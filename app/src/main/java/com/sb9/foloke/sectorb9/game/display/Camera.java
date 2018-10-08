@@ -2,44 +2,39 @@ package com.sb9.foloke.sectorb9.game.display;
 
 import android.graphics.PointF;
 
+import com.sb9.foloke.sectorb9.game.entities.DynamicEntity;
 import com.sb9.foloke.sectorb9.game.entities.Entity;
+import com.sb9.foloke.sectorb9.game.entities.Player;
 
 import java.lang.annotation.Target;
 
 public class Camera {
-    private PointF screenOffset;
+    private PointF location;
     private Entity pointOfLook;
     private float screenXcenter,screenYcenter;
     private float scale;
     public Camera(float x,float y,float scale,Entity target)
     {
         this.pointOfLook=target;
-        this.screenOffset=new PointF(x,y);
+        this.location=new PointF(x,y);
         this.scale=scale;
     }
 
-    public void tick()
+    public void tick(float scale)
     {
-       if(pointOfLook!=null)
-       {
-           screenOffset.x=(pointOfLook.getX()-screenXcenter);
-           if (screenOffset.x<0)
-               screenOffset.x+=0;
-
-           screenOffset.y=(pointOfLook.getY()-screenYcenter);
-           if (screenOffset.y<0)
-               screenOffset.y+=0;
-       }
+        this.scale=scale;
+        this.location.x= ((Player) pointOfLook).getCenterX();
+        this.location.y= ((Player) pointOfLook).getCenterY();
     }
 
     public float getxOffset()
     {
-        return screenOffset.x;
+        return location.x;
     }
 
     public float getyOffset()
     {
-        return screenOffset.y;
+        return location.y;
     }
 
     public void setPointOfLook(Entity pointOfLook) {
@@ -66,5 +61,10 @@ public class Camera {
 
     public float getScreenYcenter() {
         return screenYcenter;
+    }
+
+    public PointF getWorldLocation()
+    {
+        return location;
     }
 }

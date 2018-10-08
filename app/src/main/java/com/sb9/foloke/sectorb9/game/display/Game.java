@@ -45,7 +45,11 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
     //UI
     private Text textPointOfPlayer;
     private Text textPointOfTouch;
+    private float scale=4;
 
+    private float canvasH,canvasW;
+    private PointF pointOfTouch;
+    private PointF screenPointOfTouch;
     public Game(Context context, AttributeSet attributeSet)
     {
         super(context, attributeSet);
@@ -60,11 +64,13 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
         shipAsset.init(sheetOfShips);
 
-
+        screenPointOfTouch=new PointF(0,0);
+        pointOfTouch=new PointF(0,0);
         player=new Player(900,900,shipAsset);
        testBox=new Player(800,900,shipAsset);
-        textPointOfPlayer=new Text(""+player.getCenterX()+player.getCenterY(),200,200);
-        camera=new Camera(0,0,1,player);
+        textPointOfPlayer=new Text(""+player.getCenterX()+" "+player.getCenterY(),200,200);
+        textPointOfTouch=new Text(""+0+" "+0,200,250);
+        camera=new Camera(0,0,scale,player);
 
 
 
@@ -99,47 +105,37 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
     public void surfaceChanged(SurfaceHolder p1, int p2, int p3, int p4) { }
     public void tick()
     {
-        camera.tick();
+
+        testBox.setWorldLocation(pointOfTouch);
+        player.addMovement(screenPointOfTouch,canvasW,canvasH);
+        player.RotationToPoint(pointOfTouch);
+        player.tick();
+        camera.tick(scale);
+
     }
     public void render(Canvas canvas)
     {
         super.draw(canvas);
 
-        camera.setScreenXcenter(getWidth()/2);
-        camera.setScreenYcenter(getHeight()/2);
+        canvasW=canvas.getWidth();
+        canvasH=canvas.getHeight();
 
         canvas.save();
         Paint tpaint=new Paint();
-        //tpaint.setAntiAlias(false);
-        //tpaint.setFilterBitmap(false);
-        //tpaint.setDither(false);
         canvas.drawColor(Color.rgb(200,200,200));
 
-
-        canvas.translate(-camera.getxOffset(),-camera.getyOffset());
-        //canvas.scale(camera.getScale(),camera.getScale());
-        canvas.scale(camera.getScale(),camera.getScale(),player.getCenterX(),player.getCenterY());
-
-
-
-
-        // tempCanvas.setBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.box_tile));
-
-
-
-
+        canvas.translate(-camera.getWorldLocation().x+canvas.getWidth()/2,-camera.getWorldLocation().y+canvas.getHeight()/2);
+        canvas.scale(camera.getScale(),camera.getScale(),camera.getWorldLocation().x,camera.getWorldLocation().y);
 
         canvas.drawBitmap(background,0,0,tpaint);
         player.render(canvas);
-        player.drawDebugBox(canvas);
-        testBox.render(canvas);
-        testBox.drawDebugBox(canvas);
-
-
+        //player.drawDebugBox(canvas);
+        //testBox.render(canvas);
+        //testBox.drawDebugBox(canvas);
 
         canvas.restore();
-        textPointOfPlayer.render(canvas);
-
+        //textPointOfPlayer.render(canvas);
+        //textPointOfTouch.render(canvas);
 
     }
 
@@ -147,21 +143,29 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
     public boolean onTouchEvent(MotionEvent event) {
 
         float x=event.getX(),y=event.getY();
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                player.RotationToPoint(new PointF(x/camera.getScale()+camera.getxOffset()+camera.getScreenXcenter()/camera.getScale(),y/camera.getScale()+camera.getyOffset()+camera.getScreenYcenter()/camera.getScale()));
-                testBox.setX(x/camera.getScale()+camera.getxOffset()+camera.getScreenXcenter()/camera.getScale());
-                testBox.setY(y/camera.getScale()+camera.getyOffset()+camera.getScreenYcenter()/camera.getScale());
-                break;
+        screenPointOfTouch.set(x,y);
+        pointOfTouch.set((x-canvasW/2)/camera.getScale()+player.getWorldLocation().x,(y-canvasH/2)/camera.getScale()+player.getWorldLocation().y);
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    pointOfTouch.set((x-canvasW/2)/camera.getScale()+player.getWorldLocation().x,(y-canvasH/2)/camera.getScale()+player.getWorldLocation().y);
 
+                    textPointOfTouch.setString(pointOfTouch.x+" "+pointOfTouch.y);
+                    player.setMovable(true);
+                    break;
                 case MotionEvent.ACTION_MOVE:
-                    player.RotationToPoint(new PointF(x/camera.getScale()+camera.getxOffset()+camera.getScreenXcenter()/camera.getScale(),y/camera.getScale()+camera.getyOffset()+camera.getScreenYcenter()/camera.getScale()));
-                    testBox.setX(x/camera.getScale()+camera.getxOffset()/camera.getScale()+camera.getScreenXcenter()/camera.getScale());
-                    testBox.setY(y/camera.getScale()+camera.getyOffset()/camera.getScale()+camera.getScreenYcenter()/camera.getScale());
-                   break;
-            default:
-                break;
+                    pointOfTouch.set((x-canvasW/2)/camera.getScale()+player.getWorldLocation().x,(y-canvasH/2)/camera.getScale()+player.getWorldLocation().y);
+
+                    textPointOfTouch.setString(pointOfTouch.x+" "+pointOfTouch.y);
+                    break;
+                    case MotionEvent.ACTION_UP:
+                        player.setMovable(false);
+                    break;
+
+                default:
+                    break;
         }
+
+
                 return true;
     }
 }

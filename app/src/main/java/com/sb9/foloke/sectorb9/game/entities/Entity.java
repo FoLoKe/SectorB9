@@ -5,12 +5,13 @@ import android.graphics.Camera;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PointF;
 import android.graphics.RectF;
 
 public abstract class Entity {
     protected float x,y;
-    private RectF collisionBox;
-    private int Height,Width;
+    protected RectF collisionBox;
+    protected int Height,Width;
     protected Bitmap image;
 
 
@@ -47,5 +48,15 @@ public abstract class Entity {
         temppaint.setColor(Color.rgb(0,255,0));
         temppaint.setStyle(Paint.Style.STROKE);
         canvas.drawRect(collisionBox,temppaint);
+    }
+
+    public PointF getWorldLocation()
+    {
+        return new PointF(x,y);
+    }
+    public void setWorldLocation(PointF location)
+    {
+        x=location.x;
+        y=location.y;
     }
 }

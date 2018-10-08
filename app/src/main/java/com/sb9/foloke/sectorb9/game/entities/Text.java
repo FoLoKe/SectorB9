@@ -3,6 +3,7 @@ package com.sb9.foloke.sectorb9.game.entities;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PointF;
 
 public class Text {
     private String string="";
@@ -23,5 +24,14 @@ public class Text {
         tPaint.setColor(Color.rgb(0,255,0));
         tPaint.setTextSize(25);
         canvas.drawText(string,x,y,tPaint);
+    }
+
+    public void setString(String string) {
+        this.string=string;
+    }
+    public void setWorldLocation(PointF location)
+    {
+        this.x=location.x;
+        this.y=location.y;
     }
 }

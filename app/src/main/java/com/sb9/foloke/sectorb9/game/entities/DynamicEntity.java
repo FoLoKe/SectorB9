@@ -12,4 +12,5 @@ public abstract class DynamicEntity extends Entity {
         rotation=dx=dy=0;
     }
     abstract public void RotationToPoint(PointF targetPoint);
+
 }
