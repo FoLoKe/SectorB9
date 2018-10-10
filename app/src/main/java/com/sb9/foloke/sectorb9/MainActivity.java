@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.Manifest;
 import android.content.pm.PackageManager;
-import android.support.v4.app.ActivityCompat;
+//import android.support.v4.app.ActivityCompat;
 
 import android.view.WindowManager;
 
@@ -23,8 +23,8 @@ public class MainActivity extends Activity {
         setContentView(R.layout.main_activity);
         mapPanel=findViewById(R.id.Game);
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED)
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 10001);
+        //if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED)
+        //    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 10001);
 
     }
 

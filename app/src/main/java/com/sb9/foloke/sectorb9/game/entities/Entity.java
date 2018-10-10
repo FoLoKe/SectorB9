@@ -13,6 +13,7 @@ public abstract class Entity {
     protected RectF collisionBox;
     protected int Height,Width;
     protected Bitmap image;
+	protected boolean renderable;
 
 
     public Entity(float x,float y,Bitmap image)
@@ -21,7 +22,7 @@ public abstract class Entity {
         this.y=y;
         this.collisionBox=new RectF(x,y,x+image.getWidth(),y+image.getHeight());
         this.image=image;
-
+		this.renderable=false;
     }
     abstract public void render(Canvas canvas);
     abstract public void tick();
@@ -44,6 +45,8 @@ public abstract class Entity {
 
     public void drawDebugBox(Canvas canvas)
     {
+		if(!renderable)
+			return;
         Paint temppaint=new Paint();
         temppaint.setColor(Color.rgb(0,255,0));
         temppaint.setStyle(Paint.Style.STROKE);
@@ -59,4 +62,21 @@ public abstract class Entity {
         x=location.x;
         y=location.y;
     }
+	public float getCenterX()
+    {
+        return x+image.getWidth()/2;
+    }
+    public float getCenterY()
+    {
+        return y+image.getHeight()/2;
+    }
+	public RectF getCollsionBox()
+	{
+		return collisionBox;
+	}
+	public void setRenderable(boolean renderable)
+	{
+		this.renderable=renderable;
+	}
+    
 }
