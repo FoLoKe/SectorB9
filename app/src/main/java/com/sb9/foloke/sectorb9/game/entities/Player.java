@@ -9,6 +9,11 @@ import static java.lang.Math.PI;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import android.graphics.*;
+
+import com.sb9.foloke.sectorb9.game.Assets.ImageAssets;
+import com.sb9.foloke.sectorb9.game.Assets.UIAsset;
+import com.sb9.foloke.sectorb9.game.UI.Text;
+import com.sb9.foloke.sectorb9.game.UI.UIProgressBar;
 import com.sb9.foloke.sectorb9.game.display.*;
 
 public class Player extends DynamicEntity {
@@ -24,7 +29,7 @@ public class Player extends DynamicEntity {
 	private PointF collisionInitPoints[];
 	
 	private Game game;
-    public Player(float x, float y, ImageAssets asset,Game game)
+    public Player(float x, float y, ImageAssets asset, UIAsset uiasset, Game game)
     {
         super(x,y,asset.player_mk1);
 		this.game=game;
@@ -34,7 +39,7 @@ public class Player extends DynamicEntity {
         this.movable=false;
 		this.renderable=true;
         textdXdY=new Text("",x-100,y-50);
-		this.uIhp=new UIProgressBar(this,100,20,asset.asteroid_1,asset.asteroid_1,5);
+		this.uIhp=new UIProgressBar(this,50,8,uiasset,50);
 		collisionInitPoints=new PointF[3];
 		collisionInitPoints[0]=new PointF(0,-image.getHeight()/2);
 		collisionInitPoints[1]=new PointF(-image.getWidth()/2,image.getHeight()/2);
@@ -102,15 +107,15 @@ public class Player extends DynamicEntity {
         canvas.drawBitmap(image,x,y,new Paint());
         canvas.restore();
 
-        textdXdY.setString(acceleration+" ");
-        textdXdY.setWorldLocation(new PointF(x,y));
-        textdXdY.render(canvas);
+       // textdXdY.setString(acceleration+" ");
+       // textdXdY.setWorldLocation(new PointF(x,y));
+       // textdXdY.render(canvas);
 		
-		Paint tPaint=new Paint();
-		tPaint.setColor(Color.rgb(0,255,0));
-		tPaint.setStyle(Paint.Style.STROKE);
-		canvas.drawPath(collisionPath,tPaint);
-		
+		//Paint tPaint=new Paint();
+		//tPaint.setColor(Color.rgb(0,255,0));
+		//tPaint.setStyle(Paint.Style.STROKE);
+		//canvas.drawPath(collisionPath,tPaint);
+		uIhp.render(canvas);
 		//canvas.drawLine(getCenterX(),getCenterY(),collisionPoints[1].x,collisionPoints[1].y,tPaint);
 
     }

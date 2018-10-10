@@ -1,16 +1,13 @@
 package com.sb9.foloke.sectorb9.game.entities;
 
-	import android.graphics.Bitmap;
 	import android.graphics.Canvas;
 	import android.graphics.Paint;
 	import android.graphics.PointF;
 
-	import static java.lang.Math.PI;
-	import static java.lang.Math.cos;
-	import static java.lang.Math.sin;
-	import android.graphics.*;
+	import com.sb9.foloke.sectorb9.game.Assets.ImageAssets;
+	import com.sb9.foloke.sectorb9.game.UI.Text;
 
-	public class Cursor extends DynamicEntity {
+public class Cursor extends DynamicEntity {
 		
 		float speed=3;
 		boolean drawable;

@@ -1,4 +1,4 @@
-package com.sb9.foloke.sectorb9.game.entities;
+package com.sb9.foloke.sectorb9.game.UI;
 
 import android.graphics.Canvas;
 import android.graphics.Color;

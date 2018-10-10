@@ -1,10 +1,8 @@
-package com.sb9.foloke.sectorb9.game.entities;
+package com.sb9.foloke.sectorb9.game.Assets;
 
-import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 
-import com.sb9.foloke.sectorb9.R;
+        import com.sb9.foloke.sectorb9.game.Assets.SpriteSheet;
 
 public class ImageAssets {
     public static Bitmap player_mk1,engine_mk1,cursor,asteroid_1;
@@ -15,6 +13,6 @@ public class ImageAssets {
         player_mk1=tsheet.crop(0,0);
         engine_mk1=tsheet.crop(1,0);
         cursor=tsheet.crop(2,0);
-		asteroid_1=tsheet.crop(3,0);
+        asteroid_1=tsheet.crop(3,0);
     }
 }

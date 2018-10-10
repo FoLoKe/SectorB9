@@ -4,7 +4,8 @@ import android.graphics.Bitmap;
 import android.graphics.PointF;
 import android.graphics.Canvas;
 import android.graphics.*;
-import java.util.*;
+
+import com.sb9.foloke.sectorb9.game.UI.Text;
 
 public abstract class DynamicEntity extends Entity {
 

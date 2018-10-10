@@ -16,11 +16,10 @@ import android.util.*;
 
 import com.sb9.foloke.sectorb9.MainThread;
 import com.sb9.foloke.sectorb9.R;
-import com.sb9.foloke.sectorb9.game.entities.Entity;
+import com.sb9.foloke.sectorb9.game.Assets.UIAsset;
 import com.sb9.foloke.sectorb9.game.entities.Player;
-import com.sb9.foloke.sectorb9.game.entities.SpriteSheet;
-import com.sb9.foloke.sectorb9.game.entities.ImageAssets;
-import com.sb9.foloke.sectorb9.game.entities.Text;
+import com.sb9.foloke.sectorb9.game.Assets.ImageAssets;
+import com.sb9.foloke.sectorb9.game.UI.Text;
 import com.sb9.foloke.sectorb9.game.entities.Cursor;
 import com.sb9.foloke.sectorb9.game.entities.*;
 
@@ -40,6 +39,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
     BitmapFactory.Options options;
     private Bitmap sheetOfShips;
     private ImageAssets shipAsset;
+    private Bitmap sheetOfUI;
+    private UIAsset uiAsset;
 
     //objects
     private Player player;
@@ -58,6 +59,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
     private float canvasH,canvasW;
     private PointF pointOfTouch;
     private PointF screenPointOfTouch;
+
+    boolean drawDebugInf=false;
 	
 	
     public Game(Context context, AttributeSet attributeSet)
@@ -68,12 +71,12 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         options.inScaled=false;
         background=Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.galactic_outflow,options));
         sheetOfShips=Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ships_sheet,options));
-
+        sheetOfUI=Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ui_asset_sheet,options));
         shipAsset.init(sheetOfShips);
-
+        uiAsset.init(sheetOfUI);
         screenPointOfTouch=new PointF(0,0);
         pointOfTouch=new PointF(0,0);
-        player=new Player(900,900,shipAsset,this);
+        player=new Player(900,900,shipAsset,uiAsset,this);
         cursor=new Cursor(900,900,shipAsset);
 		asteroids=new Asteroid[5];
 		for (int i=0;i<asteroids.length;i++)
@@ -138,17 +141,21 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         canvasH=canvas.getHeight();
 		camera.setScreenRect(canvasW,canvasH);
         canvas.save();
-        Paint tpaint=new Paint();
-        canvas.drawColor(Color.rgb(200,200,200));
+        Paint tempPaint=new Paint();
+        canvas.drawColor(Color.rgb(50,50,50));
 		
         canvas.translate(-camera.getWorldLocation().x+canvas.getWidth()/2,-camera.getWorldLocation().y+canvas.getHeight()/2);
         canvas.scale(camera.getScale(),camera.getScale(),camera.getWorldLocation().x,camera.getWorldLocation().y);
 
-        canvas.drawBitmap(background,0,0,tpaint);
+        canvas.drawBitmap(background,0,0,tempPaint);
+
+
+
+        //objects
         player.render(canvas);
 		cursor.render(canvas);
-		
-		//DynamicEntity asteroids[];
+
+		//render
 		for(int i=0;i<asteroids.length;i++)
 		{
 			if(asteroids[i].getCollsionBox().intersect(camera.getScreenRect()))
@@ -159,12 +166,20 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 		for(int i=0;i<asteroids.length;i++)
 		{
 		asteroids[i].render(canvas);
-		asteroids[i].drawVelocity(canvas);
-		asteroids[i].drawDebugBox(canvas);
+		if (drawDebugInf) {
+            asteroids[i].drawVelocity(canvas);
+            asteroids[i].drawDebugBox(canvas);
+        }
 		}
-		camera.render(canvas);
-		player.drawVelocity(canvas);
+        if (drawDebugInf) {
+            camera.render(canvas);
+            player.drawVelocity(canvas);
+        }
         canvas.restore();
+
+
+		//UI
+		if(drawDebugInf)
 		textScreenWH.render(canvas);
 		
     }
