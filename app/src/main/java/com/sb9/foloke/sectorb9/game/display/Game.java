@@ -40,9 +40,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
     //assets
     BitmapFactory.Options options;
-    private Bitmap sheetOfShips;
     private ImageAssets shipAsset;
-    private Bitmap sheetOfUI;
     private UIAsset uiAsset;
 	
 	private UIcustomImage destroyedImage;
@@ -52,11 +50,10 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
     private Cursor cursor;
 	
 	//objects arrays
-	private DynamicEntity entities[];
 	private Asteroid asteroids[];
 	
     //UI
-    private Text textPointOfPlayer;
+
     private Text textPointOfTouch;
 	private Text textScreenWH;
     private float scale=4;
@@ -77,10 +74,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         options=new BitmapFactory.Options();
         options.inScaled=false;
         background=Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.galactic_outflow,options));
-        sheetOfShips=Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ships_sheet,options));
-        sheetOfUI=Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ui_asset_sheet,options));
-        shipAsset.init(sheetOfShips);
-        uiAsset.init(sheetOfUI);
+        shipAsset.init(Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ships_sheet,options)));
+        uiAsset.init(Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ui_asset_sheet,options)));
         screenPointOfTouch=new PointF(0,0);
         pointOfTouch=new PointF(0,0);
         player=new Player(900,900,shipAsset,uiAsset,this);
@@ -90,14 +85,10 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 		for (int i=0;i<asteroids.length;i++)
 		asteroids[i]=new Asteroid(50*rand.nextInt(10)+25*rand.nextInt(20),100*rand.nextInt(10)+20*rand.nextInt(50),shipAsset);
 		canvasH=canvasW=100;
-        textPointOfPlayer=new Text(""+player.getCenterX()+" "+player.getCenterY(),200,200);
         textPointOfTouch=new Text(""+0+" "+0,200,250);
 		textScreenWH=new Text("",200,300);
         camera=new Camera(0,0,scale,player);
-		destroyedImage=new UIcustomImage(sheetOfUI,0,24,64,24);
-
-
-
+		destroyedImage=new UIcustomImage(Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ui_asset_sheet,options)),0,24,64,24);
         getHolder().addCallback(this);
         mainThread= new MainThread(getHolder(),this);
         setFocusable(true);
@@ -114,7 +105,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
     @Override
     public void surfaceDestroyed(SurfaceHolder p1)
     {
-
         boolean retry = true;
         while(retry)
         {

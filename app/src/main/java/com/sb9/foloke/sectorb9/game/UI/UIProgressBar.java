@@ -1,20 +1,17 @@
 package com.sb9.foloke.sectorb9.game.UI;
 import android.graphics.*;
-
-import com.sb9.foloke.sectorb9.game.Assets.UIAsset;
 import com.sb9.foloke.sectorb9.game.entities.Entity;
 
 public class UIProgressBar
 {
 	private Bitmap background,fill;
-	Entity target;
-	float sizeX,sizeY,percent,offsetX,offsetY;
+	private Entity target;
+	private float sizeX,sizeY,percent,offsetX,offsetY;
 
 	public UIProgressBar(Entity target, float sizeX, float sizeY,float offsetX ,float offsetY,Bitmap background,Bitmap fill, float percent)
 	{
 		this.background=background;
 		this.fill=fill;
-		
 		this.sizeX=sizeX;
 		this.sizeY=sizeY;
 		this.target=target;
@@ -31,7 +28,7 @@ public class UIProgressBar
 	{
 		int tSizeX=(int)(sizeX*percent/100);
 		if (tSizeX<=0)
-		return;
+			return;
 		canvas.drawBitmap(background,target.getCenterX()+offsetX,target.getY()+offsetY,null);
         canvas.drawBitmap(fill,target.getCenterX()+offsetX,target.getY()+offsetY,null);
 	}

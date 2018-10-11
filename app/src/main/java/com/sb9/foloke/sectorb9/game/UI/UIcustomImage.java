@@ -4,10 +4,10 @@ import com.sb9.foloke.sectorb9.game.display.Camera;
 
 public class UIcustomImage
 {
-	Bitmap image;
+	private Bitmap image;
 	public UIcustomImage(Bitmap sheet,int imageX,int imageY,int sizeX,int sizeY)
 	{
-		image=Bitmap.createBitmap(sheet,imageX,imageY,sizeX,sizeY,null,false);
+		this.image=Bitmap.createBitmap(sheet,imageX,imageY,sizeX,sizeY,null,false);
 	}
 	public void render(Canvas canvas,Camera camera)
 	{

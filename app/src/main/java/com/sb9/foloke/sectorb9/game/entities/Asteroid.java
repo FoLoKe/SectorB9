@@ -14,8 +14,8 @@ package com.sb9.foloke.sectorb9.game.entities;
 
 public class Asteroid extends DynamicEntity {
 
-		float speed=3;
-		boolean movable;
+		private float speed=3;
+		private boolean movable;
 		private Text textdXdY;
 		private float acceleration;
 		;
@@ -30,9 +30,7 @@ public class Asteroid extends DynamicEntity {
 
 		@Override
 		public void tick() {
-			if(movable||true) {//no inertia damping
-
-
+			//no inertia damping
 				x += dx;
 				y += dy;
 					if(dx>0.01)
@@ -48,7 +46,6 @@ public class Asteroid extends DynamicEntity {
 						dy=0;
 						
 				this.collisionBox.set(x,y,x+image.getWidth(),y+image.getHeight());
-			}
 		}
 
 		@Override
@@ -57,24 +54,16 @@ public class Asteroid extends DynamicEntity {
 			if(!renderable)
 				return;
 			canvas.save();
-
 			canvas.rotate(rotation,getCenterX(),getCenterY());
-
-
 			canvas.drawBitmap(image,x,y,new Paint());
-
 			canvas.restore();
 
-			//textdXdY.setString(acceleration+" ");
 			textdXdY.setWorldLocation(new PointF(x,y));
 			textdXdY.render(canvas);
 
 			Paint tPaint=new Paint();
 			tPaint.setColor(Color.rgb(0,255,0));
 			tPaint.setStyle(Paint.Style.STROKE);
-
-			//canvas.drawLine(getCenterX(),getCenterY(),collisionPoints[1].x,collisionPoints[1].y,tPaint);
-
 		}
 
 		@Override

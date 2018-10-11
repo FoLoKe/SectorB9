@@ -3,7 +3,7 @@ package com.sb9.foloke.sectorb9.game.funtions;
 public class Timer
 {
 	private int timerLenght;
-	private int maxFrames=60;
+	private static final int maxFrames=60;
 	public Timer(int seconds)
 	{
 		timerLenght=seconds*maxFrames;
