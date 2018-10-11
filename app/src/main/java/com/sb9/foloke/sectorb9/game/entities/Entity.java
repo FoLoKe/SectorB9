@@ -14,6 +14,7 @@ public abstract class Entity {
     protected int Height,Width;
     protected Bitmap image;
 	protected boolean renderable;
+	private int frameTimer;
 
 
     public Entity(float x,float y,Bitmap image)
@@ -78,5 +79,18 @@ public abstract class Entity {
 	{
 		this.renderable=renderable;
 	}
-    
+    public void setTimer(int delay)
+	{
+		frameTimer=delay*60;
+	}
+	public void timerTick()
+	{
+		if((frameTimer-=1)<0)
+			frameTimer=0;
+			
+	}
+	public int getTimer()
+	{
+		return frameTimer;
+	}
 }

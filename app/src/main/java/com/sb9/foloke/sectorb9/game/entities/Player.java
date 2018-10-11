@@ -20,26 +20,30 @@ public class Player extends DynamicEntity {
     Bitmap engine;
     //float speed=3;
     boolean movable;
+	private float maxHp=100;
+	private int HP;
     private Text textdXdY;
 	private float acceleration;
 	private UIProgressBar uIhp;
-	
+	private UIProgressBar stun;
 	private Path collisionPath;
 	private PointF collisionPoints[];
 	private PointF collisionInitPoints[];
 	
 	private Game game;
+	
     public Player(float x, float y, ImageAssets asset, UIAsset uiasset, Game game)
     {
         super(x,y,asset.player_mk1);
 		this.game=game;
         this.engine=asset.engine_mk1;
-		
+		this.HP=100;
         this.dx=this.dy=0;
         this.movable=false;
 		this.renderable=true;
         textdXdY=new Text("",x-100,y-50);
-		this.uIhp=new UIProgressBar(this,50,8,uiasset,50);
+		this.uIhp=new UIProgressBar(this,50,8,-25,-20,uiasset.hpBackground,uiasset.hpLine,HP);
+		this.stun=new UIProgressBar(this,50,8,-25,+image.getHeight(),uiasset.stunBackground,uiasset.stunLine,getTimer());
 		collisionInitPoints=new PointF[3];
 		collisionInitPoints[0]=new PointF(0,-image.getHeight()/2);
 		collisionInitPoints[1]=new PointF(-image.getWidth()/2,image.getHeight()/2);
@@ -56,8 +60,15 @@ public class Player extends DynamicEntity {
 
     @Override
     public void tick() {
+		if(HP<=0)
+		{
+			game.setPlayerDestroyed(true);
+			return;
+		}
+			
         if(movable||true) {//no inertia damping
-		UIProgressBar uIhp;
+		timerTick();
+		
 		boolean collisionFlag=false;
 		DynamicEntity asteroids[]=game.getAsteroids();
 		for (int i=0;i<collisionPoints.length;i++)
@@ -83,15 +94,19 @@ public class Player extends DynamicEntity {
 		}
 		else
 		{
+			applyDamage((int)Math.sqrt((dx*dx+dy*dy)*200));
 			x-=dx+1;
 			y-=dy+1;
 			dx=dx/2;
 			dy=dy/2;
-			
+			//make block input for 2secs (60 frames);
+			setTimer(1);
 		}
 			calculateCollisionObject();
            //this.collisionBox.set(x,y,x+image.getWidth(),y+image.getHeight());
         }
+		uIhp.tick(HP);
+		stun.tick(getTimer());
     }
 
     @Override
@@ -101,7 +116,7 @@ public class Player extends DynamicEntity {
         canvas.save();
 		
         canvas.rotate(rotation,getCenterX(),getCenterY());
-        if(movable)
+        if(movable&&(getTimer()==0))
         canvas.drawBitmap(engine,x,y-5+(acceleration)*5,new Paint());
 		
         canvas.drawBitmap(image,x,y,new Paint());
@@ -116,6 +131,7 @@ public class Player extends DynamicEntity {
 		//tPaint.setStyle(Paint.Style.STROKE);
 		//canvas.drawPath(collisionPath,tPaint);
 		uIhp.render(canvas);
+		stun.render(canvas);
 		//canvas.drawLine(getCenterX(),getCenterY(),collisionPoints[1].x,collisionPoints[1].y,tPaint);
 
     }
@@ -130,7 +146,8 @@ public class Player extends DynamicEntity {
 
     public void addMovement(PointF screenPoint,float screenW, float screenH) {
         //float hundredPercent=dx+dy;
-        if (movable) {
+		
+        if (movable&&(getTimer()==0)) {
             //dx = dx / hundredPercent * speed;
             //dy = dy / hundredPercent * speed;
 			
@@ -186,5 +203,9 @@ public class Player extends DynamicEntity {
 		collisionPath.lineTo(collisionPoints[1].x,collisionPoints[1].y);
 		collisionPath.lineTo(collisionPoints[2].x,collisionPoints[2].y);
 		collisionPath.close();
+	}
+	public void applyDamage(int damage)
+	{
+		HP-=damage;
 	}
 }

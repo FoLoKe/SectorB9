@@ -22,6 +22,9 @@ import com.sb9.foloke.sectorb9.game.Assets.ImageAssets;
 import com.sb9.foloke.sectorb9.game.UI.Text;
 import com.sb9.foloke.sectorb9.game.entities.Cursor;
 import com.sb9.foloke.sectorb9.game.entities.*;
+import com.sb9.foloke.sectorb9.game.UI.*;
+import com.sb9.foloke.sectorb9.game.funtions.*;
+import java.util.Random;
 
 
 public class Game extends SurfaceView implements SurfaceHolder.Callback
@@ -41,7 +44,9 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
     private ImageAssets shipAsset;
     private Bitmap sheetOfUI;
     private UIAsset uiAsset;
-
+	
+	private UIcustomImage destroyedImage;
+	
     //objects
     private Player player;
     private Cursor cursor;
@@ -61,13 +66,15 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
     private PointF screenPointOfTouch;
 
     boolean drawDebugInf=false;
+	boolean playerDestroyed=false;
 	
+	private Timer destroyedTimer;
 	
     public Game(Context context, AttributeSet attributeSet)
     {
         super(context, attributeSet);
 
-         options=new BitmapFactory.Options();
+        options=new BitmapFactory.Options();
         options.inScaled=false;
         background=Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.galactic_outflow,options));
         sheetOfShips=Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ships_sheet,options));
@@ -78,14 +85,16 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         pointOfTouch=new PointF(0,0);
         player=new Player(900,900,shipAsset,uiAsset,this);
         cursor=new Cursor(900,900,shipAsset);
-		asteroids=new Asteroid[5];
+		asteroids=new Asteroid[50];
+		Random rand=new Random();
 		for (int i=0;i<asteroids.length;i++)
-		asteroids[i]=new Asteroid(800,900-100*i,shipAsset);
+		asteroids[i]=new Asteroid(50*rand.nextInt(10)+25*rand.nextInt(20),100*rand.nextInt(10)+20*rand.nextInt(50),shipAsset);
 		canvasH=canvasW=100;
         textPointOfPlayer=new Text(""+player.getCenterX()+" "+player.getCenterY(),200,200);
         textPointOfTouch=new Text(""+0+" "+0,200,250);
 		textScreenWH=new Text("",200,300);
         camera=new Camera(0,0,scale,player);
+		destroyedImage=new UIcustomImage(sheetOfUI,0,24,64,24);
 
 
 
@@ -120,7 +129,15 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
     public void surfaceChanged(SurfaceHolder p1, int p2, int p3, int p4) { }
     public void tick()
     {
-		
+		if(playerDestroyed)
+		{
+			if(destroyedTimer.tick())
+				{
+					destroyedTimer=null;
+				createNewPlayer();
+				}
+			return;
+		}
         cursor.setWorldLocation(pointOfTouch);
         player.addMovement(screenPointOfTouch,canvasW,canvasH);
         player.RotationToPoint(pointOfTouch);
@@ -152,7 +169,9 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
 
         //objects
+		if(!playerDestroyed)
         player.render(canvas);
+	
 		cursor.render(canvas);
 
 		//render
@@ -175,12 +194,17 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
             camera.render(canvas);
             player.drawVelocity(canvas);
         }
+		
+		
+		
         canvas.restore();
 
 
 		//UI
 		if(drawDebugInf)
 		textScreenWH.render(canvas);
+		if(playerDestroyed)
+		destroyedImage.render(canvas);
 		
     }
 
@@ -218,5 +242,19 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 	public Asteroid[] getAsteroids()
 	{
 		return asteroids;
+	}
+	public void setPlayerDestroyed(boolean condition)
+	{
+		playerDestroyed=condition;
+		destroyedTimer=new Timer(2);
+	}
+	public void createNewPlayer()
+	{
+		
+		player=null;
+		camera.setPointOfLook(null);
+		player=new Player(900,900,shipAsset,uiAsset,this);
+		playerDestroyed=false;
+		camera.setPointOfLook(player);
 	}
 }
