@@ -20,5 +20,9 @@ public class Timer
 			return true;
 		}
 	}
+	public int getTick()
+	{
+		return timerLenght;
+	}
 	
 }

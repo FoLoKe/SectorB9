@@ -15,6 +15,7 @@ import com.sb9.foloke.sectorb9.game.Assets.UIAsset;
 import com.sb9.foloke.sectorb9.game.UI.Text;
 import com.sb9.foloke.sectorb9.game.UI.UIProgressBar;
 import com.sb9.foloke.sectorb9.game.display.*;
+import com.sb9.foloke.sectorb9.game.ParticleSystem.*;
 
 public class Player extends DynamicEntity {
     Bitmap engine;
@@ -29,7 +30,9 @@ public class Player extends DynamicEntity {
 	private Path collisionPath;
 	private PointF collisionPoints[];
 	private PointF collisionInitPoints[];
+	private int inventory[][];
 	
+	//private ParticleSystem engineSmoke;
 	private Game game;
 	
     public Player(float x, float y, ImageAssets asset, UIAsset uiasset, Game game)
@@ -44,6 +47,11 @@ public class Player extends DynamicEntity {
         textdXdY=new Text("",x-100,y-50);
 		this.uIhp=new UIProgressBar(this,50,8,-25,-20,uiasset.hpBackground,uiasset.hpLine,HP);
 		this.stun=new UIProgressBar(this,50,8,-25,+image.getHeight(),uiasset.stunBackground,uiasset.stunLine,getTimer());
+		
+		inventory=new int[3][2];
+		//Point particleAccuracy=new Point(40,40);
+		//this.engineSmoke=new ParticleSystem(asset.asteroid_1,x,y,1,particleAccuracy);
+		
 		collisionInitPoints=new PointF[3];
 		collisionInitPoints[0]=new PointF(0,-image.getHeight()/2);
 		collisionInitPoints[1]=new PointF(-image.getWidth()/2,image.getHeight()/2);
@@ -63,6 +71,8 @@ public class Player extends DynamicEntity {
 
         //no inertia damping
 		timerTick();
+		//engineSmoke.tick();
+		//engineSmoke.setWorldLocation(x,y);
 		
 		boolean collisionFlag=false;
 		DynamicEntity asteroids[]=game.getAsteroids();
@@ -111,6 +121,7 @@ public class Player extends DynamicEntity {
         if(movable&&(getTimer()==0))
         	canvas.drawBitmap(engine,x,y-5+(acceleration)*5,new Paint());
         canvas.drawBitmap(image,x,y,new Paint());
+		//engineSmoke.render(canvas);
         canvas.restore();
 		uIhp.render(canvas);
 		stun.render(canvas);
@@ -174,5 +185,9 @@ public class Player extends DynamicEntity {
 	public void applyDamage(int damage)
 	{
 		HP-=damage;
+	}
+	public int[][] getInventory()
+	{
+	return inventory;
 	}
 }
