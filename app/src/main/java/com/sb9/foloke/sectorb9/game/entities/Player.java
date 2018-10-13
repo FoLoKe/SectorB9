@@ -119,8 +119,8 @@ public class Player extends DynamicEntity {
         canvas.save();
         canvas.rotate(rotation,getCenterX(),getCenterY());
         if(movable&&(getTimer()==0))
-        	canvas.drawBitmap(engine,x,y-5+(acceleration)*5,new Paint());
-        canvas.drawBitmap(image,x,y,new Paint());
+        	canvas.drawBitmap(engine,x,y-5+(acceleration)*5,null);
+        canvas.drawBitmap(image,x,y,null);
 		//engineSmoke.render(canvas);
         canvas.restore();
 		uIhp.render(canvas);

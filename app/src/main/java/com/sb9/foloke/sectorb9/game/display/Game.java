@@ -132,104 +132,102 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 		if(playerDestroyed)
 		{
 			if(destroyedTimer.tick())
-				{
-					destroyedTimer=null;
+			{
+				destroyedTimer=null;
 				createNewPlayer();
-				}
+			}
 			return;
 		}
-		if(!gamePause)
-		{
-        cursor.setWorldLocation(pointOfTouch);
-        player.addMovement(screenPointOfTouch,canvasW,canvasH);
-        player.RotationToPoint(pointOfTouch);
-        player.tick();
-		for(int i=0;i<asteroids.length;i++)
-		{
-			asteroids[i].tick();
-		}
-		}
-        camera.tick(scale,canvasW,canvasH);
-		textScreenWH.setString(canvasW+"x"+canvasH);
-
+			
+			if(!gamePause)
+			{
+       		 	cursor.setWorldLocation(pointOfTouch);
+        		player.addMovement(screenPointOfTouch,canvasW,canvasH);
+        		player.RotationToPoint(pointOfTouch);
+        		player.tick();
+				for(int i=0;i<asteroids.length;i++)
+				{
+					asteroids[i].tick();
+				}
+			}
+        	camera.tick(scale,canvasW,canvasH);
+			textScreenWH.setString(canvasW+"x"+canvasH);
     }
     public void render(Canvas canvas)
     {
-        super.draw(canvas);
-		
-        canvasW=canvas.getWidth();
-        canvasH=canvas.getHeight();
-		camera.setScreenRect(canvasW,canvasH);
-        canvas.save();
-        canvas.drawColor(Color.rgb(50,50,50));
-		
-        canvas.translate(-camera.getWorldLocation().x+canvas.getWidth()/2,-camera.getWorldLocation().y+canvas.getHeight()/2);
-        canvas.scale(camera.getScale(),camera.getScale(),camera.getWorldLocation().x,camera.getWorldLocation().y);
-
-        canvas.drawBitmap(background,0,0,null);
-
-
-
-        //objects
-		if(!playerDestroyed&&!gamePause)
+		if(true)
 		{
-        player.render(canvas);
-	
-		cursor.render(canvas);
+       		super.draw(canvas);
+       		canvasW=canvas.getWidth();
+        	canvasH=canvas.getHeight();
+			camera.setScreenRect(canvasW,canvasH);
+        	canvas.save();
+		
+        	//canvas.drawColor(Color.rgb(50,50,50));
+		
+        	canvas.translate(-camera.getWorldLocation().x+canvas.getWidth()/2,-camera.getWorldLocation().y+canvas.getHeight()/2);
+        	canvas.scale(camera.getScale(),camera.getScale(),camera.getWorldLocation().x,camera.getWorldLocation().y);
 
-		//render
-		for(int i=0;i<asteroids.length;i++)
-		{
-			if(asteroids[i].getCollsionBox().intersect(camera.getScreenRect()))
-				asteroids[i].setRenderable(true);
+        	canvas.drawBitmap(background,0,0,null);
+			
+        	//objects
+        	player.render(canvas);
+			cursor.render(canvas);
+
+			//render
+			for(int i=0;i<asteroids.length;i++)
+			{
+				if(asteroids[i].getCollsionBox().intersect(camera.getScreenRect()))
+					asteroids[i].setRenderable(true);
 				else
 					asteroids[i].setRenderable(false);
+			}
+			for(int i=0;i<asteroids.length;i++)
+			{
+				asteroids[i].render(canvas);
+				if (drawDebugInf) 
+				{
+            		asteroids[i].drawVelocity(canvas);
+            		asteroids[i].drawDebugBox(canvas);
+        		}
+			}
+        	if (drawDebugInf) 
+			{
+            	camera.render(canvas);
+            	player.drawVelocity(canvas);
+        	}
+        	canvas.restore();
+			//UI
+			if(drawDebugInf)
+			textScreenWH.render(canvas);	
+			
 		}
-		for(int i=0;i<asteroids.length;i++)
-		{
-		asteroids[i].render(canvas);
-		if (drawDebugInf) {
-            asteroids[i].drawVelocity(canvas);
-            asteroids[i].drawDebugBox(canvas);
-        }
-		}
-        if (drawDebugInf) {
-            camera.render(canvas);
-            player.drawVelocity(canvas);
-        }
-		}
-		
-		
-		
-        canvas.restore();
-
-
-		//UI
-		if(drawDebugInf)
-		textScreenWH.render(canvas);
-		if(playerDestroyed)
-		destroyedImage.render(canvas);
 		if ((OpenInventory)&&(player!=null))
 		{
 			playerInventory.render(canvas);
 		}
+		if(playerDestroyed)
+			destroyedImage.render(canvas);
+		
 		
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+		if(!gamePause)
+		{
         float x=event.getX(),y=event.getY();
         screenPointOfTouch.set(x,y);
         pointOfTouch.set((x-canvasW/2)/camera.getScale()+player.getWorldLocation().x,(y-canvasH/2)/camera.getScale()+player.getWorldLocation().y);
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-					
+
                     pointOfTouch.set((x-canvasW/2)/camera.getScale()+player.getWorldLocation().x,(y-canvasH/2)/camera.getScale()+player.getWorldLocation().y);
 					
                     textPointOfTouch.setString(pointOfTouch.x+" "+pointOfTouch.y);
 					cursor.setDrawable(true);
                     player.setMovable(true);
-					openNewInventory(playerInventory,player.getInventory());
+					//openNewInventory(playerInventory,player.getInventory());
                     break;
                 case MotionEvent.ACTION_MOVE:
                     pointOfTouch.set((x-canvasW/2)/camera.getScale()+player.getWorldLocation().x,(y-canvasH/2)/camera.getScale()+player.getWorldLocation().y);
@@ -238,14 +236,14 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
                     case MotionEvent.ACTION_UP:
 						cursor.setDrawable(false);
                         player.setMovable(false);
-						closeInventory(playerInventory);
+						
+						//closeInventory(playerInventory);
                     break;
 
                 default:
                     break;
         }
-
-
+		}
                 return true;
     }
 	public Asteroid[] getAsteroids()
@@ -256,15 +254,16 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 	{
 		playerDestroyed=condition;
 		destroyedTimer=new Timer(2);
+		gamePause=condition;
 	}
 	public void createNewPlayer()
 	{
-		
 		player=null;
 		camera.setPointOfLook(null);
 		player=new Player(900,900,shipAsset,uiAsset,this);
 		playerDestroyed=false;
 		camera.setPointOfLook(player);
+		gamePause=false;
 	}
 	public void openNewInventory(UIinventory inventory,int items[][])
 	{
@@ -281,5 +280,13 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 		gamePause=false;
 		OpenInventory=false;
 		//inventory=null;
+	}
+	public Player getplayer()
+	{
+		return player;
+	}
+	public UIinventory getPlayerUIInventory()
+	{
+		return playerInventory;
 	}
 }
