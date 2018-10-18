@@ -36,11 +36,23 @@ import java.util.Map;
 
 import com.sb9.foloke.sectorb9.game.display.Game;
 import android.widget.*;
+import android.util.*;
+import android.view.*;
+import com.sb9.foloke.sectorb9.game.UI.*;
+import com.sb9.foloke.sectorb9.game.Assets.*;
+import android.content.*;
+import android.opengl.*;
 
 public class MainActivity extends Activity {
 
-    Game mapPanel;
+    Game game;
 	boolean inventoryOpened=false;
+	
+	private BitmapFactory.Options options;
+	private InventoryAsset invAsset;
+	private ScrollView playerScrollView;
+	
+	private ScrollView objectScrollView;
 	
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -48,24 +60,26 @@ public class MainActivity extends Activity {
         //requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.main_activity);
-        mapPanel=findViewById(R.id.Game);
+        game=findViewById(R.id.Game);
+		options=new BitmapFactory.Options();
+        options.inScaled=false;
 		
 		
-		/*TableLayout table = (TableLayout)findViewById(R.id.myTableLayout);
-		String data[]={"a","b"};
-		for(int i=0;i<data.length;i++)
-		{
-			TableRow row=new TableRow(this);
-			String phone = data[i];
-			String amount = data[i];
-			TextView tv1=new TextView(this);
-			tv1.setText(phone);
-			TextView tv2=new TextView(this);
-			tv2.setText(amount);
-			row.addView(tv1);
-			row.addView(tv2);
-			table.addView(row);
-		}*/
+		playerScrollView=findViewById(R.id.PlayerScrollView);
+		playerScrollView.setVisibility(View.GONE);
+		objectScrollView=findViewById(R.id.ObjectScrollView);
+		objectScrollView.setVisibility(View.GONE);
+		
+		TableLayout playerTable=findViewById(R.id.PlayerTableLayout);
+		TableLayout objectTable=findViewById(R.id.ObjectTableLayout);
+		//objectInv=new UIinventory(invAsset,items,objectTable,(Context)this);
+		//playerInv=new UIinventory(invAsset,items,playerTable,(Context)this);
+// адаптер данных
+		game.initInventoryUI(playerTable,objectTable,this);
+		//listView.addView(new ImageButton(this));
+		
+    
+		
         //if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED)
         //    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 10001);
 		//Button button;
@@ -88,12 +102,20 @@ public class MainActivity extends Activity {
 	{
 		if(!inventoryOpened)
 		{
-			mapPanel.openNewInventory(mapPanel.getPlayerUIInventory(),mapPanel.getplayer().getInventory());
+			//mapPanel.openNewInventory(mapPanel.getPlayerUIInventory(),mapPanel.getplayer().getInventory());
+			playerScrollView.setActivated(true);
+			playerScrollView.setVisibility(View.VISIBLE);
+			objectScrollView.setVisibility(View.VISIBLE);
 			inventoryOpened=true;
 		}
 		else
 		{
-			mapPanel.closeInventory(mapPanel.getPlayerUIInventory());
+			//mapPanel.closeInventory(mapPanel.getPlayerUIInventory());
+			playerScrollView.setActivated(false);
+			playerScrollView.setVisibility(View.GONE);
+			objectScrollView.setVisibility(View.GONE);
+			game.getPlayerUIInventory().init();
+			game.getObjectUIInventory().init();
 			inventoryOpened=false;
 		}
 	}

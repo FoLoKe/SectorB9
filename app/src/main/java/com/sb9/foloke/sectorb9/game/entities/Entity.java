@@ -7,6 +7,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.RectF;
+import java.util.*;
+import com.sb9.foloke.sectorb9.game.UI.*;
 
 public abstract class Entity {
     protected float x,y;
@@ -15,7 +17,8 @@ public abstract class Entity {
     protected Bitmap image;
 	protected boolean renderable;
 	private int frameTimer;
-
+	protected HashMap<Integer,Integer> inventory;
+	protected int inventoryMaxCapacity=5;
 
     public Entity(float x,float y,Bitmap image)
     {
@@ -24,6 +27,8 @@ public abstract class Entity {
         this.collisionBox=new RectF(x,y,x+image.getWidth(),y+image.getHeight());
         this.image=image;
 		this.renderable=false;
+		inventory=new HashMap<Integer,Integer>();
+		
     }
     abstract public void render(Canvas canvas);
     abstract public void tick();
@@ -93,4 +98,13 @@ public abstract class Entity {
 	{
 		return frameTimer;
 	}
+	public HashMap<Integer,Integer> getInventory()
+	{
+		return inventory;
+	}
+	public int getInventoryMaxCapacity()
+	{
+		return inventoryMaxCapacity;
+	}
+	
 }

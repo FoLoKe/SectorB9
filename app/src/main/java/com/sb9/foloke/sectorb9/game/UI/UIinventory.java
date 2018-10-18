@@ -1,46 +1,223 @@
 package com.sb9.foloke.sectorb9.game.UI;
 import com.sb9.foloke.sectorb9.game.Assets.*;
 import android.graphics.*;
+import android.widget.*;
+import android.content.pm.PackageManager;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.os.Bundle;
+import android.os.Environment;
+//import android.support.v4.app.ActivityCompat;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import com.sb9.foloke.sectorb9.R;
+
+import com.sb9.foloke.sectorb9.game.display.Game;
+import android.widget.*;
+import android.util.*;
+import android.view.*;
+import android.content.Context;
+import com.sb9.foloke.sectorb9.game.entities.Entity;
 //import java.util.*;
 public class UIinventory
 {
 	private InventoryAsset asset;
 	//private HashMap<int,int> inv_indexes; //item_index //count
-	private int inv_items[][]; //index,count
+	//private  inv_items[][]; //index,count
 	private boolean visible;
-	
-	public UIinventory(InventoryAsset inventoryAsset,int inv_items[][])
+	private TableLayout table;
+	private Context context;
+	//private int capacity;
+	//private HashMap<Integer,Integer> inventoryItems;
+	private Entity target;
+	private InventoryAsset inventoryAsset;
+	private UICommInterface exchangeInterface;
+
+	public UIinventory(InventoryAsset inventoryAsset,TableLayout table,Context context,Entity target,UICommInterface exchangeInterface)
 	{
-		//this.asset=inventoryAsset;
-		//this.inv_items=inv_items;
-		inv_items=new int [2][2];
+		this.target=target;
+		//this.capacity=target.getInventoryMaxCapacity();
+		//table.setStretchAllColumns(true);this.inventoryItems=inv_items;
+		this.exchangeInterface=exchangeInterface;
+		this.inventoryAsset=inventoryAsset;
+		this.table=table;
+		this.context=context;
+		ScrollView.LayoutParams lp= new ScrollView.LayoutParams(ScrollView.LayoutParams.WRAP_CONTENT,context.getResources().getDisplayMetrics().heightPixels);
+		lp.setMargins(10,10,10,10);
+		init();
 	}
-	public void render(Canvas canvas)
+	public void init()
 	{
-		if(visible)
+		table.removeAllViews();
+		BitmapFactory.Options options=new BitmapFactory.Options();
+        options.inScaled=false;
+		
+		
+		
+		
+		for(HashMap.Entry<Integer,Integer> entry : target.getInventory().entrySet()) {
+			Integer key = entry.getKey();
+			Integer value = entry.getValue();
+			TableRow row=new TableRow(context);
+			TableLayout.LayoutParams tableRowParams=
+				new TableLayout.LayoutParams
+			(TableLayout.LayoutParams.WRAP_CONTENT,TableLayout.LayoutParams.FILL_PARENT);
+
+			int leftMargin=10;
+			int topMargin=10;
+			int rightMargin=10;
+			int bottomMargin=10;
+
+			tableRowParams.setMargins(leftMargin, topMargin, rightMargin, bottomMargin);
+			row.setLayoutParams(tableRowParams);
+			ImageView sprite=new ImageView(context);
+			ImageButton button1=new ImageButton(context);
+			TextView testText=new TextView(context);
+			TextView testText2=new TextView(context);
+			TableRow.LayoutParams trp=new TableRow.LayoutParams();
+			trp.setMargins(10,10,10,10);
+			trp.height=100;
+			button1.setLayoutParams(trp);
+			testText.setLayoutParams(trp);
+			testText.setText(""+key);
+			testText2.setText(""+value);
+			testText2.setLayoutParams(trp);
+			BitmapDrawable bdrawable;
+			if(key==0)
+				bdrawable = new BitmapDrawable(context.getResources(),inventoryAsset.inv_empty);
+				else
+				bdrawable = new BitmapDrawable(context.getResources(),inventoryAsset.inv_steel_ingot);
+
+			//button1.setBackground(bdrawable);
+			//button1.setScaleType(ImageView.ScaleType.FIT_XY);
+			//sprite.setBackground(bdrawable);
+			sprite.setImageDrawable(bdrawable);
+			final int itemId=key;
+			final int itemCount=value;
+			row.setOnClickListener(new OnClickListener()
+			{
+				@Override
+				public void onClick(View v)
+				{
+					
+					if(exchangeInterface.setSide(target,itemId,itemCount))
+					{
+					//
+						v.setBackgroundColor(Color.RED);
+						
+					}
+					else
+					{
+						exchangeInterface.game.getObjectUIInventory().init();
+						exchangeInterface.game.getPlayerUIInventory().init();
+					}
+					if(!exchangeInterface.flagStartedExchange)
+					{
+						exchangeInterface.game.getObjectUIInventory().init();
+						exchangeInterface.game.getPlayerUIInventory().init();
+					}
+					//v.setBackground();
+					
+				}
+			});
+			button1.setScaleType(ImageView.ScaleType.FIT_XY);
+			row.setId(key);
+			
+			row.addView(sprite);
+			row.addView(testText);
+			row.addView(testText2);
+			table.addView(row);
+		}
+		for (int i=0;i<(target.getInventoryMaxCapacity()-target.getInventory().size());i++)
 		{
-			canvas.save();
-			float scale=15;
-			canvas.scale(scale,scale);
-			float H=canvas.getHeight();
-			float W=canvas.getWidth();
-			float imagesize=64;
-			float leftOffset=0;
-			float topOffset=0;
-			if(W/2>imagesize*scale)
-				leftOffset=(W/2-imagesize*scale)/(2*scale);
-			if(H>imagesize*scale)
-				topOffset=(H-imagesize*scale)/(2*scale);
-		canvas.drawBitmap(asset.inv_background,leftOffset,topOffset,null);
-		canvas.restore();
-		canvas.scale(scale-5,scale-5);
-		canvas.drawBitmap(asset.inv_steel_ingot,leftOffset+64/(5),topOffset+64,null);
-		canvas.restore();
-			}
+			TableRow row=new TableRow(context);
+			TableLayout.LayoutParams tableRowParams=
+				new TableLayout.LayoutParams
+			(TableLayout.LayoutParams.WRAP_CONTENT,TableLayout.LayoutParams.FILL_PARENT);
+
+			int leftMargin=10;
+			int topMargin=10;
+			int rightMargin=10;
+			int bottomMargin=10;
+
+			tableRowParams.setMargins(leftMargin, topMargin, rightMargin, bottomMargin);
+			row.setLayoutParams(tableRowParams);
+
+			ImageButton button1=new ImageButton(context);
+			ImageView sprite=new ImageView(context);
+			TableRow.LayoutParams trp=new TableRow.LayoutParams();
+			trp.setMargins(10,10,10,10);
+			trp.height=100;
+			button1.setLayoutParams(trp);
+		
+			BitmapDrawable bdrawable;
+			
+			bdrawable = new BitmapDrawable(context.getResources(),inventoryAsset.inv_empty);
+			sprite.setImageDrawable(bdrawable);
+			///button1.setBackground(bdrawable);
+			///button1.setScaleType(ImageView.ScaleType.FIT_XY);
+			row.setOnClickListener
+			(new OnClickListener() 
+				{
+					@Override
+					public void onClick(View v) 
+					{
+						if(exchangeInterface.flagStartedExchange==true)
+						{
+							if(exchangeInterface.setSide(target,0,0))
+								exchangeInterface.game.getObjectUIInventory().init();
+							exchangeInterface.game.getPlayerUIInventory().init();
+						}
+					}
+				});
+			row.setId(0);
+			row.addView(sprite);
+			table.addView(row);
+		}
+		
 	}
 	public void setVisability(boolean visability)
 	{
 		this.visible=visability;
 	}
-	
+	public TableLayout getTable()
+	{
+		return table;
+	}
+	public  boolean addItem(int index,int count,Entity from)
+	{
+		if(target.getInventory().containsKey(index))
+			target.getInventory().replace(index,target.getInventory().get(index)+count);
+			else
+			{
+		if(target.getInventoryMaxCapacity()<=target.getInventory().size())
+			return false;
+			
+			else
+		target.getInventory().put(index,count);
+		}
+		init();
+		return true;
+		
+	}
 }

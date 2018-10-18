@@ -10,7 +10,13 @@ import android.view.SurfaceView;
 import android.view.SurfaceHolder;
 import android.content.Context;
 import android.graphics.Canvas;
-
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
 
 import android.util.*;
 
@@ -26,6 +32,8 @@ import com.sb9.foloke.sectorb9.game.UI.*;
 import com.sb9.foloke.sectorb9.game.funtions.*;
 import java.util.Random;
 import com.sb9.foloke.sectorb9.game.Assets.*;
+import android.widget.*;
+import android.app.*;
 
 
 public class Game extends SurfaceView implements SurfaceHolder.Callback
@@ -69,21 +77,44 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 	boolean OpenInventory=false;
 	boolean gamePause=false;
 	private Timer destroyedTimer;
-	private UIinventory playerInventory;
+	
+	//private UIinventory playerInventory;
+	UIinventory playerInv;
+	UIinventory objectInv;
+	UICommInterface exchangeInteface;
+	
+	
+	//debug 
+	String exchangeFrom;
+	String exchangeTo;
+	Text debugExchange;
 	
     public Game(Context context, AttributeSet attributeSet)
     {
+		
         super(context, attributeSet);
+		
+		//View rootView = ((Activity)_context).Window.DecorView.FindViewById(Android.Resource.Id.Content);
+		//View rootView = ((Activity)context).getWindow().getDecorView().findViewById(android.R.id.content);
+		//TableLayout playerTable=rootView.findViewById(R.id.PlayerTableLayout);
+		//TableLayout objectTable=((Activity)context).getWindow().getDecorView().findViewById(R.id.ObjectTableLayout);
+		
 
         options=new BitmapFactory.Options();
         options.inScaled=false;
-		invAsset.init(Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ui_inventory_sheet,options)));
+		
         background=Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.galactic_outflow,options));
         shipAsset.init(Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ships_sheet,options)));
+		invAsset.init(Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ui_inventory_sheet,options)));
         uiAsset.init(Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ui_asset_sheet,options)));
+		exchangeInteface.init(this);
         screenPointOfTouch=new PointF(0,0);
         pointOfTouch=new PointF(0,0);
+		//TableLayout playerTable=findViewById(R.id.PlayerTableLayout);
+		//TableLayout objectTable=findViewById(R.id.ObjectTableLayout);
         player=new Player(900,900,shipAsset,uiAsset,this);
+		
+		
         cursor=new Cursor(900,900,shipAsset);
 		asteroids=new Asteroid[50];
 		Random rand=new Random();
@@ -92,11 +123,12 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 		canvasH=canvasW=100;
         textPointOfTouch=new Text(""+0+" "+0,200,250);
 		textScreenWH=new Text("",200,300);
+		debugExchange=new Text("",500,300);
         camera=new Camera(0,0,scale,player);
 		
 		
-		playerInventory=new UIinventory(invAsset,player.getInventory());
-		playerInventory.setVisability(true);
+		//playerInventory=new UIinventory(invAsset,player.getInventory());
+		//playerInventory.setVisability(true);
 		destroyedImage=new UIcustomImage(Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ui_asset_sheet,options)),0,24,64,24);
         getHolder().addCallback(this);
         mainThread= new MainThread(getHolder(),this);
@@ -129,6 +161,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
     public void surfaceChanged(SurfaceHolder p1, int p2, int p3, int p4) { }
     public void tick()
     {
+		debugExchange.setString(exchangeInteface.getExchangeFrom()+"->"+exchangeInteface.ExchangeTo);
 		if(playerDestroyed)
 		{
 			if(destroyedTimer.tick())
@@ -201,11 +234,10 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 			if(drawDebugInf)
 			textScreenWH.render(canvas);	
 			
+			debugExchange.render(canvas);
+			
 		}
-		if ((OpenInventory)&&(player!=null))
-		{
-			playerInventory.render(canvas);
-		}
+		//TODO: make PLAYER DESTROYED CLOSE INVENTORY
 		if(playerDestroyed)
 			destroyedImage.render(canvas);
 		
@@ -281,12 +313,22 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 		OpenInventory=false;
 		//inventory=null;
 	}
-	public Player getplayer()
+	public Player getPlayer()
 	{
 		return player;
 	}
 	public UIinventory getPlayerUIInventory()
 	{
-		return playerInventory;
+		return playerInv;
+	}
+	public void initInventoryUI(TableLayout playerTable,TableLayout objectTable,Context context)
+	{
+		//exchangeInteface=exchangeInteface;
+		objectInv=new UIinventory(invAsset,objectTable,context,asteroids[0],exchangeInteface);
+		playerInv=new UIinventory(invAsset,playerTable,context,player,exchangeInteface);
+	}
+	public UIinventory getObjectUIInventory()
+	{
+		return objectInv;
 	}
 }

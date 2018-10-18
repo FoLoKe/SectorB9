@@ -26,6 +26,8 @@ public class Asteroid extends DynamicEntity {
 			this.dx=this.dy=0;
 			this.movable=false;
 			textdXdY=new Text("",x-100,y-50);
+			for (int i=1;i<inventoryMaxCapacity-2;i++)
+				inventory.put(i,i+i);
 		}
 
 		@Override

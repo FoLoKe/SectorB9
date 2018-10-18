@@ -16,7 +16,7 @@ import com.sb9.foloke.sectorb9.game.UI.Text;
 import com.sb9.foloke.sectorb9.game.UI.UIProgressBar;
 import com.sb9.foloke.sectorb9.game.display.*;
 import com.sb9.foloke.sectorb9.game.ParticleSystem.*;
-
+import java.util.*;
 public class Player extends DynamicEntity {
     Bitmap engine;
     //float speed=3;
@@ -30,8 +30,8 @@ public class Player extends DynamicEntity {
 	private Path collisionPath;
 	private PointF collisionPoints[];
 	private PointF collisionInitPoints[];
-	private int inventory[][];
-	
+	//private int inventory[][];
+
 	//private ParticleSystem engineSmoke;
 	private Game game;
 	
@@ -47,8 +47,11 @@ public class Player extends DynamicEntity {
         textdXdY=new Text("",x-100,y-50);
 		this.uIhp=new UIProgressBar(this,50,8,-25,-20,uiasset.hpBackground,uiasset.hpLine,HP);
 		this.stun=new UIProgressBar(this,50,8,-25,+image.getHeight(),uiasset.stunBackground,uiasset.stunLine,getTimer());
+		inventoryMaxCapacity=10;
+		for (int i=0;i<inventoryMaxCapacity;i++)
+			inventory.put(i,i+i);
 		
-		inventory=new int[3][2];
+		
 		//Point particleAccuracy=new Point(40,40);
 		//this.engineSmoke=new ParticleSystem(asset.asteroid_1,x,y,1,particleAccuracy);
 		
@@ -86,7 +89,6 @@ public class Player extends DynamicEntity {
 			
 			break;
 			}
-			
 		}
 
 		if (!collisionFlag)
@@ -106,7 +108,6 @@ public class Player extends DynamicEntity {
 			//make block input for 1sec (60 frames);
 			setTimer(1);
 		}
-
 		calculateCollisionObject();
 		uIhp.tick(HP);
 		stun.tick(getTimer());
@@ -125,7 +126,6 @@ public class Player extends DynamicEntity {
         canvas.restore();
 		uIhp.render(canvas);
 		stun.render(canvas);
-
     }
 
     @Override
@@ -148,6 +148,7 @@ public class Player extends DynamicEntity {
 				acceleration=0;
 			if(acceleration>1)
 				acceleration=1;
+			
 				
             float mathRotation=(float)(PI/180*rotation);
             rotation=360-(float)Math.toDegrees(Math.PI+Math.atan2(-screenW/2+screenPoint.x,-screenH/2+screenPoint.y)); //screen relative rotation
@@ -186,8 +187,5 @@ public class Player extends DynamicEntity {
 	{
 		HP-=damage;
 	}
-	public int[][] getInventory()
-	{
-	return inventory;
-	}
+	
 }
