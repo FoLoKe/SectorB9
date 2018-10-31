@@ -37,6 +37,7 @@ import android.app.*;
 import java.util.ArrayList;
 import com.sb9.foloke.sectorb9.*;
 import com.sb9.foloke.sectorb9.game.entities.Buildings.*;
+import android.os.*;
 
 
 public class Game extends SurfaceView implements SurfaceHolder.Callback
@@ -112,10 +113,11 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 		//View rootView = ((Activity)context).getWindow().getDecorView().findViewById(android.R.id.content);
 		//TableLayout playerTable=rootView.findViewById(R.id.PlayerTableLayout);
 		//TableLayout objectTable=((Activity)context).getWindow().getDecorView().findViewById(R.id.ObjectTableLayout);
-		
+	
 		entityManager=new EntityManager(this);
         options=new BitmapFactory.Options();
         options.inScaled=false;
+		Random rand=new Random();
 		
         background=Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.galactic_outflow,options));
         shipAsset.init(Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ships_sheet,options)));
@@ -129,10 +131,10 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 		//TableLayout objectTable=findViewById(R.id.ObjectTableLayout);
         player=new Player(900,900,0,shipAsset,uiAsset,this,"player");
 		
-		entityManager.addObject( new SmallCargoContainer(850,900,10,objAsset,"debug cargo",this));
+		entityManager.addObject( new SmallCargoContainer(850,900,rand.nextInt(180),objAsset,"debug cargo",this));
 		entityManager.addObject(new SmallCargoContainer(1000,900,10,objAsset,"debug cargo1",this));
 		//entityManager.addObject(new SmallCargoContainer());
-		entityManager.addObject(new Crusher(900,1000,10,objAsset.crusher,"debug crusher",this));
+		entityManager.addObject(new Crusher(900,1000,rand.nextInt(180),objAsset.crusher,"debug crusher",this));
         cursor=new Cursor(900,900,shipAsset,"cursor",this);
 		
 		//asteroids=new Asteroid[50];
@@ -140,7 +142,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 		//staticEntities[0]=container;
 		//staticEntities[1]=container2;
 		//staticEntities[2]=container3;
-		Random rand=new Random();
+		
 		for (int i=0;i<50;i++)
 		entityManager.addObject(new Asteroid(50*rand.nextInt(10)+25*rand.nextInt(20),100*rand.nextInt(10)+20*rand.nextInt(50),rand.nextInt(180),shipAsset,"asteroid_"+i,this));
 		canvasH=canvasW=100;
@@ -402,5 +404,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 		
 		objectInv.init();
 	}
+	
+	
 	
 }

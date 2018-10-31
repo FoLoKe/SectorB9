@@ -200,7 +200,7 @@ public class UIinventory
 		//TableLayout ttable=table;
 		if(table.getVisibility()==View.GONE)
 		table.setVisibility(View.VISIBLE);
-		TableLayout ttable=table;
+		target.getGame().errorText.setString("all good");
 		}
 		catch(Exception e)
 		{ target.getGame().errorText.setString(e.toString());}

@@ -4,9 +4,12 @@ import android.graphics.*;
 import com.sb9.foloke.sectorb9.game.display.*;
 import com.sb9.foloke.sectorb9.game.funtions.*;
 import java.util.Map;
+import com.sb9.foloke.sectorb9.*;
+import com.sb9.foloke.sectorb9.game.UI.*;
 
 public class Crusher extends StaticEntity
 {
+	private UIProgressBar prgBar;
 	private int inProduction;
 	private int count;
 	private Timer prodTimer;
@@ -17,12 +20,19 @@ public class Crusher extends StaticEntity
 		this.opened=true;
 		inProduction=0;
 		count=0;prodTimer=new Timer(0);
+		prgBar=new UIProgressBar(this,50,8,-25,-20,game.uiAsset.hpBackground,game.uiAsset.hpLine,game.uiAsset.progressBarBorder,prodTimer.getTick());
+		
 	}
 
 	@Override
 	public void render(Canvas canvas)
 	{
+		canvas.save();
+		canvas.rotate(rotation,getCenterX(),getCenterY());
 		canvas.drawBitmap(image,x,y,null);
+		if(prodTimer.getTick()>0)
+		prgBar.render(canvas);
+		canvas.restore();
 		// TODO: Implement this method
 	}
 
@@ -32,10 +42,14 @@ public class Crusher extends StaticEntity
 		if(inventory.size()>0&&inProduction==0)
 		{
 			//inProduction= inventory..;
+			for(Map.Entry<Integer,Integer> e: inventory.entrySet())
+			{
+				if(e.getKey()==1)
+					inProduction=e.getKey();
+			}
 			
-			
-			inProduction=inventory.keySet().toArray()[0];
-			count=inventory.get(inProduction);
+			//keySet().toArray()[0];
+			//count=inventory.get(inProduction);
 		
 			/*if(count==1)
 			{
@@ -44,12 +58,13 @@ public class Crusher extends StaticEntity
 					//inProduction=0;
 			}*/
 			prodTimer.setTimer(1);
+			
 		}
-		if(inProduction!=0&&inProduction!=0)
+		if(inProduction!=0)
 		{
 			if(prodTimer.tick())
 			{
-				inProduction=0;
+				
 				if(inventory.containsKey(inProduction))
 				{
 				//int v=
@@ -58,21 +73,24 @@ public class Crusher extends StaticEntity
 					inventory.put(inProduction,inventory.get(inProduction)-1);
 				else
 					inventory.remove(inProduction);
-					if(inventory.containsKey(inProduction+1))
+					if(inventory.containsKey(4))
 					{
-						inventory.put(inProduction+1,inventory.get(inProduction+1)+1);
+						inventory.put(4,inventory.get(4)+1);
 					}
 					else
-						inventory.put(inProduction+1,1);
+						inventory.put(4,1);
+					inProduction=0;
 				}
 			//if(getGame().command==getGame().commandInteraction)
 				
-			game.initObjInventory();
 			
+				MainActivity tAct=(MainActivity)game.mAcontext;
+				tAct.initInvenories();
 			
 			}
 		}
-		
+		if(prodTimer.getTick()>0)
+		prgBar.tick(1/prodTimer.getTick());
 		// TODO: Implement this method
 	}
 

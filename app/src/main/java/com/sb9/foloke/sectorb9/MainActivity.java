@@ -44,6 +44,7 @@ import android.content.*;
 import android.opengl.*;
 import android.view.View.*;
 import android.view.InputDevice.*;
+import android.os.*;
 
 public class MainActivity extends Activity {
 
@@ -158,5 +159,15 @@ public class MainActivity extends Activity {
 	public void openObjectInventory()
 	{
 		objectScrollView.setVisibility(View.VISIBLE);
+	}
+	public void initInvenories()
+	{
+		runOnUiThread(new Runnable() {  
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+
+					game.getObjectUIInventory().init();
+				}});
 	}
 }
