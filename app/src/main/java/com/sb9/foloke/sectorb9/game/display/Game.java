@@ -34,6 +34,9 @@ import java.util.Random;
 import com.sb9.foloke.sectorb9.game.Assets.*;
 import android.widget.*;
 import android.app.*;
+import java.util.ArrayList;
+import com.sb9.foloke.sectorb9.*;
+import com.sb9.foloke.sectorb9.game.entities.Buildings.*;
 
 
 public class Game extends SurfaceView implements SurfaceHolder.Callback
@@ -50,8 +53,9 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
     //assets
     private BitmapFactory.Options options;
     private ImageAssets shipAsset;
-    private UIAsset uiAsset;
+    public UIAsset uiAsset;
 	private InventoryAsset invAsset;
+	public ObjectsAsset objAsset;
 	
 	private UIcustomImage destroyedImage;
 	
@@ -60,46 +64,56 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
     private Cursor cursor;
 	
 	//objects arrays
-	private Asteroid asteroids[];
+	
+	//private Asteroid asteroids[];
+	//private StaticEntity staticEntities[];
+	protected EntityManager entityManager;
 	
     //UI
 
     private Text textPointOfTouch;
 	private Text textScreenWH;
-    private float scale=4;
+    private float scale=5;
 
     private float canvasH,canvasW;
     private PointF pointOfTouch;
     private PointF screenPointOfTouch;
 
-    boolean drawDebugInf=false;
+    public boolean drawDebugInf=true;
 	boolean playerDestroyed=false;
 	boolean OpenInventory=false;
 	boolean gamePause=false;
 	private Timer destroyedTimer;
+	public int command=0;
+	public static final int commandInteraction=1,commandMoving=0;
 	
 	//private UIinventory playerInventory;
 	UIinventory playerInv;
 	UIinventory objectInv;
-	UICommInterface exchangeInteface;
+	public UICommInterface exchangeInteface;
+	UIProgressBar uIhp;
 	
 	
 	//debug 
 	String exchangeFrom;
 	String exchangeTo;
 	Text debugExchange;
+	//private
+	public Text debugText;
+	public Text errorText;
+	public Context mAcontext;
 	
     public Game(Context context, AttributeSet attributeSet)
     {
 		
         super(context, attributeSet);
-		
+		this.mAcontext=context;
 		//View rootView = ((Activity)_context).Window.DecorView.FindViewById(Android.Resource.Id.Content);
 		//View rootView = ((Activity)context).getWindow().getDecorView().findViewById(android.R.id.content);
 		//TableLayout playerTable=rootView.findViewById(R.id.PlayerTableLayout);
 		//TableLayout objectTable=((Activity)context).getWindow().getDecorView().findViewById(R.id.ObjectTableLayout);
 		
-
+		entityManager=new EntityManager(this);
         options=new BitmapFactory.Options();
         options.inScaled=false;
 		
@@ -107,29 +121,41 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         shipAsset.init(Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ships_sheet,options)));
 		invAsset.init(Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ui_inventory_sheet,options)));
         uiAsset.init(Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ui_asset_sheet,options)));
+		objAsset.init(Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.objects_sheet,options)));
 		exchangeInteface.init(this);
         screenPointOfTouch=new PointF(0,0);
         pointOfTouch=new PointF(0,0);
 		//TableLayout playerTable=findViewById(R.id.PlayerTableLayout);
 		//TableLayout objectTable=findViewById(R.id.ObjectTableLayout);
-        player=new Player(900,900,shipAsset,uiAsset,this);
+        player=new Player(900,900,0,shipAsset,uiAsset,this,"player");
 		
+		entityManager.addObject( new SmallCargoContainer(850,900,10,objAsset,"debug cargo",this));
+		entityManager.addObject(new SmallCargoContainer(1000,900,10,objAsset,"debug cargo1",this));
+		//entityManager.addObject(new SmallCargoContainer());
+		entityManager.addObject(new Crusher(900,1000,10,objAsset.crusher,"debug crusher",this));
+        cursor=new Cursor(900,900,shipAsset,"cursor",this);
 		
-        cursor=new Cursor(900,900,shipAsset);
-		asteroids=new Asteroid[50];
+		//asteroids=new Asteroid[50];
+		//staticEntities=new StaticEntity[3];
+		//staticEntities[0]=container;
+		//staticEntities[1]=container2;
+		//staticEntities[2]=container3;
 		Random rand=new Random();
-		for (int i=0;i<asteroids.length;i++)
-		asteroids[i]=new Asteroid(50*rand.nextInt(10)+25*rand.nextInt(20),100*rand.nextInt(10)+20*rand.nextInt(50),shipAsset);
+		for (int i=0;i<50;i++)
+		entityManager.addObject(new Asteroid(50*rand.nextInt(10)+25*rand.nextInt(20),100*rand.nextInt(10)+20*rand.nextInt(50),rand.nextInt(180),shipAsset,"asteroid_"+i,this));
 		canvasH=canvasW=100;
-        textPointOfTouch=new Text(""+0+" "+0,200,250);
-		textScreenWH=new Text("",200,300);
+        textPointOfTouch=new Text(""+0+" "+0,500,400);
+		textScreenWH=new Text("",500,250);
+		debugText=new Text("",500,350);
 		debugExchange=new Text("",500,300);
+		errorText=new Text("",500,450);
         camera=new Camera(0,0,scale,player);
 		
 		
 		//playerInventory=new UIinventory(invAsset,player.getInventory());
 		//playerInventory.setVisability(true);
 		destroyedImage=new UIcustomImage(Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ui_asset_sheet,options)),0,24,64,24);
+		uIhp=new UIProgressBar(this,500,100,50,50,uiAsset.hpBackground,uiAsset.hpLine,uiAsset.progressBarBorder,(int)100);
         getHolder().addCallback(this);
         mainThread= new MainThread(getHolder(),this);
         setFocusable(true);
@@ -178,13 +204,27 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         		player.addMovement(screenPointOfTouch,canvasW,canvasH);
         		player.RotationToPoint(pointOfTouch);
         		player.tick();
-				for(int i=0;i<asteroids.length;i++)
+				player.Shoot();
+				entityManager.tick();
+				uIhp.tick(player.getHp());
+				for(Entity e : entityManager.getArray())
 				{
-					asteroids[i].tick();
+					if(e.getActive())
+					{
+						if(e.getCollsionBox().intersect(camera.getScreenRect()))
+							e.setRenderable(true);
+						else
+							e.setRenderable(false);
+					}
+					else
+						e.setRenderable(false);
 				}
 			}
         	camera.tick(scale,canvasW,canvasH);
 			textScreenWH.setString(canvasW+"x"+canvasH);
+			//objectInv.setTarget(player);
+			//objectInv.init();
+			
     }
     public void render(Canvas canvas)
     {
@@ -193,6 +233,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
        		super.draw(canvas);
        		canvasW=canvas.getWidth();
         	canvasH=canvas.getHeight();
+			
 			camera.setScreenRect(canvasW,canvasH);
         	canvas.save();
 		
@@ -208,33 +249,27 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 			cursor.render(canvas);
 
 			//render
-			for(int i=0;i<asteroids.length;i++)
-			{
-				if(asteroids[i].getCollsionBox().intersect(camera.getScreenRect()))
-					asteroids[i].setRenderable(true);
-				else
-					asteroids[i].setRenderable(false);
-			}
-			for(int i=0;i<asteroids.length;i++)
-			{
-				asteroids[i].render(canvas);
-				if (drawDebugInf) 
-				{
-            		asteroids[i].drawVelocity(canvas);
-            		asteroids[i].drawDebugBox(canvas);
-        		}
-			}
+			
+			
         	if (drawDebugInf) 
 			{
             	camera.render(canvas);
             	player.drawVelocity(canvas);
         	}
+			for(Entity e: entityManager.getArray())
+			{
+			e.render(canvas);
+			e.drawDebugBox(canvas);
+			}
         	canvas.restore();
 			//UI
 			if(drawDebugInf)
 			textScreenWH.render(canvas);	
-			
+			textPointOfTouch.render(canvas);
 			debugExchange.render(canvas);
+			debugText.render(canvas);
+			errorText.render(canvas);
+			uIhp.render(canvas);
 			
 		}
 		//TODO: make PLAYER DESTROYED CLOSE INVENTORY
@@ -250,25 +285,52 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 		{
         float x=event.getX(),y=event.getY();
         screenPointOfTouch.set(x,y);
-        pointOfTouch.set((x-canvasW/2)/camera.getScale()+player.getWorldLocation().x,(y-canvasH/2)/camera.getScale()+player.getWorldLocation().y);
+        pointOfTouch.set((x-canvasW/2)/camera.getScale()+player.getCenterX(),(y-canvasH/2)/camera.getScale()+player.getCenterY());
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-
-                    pointOfTouch.set((x-canvasW/2)/camera.getScale()+player.getWorldLocation().x,(y-canvasH/2)/camera.getScale()+player.getWorldLocation().y);
+					
+                    pointOfTouch.set((x-canvasW/2)/camera.getScale()+player.getCenterX(),(y-canvasH/2)/camera.getScale()+player.getCenterY());
 					
                     textPointOfTouch.setString(pointOfTouch.x+" "+pointOfTouch.y);
 					cursor.setDrawable(true);
+					
+					switch (command)
+					{
+					case commandMoving:
                     player.setMovable(true);
+					break;
+					case commandInteraction: 
+						break;
+					}
 					//openNewInventory(playerInventory,player.getInventory());
                     break;
                 case MotionEvent.ACTION_MOVE:
-                    pointOfTouch.set((x-canvasW/2)/camera.getScale()+player.getWorldLocation().x,(y-canvasH/2)/camera.getScale()+player.getWorldLocation().y);
-                    textPointOfTouch.setString(pointOfTouch.x+" "+pointOfTouch.y);
+                    pointOfTouch.set((x-canvasW/2)/camera.getScale()+player.getCenterX(),(y-canvasH/2)/camera.getScale()+player.getCenterY());
+                    
                     break;
                     case MotionEvent.ACTION_UP:
-						cursor.setDrawable(false);
-                        player.setMovable(false);
 						
+						cursor.setDrawable(false);
+					switch (command)
+					{
+						case commandMoving:
+                        player.setMovable(false);
+						break;
+						case commandInteraction:
+							for(Entity e: entityManager.getArray())
+							{
+								if(e.getCollisionBox().contains(pointOfTouch.x,pointOfTouch.y)&&e.getOpened())
+								{
+									objectInv.setTarget(e);
+									textPointOfTouch.setString(e.getName());
+							
+									objectInv.init();
+									((MainActivity)mAcontext).openObjectInventory();
+									
+								}
+							}
+							break;
+						}
 						//closeInventory(playerInventory);
                     break;
 
@@ -278,9 +340,9 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 		}
                 return true;
     }
-	public Asteroid[] getAsteroids()
+	public ArrayList<Entity> getEntities()
 	{
-		return asteroids;
+		return entityManager.getArray();
 	}
 	public void setPlayerDestroyed(boolean condition)
 	{
@@ -292,12 +354,12 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 	{
 		player=null;
 		camera.setPointOfLook(null);
-		player=new Player(900,900,shipAsset,uiAsset,this);
+		player=new Player(900,900,0,shipAsset,uiAsset,this,"player");
 		playerDestroyed=false;
 		camera.setPointOfLook(player);
 		gamePause=false;
 	}
-	public void openNewInventory(UIinventory inventory,int items[][])
+	/*public void openNewInventory(UIinventory inventory,int items[][])
 	{
 		gamePause=true;
 		OpenInventory=true;
@@ -312,7 +374,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 		gamePause=false;
 		OpenInventory=false;
 		//inventory=null;
-	}
+	}*/
 	public Player getPlayer()
 	{
 		return player;
@@ -324,11 +386,21 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 	public void initInventoryUI(TableLayout playerTable,TableLayout objectTable,Context context)
 	{
 		//exchangeInteface=exchangeInteface;
-		objectInv=new UIinventory(invAsset,objectTable,context,asteroids[0],exchangeInteface);
+		objectInv=new UIinventory(invAsset,objectTable,context,null,exchangeInteface);
 		playerInv=new UIinventory(invAsset,playerTable,context,player,exchangeInteface);
 	}
 	public UIinventory getObjectUIInventory()
 	{
 		return objectInv;
 	}
+	public EntityManager getEntityManager()
+	{
+		return entityManager;
+	}
+	public void initObjInventory()
+	{
+		
+		objectInv.init();
+	}
+	
 }

@@ -2,9 +2,9 @@ package com.sb9.foloke.sectorb9.game.funtions;
 
 public class Timer
 {
-	private int timerLenght;
+	private float timerLenght;
 	private static final int maxFrames=60;
-	public Timer(int seconds)
+	public Timer(float seconds)
 	{
 		timerLenght=seconds*maxFrames;
 	}
@@ -20,9 +20,13 @@ public class Timer
 			return true;
 		}
 	}
-	public int getTick()
+	public float getTick()
 	{
 		return timerLenght;
+	}
+	public void setTimer(float sec)
+	{
+		timerLenght=sec*maxFrames;
 	}
 	
 }

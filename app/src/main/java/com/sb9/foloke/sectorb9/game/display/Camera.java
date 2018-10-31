@@ -88,7 +88,7 @@ public class Camera {
     }
 	public void setScreenRect(float screenW,float screenH)
 	{
-		screenRect.set(pointOfLook.getCenterX()-screenW/(2*scale),pointOfLook.getCenterY()-screenH/(2*scale),pointOfLook.getCenterX()+screenW/(2*scale),pointOfLook.getCenterY()+screenH/(2*scale));
+		screenRect.set(pointOfLook.getCenterX()-screenW/(3*scale),pointOfLook.getCenterY()-screenH/(3*scale),pointOfLook.getCenterX()+screenW/(2*scale),pointOfLook.getCenterY()+screenH/(2*scale));
 	}
 	public RectF getScreenRect()
 	{

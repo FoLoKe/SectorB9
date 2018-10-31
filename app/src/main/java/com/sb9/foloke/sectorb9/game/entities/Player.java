@@ -16,39 +16,53 @@ import com.sb9.foloke.sectorb9.game.UI.Text;
 import com.sb9.foloke.sectorb9.game.UI.UIProgressBar;
 import com.sb9.foloke.sectorb9.game.display.*;
 import com.sb9.foloke.sectorb9.game.ParticleSystem.*;
-import java.util.*;
+import java.util.HashMap;
+import java.sql.*;
+import com.sb9.foloke.sectorb9.game.funtions.*;
+import org.apache.http.impl.client.*;
 public class Player extends DynamicEntity {
     Bitmap engine;
     //float speed=3;
+
     boolean movable;
 	private float maxHp=100;
-	private int HP;
+
     private Text textdXdY;
 	private float acceleration;
 	private UIProgressBar uIhp;
 	private UIProgressBar stun;
-	private Path collisionPath;
+	//private Path collisionPath;
 	private PointF collisionPoints[];
 	private PointF collisionInitPoints[];
-	//private int inventory[][];
-
-	//private ParticleSystem engineSmoke;
-	private Game game;
+	private Line2D collisionlines[];
+	public boolean shootFlag;
 	
-    public Player(float x, float y, ImageAssets asset, UIAsset uiasset, Game game)
+	//private int inventory[][];
+   
+	//private ParticleSystem engineSmoke;
+	
+	
+	public  ProjectilesPool projectiles;
+	private Bitmap projectileImage;
+	private Timer fireDelay=new Timer(0);
+	private int fireRate= 600;
+	
+    public Player(float x, float y,float rotation, ImageAssets asset, UIAsset uiasset, Game game,String name)
     {
-        super(x,y,asset.player_mk1);
-		this.game=game;
+        super(x,y,rotation,asset.player_mk1,name,game);		
+		this.projectiles=new ProjectilesPool(asset.shell,this,5,500,game);
+		
         this.engine=asset.engine_mk1;
-		this.HP=100;
+		projectileImage=asset.cursor;
+		
         this.dx=this.dy=0;
         this.movable=false;
 		this.renderable=true;
         textdXdY=new Text("",x-100,y-50);
-		this.uIhp=new UIProgressBar(this,50,8,-25,-20,uiasset.hpBackground,uiasset.hpLine,HP);
-		this.stun=new UIProgressBar(this,50,8,-25,+image.getHeight(),uiasset.stunBackground,uiasset.stunLine,getTimer());
+		//this.uIhp=new UIProgressBar(this,50,8,-25,-20,uiasset.hpBackground,uiasset.hpLine,getHp());
+		this.stun=new UIProgressBar(this,50,8,-25,+image.getHeight(),uiasset.stunBackground,uiasset.stunLine,uiasset.progressBarBorder,getTimer());
 		inventoryMaxCapacity=10;
-		for (int i=0;i<inventoryMaxCapacity;i++)
+		for (int i=1;i<inventoryMaxCapacity;i++)
 			inventory.put(i,i+i);
 		
 		
@@ -59,59 +73,72 @@ public class Player extends DynamicEntity {
 		collisionInitPoints[0]=new PointF(0,-image.getHeight()/2);
 		collisionInitPoints[1]=new PointF(-image.getWidth()/2,image.getHeight()/2);
 		collisionInitPoints[2]=new PointF(image.getWidth()/2,image.getHeight()/2);
+		collisionlines=new Line2D[3];
+		collisionlines[0]=new Line2D(0,0,1,1);
+		collisionlines[1]=new Line2D(0,0,1,1);
+		collisionlines[2]=new Line2D(0,0,1,1);
 		collisionPoints=new PointF[collisionInitPoints.length];
-		collisionPath=new Path();
+		//collisionPath=new Path();
 		calculateCollisionObject();
+		
     }
 
     @Override
     public void tick() {
-		if(HP<=0)
+		if(getHp()<=0)
 		{
-			game.setPlayerDestroyed(true);
+			getHolder().setPlayerDestroyed(true);
 			return;
 		}
-
         //no inertia damping
 		timerTick();
 		//engineSmoke.tick();
 		//engineSmoke.setWorldLocation(x,y);
 		
-		boolean collisionFlag=false;
-		DynamicEntity asteroids[]=game.getAsteroids();
-		for (int i=0;i<collisionPoints.length;i++)
-		for (int j=0;j<asteroids.length;j++)
+		
+		for (Entity e : getHolder().getEntities())
 		{
-		if (asteroids[j].getCollsionBox().contains(collisionPoints[i].x,collisionPoints[i].y))
-		{
-			collisionFlag=true;
-			asteroids[j].impulse(collisionPoints[i],dx,dy);
-			
-			break;
+			if(e.active)
+			{
+				if(e.collidable)
+				{
+					for (Line2D l: collisionlines)
+						if ((l.intersect(e.getCollisionBox()))&&e.collidable)
+							{
+								if (e.getClass().equals(DynamicEntity.class))
+									((DynamicEntity)e).impulse(new PointF(0,0),dx,dy);
+								impulse(e);
+								break;
+							}
+				}
 			}
 		}
-
-		if (!collisionFlag)
-		{
-           x += dx;
-           y += dy;
-           //dx = dy = 0;
-		}
-
-		else
-		{
-			applyDamage((int)Math.sqrt((dx*dx+dy*dy)*200));
-			x-=dx+1;
-			y-=dy+1;
-			dx=dx/2;
-			dy=dy/2;
-			//make block input for 1sec (60 frames);
-			setTimer(1);
-		}
+        x += dx;
+        y += dy;
+        dx = dy = 0;
 		calculateCollisionObject();
-		uIhp.tick(HP);
+		//uIhp.tick(getHp());
 		stun.tick(getTimer());
+		fireDelay.tick();
+			Shoot();
+		for(Projectile p: projectiles.getArray())
+			p.tick();
+			
     }
+	
+	public void impulse(Entity e)
+	{
+		float trotation=360-(float)Math.toDegrees(Math.PI+Math.atan2(-e.getCenterX()+x,-e.getCenterY()+y)); 
+		
+		textSpeed.setString(""+trotation);
+		float mathRotation=(float)(PI/180*trotation);
+		this.dy = -(float) (1*speed * cos(mathRotation));
+		this.dx = (float) (1*speed * sin(mathRotation));
+		 //1 of speed% 3/1300
+
+
+		
+	}
 
     @Override
     public void render(Canvas canvas) {
@@ -124,8 +151,14 @@ public class Player extends DynamicEntity {
         canvas.drawBitmap(image,x,y,null);
 		//engineSmoke.render(canvas);
         canvas.restore();
-		uIhp.render(canvas);
+		//uIhp.render(canvas);
 		stun.render(canvas);
+		for(Projectile p: projectiles.getArray())
+		p.render(canvas);
+		for(Line2D l: collisionlines)
+		{
+			l.render(canvas);
+		}
     }
 
     @Override
@@ -160,11 +193,11 @@ public class Player extends DynamicEntity {
     public void setMovable(boolean movable) {
         this.movable = movable;
     }
-	
-	private void calculateCollisionObject()
+	@Override
+	public void calculateCollisionObject()
 	{
 		float mathRotation=(float)(PI/180*rotation);
-		collisionPath.reset();
+		//collisionPath.reset();
 		for (int i=0;i<collisionPoints.length;i++)
 		{
 			float x1 = getCenterX()-collisionInitPoints[i].x - getCenterX();
@@ -178,14 +211,25 @@ public class Player extends DynamicEntity {
 		else
 			collisionPoints[i].set(x2 + getCenterX(),y2+getCenterY());
 		}
-		collisionPath.moveTo(collisionPoints[0].x,collisionPoints[0].y);
-		collisionPath.lineTo(collisionPoints[1].x,collisionPoints[1].y);
-		collisionPath.lineTo(collisionPoints[2].x,collisionPoints[2].y);
-		collisionPath.close();
-	}
-	public void applyDamage(int damage)
-	{
-		HP-=damage;
+		//collisionPath.moveTo(collisionPoints[0].x,collisionPoints[0].y);
+		//collisionPath.lineTo(collisionPoints[1].x,collisionPoints[1].y);
+		//collisionPath.lineTo(collisionPoints[2].x,collisionPoints[2].y);
+		//collisionPath.close();
+		collisionlines[0].set(collisionPoints[0].x,collisionPoints[0].y,collisionPoints[1].x,collisionPoints[1].y);
+		collisionlines[1].set(collisionPoints[1].x,collisionPoints[1].y,collisionPoints[2].x,collisionPoints[2].y);
+		collisionlines[2].set(collisionPoints[2].x,collisionPoints[2].y,collisionPoints[0].x,collisionPoints[0].y);
 	}
 	
+	public void Shoot()
+	{
+		
+		if(shootFlag&&fireDelay.getTick()<=1)
+		{
+		projectiles.shoot();
+		fireDelay.setTimer(60f/fireRate);
+			//shootFlag=false;
+		}
+		//projectiles.shoot();
+		//projectiles.newObject(new Projectile(x,y,projectileImage,"p"+projectiles.size(),(int)speed,2,rotation,this));
+	}
 }

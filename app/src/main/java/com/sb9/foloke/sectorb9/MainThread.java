@@ -6,7 +6,7 @@ import com.sb9.foloke.sectorb9.game.display.Game;
 
 public class MainThread extends Thread
 {
-    private int FPS =120;
+    private int FPS =60;
     private double averageFPS;
     private SurfaceHolder surfaceHolder;
     private Game mapPanel;

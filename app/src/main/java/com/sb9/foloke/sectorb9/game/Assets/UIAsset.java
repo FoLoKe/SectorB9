@@ -4,7 +4,7 @@ import android.graphics.Bitmap;
 
 public class UIAsset {
 
-        public static Bitmap hpBackground,hpLine,stunBackground,stunLine;
+        public static Bitmap hpBackground,hpLine,stunBackground,stunLine,progressBarBorder;
 
         public static void init(Bitmap sheet)
         {
@@ -13,6 +13,7 @@ public class UIAsset {
 			stunBackground=Bitmap.createBitmap(tsheet.crop(1,0),0,12,32,12);
             hpLine=Bitmap.createBitmap(tsheet.crop(1,0),0,0,32,12);
 			stunLine=Bitmap.createBitmap(tsheet.crop(0,0),0,12,32,12);
+			progressBarBorder=Bitmap.createBitmap(tsheet.crop(2,0),0,0,2,12); 
         }
         
 

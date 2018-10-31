@@ -6,6 +6,7 @@ package com.sb9.foloke.sectorb9.game.entities;
 
 	import com.sb9.foloke.sectorb9.game.Assets.ImageAssets;
 	import com.sb9.foloke.sectorb9.game.UI.Text;
+import com.sb9.foloke.sectorb9.game.display.*;
 
 public class Cursor extends DynamicEntity {
 		
@@ -13,9 +14,9 @@ public class Cursor extends DynamicEntity {
 		boolean drawable;
 		private Text textdXdY;
 
-		public Cursor(float x, float y, ImageAssets asset)
+		public Cursor(float x, float y, ImageAssets asset,String name,Game game)
 		{
-			super(x,y,asset.cursor);
+			super(x,y,0,asset.cursor,name,game);
 			
 			this.dx=this.dy=0;
 			this.drawable=false;
@@ -30,7 +31,7 @@ public class Cursor extends DynamicEntity {
 		@Override
 		public void render(Canvas canvas) {
 			if(drawable)
-			canvas.drawBitmap(image,x,y,new Paint());
+			canvas.drawBitmap(image,x-image.getWidth()/2,y-image.getHeight()/2,new Paint());
 		}
 
 		@Override

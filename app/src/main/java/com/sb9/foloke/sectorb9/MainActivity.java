@@ -42,18 +42,20 @@ import com.sb9.foloke.sectorb9.game.UI.*;
 import com.sb9.foloke.sectorb9.game.Assets.*;
 import android.content.*;
 import android.opengl.*;
+import android.view.View.*;
+import android.view.InputDevice.*;
 
 public class MainActivity extends Activity {
 
     Game game;
-	boolean inventoryOpened=false;
+	public boolean inventoryOpened=false;
 	
 	private BitmapFactory.Options options;
 	private InventoryAsset invAsset;
 	private ScrollView playerScrollView;
 	
 	private ScrollView objectScrollView;
-	
+	Button shootButton;
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
@@ -83,7 +85,7 @@ public class MainActivity extends Activity {
         //if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED)
         //    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 10001);
 		//Button button;
-		
+		shootButton = findViewById(R.id.shootButton);
 		Button openInventoryButton = findViewById(R.id.openInventory);
         // Устанавливаем действие по нажатию
         openInventoryButton.setOnClickListener
@@ -93,9 +95,34 @@ public class MainActivity extends Activity {
 				public void onClick(View v) 
 				{
 					switchPlayerInventory();
+					//if(shootButton.getVisibility()==View.VISIBLE)
+					
+					//else
+					//	shootButton.setVisibility(View.VISIBLE);
 				}
 			});
 			openInventoryButton.setEnabled(true);
+		
+        // Устанавливаем действие по нажатию
+        
+		shootButton.setOnTouchListener
+		(new OnTouchListener(){
+			@Override
+			public boolean onTouch(View view,MotionEvent e)
+			{
+				switch(e.getAction())
+				{
+					case MotionEvent.ACTION_DOWN:
+						game.getPlayer().shootFlag=true;
+						
+						break;
+						case MotionEvent.ACTION_UP:
+						game.getPlayer().shootFlag=false;
+						break;
+				}
+				return true;
+			}
+		});
 			
     }
 	public void switchPlayerInventory()
@@ -103,20 +130,33 @@ public class MainActivity extends Activity {
 		if(!inventoryOpened)
 		{
 			//mapPanel.openNewInventory(mapPanel.getPlayerUIInventory(),mapPanel.getplayer().getInventory());
-			playerScrollView.setActivated(true);
+			//playerScrollView.setActivated(true);
 			playerScrollView.setVisibility(View.VISIBLE);
+			if(game.getObjectUIInventory().getTarget()!=null)
 			objectScrollView.setVisibility(View.VISIBLE);
+			game.command=game.commandInteraction;
 			inventoryOpened=true;
+			shootButton.setVisibility(View.GONE);
 		}
 		else
 		{
 			//mapPanel.closeInventory(mapPanel.getPlayerUIInventory());
-			playerScrollView.setActivated(false);
-			playerScrollView.setVisibility(View.GONE);
+			//playerScrollView.setActivated(false);
+			playerScrollView.setVisibility(View.GONE);	
+			if(game.getObjectUIInventory().getTarget()!=null)
 			objectScrollView.setVisibility(View.GONE);
-			game.getPlayerUIInventory().init();
-			game.getObjectUIInventory().init();
+			game.command=game.commandMoving;
 			inventoryOpened=false;
+			shootButton.setVisibility(View.VISIBLE);
 		}
+	}
+	public void closeObjectInventory()
+	{
+		objectScrollView.setVisibility(View.GONE);
+		
+	}
+	public void openObjectInventory()
+	{
+		objectScrollView.setVisibility(View.VISIBLE);
 	}
 }

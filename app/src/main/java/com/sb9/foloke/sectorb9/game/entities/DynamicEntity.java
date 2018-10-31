@@ -6,17 +6,19 @@ import android.graphics.Canvas;
 import android.graphics.*;
 
 import com.sb9.foloke.sectorb9.game.UI.Text;
+import com.sb9.foloke.sectorb9.game.display.*;
 
 public abstract class DynamicEntity extends Entity {
 
-    float rotation,dx,dy;
+    float dx,dy;
 	float speed=3;
 	Text textSpeed;
 	private int debugCounter=0;
-    public DynamicEntity(float x, float y, Bitmap image)
+    public DynamicEntity(float x, float y,float rotation, Bitmap image,String name,Game game)
     {
-        super(x,y,image);
-        rotation=dx=dy=0;
+        super(x,y,rotation,image,name,game);
+        this.rotation=rotation;
+		dx=dy=0;
 		textSpeed=new Text("0",x,y-32);
     }
     abstract public void RotationToPoint(PointF targetPoint);

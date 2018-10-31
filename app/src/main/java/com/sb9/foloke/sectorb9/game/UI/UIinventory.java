@@ -64,17 +64,23 @@ public class UIinventory
 		this.context=context;
 		ScrollView.LayoutParams lp= new ScrollView.LayoutParams(ScrollView.LayoutParams.WRAP_CONTENT,context.getResources().getDisplayMetrics().heightPixels);
 		lp.setMargins(10,10,10,10);
+		if(target!=null)
 		init();
 	}
 	public void init()
 	{
+		try
+		{
+		if(target==null)
+			return;
+		table.setVisibility(View.GONE);
 		table.removeAllViews();
 		BitmapFactory.Options options=new BitmapFactory.Options();
         options.inScaled=false;
 		
 		
 		
-		
+		if(target.getInventory().size()>0)
 		for(HashMap.Entry<Integer,Integer> entry : target.getInventory().entrySet()) {
 			Integer key = entry.getKey();
 			Integer value = entry.getValue();
@@ -91,22 +97,22 @@ public class UIinventory
 			tableRowParams.setMargins(leftMargin, topMargin, rightMargin, bottomMargin);
 			row.setLayoutParams(tableRowParams);
 			ImageView sprite=new ImageView(context);
-			ImageButton button1=new ImageButton(context);
+			//ImageButton button1=new ImageButton(context);
 			TextView testText=new TextView(context);
 			TextView testText2=new TextView(context);
 			TableRow.LayoutParams trp=new TableRow.LayoutParams();
 			trp.setMargins(10,10,10,10);
 			trp.height=100;
-			button1.setLayoutParams(trp);
+			//button1.setLayoutParams(trp);
 			testText.setLayoutParams(trp);
 			testText.setText(""+key);
 			testText2.setText(""+value);
 			testText2.setLayoutParams(trp);
 			BitmapDrawable bdrawable;
-			if(key==0)
-				bdrawable = new BitmapDrawable(context.getResources(),inventoryAsset.inv_empty);
-				else
-				bdrawable = new BitmapDrawable(context.getResources(),inventoryAsset.inv_steel_ingot);
+			//if(key==0)
+				bdrawable = new BitmapDrawable(context.getResources(),inventoryAsset.getImageById(key));
+				//else
+				//bdrawable = new BitmapDrawable(context.getResources(),inventoryAsset.inv_steel_ingot);
 
 			//button1.setBackground(bdrawable);
 			//button1.setScaleType(ImageView.ScaleType.FIT_XY);
@@ -140,7 +146,7 @@ public class UIinventory
 					
 				}
 			});
-			button1.setScaleType(ImageView.ScaleType.FIT_XY);
+			//button1.setScaleType(ImageView.ScaleType.FIT_XY);
 			row.setId(key);
 			
 			row.addView(sprite);
@@ -163,19 +169,16 @@ public class UIinventory
 			tableRowParams.setMargins(leftMargin, topMargin, rightMargin, bottomMargin);
 			row.setLayoutParams(tableRowParams);
 
-			ImageButton button1=new ImageButton(context);
 			ImageView sprite=new ImageView(context);
 			TableRow.LayoutParams trp=new TableRow.LayoutParams();
 			trp.setMargins(10,10,10,10);
 			trp.height=100;
-			button1.setLayoutParams(trp);
 		
 			BitmapDrawable bdrawable;
 			
 			bdrawable = new BitmapDrawable(context.getResources(),inventoryAsset.inv_empty);
 			sprite.setImageDrawable(bdrawable);
-			///button1.setBackground(bdrawable);
-			///button1.setScaleType(ImageView.ScaleType.FIT_XY);
+			
 			row.setOnClickListener
 			(new OnClickListener() 
 				{
@@ -193,8 +196,14 @@ public class UIinventory
 			row.setId(0);
 			row.addView(sprite);
 			table.addView(row);
+		}	
+		//TableLayout ttable=table;
+		if(table.getVisibility()==View.GONE)
+		table.setVisibility(View.VISIBLE);
+		TableLayout ttable=table;
 		}
-		
+		catch(Exception e)
+		{ target.getGame().errorText.setString(e.toString());}
 	}
 	public void setVisability(boolean visability)
 	{
@@ -204,20 +213,12 @@ public class UIinventory
 	{
 		return table;
 	}
-	public  boolean addItem(int index,int count,Entity from)
+	public void setTarget(Entity target)
 	{
-		if(target.getInventory().containsKey(index))
-			target.getInventory().replace(index,target.getInventory().get(index)+count);
-			else
-			{
-		if(target.getInventoryMaxCapacity()<=target.getInventory().size())
-			return false;
-			
-			else
-		target.getInventory().put(index,count);
-		}
-		init();
-		return true;
-		
+		this.target=target;
+	}
+	public Entity getTarget()
+	{
+		return target;
 	}
 }

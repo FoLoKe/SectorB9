@@ -20,7 +20,8 @@ public class UICommInterface
 			return false;
 			if(ExchangeTo.getInventory().containsKey(itemID))
 			{
-				ExchangeTo.getInventory().replace(itemID,ExchangeTo.getInventory().get(itemID)+itemCount);
+				ExchangeTo.getInventory().put(itemID,ExchangeTo.getInventory().get(itemID)+itemCount);
+				//ExchangeTo.getInventory().replace(itemID,ExchangeTo.getInventory().get(itemID)+itemCount);
 				ExchangeFrom.getInventory().remove(itemID);
 				flagStartedExchange=false;
 				ExchangeFrom=null;

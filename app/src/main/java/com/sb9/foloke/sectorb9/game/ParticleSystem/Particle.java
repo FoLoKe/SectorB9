@@ -22,7 +22,7 @@ public class Particle
 	public void render(Canvas canvas)
 	{
 		Paint tPaint=new Paint();
-		tPaint.setAlpha(1/(lenght-timer.getTick()));
+		//tPaint.setAlpha(1/(lenght-timer.getTick()));
 		canvas.drawBitmap(image,x,y,null);
 	}
 	public void tick()

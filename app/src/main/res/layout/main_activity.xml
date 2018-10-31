@@ -108,6 +108,7 @@
 			,</ScrollView>
 	</RelativeLayout>
 </LinearLayout>
+
 	<LinearLayout
 		android:layout_gravity="bottom"
 		android:orientation="horizontal"
@@ -117,9 +118,25 @@
 	<Button
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
+		
 		android:text="Inv"
 		android:id="@+id/openInventory"
 	/>
+	</LinearLayout>
+
+	<LinearLayout
+		android:layout_gravity="left"
+		android:orientation="vertical"
+		android:gravity="bottom"
+		android:layout_width="wrap_content"
+		android:layout_height="match_parent">
+		<Button
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			
+			android:text="Fire"
+			android:id="@+id/shootButton"
+		/>
 	</LinearLayout>
 
 </FrameLayout>

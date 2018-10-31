@@ -1,14 +1,18 @@
 package com.sb9.foloke.sectorb9.game.UI;
 import android.graphics.*;
 import com.sb9.foloke.sectorb9.game.entities.Entity;
+import android.widget.*;
+import com.sb9.foloke.sectorb9.game.display.*;
+import com.sb9.foloke.sectorb9.game.Assets.*;
 
 public class UIProgressBar
 {
-	private Bitmap background,fill;
-	private Entity target;
+	private Bitmap background,fill,border;
+	private Object target;
 	private float sizeX,sizeY,percent,offsetX,offsetY;
+	private boolean active=true;
 
-	public UIProgressBar(Entity target, float sizeX, float sizeY,float offsetX ,float offsetY,Bitmap background,Bitmap fill, float percent)
+	public UIProgressBar(Object target, float sizeX, float sizeY,float offsetX ,float offsetY,Bitmap background,Bitmap fill,Bitmap border, float percent)
 	{
 		this.background=background;
 		this.fill=fill;
@@ -23,14 +27,33 @@ public class UIProgressBar
 			tSizeX=1;
         this.background = Bitmap.createScaledBitmap(background, (int)sizeX, (int)sizeY, false);
 		this.fill = Bitmap.createScaledBitmap(fill, tSizeX, (int)(sizeY), false);
+		///int tY=(int)(sizeY*(2/12));
+		this.border=Bitmap.createScaledBitmap(border, 5, (int)(sizeY), false);
 	}
 	public void render(Canvas canvas)
 	{
+		if(active)
+		{
+		if(target.getClass() == Game.class)
+		{
+			//((Game)target).
+			canvas.save();
+			canvas.scale(1,1);
+			canvas.drawBitmap(background,0+offsetX,0+offsetY,null);
+			canvas.drawBitmap(fill,0+offsetX,0+offsetY,null);
+			canvas.drawBitmap(border,10+offsetX,offsetY,null);
+			canvas.restore();
+			return;
+		}
+		else
+		{
 		int tSizeX=(int)(sizeX*percent/100);
 		if (tSizeX<=0)
 			return;
-		canvas.drawBitmap(background,target.getCenterX()+offsetX,target.getY()+offsetY,null);
-        canvas.drawBitmap(fill,target.getCenterX()+offsetX,target.getY()+offsetY,null);
+		canvas.drawBitmap(background,((Entity)target).getCenterX()+offsetX,((Entity)target).getY()+offsetY,null);
+        canvas.drawBitmap(fill,((Entity)target).getCenterX()+offsetX,((Entity)target).getY()+offsetY,null);
+		}
+		}
 	}
 	public void tick(float percent)
 	{
@@ -39,5 +62,9 @@ public class UIProgressBar
 		if (tSizeX<=0)
 			return;
 		this.fill = Bitmap.createScaledBitmap(fill, tSizeX, (int)(sizeY), false);
+	}
+	public void setActive(boolean condition)
+	{
+		active=condition;
 	}
 }

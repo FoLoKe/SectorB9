@@ -11,28 +11,58 @@ package com.sb9.foloke.sectorb9.game.entities;
 
 	import com.sb9.foloke.sectorb9.game.Assets.ImageAssets;
 	import com.sb9.foloke.sectorb9.game.UI.Text;
+import com.sb9.foloke.sectorb9.game.display.*;
+import com.sb9.foloke.sectorb9.game.UI.*;
+import java.util.*;
 
 public class Asteroid extends DynamicEntity {
 
 		private float speed=3;
 		private boolean movable;
+		
 		private Text textdXdY;
 		private float acceleration;
-		;
-		public Asteroid(float x, float y, ImageAssets asset)
+		
+		public Asteroid(float x, float y,float rotation, ImageAssets asset,String name,Game game)
 		{
-			super(x,y,asset.asteroid_1);
+			super(x,y,rotation,asset.asteroid_1,name,game);
 
 			this.dx=this.dy=0;
 			this.movable=false;
-			textdXdY=new Text("",x-100,y-50);
-			for (int i=1;i<inventoryMaxCapacity-2;i++)
-				inventory.put(i,i+i);
+			this.textdXdY=new Text("",x-100,y-50);
+			this.inventoryMaxCapacity=1;
+			Random itemR=new Random();
+			
+			for (int i=1;i<inventoryMaxCapacity+1;i++)
+			{
+				int k=0;
+				int v=0;
+				while(k==0)
+				{
+					k=itemR.nextInt(3);
+				}
+				while(v==0)
+				{
+					v=itemR.nextInt(25);
+				}
+				this.inventory.put(k,v);
+			}
 		}
 
 		@Override
 		public void tick() {
-			//no inertia damping
+			//inertia damping
+			if(active)
+			{
+			if(!renderable)
+				return;
+			if(getHp()<=0)
+			{
+					active=false;
+					onDestroy();
+					return;
+					}
+			uIhp.tick(getHp());
 				x += dx;
 				y += dy;
 					if(dx>0.01)
@@ -46,28 +76,26 @@ public class Asteroid extends DynamicEntity {
 					dy+=0.021;
 					if((dy>-0.01)&&(dy<0.01))
 						dy=0;
-						
-				this.collisionBox.set(x,y,x+image.getWidth(),y+image.getHeight());
+			textdXdY.setWorldLocation(new PointF(x,y));
+			this.collisionBox.set(x,y,x+image.getWidth(),y+image.getHeight());
+			}
 		}
 
 		@Override
 		public void render(Canvas canvas) {
-
-			if(!renderable)
-				return;
-			canvas.save();
-			canvas.rotate(rotation,getCenterX(),getCenterY());
-			canvas.drawBitmap(image,x,y,new Paint());
-			canvas.restore();
-
-			textdXdY.setWorldLocation(new PointF(x,y));
-			textdXdY.render(canvas);
-
-			Paint tPaint=new Paint();
-			tPaint.setColor(Color.rgb(0,255,0));
-			tPaint.setStyle(Paint.Style.STROKE);
+		if(active)
+			{
+				if(!renderable)
+					return;
+				if(getHp()<100)
+					uIhp.render(canvas);
+				canvas.save();
+				canvas.rotate(rotation,getCenterX(),getCenterY());
+				canvas.drawBitmap(image,x,y,null);
+				canvas.restore();
+				textdXdY.render(canvas);
+			}
 		}
-
 		@Override
 		public void RotationToPoint(PointF targetPoint) {
 			// rotation=(float)-Math.toDegrees(Math.PI+Math.atan2(targetPoint.x-x,targetPoint.y-y));   /coord rotation
