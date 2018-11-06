@@ -134,7 +134,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 		entityManager.addObject( new SmallCargoContainer(850,900,rand.nextInt(180),objAsset,"debug cargo",this));
 		entityManager.addObject(new SmallCargoContainer(1000,900,10,objAsset,"debug cargo1",this));
 		//entityManager.addObject(new SmallCargoContainer());
-		entityManager.addObject(new Crusher(900,1000,rand.nextInt(180),objAsset.crusher,"debug crusher",this));
+		entityManager.addObject(new Crusher(900,1000,rand.nextInt(180),objAsset,"debug crusher",this));
         cursor=new Cursor(900,900,shipAsset,"cursor",this);
 		
 		//asteroids=new Asteroid[50];
@@ -293,7 +293,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 					
                     pointOfTouch.set((x-canvasW/2)/camera.getScale()+player.getCenterX(),(y-canvasH/2)/camera.getScale()+player.getCenterY());
 					
-                    textPointOfTouch.setString(pointOfTouch.x+" "+pointOfTouch.y);
+                 //   textPointOfTouch.setString(pointOfTouch.x+" "+pointOfTouch.y);
 					cursor.setDrawable(true);
 					
 					switch (command)
@@ -323,12 +323,20 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 							{
 								if(e.getCollisionBox().contains(pointOfTouch.x,pointOfTouch.y)&&e.getOpened())
 								{
+									if(Math.sqrt((e.getCenterX()-player.getCenterX())*(e.getCenterX()-player.getCenterX())
+												 +(e.getCenterY()-player.getCenterY())*(e.getCenterY()-player.getCenterY()))-32<50)
+												 
+									{
+										
 									objectInv.setTarget(e);
-									textPointOfTouch.setString(e.getName());
-							
-									objectInv.init();
-									((MainActivity)mAcontext).openObjectInventory();
 									
+
+									((MainActivity)mAcontext).initInvenories();
+									((MainActivity)mAcontext).openObjectInventory();
+									}
+									
+									textPointOfTouch.setString(Math.sqrt((e.getCenterX()-player.getCenterX())*(e.getCenterX()-player.getCenterX())
+																		 +(e.getCenterY()-player.getCenterY())*(e.getCenterY()-player.getCenterY()))+"");
 								}
 							}
 							break;

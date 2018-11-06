@@ -20,65 +20,59 @@ import java.util.HashMap;
 import java.sql.*;
 import com.sb9.foloke.sectorb9.game.funtions.*;
 import org.apache.http.impl.client.*;
+import com.sb9.foloke.sectorb9.game.entities.Ships.*;
+
 public class Player extends DynamicEntity {
-    Bitmap engine;
-    //float speed=3;
-
-    boolean movable;
-	private float maxHp=100;
-
-    private Text textdXdY;
-	private float acceleration;
-	private UIProgressBar uIhp;
-	private UIProgressBar stun;
-	//private Path collisionPath;
-	private PointF collisionPoints[];
-	private PointF collisionInitPoints[];
-	private Line2D collisionlines[];
-	public boolean shootFlag;
+	//TODO: ENGINE PARTICLESPOOL SMOKE OR MAKE ANIMATION
 	
-	//private int inventory[][];
-   
-	//private ParticleSystem engineSmoke;
+    private Bitmap engine;
+    private Bitmap projectileImage;
+	
+    //private Text textdXdY;
+	private float acceleration;
+	private UIProgressBar stun;
+	
 	
 	
 	public  ProjectilesPool projectiles;
-	private Bitmap projectileImage;
+	public ParticleSystem engineSmoke;
 	private Timer fireDelay=new Timer(0);
 	private int fireRate= 600;
 	
+	
+	public boolean shootFlag;
+	private boolean movable;
+	private boolean drawInteractionCitcle=false;
+	ShipMk1 ship;
+	
     public Player(float x, float y,float rotation, ImageAssets asset, UIAsset uiasset, Game game,String name)
     {
-        super(x,y,rotation,asset.player_mk1,name,game);		
+        super(x,y,rotation,asset.player_mk2,name,game);		
 		this.projectiles=new ProjectilesPool(asset.shell,this,5,500,game);
 		
         this.engine=asset.engine_mk1;
 		projectileImage=asset.cursor;
 		
+		engineSmoke=new ParticleSystem(asset.yellow_pixel,x,y,1f,game,this);
+		
+		ship=new ShipMk1(asset,this);
         this.dx=this.dy=0;
         this.movable=false;
 		this.renderable=true;
-        textdXdY=new Text("",x-100,y-50);
+        //this.textdXdY=new Text("",x-100,y-50);
 		//this.uIhp=new UIProgressBar(this,50,8,-25,-20,uiasset.hpBackground,uiasset.hpLine,getHp());
 		this.stun=new UIProgressBar(this,50,8,-25,+image.getHeight(),uiasset.stunBackground,uiasset.stunLine,uiasset.progressBarBorder,getTimer());
 		inventoryMaxCapacity=10;
-		for (int i=1;i<inventoryMaxCapacity;i++)
-			inventory.put(i,i+i);
+		for (int i=1;i<4;i++)
+			inventory.put(i,10);
 		
 		
 		//Point particleAccuracy=new Point(40,40);
 		//this.engineSmoke=new ParticleSystem(asset.asteroid_1,x,y,1,particleAccuracy);
 		
-		collisionInitPoints=new PointF[3];
-		collisionInitPoints[0]=new PointF(0,-image.getHeight()/2);
-		collisionInitPoints[1]=new PointF(-image.getWidth()/2,image.getHeight()/2);
-		collisionInitPoints[2]=new PointF(image.getWidth()/2,image.getHeight()/2);
-		collisionlines=new Line2D[3];
-		collisionlines[0]=new Line2D(0,0,1,1);
-		collisionlines[1]=new Line2D(0,0,1,1);
-		collisionlines[2]=new Line2D(0,0,1,1);
-		collisionPoints=new PointF[collisionInitPoints.length];
-		//collisionPath=new Path();
+		
+		
+		
 		calculateCollisionObject();
 		
     }
@@ -102,20 +96,36 @@ public class Player extends DynamicEntity {
 			{
 				if(e.collidable)
 				{
-					for (Line2D l: collisionlines)
-						if ((l.intersect(e.getCollisionBox()))&&e.collidable)
+					for (Line2D l: ship.collisionlines)
+					{
+						if(!e.isUsingCustomCollision)
+						{
+						if ((l.intersect(e.getCollisionBox())))
 							{
 								if (e.getClass().equals(DynamicEntity.class))
 									((DynamicEntity)e).impulse(new PointF(0,0),dx,dy);
 								impulse(e);
 								break;
 							}
+						}
+						else
+						{
+							if ((e.getCustomCollisionObject().intersect(l)))
+							{
+								if (e.getClass().equals(DynamicEntity.class))
+									((DynamicEntity)e).impulse(new PointF(0,0),dx,dy);
+								impulse(e);
+								break;
+							}
+						}
+					}
 				}
 			}
 		}
         x += dx;
         y += dy;
         dx = dy = 0;
+		
 		calculateCollisionObject();
 		//uIhp.tick(getHp());
 		stun.tick(getTimer());
@@ -123,6 +133,8 @@ public class Player extends DynamicEntity {
 			Shoot();
 		for(Projectile p: projectiles.getArray())
 			p.tick();
+		engineSmoke.tick();
+		//acceleration=0;
 			
     }
 	
@@ -135,8 +147,6 @@ public class Player extends DynamicEntity {
 		this.dy = -(float) (1*speed * cos(mathRotation));
 		this.dx = (float) (1*speed * sin(mathRotation));
 		 //1 of speed% 3/1300
-
-
 		
 	}
 
@@ -146,19 +156,26 @@ public class Player extends DynamicEntity {
 			return;
         canvas.save();
         canvas.rotate(rotation,getCenterX(),getCenterY());
-        if(movable&&(getTimer()==0))
+		ship.render(canvas);
+        /*if(movable&&(getTimer()==0))
         	canvas.drawBitmap(engine,x,y-5+(acceleration)*5,null);
-        canvas.drawBitmap(image,x,y,null);
+        canvas.drawBitmap(image,x,y,null);*/
 		//engineSmoke.render(canvas);
         canvas.restore();
 		//uIhp.render(canvas);
 		stun.render(canvas);
 		for(Projectile p: projectiles.getArray())
 		p.render(canvas);
-		for(Line2D l: collisionlines)
+		for(Line2D l: ship.collisionlines)
 		{
 			l.render(canvas);
 		}
+		if(drawInteractionCitcle)
+		drawInteractionCircle(canvas);
+		if(acceleration>0.4)
+		engineSmoke.draw();
+		engineSmoke.render(canvas);
+		acceleration=0;
     }
 
     @Override
@@ -196,12 +213,13 @@ public class Player extends DynamicEntity {
 	@Override
 	public void calculateCollisionObject()
 	{
-		float mathRotation=(float)(PI/180*rotation);
+		ship.calculateCollisionObject();
+		/*float mathRotation=(float)(PI/180*rotation);
 		//collisionPath.reset();
 		for (int i=0;i<collisionPoints.length;i++)
 		{
-			float x1 = getCenterX()-collisionInitPoints[i].x - getCenterX();
-			float y1 = getCenterY()+collisionInitPoints[i].y - getCenterY();
+			float x1 = getCenterX()-ship.collisionInitPoints[i].x - getCenterX();
+			float y1 = getCenterY()+ship.collisionInitPoints[i].y - getCenterY();
 
 			float x2 = (float)(x1 * Math.cos(mathRotation) - y1 * Math.sin(mathRotation));
 			float y2 = (float)(x1 * Math.sin(mathRotation) + y1 * Math.cos(mathRotation));
@@ -211,13 +229,9 @@ public class Player extends DynamicEntity {
 		else
 			collisionPoints[i].set(x2 + getCenterX(),y2+getCenterY());
 		}
-		//collisionPath.moveTo(collisionPoints[0].x,collisionPoints[0].y);
-		//collisionPath.lineTo(collisionPoints[1].x,collisionPoints[1].y);
-		//collisionPath.lineTo(collisionPoints[2].x,collisionPoints[2].y);
-		//collisionPath.close();
 		collisionlines[0].set(collisionPoints[0].x,collisionPoints[0].y,collisionPoints[1].x,collisionPoints[1].y);
 		collisionlines[1].set(collisionPoints[1].x,collisionPoints[1].y,collisionPoints[2].x,collisionPoints[2].y);
-		collisionlines[2].set(collisionPoints[2].x,collisionPoints[2].y,collisionPoints[0].x,collisionPoints[0].y);
+		collisionlines[2].set(collisionPoints[2].x,collisionPoints[2].y,collisionPoints[0].x,collisionPoints[0].y);*/
 	}
 	
 	public void Shoot()
@@ -225,11 +239,24 @@ public class Player extends DynamicEntity {
 		
 		if(shootFlag&&fireDelay.getTick()<=1)
 		{
-		projectiles.shoot();
+		projectiles.shoot(ship.pointOfShooting);
 		fireDelay.setTimer(60f/fireRate);
 			//shootFlag=false;
 		}
 		//projectiles.shoot();
 		//projectiles.newObject(new Projectile(x,y,projectileImage,"p"+projectiles.size(),(int)speed,2,rotation,this));
+	}
+	public void drawInteractionCircle(Canvas canvas)
+	{
+		Paint tPaint = new Paint();
+		tPaint.setColor(Color.YELLOW);
+		tPaint.setStyle(Paint.Style.STROKE);
+		tPaint.setStrokeWidth(2);
+		tPaint.setPathEffect(new DashPathEffect(new float[] { 15, 16}, 0));
+		canvas.drawCircle(getCenterX(),getCenterY(),50,tPaint);
+	}
+	public void setDrawInteractionCicle(boolean state)
+	{
+		drawInteractionCitcle=state;
 	}
 }

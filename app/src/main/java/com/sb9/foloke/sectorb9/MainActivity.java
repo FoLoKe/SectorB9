@@ -138,6 +138,7 @@ public class MainActivity extends Activity {
 			game.command=game.commandInteraction;
 			inventoryOpened=true;
 			shootButton.setVisibility(View.GONE);
+			game.getPlayer().setDrawInteractionCicle(true);
 		}
 		else
 		{
@@ -149,16 +150,24 @@ public class MainActivity extends Activity {
 			game.command=game.commandMoving;
 			inventoryOpened=false;
 			shootButton.setVisibility(View.VISIBLE);
+			game.getPlayer().setDrawInteractionCicle(false);
 		}
 	}
 	public void closeObjectInventory()
 	{
-		objectScrollView.setVisibility(View.GONE);
+		runOnUiThread(new Runnable() {  
+				@Override
+				public void run() {
+		objectScrollView.setVisibility(View.GONE);}});
 		
 	}
 	public void openObjectInventory()
 	{
+		runOnUiThread(new Runnable() {  
+				@Override
+				public void run() {
 		objectScrollView.setVisibility(View.VISIBLE);
+		}});
 	}
 	public void initInvenories()
 	{

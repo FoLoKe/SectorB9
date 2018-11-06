@@ -6,6 +6,7 @@ import com.sb9.foloke.sectorb9.game.funtions.*;
 import java.util.Map;
 import com.sb9.foloke.sectorb9.*;
 import com.sb9.foloke.sectorb9.game.UI.*;
+import com.sb9.foloke.sectorb9.game.Assets.*;
 
 public class Crusher extends StaticEntity
 {
@@ -13,26 +14,43 @@ public class Crusher extends StaticEntity
 	private int inProduction;
 	private int count;
 	private Timer prodTimer;
-	public Crusher(float x, float y,float rotation, Bitmap image,String name,Game game)
+	//private PointF collisionPoints[];
+	private PointF collisionInitPoints[];
+	//private Line2D collisionlines[];
+	private Animation crusherAnim;
+	
+	public Crusher(float x, float y,float rotation,ObjectsAsset  objAsset,String name,Game game)
 	{
-		super(x,y,rotation,image,name,game);
+		super(x,y,rotation,objAsset.crusher,name,game);
+		crusherAnim=new Animation(objAsset.crusherAnim,15);
 		this.inventoryMaxCapacity=3;
 		this.opened=true;
 		inProduction=0;
 		count=0;prodTimer=new Timer(0);
-		prgBar=new UIProgressBar(this,50,8,-25,-20,game.uiAsset.hpBackground,game.uiAsset.hpLine,game.uiAsset.progressBarBorder,prodTimer.getTick());
-		
+		prgBar=new UIProgressBar(this,50,8,-25,-20,game.uiAsset.stunBackground,game.uiAsset.stunLine,game.uiAsset.progressBarBorder,prodTimer.getTick());
+
+		collisionInitPoints=new PointF[4];
+		collisionInitPoints[0]=new PointF(-image.getWidth()/2,-image.getHeight()/2);
+		collisionInitPoints[1]=new PointF(image.getWidth()/2,-image.getHeight()/2);
+		collisionInitPoints[2]=new PointF(image.getWidth()/2,image.getHeight()/2);
+		collisionInitPoints[3]=new PointF(-image.getWidth()/2,image.getHeight()/2);
+		isUsingCustomCollision=true;
+		setCustomCollisionObject(collisionInitPoints);
 	}
 
 	@Override
 	public void render(Canvas canvas)
 	{
+		if(!renderable)
+			return;
 		canvas.save();
 		canvas.rotate(rotation,getCenterX(),getCenterY());
-		canvas.drawBitmap(image,x,y,null);
-		if(prodTimer.getTick()>0)
+		canvas.drawBitmap(crusherAnim.getImage(),x,y,null);
+		//if(prodTimer.getTick()>0)
 		prgBar.render(canvas);
+		game.debugText.setString(prodTimer.getTick()+"");
 		canvas.restore();
+		drawDebugCollision(canvas);
 		// TODO: Implement this method
 	}
 
@@ -45,7 +63,10 @@ public class Crusher extends StaticEntity
 			for(Map.Entry<Integer,Integer> e: inventory.entrySet())
 			{
 				if(e.getKey()==1)
+				{
 					inProduction=e.getKey();
+				prodTimer.setTimer(2);
+				}
 			}
 			
 			//keySet().toArray()[0];
@@ -57,11 +78,12 @@ public class Crusher extends StaticEntity
 				inventory.remove(inProduction);
 					//inProduction=0;
 			}*/
-			prodTimer.setTimer(1);
+			
 			
 		}
 		if(inProduction!=0)
 		{
+			crusherAnim.tick();
 			if(prodTimer.tick())
 			{
 				
@@ -79,20 +101,33 @@ public class Crusher extends StaticEntity
 					}
 					else
 						inventory.put(4,1);
-					inProduction=0;
+					
 				}
+				inProduction=0;
+				MainActivity tAct=(MainActivity)game.mAcontext;
+				tAct.initInvenories();
 			//if(getGame().command==getGame().commandInteraction)
 				
 			
-				MainActivity tAct=(MainActivity)game.mAcontext;
-				tAct.initInvenories();
+				
 			
 			}
 		}
 		if(prodTimer.getTick()>0)
-		prgBar.tick(1/prodTimer.getTick());
+			prgBar.tick(prodTimer.getTick()/(1.2f));
+		calculateCollisionObject();
 		// TODO: Implement this method
 	}
+
+	@Override
+	public void calculateCollisionObject()
+	{
+		// TODO: Implement this method
+		super.calculateCollisionObject();
+		calculateCustomCollisionObject();
+	}
+	//@Override
+	
 
 
 	

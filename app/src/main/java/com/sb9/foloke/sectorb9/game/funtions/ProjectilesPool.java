@@ -36,13 +36,13 @@ public class ProjectilesPool
 				p.render(canvas);
 			}
 		}
-		public void shoot()
+		public void shoot(PointF point)
 		{
 			for(Projectile p:projectiles)
 			{
 				if(!p.getActive())
 				{
-					p.shoot();
+					p.shoot(point);
 					//p.getGame().debugText.setString(p.getName());
 					return;
 				}

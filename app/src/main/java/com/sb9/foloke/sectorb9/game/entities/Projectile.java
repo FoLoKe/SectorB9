@@ -97,12 +97,12 @@ public class Projectile extends DynamicEntity
 	{
 		return active;
 	}
-	public void shoot()
+	public void shoot(PointF point)
 	{
 		active=false;
 		
-		setCenterX(holder.getCenterX());
-		setCenterY(holder.getCenterY());
+		setCenterX(point.x);
+		setCenterY(point.y);
 		rotation=holder.getWorldRotation();
 		this.lifetimer.setTimer(lifetime);
 		

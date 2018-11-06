@@ -10,6 +10,7 @@ import android.graphics.RectF;
 import java.util.*;
 import com.sb9.foloke.sectorb9.game.UI.*;
 import com.sb9.foloke.sectorb9.game.display.*;
+import com.sb9.foloke.sectorb9.game.funtions.*;
 
 public abstract class Entity {
     protected float x,y;
@@ -28,6 +29,8 @@ public abstract class Entity {
 	protected boolean active=true;
 	protected boolean collidable=true;
 	protected boolean opened=false;
+	protected boolean isUsingCustomCollision=false;
+	private CustomCollisionObject collisionObject;
 	protected UIProgressBar uIhp;
     public Entity(float x,float y,float rotation,Bitmap image,String name,Game game)
     {
@@ -183,5 +186,21 @@ public abstract class Entity {
 	public boolean getOpened()
 	{
 		return opened;
+	}
+	public CustomCollisionObject getCustomCollisionObject()
+	{
+		return collisionObject;
+	}
+	public void setCustomCollisionObject(PointF points[])
+	{
+		collisionObject=new CustomCollisionObject(points,this);
+		}
+	public void drawDebugCollision(Canvas canvas)
+	{
+		collisionObject.render(canvas);
+	}
+	public void calculateCustomCollisionObject()
+	{
+		collisionObject.calculateCollisionObject();
 	}
 }
