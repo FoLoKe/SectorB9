@@ -203,4 +203,8 @@ public abstract class Entity {
 	{
 		collisionObject.calculateCollisionObject();
 	}
+	public void setWorldRotation(float rotation)
+	{
+		this.rotation=rotation;
+	}
 }

@@ -14,15 +14,25 @@ public class Particle
 	float rotation;
 	boolean active=false;
 	boolean renderable=false;
-	Entity holder;
-	public Particle(Bitmap image,float x,float y,float lenght,Entity holder)
+	float dx,dy;
+	Random rnd=new Random();
+	PointF dXY;
+	
+	//Entity holder;
+	
+	
+	public Particle(Bitmap image,float x,float y,float lenght,PointF dXY,int rotation)
 	{
 		this.image=image;
 		this.x=x;
 		this.lifetime=lenght;
 		this.y=y;
+		this.rotation=rotation;
+		this.dXY=dXY;
+		//this.dx=dXY.x;
+		//this.dy=dXY.y;
 		lifetimer=new Timer(0);
-		this.holder=holder;
+		//this.holder=holder;
 	}
 	public void render(Canvas canvas)
 	{
@@ -33,8 +43,9 @@ public class Particle
 			Paint tPaint=new Paint();
 			//100% = lifetime
 			//%= lifetimer.gettick()
+			
 			tPaint.setAlpha((int)(255*lifetimer.getTick()/(60*(lifetime))));
-			canvas.drawBitmap(image,x,y+16,tPaint);
+			canvas.drawBitmap(image,x,y,tPaint);
 			canvas.restore();
 			//drawDebugBox(canvas);
 		}
@@ -43,6 +54,8 @@ public class Particle
 	{
 		if(active)
 		{
+			y+=dy;
+			x+=dx;
 			//y-=1;
 			if(lifetimer.tick())
 			{
@@ -73,9 +86,24 @@ public class Particle
 	{
 		active=false;
 
-		setCenterX(holder.getCenterX()-16+new Random().nextInt(32));
-		setCenterY(holder.getCenterY());
-		rotation=holder.getWorldRotation();
+		setCenterX(x);
+		setCenterY(y);
+		float mathRotation=(float)(Math.PI/180*rotation);
+		PointF tPoint =new PointF((float)(dXY.x * Math.cos(mathRotation) - (dXY.y) * Math.sin(mathRotation))
+											 ,(float)(dXY.x * Math.sin(mathRotation) + (dXY.y) * Math.cos(mathRotation)));
+		//tfpointOfShooting.set(turret.getParent().getHolder().getCenterX()+tfpointOfShooting.x,turret.getParent().getHolder().getCenterY()+tfpointOfShooting.y);
+		
+		
+		if(rnd.nextBoolean())
+			dx=tPoint.x;
+		else
+			dx=-tPoint.x;
+		if(rnd.nextBoolean())
+		dy=tPoint.y;
+		else
+			dy=-tPoint.y;
+		//this.dy = -(float) (dXY.x*Math.cos(mathRotation));
+		//this.dx = (float) (dXY.y*Math.sin(mathRotation));
 		this.lifetimer.setTimer(lifetime);
 
 		//calculateCollisionObject();
@@ -102,5 +130,9 @@ public class Particle
 	public void setLifetime(float lenght)
 	{
 		lifetime=lenght;
+	}
+	public void setWorldRotation(float rotation)
+	{
+		this.rotation=rotation;
 	}
 }

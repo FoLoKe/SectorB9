@@ -137,6 +137,13 @@
 			android:text="Fire"
 			android:id="@+id/shootButton"
 		/>
+		<Button
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			
+			android:text="DEBUG"
+			android:id="@+id/DEBUG"
+			/>
 	</LinearLayout>
 
 </FrameLayout>

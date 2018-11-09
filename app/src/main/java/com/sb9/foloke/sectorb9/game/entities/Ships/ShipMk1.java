@@ -5,15 +5,17 @@ import android.graphics.*;
 
 public class ShipMk1 extends Ship
 {
-	public ShipMk1(ImageAssets shipsAsset,Entity holder)
+	public ShipMk1(ImageAssets shipsAsset,DynamicEntity holder)
 	{
 		super(shipsAsset.player_mk1,shipsAsset.engine_mk1,null,holder);
 		pointOfengine.set(0,0);
 		pointOfShooting.set(0,0);
 		collisionInitPoints=new PointF[3];
-		collisionInitPoints[0]=new PointF(0,shipImage.getHeight()/2);
+		collisionInitPoints[0]=new PointF(0,-shipImage.getHeight()/2);
 		collisionInitPoints[1]=new PointF(-shipImage.getWidth()/2,shipImage.getHeight()/2);
 		collisionInitPoints[2]=new PointF(shipImage.getWidth()/2,shipImage.getHeight()/2);
 		setPoints(collisionInitPoints);
+		turrets=new TurretSystem[1];
+		turrets[0]=new TurretSystem(pointOfShooting,holder.getGame(),this);
 	}
 }

@@ -10,11 +10,11 @@ public class ProjectilesPool
 	static Bitmap image;
 	ArrayList<Projectile> projectiles;
 	
-	public ProjectilesPool(Bitmap image,Entity target,float speed, int maxSize,Game game) {
+	public ProjectilesPool(Bitmap image,float speed, int maxSize,Game game) {
 		projectiles=new ArrayList<Projectile>();
 		for(int i=0;i<maxSize;i++)
 		{
-			projectiles.add(new Projectile(0,0,image,"p"+i,(int)1,speed,0,target,game));
+			projectiles.add(new Projectile(0,0,image,"p"+i,(int)1,speed,0,game));
 		}
 		}
 		public List<Projectile> getArray()
@@ -36,13 +36,13 @@ public class ProjectilesPool
 				p.render(canvas);
 			}
 		}
-		public void shoot(PointF point)
+		public void shoot(PointF point,float rotation)
 		{
 			for(Projectile p:projectiles)
 			{
 				if(!p.getActive())
 				{
-					p.shoot(point);
+					p.shoot(point,rotation);
 					//p.getGame().debugText.setString(p.getName());
 					return;
 				}

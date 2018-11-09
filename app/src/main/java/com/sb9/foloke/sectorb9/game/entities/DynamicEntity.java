@@ -14,6 +14,8 @@ public abstract class DynamicEntity extends Entity {
 	float speed=3;
 	Text textSpeed;
 	private int debugCounter=0;
+	protected float acceleration;
+	protected boolean movable;
     public DynamicEntity(float x, float y,float rotation, Bitmap image,String name,Game game)
     {
         super(x,y,rotation,image,name,game);
@@ -51,5 +53,8 @@ public abstract class DynamicEntity extends Entity {
 			debugCounter++;
 		textSpeed.setString(accel+"");
 	}
-
+	public float getAcceleration()
+	{
+		return acceleration;
+	}
 }

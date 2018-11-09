@@ -53,7 +53,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
     //assets
     private BitmapFactory.Options options;
-    private ImageAssets shipAsset;
+    public ImageAssets shipAsset;
     public UIAsset uiAsset;
 	private InventoryAsset invAsset;
 	public ObjectsAsset objAsset;
@@ -156,9 +156,10 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 		
 		//playerInventory=new UIinventory(invAsset,player.getInventory());
 		//playerInventory.setVisability(true);
-		destroyedImage=new UIcustomImage(Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ui_asset_sheet,options)),0,24,64,24);
+		
 		uIhp=new UIProgressBar(this,500,100,50,50,uiAsset.hpBackground,uiAsset.hpLine,uiAsset.progressBarBorder,(int)100);
-        getHolder().addCallback(this);
+        destroyedImage=new UIcustomImage(uiAsset,3);
+		getHolder().addCallback(this);
         mainThread= new MainThread(getHolder(),this);
         setFocusable(true);
 		

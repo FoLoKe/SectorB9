@@ -1,13 +1,15 @@
 package com.sb9.foloke.sectorb9.game.UI;
 import android.graphics.*;
 import com.sb9.foloke.sectorb9.game.display.Camera;
+import com.sb9.foloke.sectorb9.game.Assets.*;
 
 public class UIcustomImage
 {
 	private Bitmap image;
-	public UIcustomImage(Bitmap sheet,int imageX,int imageY,int sizeX,int sizeY)
+	public UIcustomImage(UIAsset sheet,int index)
 	{
-		this.image=Bitmap.createBitmap(sheet,imageX,imageY,sizeX,sizeY,null,false);
+		this.image=sheet.getByIndex(index);
+		index=0;
 	}
 	public void render(Canvas canvas,Camera camera)
 	{

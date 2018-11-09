@@ -7,16 +7,16 @@ public class Projectile extends DynamicEntity
 {
 	private int lifetime;
 	private Timer lifetimer;
-	private Entity holder;
+	//private Entity holder;
 	protected boolean active=false;
-	public Projectile(float x,float y,Bitmap image,String name,int lifetime,float speed, float rotation,Entity holder,Game game)
+	public Projectile(float x,float y,Bitmap image,String name,int lifetime,float speed, float rotation,Game game)
 	{
 		super(x,y,0,image,name,game);
 		this.rotation=rotation;
 		this.speed=speed;
 		this.lifetime=3;
 		this.collisionBox=new RectF(x+image.getWidth()/2-3,y+image.getHeight()-3,x+image.getWidth()/2+3,y+image.getHeight()/2+3);
-		this.holder=holder;
+		
 		lifetimer=new Timer(0);
 	}
 	@Override
@@ -97,13 +97,13 @@ public class Projectile extends DynamicEntity
 	{
 		return active;
 	}
-	public void shoot(PointF point)
+	public void shoot(PointF point,float rotation)
 	{
 		active=false;
 		
 		setCenterX(point.x);
 		setCenterY(point.y);
-		rotation=holder.getWorldRotation();
+		this.rotation=rotation;
 		this.lifetimer.setTimer(lifetime);
 		
 		calculateCollisionObject();

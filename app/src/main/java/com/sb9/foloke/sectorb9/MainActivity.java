@@ -104,6 +104,21 @@ public class MainActivity extends Activity {
 			});
 			openInventoryButton.setEnabled(true);
 		
+		Button debugButton = findViewById(R.id.DEBUG);
+        // Устанавливаем действие по нажатию
+        debugButton.setOnClickListener
+		(new OnClickListener() 
+			{
+				@Override
+				public void onClick(View v) 
+				{
+					//switchPlayerInventory();
+					//if(shootButton.getVisibility()==View.VISIBLE)
+					game.getPlayer().setShip();
+					//else
+					//	shootButton.setVisibility(View.VISIBLE);
+				}
+			});
         // Устанавливаем действие по нажатию
         
 		shootButton.setOnTouchListener

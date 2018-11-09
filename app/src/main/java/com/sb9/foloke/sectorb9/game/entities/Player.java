@@ -25,35 +25,28 @@ import com.sb9.foloke.sectorb9.game.entities.Ships.*;
 public class Player extends DynamicEntity {
 	//TODO: ENGINE PARTICLESPOOL SMOKE OR MAKE ANIMATION
 	
-    private Bitmap engine;
-    private Bitmap projectileImage;
+    //private Bitmap engine;
+   // private Bitmap projectileImage;
 	
     //private Text textdXdY;
-	private float acceleration;
+	
 	private UIProgressBar stun;
 	
 	
 	
-	public  ProjectilesPool projectiles;
-	public ParticleSystem engineSmoke;
-	private Timer fireDelay=new Timer(0);
-	private int fireRate= 600;
-	
-	
 	public boolean shootFlag;
-	private boolean movable;
+	
 	private boolean drawInteractionCitcle=false;
-	ShipMk1 ship;
+	Ship ship;
 	
     public Player(float x, float y,float rotation, ImageAssets asset, UIAsset uiasset, Game game,String name)
     {
-        super(x,y,rotation,asset.player_mk2,name,game);		
-		this.projectiles=new ProjectilesPool(asset.shell,this,5,500,game);
+        super(x,y,rotation,asset.player_mk1,name,game);		
 		
-        this.engine=asset.engine_mk1;
-		projectileImage=asset.cursor;
+        //this.engine=asset.engine_mk1;
+		//projectileImage=asset.cursor;
 		
-		engineSmoke=new ParticleSystem(asset.yellow_pixel,x,y,1f,game,this);
+		
 		
 		ship=new ShipMk1(asset,this);
         this.dx=this.dy=0;
@@ -129,11 +122,10 @@ public class Player extends DynamicEntity {
 		calculateCollisionObject();
 		//uIhp.tick(getHp());
 		stun.tick(getTimer());
-		fireDelay.tick();
+		
 			Shoot();
-		for(Projectile p: projectiles.getArray())
-			p.tick();
-		engineSmoke.tick();
+		ship.tick();
+		
 		//acceleration=0;
 			
     }
@@ -155,26 +147,23 @@ public class Player extends DynamicEntity {
 		if(!renderable)
 			return;
         canvas.save();
-        canvas.rotate(rotation,getCenterX(),getCenterY());
+        
 		ship.render(canvas);
         /*if(movable&&(getTimer()==0))
-        	canvas.drawBitmap(engine,x,y-5+(acceleration)*5,null);
-        canvas.drawBitmap(image,x,y,null);*/
+        	canvas.drawBitmap(engine,x,y-5+(acceleration)*5,null);*/
+       // canvas.drawBitmap(image,x,y,null);
 		//engineSmoke.render(canvas);
-        canvas.restore();
+       // canvas.restore();
 		//uIhp.render(canvas);
 		stun.render(canvas);
-		for(Projectile p: projectiles.getArray())
-		p.render(canvas);
+		
 		for(Line2D l: ship.collisionlines)
 		{
 			l.render(canvas);
 		}
 		if(drawInteractionCitcle)
 		drawInteractionCircle(canvas);
-		if(acceleration>0.4)
-		engineSmoke.draw();
-		engineSmoke.render(canvas);
+		
 		acceleration=0;
     }
 
@@ -237,11 +226,10 @@ public class Player extends DynamicEntity {
 	public void Shoot()
 	{
 		
-		if(shootFlag&&fireDelay.getTick()<=1)
+		if(shootFlag)
 		{
-		projectiles.shoot(ship.pointOfShooting);
-		fireDelay.setTimer(60f/fireRate);
-			//shootFlag=false;
+			ship.shoot();
+		
 		}
 		//projectiles.shoot();
 		//projectiles.newObject(new Projectile(x,y,projectileImage,"p"+projectiles.size(),(int)speed,2,rotation,this));
@@ -258,5 +246,12 @@ public class Player extends DynamicEntity {
 	public void setDrawInteractionCicle(boolean state)
 	{
 		drawInteractionCitcle=state;
+	}
+	public void setShip()
+	{
+		if (ship.getClass()==ShipMk1.class)
+			ship=new ShipMk2(game.shipAsset,this);
+			else
+			ship=new ShipMk1(game.shipAsset,this);
 	}
 }

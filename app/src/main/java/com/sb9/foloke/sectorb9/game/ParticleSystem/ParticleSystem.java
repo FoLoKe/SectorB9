@@ -12,6 +12,7 @@ public class ParticleSystem
 	//private Particle particles[];
 	private static final int maxCount=120;
 	private float x,y;
+	private float dx,dy;
 	private float lenght=lenght;
 	private Bitmap image;
 	private Point accuracy;
@@ -21,7 +22,7 @@ public class ParticleSystem
 	private Timer delay;
 	private Random rand=new Random();
 	ArrayList<Particle> particles;
-	public ParticleSystem(Bitmap image,float x,float y,float lenght,Game game,Entity holder)
+	public ParticleSystem(Bitmap image,float x,float y,float lenght,PointF dXY,Game game)
 	{
 		this.accuracy=new Point(1,1);
 		this.image=image;
@@ -30,10 +31,11 @@ public class ParticleSystem
 		this.lenght=lenght;
 		this.particles=new ArrayList<Particle>();
 		delay=new Timer(0);
-		
+		dx=dXY.x;
+		dy=dXY.y;
 		for(int i=0;i<maxCount;i++)
 		{
-			particles.add(new Particle(image,x,y,lenght,holder));
+			particles.add(new Particle(image,x,y,lenght,dXY,0));
 		}
 		
 	}
@@ -65,14 +67,20 @@ public class ParticleSystem
 			p.render(canvas);
 		}
 	}
-	public void draw()
+	public void draw(float x,float y,float rotation,PointF rotationPrivot)
 	{
 		if(delay.tick())
 		for(Particle p:particles)
 		{
 			if(!p.getActive())
 			{
+				p.setWorldRotation(rotation);
 				p.draw();
+				float mathRotation=(float)(Math.PI/180*(rotation));
+				PointF tXY =new PointF((float)((-accuracy.x/2+rand.nextInt(accuracy.x))* Math.cos(mathRotation) - (-accuracy.y/2+rand.nextInt(accuracy.y)) * Math.sin(mathRotation))
+									   ,(float)((-accuracy.x/2+rand.nextInt(accuracy.x)) * Math.sin(mathRotation) + (-accuracy.y/2+rand.nextInt(accuracy.y)) * Math.cos(mathRotation)));
+				p.setWorldLocation(x+tXY.x,y+tXY.y);
+				//p.setWorldRotation(rotation);
 				//p.getGame().debugText.setString(p.getName());
 				delay.setTimer(0.01f);
 				return;
@@ -99,5 +107,9 @@ public class ParticleSystem
 		{
 			p.setLifetime(lenght);
 		}
+	}
+	public void setAccuracy(Point accuracy)
+	{
+		this.accuracy=accuracy;
 	}
 }
