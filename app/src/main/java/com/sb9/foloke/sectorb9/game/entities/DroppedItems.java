@@ -47,8 +47,8 @@ public class DroppedItems extends Entity
 			opened=false;
 		inventoryMaxCapacity=0;
 		getGame().getObjectUIInventory().setTarget(null);
-		Context tcontext=getGame().mAcontext;
-		((MainActivity)tcontext).closeObjectInventory();
+		//Context tcontext=getGame().mAcontext;
+		//((MainActivity)tcontext).closeObjectInventory();
 		active=false;
 		renderable=false;
 		opened=false;

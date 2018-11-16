@@ -12,7 +12,7 @@ public abstract class DynamicEntity extends Entity {
 
     float dx,dy;
 	float speed=3;
-	Text textSpeed;
+	//Text textSpeed;
 	private int debugCounter=0;
 	protected float acceleration;
 	protected boolean movable;
@@ -21,7 +21,7 @@ public abstract class DynamicEntity extends Entity {
         super(x,y,rotation,image,name,game);
         this.rotation=rotation;
 		dx=dy=0;
-		textSpeed=new Text("0",x,y-32);
+		//textSpeed=new Text("0",x,y-32);
     }
     abstract public void RotationToPoint(PointF targetPoint);
 	
@@ -33,7 +33,7 @@ public abstract class DynamicEntity extends Entity {
 		tPaint.setColor(Color.rgb(255,255,0));
 		tPaint.setStrokeWidth(5);
 		canvas.drawLine(getCenterX(),getCenterY(),getCenterX()+dx*20,getCenterY()+dy*20,tPaint);
-		textSpeed.render(canvas);
+		//textSpeed.render(canvas);
 	}
 	public void impulse(PointF pointOfimpulse,float dx,float dy)
 	{
@@ -51,7 +51,7 @@ public abstract class DynamicEntity extends Entity {
 		if(this.dy>speed)
 			this.dy=speed;
 			debugCounter++;
-		textSpeed.setString(accel+"");
+		//textSpeed.setString(accel+"");
 	}
 	public float getAcceleration()
 	{

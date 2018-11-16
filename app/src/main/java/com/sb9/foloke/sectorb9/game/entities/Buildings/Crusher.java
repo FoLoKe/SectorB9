@@ -11,6 +11,8 @@ import com.sb9.foloke.sectorb9.game.Assets.*;
 public class Crusher extends StaticEntity
 {
 	private UIProgressBar prgBar;
+	private UIcustomImage statusImage;
+	
 	private int inProduction;
 	private int count;
 	private Timer prodTimer;
@@ -36,6 +38,9 @@ public class Crusher extends StaticEntity
 		collisionInitPoints[3]=new PointF(-image.getWidth()/2,image.getHeight()/2);
 		isUsingCustomCollision=true;
 		setCustomCollisionObject(collisionInitPoints);
+		
+		statusImage=new UIcustomImage(game.uiAsset.noEnergySign,5);
+		
 	}
 
 	@Override
@@ -50,6 +55,10 @@ public class Crusher extends StaticEntity
 		prgBar.render(canvas);
 		game.debugText.setString(prodTimer.getTick()+"");
 		canvas.restore();
+		
+		if(energy==false)
+		statusImage.render(canvas,new PointF(x,y));
+		if(game.drawDebugInf)
 		drawDebugCollision(canvas);
 		// TODO: Implement this method
 	}
@@ -57,6 +66,8 @@ public class Crusher extends StaticEntity
 	@Override
 	public void tick()
 	{
+		if(energy)
+		{
 		if(inventory.size()>0&&inProduction==0)
 		{
 			//inProduction= inventory..;
@@ -68,17 +79,6 @@ public class Crusher extends StaticEntity
 				prodTimer.setTimer(2);
 				}
 			}
-			
-			//keySet().toArray()[0];
-			//count=inventory.get(inProduction);
-		
-			/*if(count==1)
-			{
-				
-				inventory.remove(inProduction);
-					//inProduction=0;
-			}*/
-			
 			
 		}
 		if(inProduction!=0)
@@ -115,6 +115,7 @@ public class Crusher extends StaticEntity
 		}
 		if(prodTimer.getTick()>0)
 			prgBar.tick(prodTimer.getTick()/(1.2f));
+		}
 		calculateCollisionObject();
 		// TODO: Implement this method
 	}

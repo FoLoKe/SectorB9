@@ -13,14 +13,27 @@ public class TurretSystem
 	private int type;
 	private Weapon weapon;
 	private Ship parent;
-	public TurretSystem(PointF point,Game game,Ship ship)
+	public TurretSystem(PointF point,int type,Game game,Ship ship)
 	{
 		//TODO: WEAPONS SYSTEM (LASERS ROCKETS AND CHOOSING THEM)
-		
+		this.type=type;
 		this.parent=ship;
 		pointOfShooting=point;
-		
+		switch (type)
+		{
+		case 1:
+		weapon=new Minigun(this,game);
+		break;
+		case 2:
+		weapon=new Plasmgun(this,game);
+		break;
+		case 3:
 		weapon=new Laser(this,game);
+		break;
+		default:
+				weapon=new Minigun(this,game);
+				break;
+		}
 	}
 	public void shoot()
 	{

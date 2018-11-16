@@ -4,7 +4,7 @@ package com.sb9.foloke.sectorb9.game.entities;
 	import android.graphics.Paint;
 	import android.graphics.PointF;
 
-	import com.sb9.foloke.sectorb9.game.Assets.ImageAssets;
+	import com.sb9.foloke.sectorb9.game.Assets.ShipAsset;
 	import com.sb9.foloke.sectorb9.game.UI.Text;
 import com.sb9.foloke.sectorb9.game.display.*;
 
@@ -14,7 +14,7 @@ public class Cursor extends DynamicEntity {
 		boolean drawable;
 		private Text textdXdY;
 
-		public Cursor(float x, float y, ImageAssets asset,String name,Game game)
+		public Cursor(float x, float y, ShipAsset asset,String name,Game game)
 		{
 			super(x,y,0,asset.cursor,name,game);
 			

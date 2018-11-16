@@ -38,6 +38,7 @@ import android.util.*;
 import android.view.*;
 import android.content.Context;
 import com.sb9.foloke.sectorb9.game.entities.Entity;
+import com.sb9.foloke.sectorb9.*;
 //import java.util.*;
 public class UIinventory
 {
@@ -46,14 +47,14 @@ public class UIinventory
 	//private  inv_items[][]; //index,count
 	private boolean visible;
 	private TableLayout table;
-	private Context context;
+	final private Context context;
 	//private int capacity;
 	//private HashMap<Integer,Integer> inventoryItems;
 	private Entity target;
 	private InventoryAsset inventoryAsset;
 	private UICommInterface exchangeInterface;
 
-	public UIinventory(InventoryAsset inventoryAsset,TableLayout table,Context context,Entity target,UICommInterface exchangeInterface)
+	public UIinventory(InventoryAsset inventoryAsset,TableLayout table,final Context context,Entity target,UICommInterface exchangeInterface)
 	{
 		this.target=target;
 		//this.capacity=target.getInventoryMaxCapacity();
@@ -61,9 +62,18 @@ public class UIinventory
 		this.exchangeInterface=exchangeInterface;
 		this.inventoryAsset=inventoryAsset;
 		this.table=table;
+		
 		this.context=context;
 		ScrollView.LayoutParams lp= new ScrollView.LayoutParams(ScrollView.LayoutParams.WRAP_CONTENT,context.getResources().getDisplayMetrics().heightPixels);
 		lp.setMargins(10,10,10,10);
+		Button closeButton=((MainActivity)context).findViewById(R.id.closeInventoryButton);
+		closeButton.setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View v)
+			{
+				((MainActivity)context).getViewFlipper().setDisplayedChild(((MainActivity)context).getViewFlipper().indexOfChild(((MainActivity)context).findViewById(R.id.interactionUI)));
+			}
+		});
 		if(target!=null)
 		init();
 	}
@@ -77,7 +87,7 @@ public class UIinventory
 		table.removeAllViews();
 		BitmapFactory.Options options=new BitmapFactory.Options();
         options.inScaled=false;
-		
+			table.setBackground(new BitmapDrawable(target.getGame().mAcontext.getResources(),target.getGame().uiAsset.uiBgBlur));
 		
 		
 		if(target.getInventory().size()>0)
@@ -88,12 +98,12 @@ public class UIinventory
 			TableLayout.LayoutParams tableRowParams=
 				new TableLayout.LayoutParams
 			(TableLayout.LayoutParams.WRAP_CONTENT,TableLayout.LayoutParams.FILL_PARENT);
-
+			
 			int leftMargin=10;
 			int topMargin=10;
 			int rightMargin=10;
 			int bottomMargin=10;
-
+			
 			tableRowParams.setMargins(leftMargin, topMargin, rightMargin, bottomMargin);
 			row.setLayoutParams(tableRowParams);
 			ImageView sprite=new ImageView(context);
@@ -103,20 +113,16 @@ public class UIinventory
 			TableRow.LayoutParams trp=new TableRow.LayoutParams();
 			trp.setMargins(10,10,10,10);
 			trp.height=100;
+			testText.setTextColor(Color.parseColor("#ffffffff"));
+			testText2.setTextColor(Color.parseColor("#ffffffff"));
 			//button1.setLayoutParams(trp);
 			testText.setLayoutParams(trp);
 			testText.setText(""+key);
 			testText2.setText(""+value);
 			testText2.setLayoutParams(trp);
 			BitmapDrawable bdrawable;
-			//if(key==0)
 				bdrawable = new BitmapDrawable(context.getResources(),inventoryAsset.getImageById(key));
-				//else
-				//bdrawable = new BitmapDrawable(context.getResources(),inventoryAsset.inv_steel_ingot);
-
-			//button1.setBackground(bdrawable);
-			//button1.setScaleType(ImageView.ScaleType.FIT_XY);
-			//sprite.setBackground(bdrawable);
+			
 			sprite.setImageDrawable(bdrawable);
 			final int itemId=key;
 			final int itemCount=value;

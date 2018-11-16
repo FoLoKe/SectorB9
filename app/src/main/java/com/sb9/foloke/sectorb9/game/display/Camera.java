@@ -37,15 +37,17 @@ public class Camera {
 	
 	public void render(Canvas canvas)
 	{
-		Paint tPaint=new Paint();
-		tPaint.setStyle(Paint.Style.STROKE);
-		tPaint.setColor(Color.rgb(0,255,0));
-		canvas.drawRect(screenRect,tPaint);
-		canvas.drawCircle(((Player)pointOfLook).getCenterX(),((Player)pointOfLook).getCenterY(),canvas.getHeight()/(8*scale),tPaint);
-		canvas.drawCircle(((Player)pointOfLook).getCenterX(),((Player)pointOfLook).getCenterY(),canvas.getHeight()/(2*scale),tPaint);
+		if(pointOfLook.getGame().drawDebugInf)
+		{
+			Paint tPaint=new Paint();
+			tPaint.setStyle(Paint.Style.STROKE);
+			tPaint.setColor(Color.rgb(0,255,0));
 		
+			canvas.drawRect(screenRect,tPaint);
+			canvas.drawCircle(((Player)pointOfLook).getCenterX(),((Player)pointOfLook).getCenterY(),canvas.getHeight()/(8*scale),tPaint);
+			canvas.drawCircle(((Player)pointOfLook).getCenterX(),((Player)pointOfLook).getCenterY(),canvas.getHeight()/(2*scale),tPaint);
+		}
 	}
-
     public float getxOffset()
     {
         return location.x;
@@ -88,7 +90,10 @@ public class Camera {
     }
 	public void setScreenRect(float screenW,float screenH)
 	{
-		screenRect.set(pointOfLook.getCenterX()-screenW/(3*scale),pointOfLook.getCenterY()-screenH/(3*scale),pointOfLook.getCenterX()+screenW/(2*scale),pointOfLook.getCenterY()+screenH/(2*scale));
+		if(pointOfLook.getGame().drawDebugInf)
+			screenRect.set(pointOfLook.getCenterX()-screenW/(2*scale)+10,pointOfLook.getCenterY()-screenH/(2*scale)+10,pointOfLook.getCenterX()+screenW/(2*scale)-10,pointOfLook.getCenterY()+screenH/(2*scale)-10);
+		else
+			screenRect.set(pointOfLook.getCenterX()-screenW/(2*scale),pointOfLook.getCenterY()-screenH/(2*scale),pointOfLook.getCenterX()+screenW/(2*scale),pointOfLook.getCenterY()+screenH/(2*scale));
 	}
 	public RectF getScreenRect()
 	{

@@ -45,103 +45,86 @@ import android.opengl.*;
 import android.view.View.*;
 import android.view.InputDevice.*;
 import android.os.*;
+import android.widget.ViewSwitcher.*;
+import android.widget.CompoundButton.*;
+import android.app.*;
 
 public class MainActivity extends Activity {
 
-    Game game;
+    private Game game;
 	public boolean inventoryOpened=false;
 	
 	private BitmapFactory.Options options;
-	private InventoryAsset invAsset;
-	private ScrollView playerScrollView;
+	//private InventoryAsset invAsset;
+	//private ScrollView playerScrollView;
+	private ViewFlipper VF;
+	//private ScrollView objectScrollView;
 	
-	private ScrollView objectScrollView;
-	Button shootButton;
+	private UImenu uiMenu=new UImenu();
+	public UIinteraction uiInteraction=new UIinteraction();
+	private UIaction uiAction =new UIaction();
+	
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        //requestWindowFeature(Window.FEATURE_NO_TITLE);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.main_activity);
         game=findViewById(R.id.Game);
 		options=new BitmapFactory.Options();
         options.inScaled=false;
-		
-		
-		playerScrollView=findViewById(R.id.PlayerScrollView);
-		playerScrollView.setVisibility(View.GONE);
-		objectScrollView=findViewById(R.id.ObjectScrollView);
-		objectScrollView.setVisibility(View.GONE);
+		//findViewById(R.id.UIFlipper).setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
+		//findViewById(R.id.UIFlipper).setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+		//ActionBar actionBar = getActionBar();
+		//actionBar.hide();
+		//playerScrollView=findViewById(R.id.PlayerScrollView);
+		//playerScrollView.setVisibility(View.GONE);
+		//objectScrollView=findViewById(R.id.ObjectScrollView);
+		//objectScrollView.setVisibility(View.GONE);
 		
 		TableLayout playerTable=findViewById(R.id.PlayerTableLayout);
 		TableLayout objectTable=findViewById(R.id.ObjectTableLayout);
-		//objectInv=new UIinventory(invAsset,items,objectTable,(Context)this);
-		//playerInv=new UIinventory(invAsset,items,playerTable,(Context)this);
-// адаптер данных
+
 		game.initInventoryUI(playerTable,objectTable,this);
-		//listView.addView(new ImageButton(this));
 		
-    
+		VF = findViewById(R.id.UIFlipper);
+		VF.setDisplayedChild(VF.indexOfChild(findViewById(R.id.actionUI)));
 		
-        //if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED)
-        //    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 10001);
-		//Button button;
-		shootButton = findViewById(R.id.shootButton);
-		Button openInventoryButton = findViewById(R.id.openInventory);
-        // Устанавливаем действие по нажатию
-        openInventoryButton.setOnClickListener
-		(new OnClickListener() 
-		{
-				@Override
-				public void onClick(View v) 
-				{
-					switchPlayerInventory();
-					//if(shootButton.getVisibility()==View.VISIBLE)
-					
-					//else
-					//	shootButton.setVisibility(View.VISIBLE);
-				}
-			});
-			openInventoryButton.setEnabled(true);
 		
-		Button debugButton = findViewById(R.id.DEBUG);
-        // Устанавливаем действие по нажатию
-        debugButton.setOnClickListener
-		(new OnClickListener() 
-			{
-				@Override
-				public void onClick(View v) 
-				{
-					//switchPlayerInventory();
-					//if(shootButton.getVisibility()==View.VISIBLE)
-					game.getPlayer().setShip();
-					//else
-					//	shootButton.setVisibility(View.VISIBLE);
-				}
-			});
-        // Устанавливаем действие по нажатию
-        
-		shootButton.setOnTouchListener
-		(new OnTouchListener(){
-			@Override
-			public boolean onTouch(View view,MotionEvent e)
-			{
-				switch(e.getAction())
-				{
-					case MotionEvent.ACTION_DOWN:
-						game.getPlayer().shootFlag=true;
-						
-						break;
-						case MotionEvent.ACTION_UP:
-						game.getPlayer().shootFlag=false;
-						break;
-				}
-				return true;
-			}
-		});
+		uiAction.init(this,VF);
+		uiInteraction.init(this,VF,null);
 			
+		
+		
+		
+		
+		findViewById(R.id.menuUILinearLayout).setBackground(new BitmapDrawable(this.getResources(),game.uiAsset.uiBgBlur));
+		
+		final FrameLayout menuUI=findViewById(R.id.menuUI);
+		final MainActivity MA=this;
+		
+		Button menuButton=findViewById(R.id.Menu);
+		menuButton.setOnClickListener
+		
+		(new OnClickListener() 
+			{
+				@Override
+				public void onClick(View v) 
+				{
+					final int a=VF.getDisplayedChild();
+					uiMenu.init(MA,VF,a);
+					//uiMenu.init(this,VF,a);
+					VF.setDisplayedChild(VF.indexOfChild(menuUI));
+					game.setPause(true);
+					v.setVisibility(View.GONE);
+				}
+			});
     }
-	public void switchPlayerInventory()
+	
+	
+	
+	
+	/*public void switchPlayerInventory()
 	{
 		if(!inventoryOpened)
 		{
@@ -150,9 +133,9 @@ public class MainActivity extends Activity {
 			playerScrollView.setVisibility(View.VISIBLE);
 			if(game.getObjectUIInventory().getTarget()!=null)
 			objectScrollView.setVisibility(View.VISIBLE);
-			game.command=game.commandInteraction;
+			
 			inventoryOpened=true;
-			shootButton.setVisibility(View.GONE);
+			
 			game.getPlayer().setDrawInteractionCicle(true);
 		}
 		else
@@ -162,13 +145,13 @@ public class MainActivity extends Activity {
 			playerScrollView.setVisibility(View.GONE);	
 			if(game.getObjectUIInventory().getTarget()!=null)
 			objectScrollView.setVisibility(View.GONE);
-			game.command=game.commandMoving;
+			
 			inventoryOpened=false;
-			shootButton.setVisibility(View.VISIBLE);
+			
 			game.getPlayer().setDrawInteractionCicle(false);
 		}
-	}
-	public void closeObjectInventory()
+	}*/
+	/*public void closeObjectInventory()
 	{
 		runOnUiThread(new Runnable() {  
 				@Override
@@ -183,7 +166,7 @@ public class MainActivity extends Activity {
 				public void run() {
 		objectScrollView.setVisibility(View.VISIBLE);
 		}});
-	}
+	}*/
 	public void initInvenories()
 	{
 		runOnUiThread(new Runnable() {  
@@ -193,5 +176,13 @@ public class MainActivity extends Activity {
 
 					game.getObjectUIInventory().init();
 				}});
+	}
+	public ViewFlipper getViewFlipper()
+	{
+		return VF;
+	}
+	public Game getGame()
+	{
+		return game;
 	}
 }

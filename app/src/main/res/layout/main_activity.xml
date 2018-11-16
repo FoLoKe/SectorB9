@@ -8,142 +8,43 @@
         android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/Game"/>
-<LinearLayout
-	android:layout_gravity="top"
-	android:orientation="horizontal"
-	
-	android:layout_width="wrap_content"
-	android:layout_height="wrap_content">
-	
-	<RelativeLayout
-		android:layout_width="wrap_content"
-		android:layout_height="match_parent" 
-		
-		android:layout_margin="5dp">
-		
-		
-		<ScrollView
-			android:id="@+id/PlayerScrollView"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:focusableInTouchMode="true"
-			android:background="#ff00ff00">
-			
-		<TableLayout
-			android:id="@+id/PlayerTableLayout"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:background="@drawable/background_ui"
-			android:layout_margin="10dp">
-			
-		
-
-			<TableRow
-				android:id="@+id/tablerow1"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content" 
-				android:layout_margin="100dp">
-
-				<TextView
-					android:id="@+id/textView1"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					
-					android:text="Item" 
-                />
-
-				<TextView
-					android:id="@+id/textView2"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-
-					android:text="Count"
-				/>
-			</TableRow>
-		</TableLayout>
-			,</ScrollView>
-			
-		<ScrollView
-			android:id="@+id/ObjectScrollView"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:background="#ffff00"
-			android:layout_alignParentRight="true"
-			
-			android:focusableInTouchMode="true">
-
-			<TableLayout
-				android:id="@+id/ObjectTableLayout"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:background="@drawable/background_ui"
-				
-				android:layout_margin="10dp">
-
-
-
-				<TableRow
-					android:id="@+id/tablerow1"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content" 
-					android:layout_margin="100dp">
-
-					<TextView
-						android:id="@+id/textView1"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-
-						android:text="Item" 
-					/>
-
-					<TextView
-						android:id="@+id/textView2"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-
-						android:text="Count"
-					/>
-				</TableRow>
-			</TableLayout>
-			,</ScrollView>
-	</RelativeLayout>
-</LinearLayout>
-
-	<LinearLayout
-		android:layout_gravity="bottom"
-		android:orientation="horizontal"
-		android:gravity="center"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content">
 	<Button
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		
-		android:text="Inv"
-		android:id="@+id/openInventory"
+		android:textColor="#ffffff"
+		android:text="Menu"
+		android:id="@+id/Menu"
+		android:layout_gravity="top|right"
 	/>
-	</LinearLayout>
-
-	<LinearLayout
-		android:layout_gravity="left"
-		android:orientation="vertical"
-		android:gravity="bottom"
-		android:layout_width="wrap_content"
-		android:layout_height="match_parent">
-		<Button
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			
-			android:text="Fire"
-			android:id="@+id/shootButton"
-		/>
-		<Button
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			
-			android:text="DEBUG"
-			android:id="@+id/DEBUG"
-			/>
-	</LinearLayout>
-
+<ViewFlipper
+	android:id="@+id/UIFlipper"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:clickable="false" 
+	android:focusable="false"
+	>
+	
+<include layout="@layout/object_inventory"
+	android:id="@+id/inventoryUI"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"/>
+<include layout="@layout/interaction_ui"
+	android:id="@+id/interactionUI"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"/>
+<include layout="@layout/action_ui"
+	android:id="@+id/actionUI"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:clickable="false" 
+	android:focusable="false"/>
+<include layout="@layout/menu_ui"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:layout_gravity="center"/>
+<include layout="@layout/object_options_ui"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:layout_gravity="center"/>
+</ViewFlipper>
 </FrameLayout>

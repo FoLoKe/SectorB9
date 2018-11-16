@@ -28,7 +28,7 @@ public class Ship
 		this.holder=holder;
 		this.pointOfengine=new PointF(0,0);
 		this.pointOfShooting=new PointF(0,shipImage.getHeight()/2);
-		this.engineSmoke=new ParticleSystem(holder.getGame().shipAsset.yellow_pixel,holder.getWorldLocation().x,holder.getWorldLocation().y,1f,new PointF(0.2f,0),holder.getGame());
+		this.engineSmoke=new ParticleSystem(holder.getGame().effAsset.yellow_pixel,holder.getWorldLocation().x,holder.getWorldLocation().y,1f,new PointF(0.2f,0),holder.getGame());
 		engineSmoke.setAccuracy(new Point(16,1));
 		pointOfEngineSmoke=new PointF(0,shipImage.getHeight()/2);
 		//calculateCollisionObject();
@@ -63,17 +63,25 @@ public class Ship
 												,(float)(pointOfEngineSmoke.x * Math.sin(mathRotation) + pointOfEngineSmoke.y * Math.cos(mathRotation)));
 			//tpointOfShooting.set(pointOfEngineSmoke.x+tpointOfShooting.x,pointOfEngineSmoke.x+tpointOfShooting.y);
 			engineSmoke.draw(holder.getCenterX()+tpointOfEngineSmoke.x,holder.getCenterY()+tpointOfEngineSmoke.y,holder.getWorldRotation(), (pointOfEngineSmoke));
-			canvas.drawCircle(holder.getCenterX()+tpointOfEngineSmoke.x,holder.getCenterY()+tpointOfEngineSmoke.y,1,tpaint);
+			//canvas.drawCircle(holder.getCenterX()+tpointOfEngineSmoke.x,holder.getCenterY()+tpointOfEngineSmoke.y,1,tpaint);
 			}
 		engineSmoke.render(canvas);
 		
+		if(holder.game.drawDebugInf)
+		for(Line2D l: collisionlines)
+		{
+			l.render(canvas);
 		}
+		
+	}
+	
 	public void tick()
 	{
 		for(TurretSystem t:turrets)
 			t.tick();
 		engineSmoke.tick();
 	}
+	
 	public void setPointOfEngine(PointF point)
 	{
 		pointOfengine=point;

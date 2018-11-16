@@ -11,6 +11,7 @@ public class SmallCargoContainer extends CargoContainer
 		super(x,y,rotation,asset.smallCargoContainer,name,4,game);
 		this.renderable=true;
 		this.opened=true;
+		energy=true;
 	}
 	
 	@Override

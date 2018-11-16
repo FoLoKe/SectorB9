@@ -9,7 +9,7 @@ package com.sb9.foloke.sectorb9.game.entities;
 	import static java.lang.Math.sin;
 	import android.graphics.*;
 
-	import com.sb9.foloke.sectorb9.game.Assets.ImageAssets;
+	import com.sb9.foloke.sectorb9.game.Assets.ShipAsset;
 	import com.sb9.foloke.sectorb9.game.UI.Text;
 import com.sb9.foloke.sectorb9.game.display.*;
 import com.sb9.foloke.sectorb9.game.UI.*;
@@ -23,7 +23,7 @@ public class Asteroid extends DynamicEntity {
 		private Text textdXdY;
 		private float acceleration;
 		
-		public Asteroid(float x, float y,float rotation, ImageAssets asset,String name,Game game)
+		public Asteroid(float x, float y,float rotation, ShipAsset asset,String name,Game game)
 		{
 			super(x,y,rotation,asset.asteroid_1,name,game);
 
