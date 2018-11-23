@@ -40,6 +40,7 @@ public class UIaction
 					MA.getGame().command=MA.getGame().commandInteraction;
 					VF.setDisplayedChild(VF.indexOfChild(MA.findViewById(R.id.interactionUI)));
 					//	shootButton.setVisibility(View.VISIBLE);
+					MA.uiInteraction.init(MA,VF,null);
 				}
 			});
         // Устанавливаем действие по нажатию

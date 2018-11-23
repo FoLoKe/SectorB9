@@ -55,15 +55,13 @@ public class MainActivity extends Activity {
 	public boolean inventoryOpened=false;
 	
 	private BitmapFactory.Options options;
-	//private InventoryAsset invAsset;
-	//private ScrollView playerScrollView;
 	private ViewFlipper VF;
-	//private ScrollView objectScrollView;
+	private BuildUI buildUI=new BuildUI();
 	
 	private UImenu uiMenu=new UImenu();
 	public UIinteraction uiInteraction=new UIinteraction();
 	private UIaction uiAction =new UIaction();
-	
+	public HelpUI helpui=new HelpUI();
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
@@ -73,15 +71,7 @@ public class MainActivity extends Activity {
         game=findViewById(R.id.Game);
 		options=new BitmapFactory.Options();
         options.inScaled=false;
-		//findViewById(R.id.UIFlipper).setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
-		//findViewById(R.id.UIFlipper).setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-		//ActionBar actionBar = getActionBar();
-		//actionBar.hide();
-		//playerScrollView=findViewById(R.id.PlayerScrollView);
-		//playerScrollView.setVisibility(View.GONE);
-		//objectScrollView=findViewById(R.id.ObjectScrollView);
-		//objectScrollView.setVisibility(View.GONE);
-		
+		helpui.init(this,VF,1);
 		TableLayout playerTable=findViewById(R.id.PlayerTableLayout);
 		TableLayout objectTable=findViewById(R.id.ObjectTableLayout);
 
@@ -90,14 +80,10 @@ public class MainActivity extends Activity {
 		VF = findViewById(R.id.UIFlipper);
 		VF.setDisplayedChild(VF.indexOfChild(findViewById(R.id.actionUI)));
 		
-		
+		buildUI.init(this,VF);
 		uiAction.init(this,VF);
 		uiInteraction.init(this,VF,null);
 			
-		
-		
-		
-		
 		findViewById(R.id.menuUILinearLayout).setBackground(new BitmapDrawable(this.getResources(),game.uiAsset.uiBgBlur));
 		
 		final FrameLayout menuUI=findViewById(R.id.menuUI);
@@ -113,7 +99,6 @@ public class MainActivity extends Activity {
 				{
 					final int a=VF.getDisplayedChild();
 					uiMenu.init(MA,VF,a);
-					//uiMenu.init(this,VF,a);
 					VF.setDisplayedChild(VF.indexOfChild(menuUI));
 					game.setPause(true);
 					v.setVisibility(View.GONE);
@@ -121,52 +106,6 @@ public class MainActivity extends Activity {
 			});
     }
 	
-	
-	
-	
-	/*public void switchPlayerInventory()
-	{
-		if(!inventoryOpened)
-		{
-			//mapPanel.openNewInventory(mapPanel.getPlayerUIInventory(),mapPanel.getplayer().getInventory());
-			//playerScrollView.setActivated(true);
-			playerScrollView.setVisibility(View.VISIBLE);
-			if(game.getObjectUIInventory().getTarget()!=null)
-			objectScrollView.setVisibility(View.VISIBLE);
-			
-			inventoryOpened=true;
-			
-			game.getPlayer().setDrawInteractionCicle(true);
-		}
-		else
-		{
-			//mapPanel.closeInventory(mapPanel.getPlayerUIInventory());
-			//playerScrollView.setActivated(false);
-			playerScrollView.setVisibility(View.GONE);	
-			if(game.getObjectUIInventory().getTarget()!=null)
-			objectScrollView.setVisibility(View.GONE);
-			
-			inventoryOpened=false;
-			
-			game.getPlayer().setDrawInteractionCicle(false);
-		}
-	}*/
-	/*public void closeObjectInventory()
-	{
-		runOnUiThread(new Runnable() {  
-				@Override
-				public void run() {
-		objectScrollView.setVisibility(View.GONE);}});
-		
-	}
-	public void openObjectInventory()
-	{
-		runOnUiThread(new Runnable() {  
-				@Override
-				public void run() {
-		objectScrollView.setVisibility(View.VISIBLE);
-		}});
-	}*/
 	public void initInvenories()
 	{
 		runOnUiThread(new Runnable() {  

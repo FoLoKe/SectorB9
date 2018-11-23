@@ -45,7 +45,6 @@ public abstract class Entity {
 		this.inventory=new HashMap<Integer,Integer>();
 		this.rotation=rotation;
 		this.uIhp=new UIProgressBar(this,50,8,-25,-20,game.uiAsset.hpBackground,game.uiAsset.hpLine,game.uiAsset.progressBarBorder,getHp());
-	
     }
     abstract public void render(Canvas canvas);
     abstract public void tick();
@@ -68,7 +67,7 @@ public abstract class Entity {
 
     public void drawDebugBox(Canvas canvas)
     {
-		if(!renderable||!game.drawDebugInf)
+		if(!renderable)
 			return;
         Paint temppaint=new Paint();
         temppaint.setColor(Color.rgb(0,255,0));

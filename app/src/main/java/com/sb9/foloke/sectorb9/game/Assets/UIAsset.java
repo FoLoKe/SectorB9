@@ -5,7 +5,7 @@ import android.graphics.Bitmap;
 public class UIAsset {
 
         public static Bitmap hpBackground,hpLine,stunBackground,stunLine,progressBarBorder,destroyedText,noEnergySign,
-		invFullSign,shootButton,uiBgBlur;
+		invFullSign,shootButton,uiBgBlur,turnedOffSign;
 		public static Bitmap indexedImages[]={hpBackground,hpLine,progressBarBorder,destroyedText};
         public static void init(Bitmap sheet)
         {
@@ -21,6 +21,7 @@ public class UIAsset {
 			invFullSign=Bitmap.createScaledBitmap(tsheet.crop(3,1),20,20,true);
 			shootButton=tsheet.crop(1,2);
 			uiBgBlur=tsheet.crop(2,2);
+			turnedOffSign=Bitmap.createScaledBitmap(tsheet.crop(4,0),20,20,true);
         }
 		public static Bitmap getByIndex(int index)
 		{

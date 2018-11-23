@@ -24,6 +24,18 @@ public class UImenu
 				}
 			});
 
+		Button openHelpButton=MA.findViewById(R.id.menu_uiOpenHelpButton);
+		openHelpButton.setOnClickListener
+		(new OnClickListener() 
+			{
+				@Override
+				public void onClick(View v) 
+				{
+					MA.helpui.init(MA,VF,view);
+					VF.setDisplayedChild(VF.indexOfChild(MA.findViewById(R.id.help_sectionUI)));
+				}
+			});
+			
 		Switch menuDebugSwitch = MA.findViewById(R.id.debug_switch);
 
 		menuDebugSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener()

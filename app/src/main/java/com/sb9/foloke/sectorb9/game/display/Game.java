@@ -38,6 +38,10 @@ import java.util.ArrayList;
 import com.sb9.foloke.sectorb9.*;
 import com.sb9.foloke.sectorb9.game.entities.Buildings.*;
 import android.os.*;
+import android.view.ScaleGestureDetector.*;
+import android.view.GestureDetector.*;
+import android.view.*;
+import com.sb9.foloke.sectorb9.game.dataSheets.*;
 //TODO: MAP BORDER AND PAUSE FIX ON MOVEMENT
 
 public class Game extends SurfaceView implements SurfaceHolder.Callback
@@ -50,14 +54,14 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
     //camera
     private Camera camera;
-
+	float lastFocusX,lastFocusY;
     //assets
     private BitmapFactory.Options options;
     public ShipAsset shipAsset;
 	public WeaponsAsset weaponAsset;
     public UIAsset uiAsset;
-	private InventoryAsset invAsset;
-	public ObjectsAsset objAsset;
+	//public InventoryAsset invAsset;
+	
 	public EffectsAsset effAsset;
 	
 	private UIcustomImage destroyedImage;
@@ -66,10 +70,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
     private Player player;
     private Cursor cursor;
 	
-	//objects arrays
-	
-	//private Asteroid asteroids[];
-	//private StaticEntity staticEntities[];
+	//objects manager
 	protected EntityManager entityManager;
 	
     //UI
@@ -97,7 +98,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 	public UICommInterface exchangeInteface;
 	UIProgressBar uIhp;
 	objectOptionsUI objOptionsUI=new objectOptionsUI();
-	
+	public BuildingsDataSheet buildingsData;
+	public ItemsDataSheet itemsData;
 	
 	//debug 
 	String exchangeFrom;
@@ -106,26 +108,35 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 	//private
 	public Text debugText;
 	public Text errorText;
-	public Context mAcontext;
+	public MainActivity mAcontext;
 	private StaticEntity pressedObject;
 	
     public Game(Context context, AttributeSet attributeSet)
     {
 		
         super(context, attributeSet);
-		this.mAcontext=context;
+		DisplayMetrics displayMetrics = new DisplayMetrics();
+		((Activity) getContext()).getWindowManager()
+			.getDefaultDisplay()
+			.getMetrics(displayMetrics);
+		canvasH = displayMetrics.heightPixels;
+		canvasW = displayMetrics.widthPixels;
+		this.mAcontext=(MainActivity)context;
 		this.entityManager=new EntityManager(this);
         options=new BitmapFactory.Options();
         options.inScaled=false;
 		Random rand=new Random();
 		
+		
         background=Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.galactic_outflow,options));
         shipAsset.init(Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ships_sheet,options)));
-		invAsset.init(Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ui_inventory_sheet,options)));
+		//invAsset.init(Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ui_inventory_sheet,options)));
         uiAsset.init(Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ui_asset_sheet,options)));
-		objAsset.init(Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.objects_sheet,options)));
+		
 		weaponAsset.init(Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ships_sheet,options)));
 		effAsset.init(Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ships_sheet,options)));
+		buildingsData=new BuildingsDataSheet(this);
+		itemsData=new ItemsDataSheet(this);
 		
 		exchangeInteface.init(this);
         screenPointOfTouch=new PointF(0,0);
@@ -134,26 +145,26 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         player=new Player(900,900,0,shipAsset,uiAsset,this,"player");
 		
 		
-		entityManager.addObject(new SmallCargoContainer(1000,900,10,objAsset,"debug cargo1",this));
-		entityManager.addObject(new Crusher(900,1000,rand.nextInt(180),objAsset,"debug crusher",this));
-		entityManager.addObject( new SolarPanel(850,900,rand.nextInt(180),objAsset,"debug solar",this));
+		entityManager.addObject(new SmallCargoContainer(1000,900,10,this));
+		entityManager.addObject(new Crusher(900,1000,rand.nextInt(180),this));
+		entityManager.addObject( new FuelGenerator(850,900,rand.nextInt(180),this));
 		
-		//WHY DO I NEED THIS IDK...
+		//for building and ship leading
         cursor=new Cursor(900,900,shipAsset,"cursor",this);
 		
 		for (int i=0;i<50;i++)
-		entityManager.addObject(new Asteroid(50*rand.nextInt(10)+25*rand.nextInt(20),100*rand.nextInt(10)+20*rand.nextInt(50),rand.nextInt(180),shipAsset,"asteroid_"+i,this));
-		canvasH=canvasW=100;
+		entityManager.addObject(new Asteroid(50*rand.nextInt(50)+25*rand.nextInt(20),100*rand.nextInt(20)+20*rand.nextInt(50),rand.nextInt(180),shipAsset,"asteroid_"+i,this));
+		
         textPointOfTouch=new Text(""+0+" "+0,500,400);
 		textScreenWH=new Text("",500,250);
 		debugText=new Text("",500,350);
 		debugExchange=new Text("",500,300);
 		errorText=new Text("",500,450);
 		textFPS=new Text("",500,500);
-		//Ca
+		textScreenWH.setString(canvasW+"x"+canvasH);
         camera=new Camera(0,0,scale,player);
 		
-		uIhp=new UIProgressBar(this,500,100,50,50,uiAsset.hpBackground,uiAsset.hpLine,uiAsset.progressBarBorder,(int)100);
+		uIhp=new UIProgressBar(this,canvasW/3,canvasH/20,50,50,uiAsset.hpBackground,uiAsset.hpLine,uiAsset.progressBarBorder,100);
         destroyedImage=new UIcustomImage(uiAsset,3);
 		getHolder().addCallback(this);
         mainThread= new MainThread(getHolder(),this);
@@ -222,9 +233,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 				}
 			}
         	camera.tick(scale,canvasW,canvasH);
-			textScreenWH.setString(canvasW+"x"+canvasH);
-			//objectInv.setTarget(player);
-			//objectInv.init();
 			
     }
     public void render(Canvas canvas)
@@ -232,13 +240,9 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 		if(!gamePause)
 		{
        		super.draw(canvas);
-       		canvasW=canvas.getWidth();
-        	canvasH=canvas.getHeight();
 			
 			camera.setScreenRect(canvasW,canvasH);
         	canvas.save();
-		
-        	//canvas.drawColor(Color.rgb(50,50,50));
 		
         	canvas.translate(-camera.getWorldLocation().x+canvas.getWidth()/2,-camera.getWorldLocation().y+canvas.getHeight()/2);
         	canvas.scale(camera.getScale(),camera.getScale(),camera.getWorldLocation().x,camera.getWorldLocation().y);
@@ -255,11 +259,19 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 			{
             	camera.render(canvas);
             	player.drawVelocity(canvas);
+				for(Entity e: entityManager.getArray())
+				{
+					e.drawDebugBox(canvas);
+				}
         	}
 			for(Entity e: entityManager.getArray())
 			{
 				e.render(canvas);
-				e.drawDebugBox(canvas);
+			}
+			
+			if(pressedObject!=null)
+			{pressedObject.calculateCollisionObject();
+				pressedObject.drawDebugBox(canvas);
 			}
         	canvas.restore();
 			//UI
@@ -273,10 +285,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 				textFPS.render(canvas);
 			}
 			uIhp.render(canvas);
-			if(pressedObject!=null)
-			{pressedObject.calculateCollisionObject();
-				pressedObject.drawDebugBox(canvas);
-				}
+			
 		
 		//TODO: make PLAYER DESTROYED CLOSE INVENTORY
 		if(playerDestroyed)
@@ -284,20 +293,42 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 		}
 		
     }
+	
+	
 
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
+		private SimpleOnScaleGestureListener gestureListener = new SimpleOnScaleGestureListener() {
+			@Override
+			public boolean onScaleBegin(ScaleGestureDetector detector) {
+				return true;
+			}
+
+			@Override
+			public boolean onScale(ScaleGestureDetector detector) {
+				scale *= detector.getScaleFactor();
+				// Don't let the object get too small or too large.
+				scale = Math.max(1f, Math.min(scale, 5.0f));
+				return true;
+			}
+			
+			
+		};
+
+		private ScaleGestureDetector gestureDetector = new ScaleGestureDetector(getContext(), gestureListener);
+  		@Override
+   		public boolean onTouchEvent(MotionEvent event) {
 		if(!gamePause)
 		{
-        float x=event.getX(),y=event.getY();
-        screenPointOfTouch.set(x,y);
-        pointOfTouch.set((x-canvasW/2)/camera.getScale()+player.getCenterX(),(y-canvasH/2)/camera.getScale()+player.getCenterY());
+			gestureDetector.onTouchEvent(event);
+			//TODO: if gesture in progress ignore input
+			if(true)
+			{
+      		  float x=event.getX(),y=event.getY();
+      		  screenPointOfTouch.set(x,y);
+   		      pointOfTouch.set((x-canvasW/2)/camera.getScale()+player.getCenterX(),(y-canvasH/2)/camera.getScale()+player.getCenterY());
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
 					
                     pointOfTouch.set((x-canvasW/2)/camera.getScale()+player.getCenterX(),(y-canvasH/2)/camera.getScale()+player.getCenterY());
-					
-                 //   textPointOfTouch.setString(pointOfTouch.x+" "+pointOfTouch.y);
 					cursor.setDrawable(true);
 					
 					switch (command)
@@ -308,7 +339,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 					case commandInteraction: 
 						break;
 					}
-					//openNewInventory(playerInventory,player.getInventory());
+			
                     break;
                 case MotionEvent.ACTION_MOVE:
                     pointOfTouch.set((x-canvasW/2)/camera.getScale()+player.getCenterX(),(y-canvasH/2)/camera.getScale()+player.getCenterY());
@@ -316,10 +347,11 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
                     break;
                     case MotionEvent.ACTION_UP:
 						
-						cursor.setDrawable(false);
+						
 					switch (command)
 					{
 						case commandMoving:
+							cursor.setDrawable(false);
                         player.setMovable(false);
 						break;
 						case commandInteraction:
@@ -329,36 +361,26 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 								{
 									if(Math.sqrt(
 									(e.getCenterX()-player.getCenterX())*(e.getCenterX()-player.getCenterX())
-												 +(e.getCenterY()-player.getCenterY())*(e.getCenterY()-player.getCenterY()))-32<player.getRadius())
-												 
-									{
-										//Object g=e.getClass().getClasses();
+												 +(e.getCenterY()-player.getCenterY())*(e.getCenterY()-player.getCenterY()))-32<player.getRadius())											 
+									{								
 										if(e instanceof StaticEntity)
 										{
-											//objectInv.setVisability(false);
-											//
 											pressedObject=(StaticEntity)e;
-											((MainActivity)mAcontext).uiInteraction.init((MainActivity)mAcontext,((MainActivity)mAcontext).getViewFlipper(),pressedObject);
-											
-											
-											//((SolarPanel)e).onAndOff();
-											
+											mAcontext.uiInteraction.init(mAcontext,mAcontext.getViewFlipper(),pressedObject);
 										}
 									
-									}
-									
+									}							
 									textPointOfTouch.setString(Math.sqrt((e.getCenterX()-player.getCenterX())*(e.getCenterX()-player.getCenterX())
 																		 +(e.getCenterY()-player.getCenterY())*(e.getCenterY()-player.getCenterY()))+"");
 								}
 							}
 							break;
 						}
-						//closeInventory(playerInventory);
                     break;
-
                 default:
                     break;
-        }
+       			 }
+			}
 		}
                 return true;
     }
@@ -381,47 +403,35 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 		camera.setPointOfLook(player);
 		gamePause=false;
 	}
-	/*public void openNewInventory(UIinventory inventory,int items[][])
-	{
-		gamePause=true;
-		OpenInventory=true;
-		//inventory=null;
-		//inventory=new UIinventory(invAsset,items);
-		inventory.setVisability(true);
-		//return inventory;
-	}
-	public void closeInventory(UIinventory inventory)
-	{
-		inventory.setVisability(false);
-		gamePause=false;
-		OpenInventory=false;
-		//inventory=null;
-	}*/
+	
 	public Player getPlayer()
 	{
 		return player;
 	}
+	
 	public UIinventory getPlayerUIInventory()
 	{
 		return playerInv;
 	}
-	public void initInventoryUI(TableLayout playerTable,TableLayout objectTable,Context context)
+	
+	public void initInventoryUI(TableLayout playerTable,TableLayout objectTable,MainActivity context)
 	{
-		//exchangeInteface=exchangeInteface;
-		objectInv=new UIinventory(invAsset,objectTable,context,null,exchangeInteface);
-		playerInv=new UIinventory(invAsset,playerTable,context,player,exchangeInteface);
+		objectInv=new UIinventory(objectTable,context,null,exchangeInteface);
+		playerInv=new UIinventory(playerTable,context,player,exchangeInteface);
 	}
+	
 	public UIinventory getObjectUIInventory()
 	{
 		return objectInv;
 	}
+	
 	public EntityManager getEntityManager()
 	{
 		return entityManager;
 	}
+	
 	public void initObjInventory()
 	{
-		
 		objectInv.init();
 	}
 	
@@ -429,8 +439,19 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 	{
 		gamePause=state;
 	}
+	
 	public objectOptionsUI getObjOptions()
 	{
 		return objOptionsUI;
+	}
+	
+	public void nullPressedObject()
+	{
+		pressedObject=null;
+	}
+	
+	public PointF getTouchPoint()
+	{
+		return pointOfTouch;
 	}
 }

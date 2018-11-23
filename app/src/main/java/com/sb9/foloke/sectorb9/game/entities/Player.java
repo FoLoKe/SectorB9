@@ -28,7 +28,7 @@ public class Player extends DynamicEntity
 	public boolean shootFlag;
 	private boolean drawInteractionCitcle=false;
 	private Ship ship;
-	private int interactionRadius=100;
+	private int interactionRadius=150;
     public Player(float x, float y,float rotation, ShipAsset asset, UIAsset uiasset, Game game,String name)
     {
         super(x,y,rotation,asset.player_mk1,name,game);		
@@ -38,7 +38,7 @@ public class Player extends DynamicEntity
 		this.renderable=true;
 		this.stun=new UIProgressBar(this,50,8,-25,+image.getHeight(),uiasset.stunBackground,uiasset.stunLine,uiasset.progressBarBorder,getTimer());
 		inventoryMaxCapacity=10;
-		for (int i=1;i<4;i++)
+		for (int i=1;i<7;i++)
 			inventory.put(i,10);
 		calculateCollisionObject();
     }
@@ -115,7 +115,7 @@ public class Player extends DynamicEntity
 		
 		if(getGame().command==getGame().commandInteraction)
 			drawInteractionCircle(canvas);
-			
+		
 		//renew acceleration after drawing in debug
 		acceleration=0;
     }

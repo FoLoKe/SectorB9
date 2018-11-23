@@ -47,20 +47,20 @@ public class UIinventory
 	//private  inv_items[][]; //index,count
 	private boolean visible;
 	private TableLayout table;
-	final private Context context;
+	final private MainActivity context;
 	//private int capacity;
 	//private HashMap<Integer,Integer> inventoryItems;
 	private Entity target;
-	private InventoryAsset inventoryAsset;
+	
 	private UICommInterface exchangeInterface;
 
-	public UIinventory(InventoryAsset inventoryAsset,TableLayout table,final Context context,Entity target,UICommInterface exchangeInterface)
+	public UIinventory(TableLayout table,final MainActivity context,Entity target,UICommInterface exchangeInterface)
 	{
 		this.target=target;
 		//this.capacity=target.getInventoryMaxCapacity();
 		//table.setStretchAllColumns(true);this.inventoryItems=inv_items;
 		this.exchangeInterface=exchangeInterface;
-		this.inventoryAsset=inventoryAsset;
+		
 		this.table=table;
 		
 		this.context=context;
@@ -107,21 +107,18 @@ public class UIinventory
 			tableRowParams.setMargins(leftMargin, topMargin, rightMargin, bottomMargin);
 			row.setLayoutParams(tableRowParams);
 			ImageView sprite=new ImageView(context);
-			//ImageButton button1=new ImageButton(context);
-			TextView testText=new TextView(context);
+			
 			TextView testText2=new TextView(context);
 			TableRow.LayoutParams trp=new TableRow.LayoutParams();
 			trp.setMargins(10,10,10,10);
 			trp.height=100;
-			testText.setTextColor(Color.parseColor("#ffffffff"));
 			testText2.setTextColor(Color.parseColor("#ffffffff"));
 			//button1.setLayoutParams(trp);
-			testText.setLayoutParams(trp);
-			testText.setText(""+key);
+			
 			testText2.setText(""+value);
 			testText2.setLayoutParams(trp);
 			BitmapDrawable bdrawable;
-				bdrawable = new BitmapDrawable(context.getResources(),inventoryAsset.getImageById(key));
+				bdrawable = new BitmapDrawable(context.getResources(),context.getGame().itemsData.findById(key).image);
 			
 			sprite.setImageDrawable(bdrawable);
 			final int itemId=key;
@@ -156,7 +153,7 @@ public class UIinventory
 			row.setId(key);
 			
 			row.addView(sprite);
-			row.addView(testText);
+			
 			row.addView(testText2);
 			table.addView(row);
 		}
@@ -182,7 +179,7 @@ public class UIinventory
 		
 			BitmapDrawable bdrawable;
 			
-			bdrawable = new BitmapDrawable(context.getResources(),inventoryAsset.inv_empty);
+			bdrawable = new BitmapDrawable(context.getResources(),context.getGame().itemsData.findById(0).image);
 			sprite.setImageDrawable(bdrawable);
 			
 			row.setOnClickListener

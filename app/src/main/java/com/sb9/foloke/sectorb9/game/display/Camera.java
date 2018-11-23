@@ -15,6 +15,7 @@ public class Camera {
     private float screenXcenter,screenYcenter;
     private float scale;
 	private RectF screenRect;
+	private float canvasW,canvasH;
     public Camera(float x,float y,float scale,Entity target)
     {
         this.pointOfLook=target;
@@ -33,12 +34,16 @@ public class Camera {
         this.location.y= ((Player) pointOfLook).getCenterY();
 		if((this.location.y-screenH/(2*scale))<0)
 			this.location.y=screenH/(2*scale);
+			
+		
     }
 	
 	public void render(Canvas canvas)
 	{
 		if(pointOfLook.getGame().drawDebugInf)
 		{
+			if(pointOfLook.getGame().drawDebugInf)
+				screenRect.set(pointOfLook.getCenterX()-canvasW/(2*scale)+10,pointOfLook.getCenterY()-canvasH/(2*scale)+10,pointOfLook.getCenterX()+canvasW/(2*scale)-10,pointOfLook.getCenterY()+canvasH/(2*scale)-10);
 			Paint tPaint=new Paint();
 			tPaint.setStyle(Paint.Style.STROKE);
 			tPaint.setColor(Color.rgb(0,255,0));
@@ -90,9 +95,8 @@ public class Camera {
     }
 	public void setScreenRect(float screenW,float screenH)
 	{
-		if(pointOfLook.getGame().drawDebugInf)
-			screenRect.set(pointOfLook.getCenterX()-screenW/(2*scale)+10,pointOfLook.getCenterY()-screenH/(2*scale)+10,pointOfLook.getCenterX()+screenW/(2*scale)-10,pointOfLook.getCenterY()+screenH/(2*scale)-10);
-		else
+		canvasH=screenH;
+		canvasW=screenW;
 			screenRect.set(pointOfLook.getCenterX()-screenW/(2*scale),pointOfLook.getCenterY()-screenH/(2*scale),pointOfLook.getCenterX()+screenW/(2*scale),pointOfLook.getCenterY()+screenH/(2*scale));
 	}
 	public RectF getScreenRect()

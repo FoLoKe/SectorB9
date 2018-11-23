@@ -25,6 +25,10 @@
 		/>
 	
 	</LinearLayout>
+	<LinearLayout
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="top|center">
 	<Button
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
@@ -34,4 +38,14 @@
 
 		android:layout_gravity="top|center"
 	/>
+	<Button
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:textColor="#ffffff"
+		android:text="BuildMode"
+		android:id="@+id/openBuildUI"
+
+		android:layout_gravity="top|center"
+	/>
+	</LinearLayout>
 </FrameLayout>

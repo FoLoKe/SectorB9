@@ -8,6 +8,7 @@
         android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/Game"/>
+
 	<Button
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
@@ -32,6 +33,10 @@
 	android:id="@+id/interactionUI"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"/>
+<include layout="@layout/build_ui"
+		android:id="@+id/buildUI"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"/>
 <include layout="@layout/action_ui"
 	android:id="@+id/actionUI"
 	android:layout_width="match_parent"
@@ -43,6 +48,10 @@
 	android:layout_height="match_parent"
 	android:layout_gravity="center"/>
 <include layout="@layout/object_options_ui"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:layout_gravity="center"/>
+<include layout="@layout/help_section"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	android:layout_gravity="center"/>

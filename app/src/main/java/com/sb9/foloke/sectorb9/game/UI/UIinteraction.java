@@ -13,7 +13,8 @@ public class UIinteraction
 	{
 		Button openInventoryButton = MA.findViewById(R.id.openInventory);
 		Button openInteraction=MA.findViewById(R.id.openInteraction);
-		
+		openInventoryButton.setVisibility(View.GONE);
+		openInteraction.setVisibility(View.GONE);
 		if(target!=null)
 		{
 			if (target.getOpened())
@@ -61,9 +62,26 @@ public class UIinteraction
 				@Override
 				public void onClick(View v) 
 				{
+					MA.getGame().nullPressedObject();
 					MA.getGame().command=MA.getGame().commandMoving;
 					VF.setDisplayedChild(VF.indexOfChild(MA.findViewById(R.id.actionUI)));
 					//MA.switchPlayerInventory();
+					
+				}
+			});
+			
+		Button buildButton = MA.findViewById(R.id.openBuildUI);
+		buildButton.setOnClickListener
+		(new OnClickListener() 
+			{
+				@Override
+				public void onClick(View v) 
+				{
+					MA.getGame().nullPressedObject();
+					
+					VF.setDisplayedChild(VF.indexOfChild(MA.findViewById(R.id.buildUI)));
+					//MA.switchPlayerInventory();
+
 				}
 			});
 	}

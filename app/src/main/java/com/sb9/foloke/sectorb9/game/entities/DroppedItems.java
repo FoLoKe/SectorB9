@@ -7,13 +7,14 @@ import android.content.*;
 
 public class DroppedItems extends Entity
 {
+	private final static int ID=0;
 	float x,y;
 	//Game game;
 	//protected HashMap<Integer,Integer> inventory;
 	public DroppedItems(float x,float y,Map<Integer,Integer> inventory,Game game)
 	{
 		
-		super(x,y,((new Random()).nextInt(180)),game.objAsset.asteroidDust_1,"g",game);
+		super(x,y,((new Random()).nextInt(180)),game.buildingsData.findById(ID).image,"g",game);
 		this.x=x;
 		this.y=y;
 		this.inventoryMaxCapacity=inventory.size();

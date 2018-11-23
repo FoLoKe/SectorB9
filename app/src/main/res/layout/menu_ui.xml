@@ -47,7 +47,16 @@
 			android:textColor="#ffffff"
             android:text="test"
             android:textOff="off"
-            android:textOn="on" />
+            android:textOn="on" 
+			/>
+		<Button
+			android:id="@+id/menu_uiOpenHelpButton"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Help"
+			android:textColor="#ffffff"
+			android:layout_gravity="center"
+			/>
 
 	</LinearLayout>
 </FrameLayout>
