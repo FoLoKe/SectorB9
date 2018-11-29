@@ -5,16 +5,26 @@ import android.view.View.*;
 import android.view.*;
 //import java.lang.annotation.*;
 import com.sb9.foloke.sectorb9.game.entities.*;
+import android.graphics.*;
+import com.sb9.foloke.sectorb9.game.entities.Buildings.*;
 //mport java.lang.annotation.*;
 
 public class UIinteraction
 {
 	public void init(final MainActivity MA,final ViewFlipper VF,final StaticEntity target)
 	{
-		Button openInventoryButton = MA.findViewById(R.id.openInventory);
-		Button openInteraction=MA.findViewById(R.id.openInteraction);
+		final ViewFlipper IVF=MA.findViewById(R.id.interaction_uiViewFlipper);
+		IVF.setDisplayedChild(0);
+		Button closeButton = MA.findViewById(R.id.closeInteraction);
+		final Button openInventoryButton = MA.findViewById(R.id.openInventory);
+		final Button openInteraction=MA.findViewById(R.id.openInteraction);
+		final Button openProduction=MA.findViewById(R.id.openProduction);
+		openInventoryButton.setBackgroundColor(Color.BLACK);
+		openInteraction.setBackgroundColor(Color.BLACK);
+		openProduction.setBackgroundColor(Color.BLACK);
 		openInventoryButton.setVisibility(View.GONE);
 		openInteraction.setVisibility(View.GONE);
+		openProduction.setVisibility(View.GONE);
 		if(target!=null)
 		{
 			if (target.getOpened())
@@ -29,7 +39,10 @@ public class UIinteraction
 						public void onClick(View v) 
 						{
 							//MA.switchPlayerInventory();
-							VF.setDisplayedChild(VF.indexOfChild(MA.findViewById(R.id.inventoryUI)));
+							openInteraction.setBackgroundColor(Color.BLACK);
+							openProduction.setBackgroundColor(Color.BLACK);
+							v.setBackgroundColor(Color.parseColor("#55ffffff"));
+							IVF.setDisplayedChild(IVF.indexOfChild(MA.findViewById(R.id.inventoryUI)));
 						}
 					});
 			}
@@ -45,8 +58,11 @@ public class UIinteraction
 					@Override
 					public void onClick(View v)
 					{
-						target.getGame().getObjOptions().init(target,VF,MA);
-					VF.setDisplayedChild(VF.indexOfChild(MA.findViewById(R.id.objectOptionsUI)));
+						openProduction.setBackgroundColor(Color.BLACK);
+						openInventoryButton.setBackgroundColor(Color.BLACK);
+					v.setBackgroundColor(Color.parseColor("#55ffffff"));
+					target.getGame().getObjOptions().init(target,IVF,MA);
+					IVF.setDisplayedChild(IVF.indexOfChild(MA.findViewById(R.id.obj_optionsUI)));
 					}
 				});
 			}
@@ -54,8 +70,32 @@ public class UIinteraction
 			{
 				openInteraction.setVisibility(View.GONE);
 			}
+			
+			if (target instanceof Crusher)
+			{
+				
+				MA.assemblerUIi.init(MA);
+				//MA.openObjectInventory();
+				openProduction.setVisibility(View.VISIBLE);
+      			openProduction.setOnClickListener(new OnClickListener() 
+					{
+						@Override
+						public void onClick(View v) 
+						{
+							//MA.switchPlayerInventory();
+							openInventoryButton.setBackgroundColor(Color.BLACK);
+							openInteraction.setBackgroundColor(Color.BLACK);
+							v.setBackgroundColor(Color.parseColor("#55ffffff"));
+							IVF.setDisplayedChild(IVF.indexOfChild(MA.findViewById(R.id.assemblerUI)));
+						}
+					});
+			}
+			else
+			{
+				openInventoryButton.setVisibility(View.GONE);
+			}
 		}
-		Button closeButton = MA.findViewById(R.id.closeInteraction);
+		
 		closeButton.setOnClickListener
 		(new OnClickListener() 
 			{

@@ -18,21 +18,7 @@ public class objectOptionsUI
 		LinearLayout LL=(MA.findViewById(R.id.object_options_uiLinearLayout));
 		if(LL.getChildCount()>0)
 		LL.removeAllViews();
-		Button closeMenuButton=MA.findViewById(R.id.closeObjectOptions);
-		//final ViewFlipper VF=vf;
-		closeMenuButton.setOnClickListener(new OnClickListener() 
-			{
-				@Override
-				public void onClick(View v) 
-				{
-					//switchPlayerInventory();
-					//if(shootButton.getVisibility()==View.VISIBLE)
-					VF.setDisplayedChild(VF.indexOfChild(VF.findViewById(R.id.interactionUI)));
-					
-					//else
-					//	shootButton.setVisibility(View.VISIBLE);
-				}
-			});
+		
 		//this.target=target;
 		LinearLayout LR=VF.findViewById(R.id.object_options_uiLinearLayout);
 		LR.setBackground(new BitmapDrawable(MA.getResources(),target.getGame().uiAsset.uiBgBlur));

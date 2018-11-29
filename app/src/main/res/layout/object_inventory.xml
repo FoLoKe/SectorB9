@@ -4,14 +4,7 @@ xmlns:app="http://schemas.android.com/apk/res-auto"
 android:id="@+id/inventoryUI"
 android:layout_width="match_parent"
 android:layout_height="match_parent">
-	<Button
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_gravity="top|center"
-		android:id="@+id/closeInventoryButton"
-		android:text="Close"
-		android:textColor="#ffffff"
-	/>
+	
 <LinearLayout
 	android:layout_gravity="top"
 	android:orientation="horizontal"

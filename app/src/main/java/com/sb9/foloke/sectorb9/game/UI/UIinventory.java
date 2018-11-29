@@ -66,14 +66,14 @@ public class UIinventory
 		this.context=context;
 		ScrollView.LayoutParams lp= new ScrollView.LayoutParams(ScrollView.LayoutParams.WRAP_CONTENT,context.getResources().getDisplayMetrics().heightPixels);
 		lp.setMargins(10,10,10,10);
-		Button closeButton=((MainActivity)context).findViewById(R.id.closeInventoryButton);
+		/*Button closeButton=((MainActivity)context).findViewById(R.id.closeInventoryButton);
 		closeButton.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v)
 			{
 				((MainActivity)context).getViewFlipper().setDisplayedChild(((MainActivity)context).getViewFlipper().indexOfChild(((MainActivity)context).findViewById(R.id.interactionUI)));
 			}
-		});
+		});*/
 		if(target!=null)
 		init();
 	}

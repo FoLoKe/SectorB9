@@ -10,7 +10,7 @@ public class Timer
 	}
 	public boolean tick()
 	{
-		if (timerLenght>1)
+		if (timerLenght>0)
 		{
 		timerLenght--;
 		return false;

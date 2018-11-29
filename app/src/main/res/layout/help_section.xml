@@ -2,6 +2,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
 	android:id="@+id/help_sectionUI">
+	
 	<LinearLayout
 		android:id="@+id/helpSectionLinearLayout"
 	android:layout_width="fill_parent"

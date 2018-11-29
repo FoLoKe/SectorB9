@@ -164,6 +164,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 		textScreenWH.setString(canvasW+"x"+canvasH);
         camera=new Camera(0,0,scale,player);
 		
+		
 		uIhp=new UIProgressBar(this,canvasW/3,canvasH/20,50,50,uiAsset.hpBackground,uiAsset.hpLine,uiAsset.progressBarBorder,100);
         destroyedImage=new UIcustomImage(uiAsset,3);
 		getHolder().addCallback(this);
@@ -284,6 +285,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 				errorText.render(canvas);
 				textFPS.render(canvas);
 			}
+			if(command==commandMoving)
 			uIhp.render(canvas);
 			
 		

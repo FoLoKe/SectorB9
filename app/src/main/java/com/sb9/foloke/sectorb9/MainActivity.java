@@ -57,7 +57,7 @@ public class MainActivity extends Activity {
 	private BitmapFactory.Options options;
 	private ViewFlipper VF;
 	private BuildUI buildUI=new BuildUI();
-	
+	public assemblerUI assemblerUIi=new assemblerUI();
 	private UImenu uiMenu=new UImenu();
 	public UIinteraction uiInteraction=new UIinteraction();
 	private UIaction uiAction =new UIaction();

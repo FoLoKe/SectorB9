@@ -53,7 +53,9 @@ public class FuelGenerator extends Generator
 		super.tick();
 			prodTimer.tick();
 		}
+		float a =prodTimer.getTick();
 		if(prodTimer.getTick()<=0)
+		
 		if(inventory.size()>0)
 		{
 			

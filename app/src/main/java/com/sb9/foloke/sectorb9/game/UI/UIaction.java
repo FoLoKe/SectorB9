@@ -7,6 +7,7 @@ import android.graphics.drawable.*;
 
 public class UIaction
 {
+	
 	public void init(final MainActivity MA,final ViewFlipper VF)
 	{
 		Button debugButton = MA.findViewById(R.id.DEBUG);
@@ -37,8 +38,10 @@ public class UIaction
 					//if(shootButton.getVisibility()==View.VISIBLE)
 					//MA.getGame().getPlayer().setShip();
 					//else
+					
 					MA.getGame().command=MA.getGame().commandInteraction;
 					VF.setDisplayedChild(VF.indexOfChild(MA.findViewById(R.id.interactionUI)));
+					//VF.setDisplayedChild(VF.indexOfChild(MA.findViewById(R.id.assembler_uiFrameLayout)));
 					//	shootButton.setVisibility(View.VISIBLE);
 					MA.uiInteraction.init(MA,VF,null);
 				}

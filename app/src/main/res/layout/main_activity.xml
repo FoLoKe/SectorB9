@@ -25,10 +25,7 @@
 	android:focusable="false"
 	>
 	
-<include layout="@layout/object_inventory"
-	android:id="@+id/inventoryUI"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"/>
+
 <include layout="@layout/interaction_ui"
 	android:id="@+id/interactionUI"
 	android:layout_width="match_parent"
@@ -47,11 +44,12 @@
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	android:layout_gravity="center"/>
-<include layout="@layout/object_options_ui"
+
+<include layout="@layout/help_section"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	android:layout_gravity="center"/>
-<include layout="@layout/help_section"
+<include layout="@layout/assembler_ui"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	android:layout_gravity="center"/>

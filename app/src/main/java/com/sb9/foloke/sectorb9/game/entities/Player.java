@@ -38,7 +38,7 @@ public class Player extends DynamicEntity
 		this.renderable=true;
 		this.stun=new UIProgressBar(this,50,8,-25,+image.getHeight(),uiasset.stunBackground,uiasset.stunLine,uiasset.progressBarBorder,getTimer());
 		inventoryMaxCapacity=10;
-		for (int i=1;i<7;i++)
+		for (int i=1;i<20;i++)
 			inventory.put(i,10);
 		calculateCollisionObject();
     }
