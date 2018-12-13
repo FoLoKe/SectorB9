@@ -18,11 +18,13 @@ public class Particle
 	Random rnd=new Random();
 	PointF dXY;
 	
+	boolean randomDirection=true;
 	//Entity holder;
 	
 	
-	public Particle(Bitmap image,float x,float y,float lenght,PointF dXY,int rotation)
+	public Particle(Bitmap image,float x,float y,float lenght,PointF dXY,int rotation,boolean randomDirection)
 	{
+		this.randomDirection=randomDirection;
 		this.image=image;
 		this.x=x;
 		this.lifetime=lenght;
@@ -45,7 +47,7 @@ public class Particle
 			//%= lifetimer.gettick()
 			
 			tPaint.setAlpha((int)(255*lifetimer.getTick()/(60*(lifetime))));
-			canvas.drawBitmap(image,x,y,tPaint);
+			canvas.drawBitmap(image,x-image.getWidth()/2,y-image.getHeight()/2,tPaint);
 			canvas.restore();
 			//drawDebugBox(canvas);
 		}
@@ -93,7 +95,8 @@ public class Particle
 											 ,(float)(dXY.x * Math.sin(mathRotation) + (dXY.y) * Math.cos(mathRotation)));
 		//tfpointOfShooting.set(turret.getParent().getHolder().getCenterX()+tfpointOfShooting.x,turret.getParent().getHolder().getCenterY()+tfpointOfShooting.y);
 		
-		
+		if(randomDirection)
+		{
 		if(rnd.nextBoolean())
 			dx=tPoint.x;
 		else
@@ -102,6 +105,12 @@ public class Particle
 		dy=tPoint.y;
 		else
 			dy=-tPoint.y;
+		}
+		else
+		{
+			dx=tPoint.x;
+			dy=tPoint.y;
+		}
 		//this.dy = -(float) (dXY.x*Math.cos(mathRotation));
 		//this.dx = (float) (dXY.y*Math.sin(mathRotation));
 		this.lifetimer.setTimer(lifetime);

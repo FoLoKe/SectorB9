@@ -19,9 +19,9 @@ public class UIinteraction
 		final Button openInventoryButton = MA.findViewById(R.id.openInventory);
 		final Button openInteraction=MA.findViewById(R.id.openInteraction);
 		final Button openProduction=MA.findViewById(R.id.openProduction);
-		openInventoryButton.setBackgroundColor(Color.BLACK);
-		openInteraction.setBackgroundColor(Color.BLACK);
-		openProduction.setBackgroundColor(Color.BLACK);
+		openInventoryButton.setBackgroundColor(Color.parseColor("#33ffffff"));
+		openInteraction.setBackgroundColor(Color.parseColor("#33ffffff"));
+		openProduction.setBackgroundColor(Color.parseColor("#33ffffff"));
 		openInventoryButton.setVisibility(View.GONE);
 		openInteraction.setVisibility(View.GONE);
 		openProduction.setVisibility(View.GONE);
@@ -39,8 +39,9 @@ public class UIinteraction
 						public void onClick(View v) 
 						{
 							//MA.switchPlayerInventory();
-							openInteraction.setBackgroundColor(Color.BLACK);
-							openProduction.setBackgroundColor(Color.BLACK);
+							MA.assemblerUIi.setOpened(false);
+							openInteraction.setBackgroundColor(Color.parseColor("#22ffffff"));
+							openProduction.setBackgroundColor(Color.parseColor("#22ffffff"));
 							v.setBackgroundColor(Color.parseColor("#55ffffff"));
 							IVF.setDisplayedChild(IVF.indexOfChild(MA.findViewById(R.id.inventoryUI)));
 						}
@@ -58,8 +59,9 @@ public class UIinteraction
 					@Override
 					public void onClick(View v)
 					{
-						openProduction.setBackgroundColor(Color.BLACK);
-						openInventoryButton.setBackgroundColor(Color.BLACK);
+						MA.assemblerUIi.setOpened(false);
+						openProduction.setBackgroundColor(Color.parseColor("#22ffffff"));
+						openInventoryButton.setBackgroundColor(Color.parseColor("#22ffffff"));
 					v.setBackgroundColor(Color.parseColor("#55ffffff"));
 					target.getGame().getObjOptions().init(target,IVF,MA);
 					IVF.setDisplayedChild(IVF.indexOfChild(MA.findViewById(R.id.obj_optionsUI)));
@@ -71,10 +73,10 @@ public class UIinteraction
 				openInteraction.setVisibility(View.GONE);
 			}
 			
-			if (target instanceof Crusher)
+			if (target instanceof Assembler)
 			{
 				
-				MA.assemblerUIi.init(MA);
+				MA.assemblerUIi.init(MA,(Assembler)target);
 				//MA.openObjectInventory();
 				openProduction.setVisibility(View.VISIBLE);
       			openProduction.setOnClickListener(new OnClickListener() 
@@ -83,8 +85,10 @@ public class UIinteraction
 						public void onClick(View v) 
 						{
 							//MA.switchPlayerInventory();
-							openInventoryButton.setBackgroundColor(Color.BLACK);
-							openInteraction.setBackgroundColor(Color.BLACK);
+							MA.assemblerUIi.setOpened(true);
+							MA.getGame().initAssemblerUI((Assembler)target);
+							openInventoryButton.setBackgroundColor(Color.parseColor("#22ffffff"));
+							openInteraction.setBackgroundColor(Color.parseColor("#22ffffff"));
 							v.setBackgroundColor(Color.parseColor("#55ffffff"));
 							IVF.setDisplayedChild(IVF.indexOfChild(MA.findViewById(R.id.assemblerUI)));
 						}
@@ -92,7 +96,7 @@ public class UIinteraction
 			}
 			else
 			{
-				openInventoryButton.setVisibility(View.GONE);
+				openProduction.setVisibility(View.GONE);
 			}
 		}
 		
@@ -102,6 +106,8 @@ public class UIinteraction
 				@Override
 				public void onClick(View v) 
 				{
+					MA.assemblerUIi.setOpened(false);
+					
 					MA.getGame().nullPressedObject();
 					MA.getGame().command=MA.getGame().commandMoving;
 					VF.setDisplayedChild(VF.indexOfChild(MA.findViewById(R.id.actionUI)));
@@ -118,7 +124,7 @@ public class UIinteraction
 				public void onClick(View v) 
 				{
 					MA.getGame().nullPressedObject();
-					
+					MA.assemblerUIi.setOpened(false);
 					VF.setDisplayedChild(VF.indexOfChild(MA.findViewById(R.id.buildUI)));
 					//MA.switchPlayerInventory();
 

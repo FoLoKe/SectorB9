@@ -9,8 +9,8 @@ import com.sb9.foloke.sectorb9.*;
 public class BuildingsDataSheet
 {
 	//
-	private ObjectsAsset asset;
-	static ArrayList<BuildingObjectInfo> objects = new ArrayList<BuildingObjectInfo>();
+	public static ObjectsAsset asset;
+	private static ArrayList<BuildingObjectInfo> objects = new ArrayList<BuildingObjectInfo>();
 	public class BuildingObjectInfo
 	{
 		public String name;
@@ -44,10 +44,11 @@ public class BuildingsDataSheet
 		///									NAME					ID	IMAGE								ANIMATION				OPENED	ENABLED	INVSIZE	INTERACTABLE
 		objects.add(new BuildingObjectInfo("small cargo container"	,1	,asset.smallCargoContainer			,null					,true	,true	,5		,false			));
 		objects.add(new BuildingObjectInfo("rocks crusher"			,2	,asset.crusher						,asset.crusherAnim		,true	,true	,3		,true			));
-		objects.add(new BuildingObjectInfo("solar panel"			,3	,asset.solarPanel					,null					,false	,false	,0		,true			));
+		objects.add(new BuildingObjectInfo("solar panel"			,3	,asset.solarPanel					,null					,false	,true	,0		,true			));
 		objects.add(new BuildingObjectInfo("fuel generator"			,4	,asset.fuelGenerator				,asset.fuelGeneratorAnim,true	,false	,1		,true			));
 		objects.add(new BuildingObjectInfo("big smelter"			,5	,asset.smelterCold					,asset.smelterHot		,true	,true	,1		,true			));
-		objects.add(new BuildingObjectInfo("assembler"				,6	,asset.crusher						,asset.crusherAnim		,true	,true	,8		,true			));
+		objects.add(new BuildingObjectInfo("assembler"				,6	,asset.assembler					,asset.assemblerAnim	,true	,true	,8		,true			));
+		objects.add(new BuildingObjectInfo("lab_mk1"				,7	,asset.lab_mk1						,null					,true	,true	,10		,true			));
 		
 		
 		}

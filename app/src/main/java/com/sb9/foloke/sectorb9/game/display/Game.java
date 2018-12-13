@@ -42,6 +42,7 @@ import android.view.ScaleGestureDetector.*;
 import android.view.GestureDetector.*;
 import android.view.*;
 import com.sb9.foloke.sectorb9.game.dataSheets.*;
+import com.sb9.foloke.sectorb9.game.UI.Inventory.*;
 //TODO: MAP BORDER AND PAUSE FIX ON MOVEMENT
 
 public class Game extends SurfaceView implements SurfaceHolder.Callback
@@ -78,6 +79,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
     private Text textPointOfTouch;
 	private Text textScreenWH;
 	public Text textFPS;
+	public Text textInProduction;
+	public Text textInQueue;
     private float scale=5;
 
     private float canvasH,canvasW;
@@ -95,7 +98,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 	//private UIinventory playerInventory;
 	UIinventory playerInv;
 	UIinventory objectInv;
-	public UICommInterface exchangeInteface;
+	InventoryExchangeInterface excInterface;
 	UIProgressBar uIhp;
 	objectOptionsUI objOptionsUI=new objectOptionsUI();
 	public BuildingsDataSheet buildingsData;
@@ -138,16 +141,17 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 		buildingsData=new BuildingsDataSheet(this);
 		itemsData=new ItemsDataSheet(this);
 		
-		exchangeInteface.init(this);
+		
         screenPointOfTouch=new PointF(0,0);
         pointOfTouch=new PointF(0,0);
 		
         player=new Player(900,900,0,shipAsset,uiAsset,this,"player");
+		excInterface=new InventoryExchangeInterface(this);
 		
 		
-		entityManager.addObject(new SmallCargoContainer(1000,900,10,this));
-		entityManager.addObject(new Crusher(900,1000,rand.nextInt(180),this));
-		entityManager.addObject( new FuelGenerator(850,900,rand.nextInt(180),this));
+		entityManager.addObject(new ModularLab(1000,900,0,this));
+		entityManager.addObject(new Assembler(900,1000,rand.nextInt(180),this));
+		entityManager.addObject( new SolarPanel(850,900,rand.nextInt(180),this));
 		
 		//for building and ship leading
         cursor=new Cursor(900,900,shipAsset,"cursor",this);
@@ -158,9 +162,11 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         textPointOfTouch=new Text(""+0+" "+0,500,400);
 		textScreenWH=new Text("",500,250);
 		debugText=new Text("",500,350);
-		debugExchange=new Text("",500,300);
+		debugExchange=new Text("exchange",500,300);
 		errorText=new Text("",500,450);
 		textFPS=new Text("",500,500);
+		textInProduction=new Text("",500,550);
+		textInQueue=new Text("",500,600);
 		textScreenWH.setString(canvasW+"x"+canvasH);
         camera=new Camera(0,0,scale,player);
 		
@@ -200,7 +206,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
     {
 		if(gamePause)
 			return;
-		debugExchange.setString(exchangeInteface.getExchangeFrom()+"->"+exchangeInteface.ExchangeTo);
+		debugExchange.setString(excInterface.getItemHolder()+"->"+excInterface.getItemID()+":"+excInterface.getItemCount());
 		if(playerDestroyed)
 		{
 			if(destroyedTimer.tick())
@@ -284,6 +290,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 				debugText.render(canvas);
 				errorText.render(canvas);
 				textFPS.render(canvas);
+				textInProduction.render(canvas);
+				textInQueue.render(canvas);
 			}
 			if(command==commandMoving)
 			uIhp.render(canvas);
@@ -418,8 +426,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 	
 	public void initInventoryUI(TableLayout playerTable,TableLayout objectTable,MainActivity context)
 	{
-		objectInv=new UIinventory(objectTable,context,null,exchangeInteface);
-		playerInv=new UIinventory(playerTable,context,player,exchangeInteface);
+		objectInv=new UIinventory(objectTable,context,null,excInterface);
+		playerInv=new UIinventory(playerTable,context,player,excInterface);
 	}
 	
 	public UIinventory getObjectUIInventory()
@@ -431,10 +439,19 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 	{
 		return entityManager;
 	}
-	
+	public void initPlayerInventory()
+	{
+		playerInv.init();
+	}
 	public void initObjInventory()
 	{
-		objectInv.init();
+		mAcontext.runOnUiThread(new Runnable() {  
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+
+					objectInv.init();
+				}});
 	}
 	
 	public void setPause(boolean state)
@@ -455,5 +472,16 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 	public PointF getTouchPoint()
 	{
 		return pointOfTouch;
+	}
+	
+	public void initAssemblerUI(final Assembler assembler)
+	{
+		mAcontext.runOnUiThread(new Runnable() {  
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+
+					mAcontext.assemblerUIi.init(mAcontext,assembler);
+				}});
 	}
 }

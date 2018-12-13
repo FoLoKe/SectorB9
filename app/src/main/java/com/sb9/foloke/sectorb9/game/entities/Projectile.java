@@ -2,26 +2,40 @@ package com.sb9.foloke.sectorb9.game.entities;
 import android.graphics.*;
 import com.sb9.foloke.sectorb9.game.funtions.*;
 import com.sb9.foloke.sectorb9.game.display.*;
+import com.sb9.foloke.sectorb9.game.ParticleSystem.*;
 
 public class Projectile extends DynamicEntity
 {
 	private int lifetime;
 	private Timer lifetimer;
+	private int damage;
 	//private Entity holder;
+	private float effectDelay=1f;
 	protected boolean active=false;
-	public Projectile(float x,float y,Bitmap image,String name,int lifetime,float speed, float rotation,Game game)
+	SmallDustPuff dustPuff;
+	boolean collided=false;
+	Timer dustDelay;
+	public Projectile(float x,float y,Bitmap image,String name,int lifetime,float speed, float rotation,int damage,Game game)
 	{
 		super(x,y,0,image,name,game);
 		this.rotation=rotation;
 		this.speed=speed;
-		this.lifetime=3;
+		this.lifetime=lifetime;
 		this.collisionBox=new RectF(x+image.getWidth()/2-3,y+image.getHeight()-3,x+image.getWidth()/2+3,y+image.getHeight()/2+3);
-		
+		this.damage=damage;
 		lifetimer=new Timer(0);
+		dustDelay=new Timer(0);
+		dustPuff=new SmallDustPuff(game);
 	}
 	@Override
 	public void render(Canvas canvas)
 	{
+		if(collided)
+		{
+
+			dustPuff.render(canvas,x,y);
+		}
+		else
 		if(active)
 		{
 		canvas.save();
@@ -30,6 +44,7 @@ public class Projectile extends DynamicEntity
 		canvas.drawBitmap(image,x,y,null);
 		canvas.restore();
 		drawDebugBox(canvas);
+		
 		}
 		// TODO: Implement this method
 	}
@@ -37,8 +52,19 @@ public class Projectile extends DynamicEntity
 	@Override
 	public void tick()
 	{
+		dustPuff.tick();
+		if(collided)
+		{
+		if (dustDelay.tick())
+		{
+			collided=false;
+			active=false;
+		}
+		return;
+		}
 		if(active)
 		{
+			
 			if(lifetimer.tick())
 			{
 				getGame().debugText.setString(name+" ended");
@@ -47,6 +73,7 @@ public class Projectile extends DynamicEntity
 			}
 		else
 			{
+				
 					boolean collisionFlag=false;
 					Entity collidedObject=null;
 						for (Entity e : getHolder().getEntities())
@@ -56,11 +83,12 @@ public class Projectile extends DynamicEntity
 								
 								collidedObject=e;
 								collisionFlag=true;
-								collidedObject.applyDamage((10));
+								collidedObject.applyDamage((damage));
 								this.lifetimer.setTimer(0);
-								active=false;
+								dustDelay.setTimer(effectDelay);
 								calculateCollisionObject();
 								
+								collided=true;
 								return;
 							}
 						}
@@ -100,7 +128,8 @@ public class Projectile extends DynamicEntity
 	public void shoot(PointF point,float rotation)
 	{
 		active=false;
-		
+		collided=false;
+		dustPuff.reset();
 		setCenterX(point.x);
 		setCenterY(point.y);
 		this.rotation=rotation;

@@ -28,7 +28,7 @@ public class Ship
 		this.holder=holder;
 		this.pointOfengine=new PointF(0,0);
 		this.pointOfShooting=new PointF(0,shipImage.getHeight()/2);
-		this.engineSmoke=new ParticleSystem(holder.getGame().effAsset.yellow_pixel,holder.getWorldLocation().x,holder.getWorldLocation().y,1f,new PointF(0.2f,0),holder.getGame());
+		this.engineSmoke=new ParticleSystem(holder.getGame().effAsset.yellow_pixel,holder.getWorldLocation().x,holder.getWorldLocation().y,1f,new PointF(0.2f,0),true,120,holder.getGame());
 		engineSmoke.setAccuracy(new Point(16,1));
 		pointOfEngineSmoke=new PointF(0,shipImage.getHeight()/2);
 		//calculateCollisionObject();

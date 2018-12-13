@@ -48,7 +48,8 @@ import java.util.*;
 			circlePaint.setPathEffect(new DashPathEffect(new float[] { 15, 16}, 0));
 			calculateCustomCollisionObject();
 			calculateCollisionObject();
-			
+			if(enabled)
+				calculateConsumers();
 		}
 
 		@Override

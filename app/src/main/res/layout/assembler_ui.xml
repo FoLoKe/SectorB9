@@ -2,10 +2,88 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical"
-	android:id="@+id/assembler_uiFrameLayout">
-    <Spinner
-		android:layout_height="wrap_content"
-		android:layout_width="wrap_content"
-		android:layout_gravity="right|center"
-		android:id="@+id/assembler_uiSpinner"/>
+	android:id="@+id/assembler_uiFrameLayout"
+	android:background="#55ffffff">
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:orientation="horizontal">
+		<LinearLayout
+			
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:orientation="vertical">
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="item in queue:"
+				android:textColor="#ffffff"
+				android:layout_margin="15dp"
+				/>
+			<LinearLayout
+				
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:id="@+id/assembler_uiImageInQueue"
+				android:orientation="horizontal"
+				/>
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="item in production:"
+				android:textColor="#ffffff"
+				android:layout_margin="15dp"
+			/>
+			<ImageView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:id="@+id/assembler_uiImageInProd"
+			/>
+			<ImageView
+				android:layout_width="fill_parent"
+				android:layout_height="5dp"
+				android:background="#ff000000"
+			/>
+		<Button
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textColor="#ffffff"
+			android:text="Produce"
+			android:id="@+id/assembler_uiSetProdButton"
+			/>
+		<ScrollView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			>
+			<TableLayout
+				android:id="@+id/assembler_ui_TL_toProduceList"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				>
+			</TableLayout>
+		</ScrollView>
+		</LinearLayout>
+		<ImageView
+			android:layout_width="5dp"
+			android:layout_height="fill_parent"
+			android:background="#ff000000"
+		/>
+		<FrameLayout
+			android:id="@+id/AssemblerUIHelpFrameLayout"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent">
+			<LinearLayout
+				android:id="@+id/AssemblerUIHelpLayoutOfInfo"
+				android:layout_width="fill_parent"
+				android:layout_height="fill_parent"
+				android:orientation="vertical">
+				<TextView
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"
+					android:text="select something"
+					android:textColor="#ffffff"
+				/>
+			</LinearLayout>
+		</FrameLayout>
+	</LinearLayout>
 </FrameLayout>

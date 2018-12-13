@@ -23,7 +23,7 @@ public class Laser extends Weapon
 		lenght=100;
 		line=new Line2D(0,0,1,1);
 		line.setThickness(3);
-		laserDamageEffect=new ParticleSystem(game.effAsset.yellow_pixel,turret.getParent().getHolder().getWorldLocation().x,turret.getParent().getHolder().getWorldLocation().y,1f,new PointF(1,1),game);
+		laserDamageEffect=new ParticleSystem(game.effAsset.yellow_pixel,turret.getParent().getHolder().getWorldLocation().x,turret.getParent().getHolder().getWorldLocation().y,1f,new PointF(1,1),true,120,game);
 		laserDamageEffect.setAccuracy(new Point(10,10));
 	}
 

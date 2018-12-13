@@ -105,6 +105,9 @@ public class BuildUI
 						case 5:
 							MA.getGame().getEntityManager().addObject(new BigSmelter(MA.getGame().getTouchPoint().x-16,MA.getGame().getTouchPoint().y-16,10,MA.getGame()));
 							break;
+						case 6:
+							MA.getGame().getEntityManager().addObject(new Assembler(MA.getGame().getTouchPoint().x-16,MA.getGame().getTouchPoint().y-16,10,MA.getGame()));
+							break;
 					}
 				}
 			});

@@ -17,5 +17,7 @@ public class SolarPanel extends Generator
 	inventoryMaxCapacity	=game.buildingsData.findById(ID).inventoryCapacity;
 	isInteractable			=game.buildingsData.findById(ID).interactableByDefault;
 	opened					=game.buildingsData.findById(ID).openByDefault;
+	
+	
 	}
 }

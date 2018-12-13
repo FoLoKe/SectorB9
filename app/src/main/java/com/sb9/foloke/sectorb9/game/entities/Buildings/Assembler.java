@@ -7,30 +7,37 @@ import com.sb9.foloke.sectorb9.game.entities.*;
 import com.sb9.foloke.sectorb9.game.display.*;
 import java.util.Map;
 import com.sb9.foloke.sectorb9.*;
+import java.time.*;
+import android.util.*;
+import android.content.res.*;
+import com.sb9.foloke.sectorb9.game.entities.Buildings.Components.*;
+import java.util.ArrayList;
 
 public class Assembler extends StaticEntity
 {
-	private final static int ID=5;
+	private final static int ID=6;
 	private UIProgressBar prgBar;
 	private UIcustomImage statusImage;
 	private UIcustomImage statusImage2;
 	private int prodTimeLength=10;
-	private int inProduction;
-	private int count;
+	private int inProduction=0;
 	private Timer prodTimer;
-
+	private boolean assembling=false;
+	private ArrayList<Integer> productionQueue=new ArrayList<Integer>();
 	private PointF collisionInitPoints[];
+	private Animation assemblerAnim;
 	//private Animation crusherAnim;
-	Bitmap smelterInWorkBitmap;
 
+	
+	EntitySocket[] arms=new EntitySocket[3];
 	public Assembler(float x, float y,float rotation,ObjectsAsset  objAsset,String name,Game game)
 	{
 		super(x,y,rotation,objAsset.smelterCold,name,game);
 		//crusherAnim=new Animation(objAsset.crusherAnim,15);
-		this.inventoryMaxCapacity=3;
+		this.inventoryMaxCapacity=5;
 		this.opened=true;
 		inProduction=0;
-		count=0;prodTimer=new Timer(0);
+		prodTimer=new Timer(0);
 		prgBar=new UIProgressBar(this,50,8,-25,-20,game.uiAsset.stunBackground,game.uiAsset.stunLine,game.uiAsset.progressBarBorder,prodTimer.getTick());
 
 		collisionInitPoints=new PointF[4];
@@ -44,16 +51,21 @@ public class Assembler extends StaticEntity
 		statusImage=new UIcustomImage(game.uiAsset.noEnergySign,5);
 		statusImage2=new UIcustomImage(game.uiAsset.noEnergySign,5);
 		calculateCollisionObject();
+		
+		arms[0]=new EntitySocket(this,new AssemblerArm(x,y,rotation,"",game),rotation,new PointF(10,10));
+		arms[1]=new EntitySocket(this,new AssemblerArm(x,y,rotation,"",game),rotation,new PointF(10,10));
+		arms[2]=new EntitySocket(this,new AssemblerArm(x,y,rotation,"",game),rotation,new PointF(10,10));
+		
 	}
 
 	public Assembler(float x, float y,float rotation,Game game)
 	{
 		super(x,y,rotation,game.buildingsData.findById(ID).image,game.buildingsData.findById(ID).name,game);
-		smelterInWorkBitmap= game.buildingsData.findById(ID).animation[0];
-		this.inventoryMaxCapacity=3;
+		assemblerAnim=new Animation( game.buildingsData.findById(ID).animation,30);
+		this.inventoryMaxCapacity=5;
 		this.opened=true;
 		inProduction=0;
-		count=0;prodTimer=new Timer(0);
+		prodTimer=new Timer(0);
 		prgBar=new UIProgressBar(this,50,8,-25,-20,game.uiAsset.stunBackground,game.uiAsset.stunLine,game.uiAsset.progressBarBorder,prodTimer.getTick());
 
 		collisionInitPoints=new PointF[4];
@@ -67,22 +79,36 @@ public class Assembler extends StaticEntity
 		statusImage=new UIcustomImage(game.uiAsset.noEnergySign,5);
 		statusImage2=new UIcustomImage(game.uiAsset.turnedOffSign,5);
 		calculateCollisionObject();
+		arms[0]=new EntitySocket(this,new AssemblerArm(x,y,0,"",game),90,new PointF(10,0));
+		arms[1]=new EntitySocket(this,new AssemblerArm(x,y,25,"",game),-90,new PointF(-10,-23));
+		arms[2]=new EntitySocket(this,new AssemblerArm(x,y,15,"",game),-90,new PointF(-10,23));
+		
+		for(EntitySocket arm:arms)
+			arm.tick();
+		
 	}
 
 	@Override
 	public void render(Canvas canvas)
 	{
+		
 		if(!renderable)
 			return;
 		canvas.save();
 		canvas.rotate(rotation,getCenterX(),getCenterY());
-		if(inProduction==0)
-			canvas.drawBitmap(image,x,y,null);
+		//Bitmap debugBitmap=rotate(game.buildingsData.asset.smallCargoContainer,debugRotation);
+		
+		
+		
+		if(!assembling)
+		canvas.drawBitmap(image,x,y,null);
 		else
-			canvas.drawBitmap(smelterInWorkBitmap,x,y,null);
+			canvas.drawBitmap(assemblerAnim.getImage(),x,y,null);
 		//if(prodTimer.getTick()>0)
 		prgBar.render(canvas);
 		game.debugText.setString(prodTimer.getTick()+"");
+		
+		
 		canvas.restore();
 
 		if(energy==false)
@@ -92,57 +118,110 @@ public class Assembler extends StaticEntity
 		if(game.drawDebugInf)
 			drawDebugCollision(canvas);
 		// TODO: Implement this method
+		for(EntitySocket arm:arms)
+		arm.render(canvas);
+		
 	}
 
 	@Override
 	public void tick()
 	{
+		try
+		{
+			game.textInProduction.setString(inProduction+"");
+			game.textInQueue.setString(productionQueue+"");
 		if(energy)
 		{
-			if(inventory.size()>0&&inProduction==0)
-			{
-				for(Map.Entry<Integer,Integer> e: inventory.entrySet())
+			//error check
+			
+				//items search 
+				if(!assembling)
 				{
-					if(game.itemsData.findById(e.getKey()).smeltToID!=0)
+				for(EntitySocket arm:arms)
+					arm.setRotation(0);
+					if(productionQueue.size()>0)
 					{
-						if(e.getValue()>=2)
+						
+						if(inventory.size()>0)
 						{
-							inProduction=e.getKey();
-							prodTimer.setTimer(prodTimeLength);
-							if(inventory.get(inProduction)>2)
-								inventory.put(inProduction,inventory.get(inProduction)-2);
-							else
-								inventory.remove(inProduction);
-							game.mAcontext.initInvenories();
-							break;
+						int tProduction=productionQueue.get(0);
+							boolean allOk=true;
+							boolean toProduce[]=new boolean[game.itemsData.findById(tProduction).madeFrom.size()];
+							int i=0;
+							for(Map.Entry<Integer,Integer> e: game.itemsData.findById(tProduction).madeFrom.entrySet())
+							{
+								toProduce[i]=false;
+								if(inventory.containsKey(e.getKey()))
+									if(inventory.get(e.getKey())>=e.getValue())
+									{
+										toProduce[i]=true;
+									}
+								i++;
+							}
+						
+							//all items found?
+							for(int j=0;j<game.itemsData.findById(tProduction).madeFrom.size();j++)
+							{
+								if(toProduce[j]==false)
+									allOk=false;
+							}
+			
+							if(allOk)
+							{
+								for(Map.Entry<Integer,Integer> e: game.itemsData.findById(tProduction).madeFrom.entrySet())
+								{
+									if(inventory.get(e.getKey())>e.getValue())
+									{
+										inventory.put(e.getKey(),inventory.get(e.getKey())-e.getValue());
+									}
+									else
+									{
+										inventory.remove(e.getKey());
+									}
+								}
+								game.initObjInventory();
+								assembling=true;
+								prodTimer.setTimer(prodTimeLength);
+								inProduction=productionQueue.get(0);
+								productionQueue.remove(0);
+							
+								if(game.mAcontext.assemblerUIi.getOpened())
+									game.initAssemblerUI(this);
+							}
 						}
 					}
 				}
-
-			}
-			if(inProduction!=0)
-			{
-
-				if(prodTimer.tick())
+				//production
+				if(assembling)
 				{
-
-					if(inventory.containsKey(game.itemsData.findById(inProduction).smeltToID))
+					if(prodTimer.tick())
 					{
-						inventory.put(game.itemsData.findById(inProduction).smeltToID,inventory.get(game.itemsData.findById(inProduction).smeltToID)+1);
+						if(inventory.containsKey(inProduction))
+						{
+							inventory.put(inProduction,inventory.get(inProduction)+1);
+						}
+						else
+							inventory.put(inProduction,1);
+						game.initObjInventory();
+						assembling=false;
+						inProduction=0;
+						if(game.mAcontext.assemblerUIi.getOpened())
+							game.initAssemblerUI(this);
 					}
-					else
-						inventory.put(game.itemsData.findById(inProduction).smeltToID,1);
-
-					inProduction=0;
-					MainActivity tAct=game.mAcontext;
-					tAct.initInvenories();
+				for(EntitySocket arm:arms)
+					arm.tick();
+					assemblerAnim.tick();
 				}
-			}
-			if(prodTimer.getTick()>0)
-				prgBar.tick(prodTimer.getTick()/(prodTimeLength*0.6f));
+				if(prodTimer.getTick()>0)
+					prgBar.tick(prodTimer.getTick()/(prodTimeLength*0.6f));
 		}
 		super.calculateCollisionObject();
-
+		
+			}
+			catch(Exception e)
+			{
+				System.out.println(e);
+			}
 	}
 
 	@Override
@@ -163,5 +242,28 @@ public class Assembler extends StaticEntity
 			this.powerSupplier=null;
 		}
 	}
+	public void addQueue(int ID)
+	{
+		//Map<Integer,Integer> a=game.itemsData.findById(ID).madeFrom;
+		if(!game.itemsData.findById(ID).madeFrom.containsValue(0))
+			productionQueue.add(ID);
+		else
+			///error
+			{}
+		if(game.mAcontext.assemblerUIi.getOpened())
+			game.initAssemblerUI(this);
+	}
+	public ArrayList<Integer> getQueue()
+	{
+		return productionQueue;
+	}
+	public int getInProduction()
+	{
+		return inProduction;
+	}
+
+	
+	
+	
 }
 

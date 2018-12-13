@@ -113,7 +113,7 @@ public class MainActivity extends Activity {
 				public void run() {
 					// TODO Auto-generated method stub
 
-					game.getObjectUIInventory().init();
+					game.initObjInventory();
 				}});
 	}
 	public ViewFlipper getViewFlipper()

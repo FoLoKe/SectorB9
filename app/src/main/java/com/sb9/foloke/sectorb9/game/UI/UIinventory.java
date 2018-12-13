@@ -39,50 +39,54 @@ import android.view.*;
 import android.content.Context;
 import com.sb9.foloke.sectorb9.game.entities.Entity;
 import com.sb9.foloke.sectorb9.*;
+import android.content.*;
+import android.view.View.*;
+import com.sb9.foloke.sectorb9.game.UI.Inventory.*;
+import java.util.*;
+import android.widget.ActionMenuView.*;
 //import java.util.*;
 public class UIinventory
 {
-	private InventoryAsset asset;
-	//private HashMap<int,int> inv_indexes; //item_index //count
-	//private  inv_items[][]; //index,count
+	int selectedItemID;
 	private boolean visible;
 	private TableLayout table;
 	final private MainActivity context;
-	//private int capacity;
-	//private HashMap<Integer,Integer> inventoryItems;
 	private Entity target;
+	InventoryExchangeInterface excInterface;
 	
-	private UICommInterface exchangeInterface;
-
-	public UIinventory(TableLayout table,final MainActivity context,Entity target,UICommInterface exchangeInterface)
+	ArrayList items;
+	private class Element
 	{
-		this.target=target;
-		//this.capacity=target.getInventoryMaxCapacity();
-		//table.setStretchAllColumns(true);this.inventoryItems=inv_items;
-		this.exchangeInterface=exchangeInterface;
 		
+		public int ID;
+		public int count;
+		public Element(int ID,int count)
+		{
+			this.ID=ID;
+			this.count=count;
+		}
+	}
+
+	public UIinventory(TableLayout table,final MainActivity context,Entity target,InventoryExchangeInterface excInterface)
+	{
+		this.target=target;	
 		this.table=table;
-		
 		this.context=context;
+		this.excInterface=excInterface;
 		ScrollView.LayoutParams lp= new ScrollView.LayoutParams(ScrollView.LayoutParams.WRAP_CONTENT,context.getResources().getDisplayMetrics().heightPixels);
 		lp.setMargins(10,10,10,10);
-		/*Button closeButton=((MainActivity)context).findViewById(R.id.closeInventoryButton);
-		closeButton.setOnClickListener(new OnClickListener(){
-			@Override
-			public void onClick(View v)
-			{
-				((MainActivity)context).getViewFlipper().setDisplayedChild(((MainActivity)context).getViewFlipper().indexOfChild(((MainActivity)context).findViewById(R.id.interactionUI)));
-			}
-		});*/
 		if(target!=null)
 		init();
 	}
+	
+	///UNDER REFACTORING
 	public void init()
 	{
 		try
 		{
 		if(target==null)
 			return;
+			items=new ArrayList<Element>();
 		table.setVisibility(View.GONE);
 		table.removeAllViews();
 		BitmapFactory.Options options=new BitmapFactory.Options();
@@ -90,117 +94,134 @@ public class UIinventory
 			table.setBackground(new BitmapDrawable(target.getGame().mAcontext.getResources(),target.getGame().uiAsset.uiBgBlur));
 		
 		
+		int maxRowElems=3;
+		
 		if(target.getInventory().size()>0)
-		for(HashMap.Entry<Integer,Integer> entry : target.getInventory().entrySet()) {
-			Integer key = entry.getKey();
-			Integer value = entry.getValue();
-			TableRow row=new TableRow(context);
+		for(HashMap.Entry<Integer,Integer> entry : target.getInventory().entrySet()) {		
+			items.add(new Element(entry.getKey(),entry.getValue()));			
+		}
+		
+		/////inv maker
+		boolean overcapacity=false;
+		int maxElems=target.getInventoryMaxCapacity();
+			if(maxElems<items.size())
+			{
+				maxElems=items.size();
+				overcapacity=true;
+			}
+			int elem=0;
+		for(;elem<maxElems;)
+		{
+			final TableRow row=new TableRow(context);
 			TableLayout.LayoutParams tableRowParams=
 				new TableLayout.LayoutParams
 			(TableLayout.LayoutParams.WRAP_CONTENT,TableLayout.LayoutParams.FILL_PARENT);
-			
+
 			int leftMargin=10;
 			int topMargin=10;
 			int rightMargin=10;
 			int bottomMargin=10;
-			
+
 			tableRowParams.setMargins(leftMargin, topMargin, rightMargin, bottomMargin);
 			row.setLayoutParams(tableRowParams);
-			ImageView sprite=new ImageView(context);
 			
-			TextView testText2=new TextView(context);
-			TableRow.LayoutParams trp=new TableRow.LayoutParams();
-			trp.setMargins(10,10,10,10);
-			trp.height=100;
-			testText2.setTextColor(Color.parseColor("#ffffffff"));
-			//button1.setLayoutParams(trp);
-			
-			testText2.setText(""+value);
-			testText2.setLayoutParams(trp);
-			BitmapDrawable bdrawable;
-				bdrawable = new BitmapDrawable(context.getResources(),context.getGame().itemsData.findById(key).image);
-			
-			sprite.setImageDrawable(bdrawable);
-			final int itemId=key;
-			final int itemCount=value;
-			row.setOnClickListener(new OnClickListener()
+			for(int rowPos=0;rowPos<maxRowElems;rowPos++)
 			{
-				@Override
-				public void onClick(View v)
+				//real
+				if(elem <items.size())
 				{
+					final int itemId=((Element)items.get(elem)).ID;
+					final int itemCount=((Element)items.get(elem)).count;
 					
-					if(exchangeInterface.setSide(target,itemId,itemCount))
-					{
-					//
-						v.setBackgroundColor(Color.RED);
+					ImageView sprite=new ImageView(context);
+					TextView itemCountText=new TextView(context);
+					
+					TableRow.LayoutParams trp=new TableRow.LayoutParams();
+					trp.setMargins(10,10,10,10);
+					trp.height=100;
+					itemCountText.setTextColor(Color.parseColor("#ffffffff"));
+					//button1.setLayoutParams(trp);
+
+					itemCountText.setText("x"+itemCount);
+					itemCountText.setLayoutParams(trp);
+					BitmapDrawable bdrawable;
+					bdrawable = new BitmapDrawable(context.getResources(),context.getGame().itemsData.findById(itemId).image);
+
+					sprite.setImageDrawable(bdrawable);
+					LinearLayout LL=new LinearLayout(context);
+					row.addView(LL);
+					LL.setOrientation(LinearLayout.HORIZONTAL);
+					//LL.setBackgroundColor(Color.CY);
+					LayoutParams LLP=new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT);
+					LLP.setMargins(10,10,10,10);
+					//LLP.height=100;
+					//LLP.width=100;
+					//LL.setLayoutParams(LLP);
+					//LL.getLayoutParams().width=100;
+					//LL.getLayoutParams().height=100;
+					
+				
+					LL.setOnTouchListener(new OnTouchListener()
+						{
+							@Override
+							public boolean onTouch(View v,MotionEvent e)
+							{
+								ClipData.Item item = new ClipData.Item((CharSequence)v.getTag());
+								String[] mimeTypes = {ClipDescription.MIMETYPE_TEXT_PLAIN};
+
+								ClipData dragData = new ClipData("bug",mimeTypes, item);
+								View.DragShadowBuilder myShadow = new View.DragShadowBuilder(v);
+								excInterface.started(target,itemCount,itemId);
+								selectedItemID=itemId;
+								v.startDrag(dragData,myShadow,null,0);
+								return true;
+							}
+						});
+						//setDragAndDrop(sprite,itemId);
 						
-					}
-					else
-					{
-						exchangeInterface.game.getObjectUIInventory().init();
-						exchangeInterface.game.getPlayerUIInventory().init();
-					}
-					if(!exchangeInterface.flagStartedExchange)
-					{
-						exchangeInterface.game.getObjectUIInventory().init();
-						exchangeInterface.game.getPlayerUIInventory().init();
-					}
-					//v.setBackground();
+					LL.addView(sprite);
 					
+					LL.addView(itemCountText);
+					
+					//table.addView(row);
+					setDragAndDrop(LL,itemId);
 				}
-			});
-			//button1.setScaleType(ImageView.ScaleType.FIT_XY);
-			row.setId(key);
-			
-			row.addView(sprite);
-			
-			row.addView(testText2);
+				//empty
+				else
+				{
+					if(!overcapacity)
+					{
+					ImageView sprite=new ImageView(context);
+					TableRow.LayoutParams trp=new TableRow.LayoutParams();
+					trp.setMargins(10,10,10,10);
+					trp.height=100;
+
+					BitmapDrawable bdrawable;
+
+					bdrawable = new BitmapDrawable(context.getResources(),context.getGame().itemsData.findById(0).image);
+					sprite.setImageDrawable(bdrawable);
+					sprite.setLayoutParams(trp);
+
+					sprite.setOnTouchListener(
+						new OnTouchListener() 
+						{
+							@Override
+							public boolean onTouch(View v,MotionEvent e) 
+							{
+
+								return true;
+							}
+						});
+					//row.setId(0);
+					row.addView(sprite);
+					setDragAndDrop(sprite,0);
+					}
+				}
+				elem++;
+			}
 			table.addView(row);
 		}
-		for (int i=0;i<(target.getInventoryMaxCapacity()-target.getInventory().size());i++)
-		{
-			TableRow row=new TableRow(context);
-			TableLayout.LayoutParams tableRowParams=
-				new TableLayout.LayoutParams
-			(TableLayout.LayoutParams.WRAP_CONTENT,TableLayout.LayoutParams.FILL_PARENT);
 
-			int leftMargin=10;
-			int topMargin=10;
-			int rightMargin=10;
-			int bottomMargin=10;
-
-			tableRowParams.setMargins(leftMargin, topMargin, rightMargin, bottomMargin);
-			row.setLayoutParams(tableRowParams);
-
-			ImageView sprite=new ImageView(context);
-			TableRow.LayoutParams trp=new TableRow.LayoutParams();
-			trp.setMargins(10,10,10,10);
-			trp.height=100;
-		
-			BitmapDrawable bdrawable;
-			
-			bdrawable = new BitmapDrawable(context.getResources(),context.getGame().itemsData.findById(0).image);
-			sprite.setImageDrawable(bdrawable);
-			
-			row.setOnClickListener
-			(new OnClickListener() 
-				{
-					@Override
-					public void onClick(View v) 
-					{
-						if(exchangeInterface.flagStartedExchange==true)
-						{
-							if(exchangeInterface.setSide(target,0,0))
-								exchangeInterface.game.getObjectUIInventory().init();
-							exchangeInterface.game.getPlayerUIInventory().init();
-						}
-					}
-				});
-			row.setId(0);
-			row.addView(sprite);
-			table.addView(row);
-		}	
-		//TableLayout ttable=table;
 		if(table.getVisibility()==View.GONE)
 		table.setVisibility(View.VISIBLE);
 		target.getGame().errorText.setString("all good");
@@ -224,4 +245,33 @@ public class UIinventory
 	{
 		return target;
 	}
+	public void setDragAndDrop(View img,final int ID)
+	{
+	img.setOnDragListener(new View.OnDragListener() {
+	@Override
+	public boolean onDrag(View v, DragEvent event) {
+		switch(event.getAction()) {
+			case DragEvent.ACTION_DRAG_STARTED:
+				if (ID==0||ID==excInterface.getItemID())
+				v.setBackgroundColor(Color.GREEN);
+				break;
+
+			
+			case DragEvent.ACTION_DRAG_ENDED   :
+				
+				v.setBackgroundColor(Color.TRANSPARENT);
+				// Do nothing
+				break;
+
+			case DragEvent.ACTION_DROP:
+				v.setBackgroundColor(Color.RED);
+				excInterface.ended(target);
+				
+				// Do nothing
+				break;
+			default: break;
+		}
+		return true;
+	}
+	});}
 }

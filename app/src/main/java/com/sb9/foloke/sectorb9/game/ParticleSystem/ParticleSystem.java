@@ -10,7 +10,7 @@ import com.sb9.foloke.sectorb9.game.entities.*;
 public class ParticleSystem
 {
 	//private Particle particles[];
-	private static final int maxCount=120;
+	private static int maxCount=120;
 	private float x,y;
 	private float dx,dy;
 	private float lenght=lenght;
@@ -22,8 +22,9 @@ public class ParticleSystem
 	private Timer delay;
 	private Random rand=new Random();
 	ArrayList<Particle> particles;
-	public ParticleSystem(Bitmap image,float x,float y,float lenght,PointF dXY,Game game)
+	public ParticleSystem(Bitmap image,float x,float y,float lenght,PointF dXY,boolean randomDirection,int count,Game game)
 	{
+		this.maxCount=count;
 		this.accuracy=new Point(1,1);
 		this.image=image;
 		this.x=x;
@@ -35,7 +36,7 @@ public class ParticleSystem
 		dy=dXY.y;
 		for(int i=0;i<maxCount;i++)
 		{
-			particles.add(new Particle(image,x,y,lenght,dXY,0));
+			particles.add(new Particle(image,x,y,lenght,dXY,0,randomDirection));
 		}
 		
 	}

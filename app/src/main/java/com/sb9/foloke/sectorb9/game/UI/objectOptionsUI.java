@@ -8,6 +8,7 @@ import android.view.*;
 import android.widget.CompoundButton.*;
 import android.graphics.drawable.*;
 import android.widget.Toolbar.*;
+import android.graphics.*;
 
 public class objectOptionsUI
 {
@@ -21,7 +22,8 @@ public class objectOptionsUI
 		
 		//this.target=target;
 		LinearLayout LR=VF.findViewById(R.id.object_options_uiLinearLayout);
-		LR.setBackground(new BitmapDrawable(MA.getResources(),target.getGame().uiAsset.uiBgBlur));
+		//LR.setBackground(new BitmapDrawable(MA.getResources(),target.getGame().uiAsset.uiBgBlur));
+		LR.setBackgroundColor(Color.parseColor("#55ffffff"));
 		Switch SW1=new Switch(MA);
 		SW1.setChecked(target.getEnabled());
 		

@@ -10,11 +10,11 @@ public class ProjectilesPool
 	static Bitmap image;
 	ArrayList<Projectile> projectiles;
 	
-	public ProjectilesPool(Bitmap image,float speed, int maxSize,Game game) {
+	public ProjectilesPool(Bitmap image,float speed, int maxSize,int damage,Game game) {
 		projectiles=new ArrayList<Projectile>();
 		for(int i=0;i<maxSize;i++)
 		{
-			projectiles.add(new Projectile(0,0,image,"p"+i,(int)1,speed,0,game));
+			projectiles.add(new Projectile(0,0,image,"p"+i,(int)1,speed,0,damage,game));
 		}
 		}
 		public List<Projectile> getArray()

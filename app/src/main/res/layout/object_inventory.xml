@@ -3,19 +3,18 @@
 xmlns:app="http://schemas.android.com/apk/res-auto"
 android:id="@+id/inventoryUI"
 android:layout_width="match_parent"
-android:layout_height="match_parent">
+android:layout_height="match_parent"
+android:background="#55ffffff">
 	
 <LinearLayout
 	android:layout_gravity="top"
 	android:orientation="horizontal"
-
 	android:layout_width="wrap_content"
 	android:layout_height="wrap_content">
 
 <RelativeLayout 
 android:layout_width="wrap_content"
 android:layout_height="match_parent" 
-
 android:layout_margin="5dp">
 
 
@@ -35,28 +34,6 @@ android:layout_margin="5dp">
 
 
 
-		<TableRow
-			android:id="@+id/tablerow1"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content" 
-			android:layout_margin="100dp">
-
-			<TextView
-				android:id="@+id/textView1"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-
-				android:text="Item" 
-			/>
-
-			<TextView
-				android:id="@+id/textView2"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-
-				android:text="Count"
-			/>
-		</TableRow>
 	</TableLayout>
 	,</ScrollView>
 
@@ -79,28 +56,7 @@ android:layout_margin="5dp">
 
 
 
-		<TableRow
-			android:id="@+id/tablerow1"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content" 
-			android:layout_margin="100dp">
-
-			<TextView
-				android:id="@+id/textView1"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-
-				android:text="Item" 
-			/>
-
-			<TextView
-				android:id="@+id/textView2"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-
-				android:text="Count"
-			/>
-		</TableRow>
+		
 	</TableLayout>
 	,</ScrollView>
 </RelativeLayout>
