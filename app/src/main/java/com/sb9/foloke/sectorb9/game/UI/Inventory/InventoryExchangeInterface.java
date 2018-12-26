@@ -5,31 +5,30 @@ import com.sb9.foloke.sectorb9.game.entities.*;
 public class InventoryExchangeInterface
 {
 	Game game;
-	int itemCount,itemID;
-	Entity itemHolder,itemCatcher;
+	int itemCount,itemID,x,y;
+	
+	Inventory itemHolder;
 	public InventoryExchangeInterface(Game game)
 	{
 		this.game=game;
 	}
-	public void started(Entity itemHolder,int itemCount,int itemID)
+	public void started(Inventory inventory,int x,int y,int count)
 	{
-		this.itemHolder=itemHolder;
-		this.itemCount=itemCount;
-		this.itemID=itemID;
+		this.itemHolder=inventory;
+		this.x=x;
+		this.y=y;
+		this.itemCount=count;
+		this.itemID=inventory.getItemIdOnPos(x,y);
 	}
 	
-	public void ended(Entity itemCatcher)
+	public void ended(Inventory itemCatcher,int cx,int cy)
 	{
-		if(itemCatcher!=null&&itemCatcher!=itemHolder)
+		if(itemCatcher!=null)
 		{
-			itemHolder.getInventory().remove(itemID);
-			if(itemCatcher.getInventory().containsKey(itemID))
+			if(itemCatcher.equaOrNullOnPosByID(cx,cy,itemHolder.getItemIdOnPos(x,y)))
+			if(itemHolder.takeItemFromPos(x,y,itemCount))
 			{
-				itemCatcher.getInventory().put(itemID,itemCatcher.getInventory().get(itemID)+itemCount);
-			}
-			else
-			{
-				itemCatcher.getInventory().put(itemID,itemCount);
+				itemCatcher.addItemToPos(cx,cy,itemID,itemCount);
 			}
 		}
 		itemHolder=null;
@@ -40,7 +39,7 @@ public class InventoryExchangeInterface
 		
 	}
 	
-	public Entity getItemHolder()
+	public Inventory getItemHolder()
 	{
 		return itemHolder;
 	}

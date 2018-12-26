@@ -11,7 +11,7 @@ public class ModularLab extends StaticEntity
 	EntitySocket floatingReader;
 	public ModularLab(float x,float y,float rotation,Game game)
 	{
-		super(x,y,rotation,game.buildingsData.findById(ID).image,game.buildingsData.findById(ID).name,game);
+		super(x,y,rotation,game.buildingsData.findById(ID).image,game.buildingsData.findById(ID).name,game,ID);
 		floatingReader=new EntitySocket(this,new ModularLabReaderComponent(x+8,y+8,0,"",game),90,new PointF(50,0));
 		
 	}

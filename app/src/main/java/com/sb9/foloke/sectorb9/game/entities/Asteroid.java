@@ -20,46 +20,37 @@ public class Asteroid extends DynamicEntity {
 		private float speed=3;
 		private boolean movable;
 		
-		private Text textdXdY;
-		private float acceleration;
 		
-		public Asteroid(float x, float y,float rotation, ShipAsset asset,String name,Game game)
-		{
-			super(x,y,rotation,asset.asteroid_1,name,game);
+		private float acceleration;
+		private PointF[] collisionInitPoints;
+		final static int ID=8;
+		
+	public Asteroid(float x, float y,float rotation,Game game)
+	{
+		super(x,y,rotation,game.buildingsData.findById(ID).image,game.buildingsData.findById(ID).name,game,ID);
+		
+		
+		
+		isUsingCustomCollision=false;
+		
+		
+		calculateCollisionObject();
+		
 
-			this.dx=this.dy=0;
-			this.movable=false;
-			this.textdXdY=new Text("",x-100,y-50);
-			this.inventoryMaxCapacity=1;
-			Random itemR=new Random();
-			
-			for (int i=1;i<inventoryMaxCapacity+1;i++)
-			{
-				int k=0;
-				int v=0;
-				while(k==0)
-				{
-					k=itemR.nextInt(3);
-				}
-				while(v==0)
-				{
-					v=itemR.nextInt(25);
-				}
-				this.inventory.put(k,v);
-			}
-		}
-
+	}
+	
 		@Override
 		public void tick() {
 			//inertia damping
 			if(active)
 			{
+				calculateCollisionObject();
 			if(!renderable)
 				return;
 			if(getHp()<=0)
 			{
 					active=false;
-					onDestroy();
+					//onDestroy();
 					return;
 					}
 			uIhp.tick(getHp());
@@ -76,9 +67,10 @@ public class Asteroid extends DynamicEntity {
 					dy+=0.021;
 					if((dy>-0.01)&&(dy<0.01))
 						dy=0;
-			textdXdY.setWorldLocation(new PointF(x,y));
-			this.collisionBox.set(x,y,x+image.getWidth(),y+image.getHeight());
+			
+			
 			}
+			
 		}
 
 		@Override
@@ -93,7 +85,7 @@ public class Asteroid extends DynamicEntity {
 				canvas.rotate(rotation,getCenterX(),getCenterY());
 				canvas.drawBitmap(image,x,y,null);
 				canvas.restore();
-				textdXdY.render(canvas);
+				
 			}
 		}
 		@Override
@@ -101,6 +93,9 @@ public class Asteroid extends DynamicEntity {
 			// rotation=(float)-Math.toDegrees(Math.PI+Math.atan2(targetPoint.x-x,targetPoint.y-y));   /coord rotation
 		}
 
+		
+
+		
 		public float getCenterX()
 		{
 			return x+image.getWidth()/2;

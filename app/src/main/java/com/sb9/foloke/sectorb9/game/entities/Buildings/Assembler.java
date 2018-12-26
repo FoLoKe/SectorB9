@@ -32,7 +32,7 @@ public class Assembler extends StaticEntity
 	EntitySocket[] arms=new EntitySocket[3];
 	public Assembler(float x, float y,float rotation,ObjectsAsset  objAsset,String name,Game game)
 	{
-		super(x,y,rotation,objAsset.smelterCold,name,game);
+		super(x,y,rotation,objAsset.smelterCold,name,game,ID);
 		//crusherAnim=new Animation(objAsset.crusherAnim,15);
 		this.inventoryMaxCapacity=5;
 		this.opened=true;
@@ -60,7 +60,7 @@ public class Assembler extends StaticEntity
 
 	public Assembler(float x, float y,float rotation,Game game)
 	{
-		super(x,y,rotation,game.buildingsData.findById(ID).image,game.buildingsData.findById(ID).name,game);
+		super(x,y,rotation,game.buildingsData.findById(ID).image,game.buildingsData.findById(ID).name,game,ID);
 		assemblerAnim=new Animation( game.buildingsData.findById(ID).animation,30);
 		this.inventoryMaxCapacity=5;
 		this.opened=true;
@@ -126,7 +126,7 @@ public class Assembler extends StaticEntity
 	@Override
 	public void tick()
 	{
-		try
+		/*try
 		{
 			game.textInProduction.setString(inProduction+"");
 			game.textInQueue.setString(productionQueue+"");
@@ -221,7 +221,7 @@ public class Assembler extends StaticEntity
 			catch(Exception e)
 			{
 				System.out.println(e);
-			}
+			}*/
 	}
 
 	@Override

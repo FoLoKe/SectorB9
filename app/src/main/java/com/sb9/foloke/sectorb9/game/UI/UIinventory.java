@@ -47,25 +47,13 @@ import android.widget.ActionMenuView.*;
 //import java.util.*;
 public class UIinventory
 {
-	int selectedItemID;
-	private boolean visible;
 	private TableLayout table;
 	final private MainActivity context;
 	private Entity target;
 	InventoryExchangeInterface excInterface;
 	
-	ArrayList items;
-	private class Element
-	{
-		
-		public int ID;
-		public int count;
-		public Element(int ID,int count)
-		{
-			this.ID=ID;
-			this.count=count;
-		}
-	}
+	
+	
 
 	public UIinventory(TableLayout table,final MainActivity context,Entity target,InventoryExchangeInterface excInterface)
 	{
@@ -73,8 +61,6 @@ public class UIinventory
 		this.table=table;
 		this.context=context;
 		this.excInterface=excInterface;
-		ScrollView.LayoutParams lp= new ScrollView.LayoutParams(ScrollView.LayoutParams.WRAP_CONTENT,context.getResources().getDisplayMetrics().heightPixels);
-		lp.setMargins(10,10,10,10);
 		if(target!=null)
 		init();
 	}
@@ -86,82 +72,49 @@ public class UIinventory
 		{
 		if(target==null)
 			return;
-			items=new ArrayList<Element>();
+			
 		table.setVisibility(View.GONE);
 		table.removeAllViews();
 		BitmapFactory.Options options=new BitmapFactory.Options();
         options.inScaled=false;
-			table.setBackground(new BitmapDrawable(target.getGame().mAcontext.getResources(),target.getGame().uiAsset.uiBgBlur));
+		table.setBackground(new BitmapDrawable(target.getGame().mAcontext.getResources(),target.getGame().uiAsset.uiBgBlur));
 		
 		
-		int maxRowElems=3;
-		
-		if(target.getInventory().size()>0)
-		for(HashMap.Entry<Integer,Integer> entry : target.getInventory().entrySet()) {		
-			items.add(new Element(entry.getKey(),entry.getValue()));			
-		}
-		
-		/////inv maker
-		boolean overcapacity=false;
-		int maxElems=target.getInventoryMaxCapacity();
-			if(maxElems<items.size())
-			{
-				maxElems=items.size();
-				overcapacity=true;
-			}
-			int elem=0;
-		for(;elem<maxElems;)
+			int height=target.getInventory().getHeight();
+			int width=target.getInventory().getWidth();
+			
+		for(int i=0;i<height;i++)
 		{
 			final TableRow row=new TableRow(context);
 			TableLayout.LayoutParams tableRowParams=
 				new TableLayout.LayoutParams
 			(TableLayout.LayoutParams.WRAP_CONTENT,TableLayout.LayoutParams.FILL_PARENT);
 
-			int leftMargin=10;
-			int topMargin=10;
-			int rightMargin=10;
-			int bottomMargin=10;
-
-			tableRowParams.setMargins(leftMargin, topMargin, rightMargin, bottomMargin);
+			
 			row.setLayoutParams(tableRowParams);
 			
-			for(int rowPos=0;rowPos<maxRowElems;rowPos++)
+			for(int j=0;j<width;j++)
 			{
-				//real
-				if(elem <items.size())
-				{
-					final int itemId=((Element)items.get(elem)).ID;
-					final int itemCount=((Element)items.get(elem)).count;
-					
+				final int x=j;
+				final int y=i;
+				final Inventory inventory=target.getInventory();
 					ImageView sprite=new ImageView(context);
 					TextView itemCountText=new TextView(context);
 					
-					TableRow.LayoutParams trp=new TableRow.LayoutParams();
-					trp.setMargins(10,10,10,10);
-					trp.height=100;
 					itemCountText.setTextColor(Color.parseColor("#ffffffff"));
-					//button1.setLayoutParams(trp);
-
-					itemCountText.setText("x"+itemCount);
-					itemCountText.setLayoutParams(trp);
-					BitmapDrawable bdrawable;
-					bdrawable = new BitmapDrawable(context.getResources(),context.getGame().itemsData.findById(itemId).image);
-
-					sprite.setImageDrawable(bdrawable);
-					LinearLayout LL=new LinearLayout(context);
-					row.addView(LL);
-					LL.setOrientation(LinearLayout.HORIZONTAL);
-					//LL.setBackgroundColor(Color.CY);
-					LayoutParams LLP=new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT);
-					LLP.setMargins(10,10,10,10);
-					//LLP.height=100;
-					//LLP.width=100;
-					//LL.setLayoutParams(LLP);
-					//LL.getLayoutParams().width=100;
-					//LL.getLayoutParams().height=100;
+					int itemcount=target.getInventory().getItemOnPos(j,i).y;
+					if(itemcount!=0)
+					itemCountText.setText(itemcount+"");
+					itemCountText.setTextSize(10);
 					
+					
+					sprite.setImageDrawable(new BitmapDrawable(context.getResources(),context.getGame().itemsData.findById(target.getInventory().getItemOnPos(j,i).x).image));
+					InventoryFrameLayout IFL=new InventoryFrameLayout(context);
+					IFL.setX(j);
+					IFL.setY(i);
+					row.addView(IFL);
 				
-					LL.setOnTouchListener(new OnTouchListener()
+					IFL.setOnTouchListener(new OnTouchListener()
 						{
 							@Override
 							public boolean onTouch(View v,MotionEvent e)
@@ -171,54 +124,20 @@ public class UIinventory
 
 								ClipData dragData = new ClipData("bug",mimeTypes, item);
 								View.DragShadowBuilder myShadow = new View.DragShadowBuilder(v);
-								excInterface.started(target,itemCount,itemId);
-								selectedItemID=itemId;
+								excInterface.started(inventory,x,y,inventory.getItemCountOnPos(x,y));
+								
 								v.startDrag(dragData,myShadow,null,0);
 								return true;
 							}
 						});
-						//setDragAndDrop(sprite,itemId);
+						setDragAndDrop(IFL);
 						
-					LL.addView(sprite);
+					IFL.addView(sprite);
 					
-					LL.addView(itemCountText);
-					
-					//table.addView(row);
-					setDragAndDrop(LL,itemId);
+					IFL.addView(itemCountText);
 				}
 				//empty
-				else
-				{
-					if(!overcapacity)
-					{
-					ImageView sprite=new ImageView(context);
-					TableRow.LayoutParams trp=new TableRow.LayoutParams();
-					trp.setMargins(10,10,10,10);
-					trp.height=100;
-
-					BitmapDrawable bdrawable;
-
-					bdrawable = new BitmapDrawable(context.getResources(),context.getGame().itemsData.findById(0).image);
-					sprite.setImageDrawable(bdrawable);
-					sprite.setLayoutParams(trp);
-
-					sprite.setOnTouchListener(
-						new OnTouchListener() 
-						{
-							@Override
-							public boolean onTouch(View v,MotionEvent e) 
-							{
-
-								return true;
-							}
-						});
-					//row.setId(0);
-					row.addView(sprite);
-					setDragAndDrop(sprite,0);
-					}
-				}
-				elem++;
-			}
+				
 			table.addView(row);
 		}
 
@@ -229,10 +148,7 @@ public class UIinventory
 		catch(Exception e)
 		{ target.getGame().errorText.setString(e.toString());}
 	}
-	public void setVisability(boolean visability)
-	{
-		this.visible=visability;
-	}
+	
 	public TableLayout getTable()
 	{
 		return table;
@@ -245,9 +161,11 @@ public class UIinventory
 	{
 		return target;
 	}
-	public void setDragAndDrop(View img,final int ID)
+	public void setDragAndDrop(final InventoryFrameLayout IFL)
 	{
-	img.setOnDragListener(new View.OnDragListener() {
+		final int ID=target.getInventory().getItemOnPos(IFL.x,IFL.y).x;
+		
+	IFL.setOnDragListener(new View.OnDragListener() {
 	@Override
 	public boolean onDrag(View v, DragEvent event) {
 		switch(event.getAction()) {
@@ -265,7 +183,7 @@ public class UIinventory
 
 			case DragEvent.ACTION_DROP:
 				v.setBackgroundColor(Color.RED);
-				excInterface.ended(target);
+				excInterface.ended(target.getInventory(),IFL.x,IFL.y);
 				
 				// Do nothing
 				break;

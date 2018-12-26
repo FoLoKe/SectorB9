@@ -7,7 +7,7 @@ public abstract class ComponentEntity extends Entity
 {
 	public ComponentEntity(float x,float y,float rotation,Bitmap image,String name,Game game)
 	{
-		super(x,y,rotation,image,name,game);
+		super(x,y,rotation,image,name,game,0);
 	}
 	public abstract void render(Canvas canvas,float x,float y,float rotation);
 	

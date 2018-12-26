@@ -54,7 +54,7 @@ public class ItemsDataSheet
 	{
 		BitmapFactory.Options options=new BitmapFactory.Options();
         options.inScaled=false;
-		asset.init(Bitmap.createBitmap(BitmapFactory.decodeResource(game.getResources(),R.drawable.ui_inventory_sheet,options)));
+		asset.init(Bitmap.createBitmap(BitmapFactory.decodeResource(game.getResources(),R.drawable.ui_inv_sheet_v2,options)));
 		///						NAME				ID	IMAGE						made from items				items count					crushed into		smeltedinto	crushedFrom smeltedFrom info
 		objects.add(new ItemInfo("null item"			,0	,asset.inv_empty			,new int[]{0}				,new int[]{0}				,0					,0			,0			,0			,"error please contact developer"));
 		objects.add(new ItemInfo("iron ore"				,1	,asset.inv_item_fe			,new int[]{0}				,new int[]{0}				,4					,0			,0			,0			,"can be mined on asterods by drilling them or destroying"));
@@ -69,11 +69,11 @@ public class ItemsDataSheet
 		objects.add(new ItemInfo("steel wire"			,10	,asset.inv_item_steel_wire	,new int[]{7}				,new int[]{1}				,4  				,0			,0			,0			,""));
 		objects.add(new ItemInfo("gold wire"			,11	,asset.inv_item_gold_wire	,new int[]{8}				,new int[]{1}				,5  				,0			,0			,0			,""));
 		objects.add(new ItemInfo("silicon plate"		,12	,asset.inv_item_si_plate	,new int[]{9}				,new int[]{2}				,6  				,0			,0			,0			,""));	
-		objects.add(new ItemInfo("processor"			,13	,asset.inv_item_proc	,new int[]{10,11,12}		,new int[]{1,2,1}			,5  				,0			,0			,0			,""));
+		objects.add(new ItemInfo("processor"			,13	,asset.inv_item_proc		,new int[]{10,11,12}		,new int[]{1,2,1}			,5  				,0			,0			,0			,""));
 		objects.add(new ItemInfo("steel plate"			,14	,asset.inv_item_steel_plate	,new int[]{7}				,new int[]{1}				,4  				,7			,0			,0			,""));
-		objects.add(new ItemInfo("steel girder"			,15	,asset.inv_item_girder	,new int[]{14}				,new int[]{2}				,4  				,7			,0			,0			,""));
+		objects.add(new ItemInfo("steel girder"			,15	,asset.inv_item_girder		,new int[]{14}				,new int[]{2}				,4  				,7			,0			,0			,""));
 		objects.add(new ItemInfo("steel bar"			,16	,asset.inv_item_steel_ingot	,new int[]{14}				,new int[]{1}				,4  				,7			,0			,0			,""));
-		objects.add(new ItemInfo("integrated circuit"	,17	,asset.inv_item_circuit	,new int[]{11,12}			,new int[]{3,1}				,5  				,0			,0			,0			,""));
+		objects.add(new ItemInfo("integrated circuit"	,17	,asset.inv_item_circuit		,new int[]{11,12}			,new int[]{3,1}				,5  				,0			,0			,0			,""));
 		
 	}
 	public ItemInfo findById(int id)

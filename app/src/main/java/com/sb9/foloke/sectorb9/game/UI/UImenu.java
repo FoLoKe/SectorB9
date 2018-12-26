@@ -45,5 +45,20 @@ public class UImenu
 					MA.getGame().drawDebugInf=isChecked;
 				}
 			});
+			
+		Button saveButton=MA.findViewById(R.id.menu_save);
+		saveButton.setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View v)
+			{
+				MA.saveFile("test");
+			}});
+		Button loadButton=MA.findViewById(R.id.menu_load);
+		loadButton.setOnClickListener(new OnClickListener(){
+				@Override
+				public void onClick(View v)
+				{
+					MA.loadFile("test");
+				}});
 	}
 }

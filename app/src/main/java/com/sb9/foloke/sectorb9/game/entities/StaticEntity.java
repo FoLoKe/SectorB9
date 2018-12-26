@@ -16,9 +16,9 @@ public abstract class StaticEntity extends Entity {
 	protected boolean isInteractable=true;
 	protected StaticEntity powerSupplier=null;
 	
-    public StaticEntity(float x, float y,float rotation, Bitmap image,String name,Game game)
+    public StaticEntity(float x, float y,float rotation, Bitmap image,String name,Game game,int ID)
     {
-        super(x,y,rotation,image,name,game);
+        super(x,y,rotation,image,name,game,ID);
         //this.name=name;
 		textName=new Text("0",x,y-32);
     }

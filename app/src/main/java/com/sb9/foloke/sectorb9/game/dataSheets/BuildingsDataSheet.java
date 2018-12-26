@@ -42,14 +42,15 @@ public class BuildingsDataSheet
         options.inScaled=false;
 		asset.init(Bitmap.createBitmap(BitmapFactory.decodeResource(game.getResources(),R.drawable.objects_sheet,options)));
 		///									NAME					ID	IMAGE								ANIMATION				OPENED	ENABLED	INVSIZE	INTERACTABLE
-		objects.add(new BuildingObjectInfo("small cargo container"	,1	,asset.smallCargoContainer			,null					,true	,true	,5		,false			));
-		objects.add(new BuildingObjectInfo("rocks crusher"			,2	,asset.crusher						,asset.crusherAnim		,true	,true	,3		,true			));
-		objects.add(new BuildingObjectInfo("solar panel"			,3	,asset.solarPanel					,null					,false	,true	,0		,true			));
-		objects.add(new BuildingObjectInfo("fuel generator"			,4	,asset.fuelGenerator				,asset.fuelGeneratorAnim,true	,false	,1		,true			));
-		objects.add(new BuildingObjectInfo("big smelter"			,5	,asset.smelterCold					,asset.smelterHot		,true	,true	,1		,true			));
+		objects.add(new BuildingObjectInfo("nullItem"				,0	,asset.smallCargoContainer			,null					,false	,false	,0		,false			));
+		objects.add(new BuildingObjectInfo("small_cargo_container"	,1	,asset.smallCargoContainer			,null					,true	,true	,5		,false			));
+		objects.add(new BuildingObjectInfo("rocks_crusher"			,2	,asset.crusher						,asset.crusherAnim		,true	,true	,3		,true			));
+		objects.add(new BuildingObjectInfo("solar_panel"			,3	,asset.solarPanel					,null					,false	,true	,0		,true			));
+		objects.add(new BuildingObjectInfo("fuel_generator"			,4	,asset.fuelGenerator				,asset.fuelGeneratorAnim,true	,false	,1		,true			));
+		objects.add(new BuildingObjectInfo("big_smelter"			,5	,asset.smelterCold					,asset.smelterHot		,true	,true	,1		,true			));
 		objects.add(new BuildingObjectInfo("assembler"				,6	,asset.assembler					,asset.assemblerAnim	,true	,true	,8		,true			));
 		objects.add(new BuildingObjectInfo("lab_mk1"				,7	,asset.lab_mk1						,null					,true	,true	,10		,true			));
-		
+		objects.add(new BuildingObjectInfo("smallAsteroid"			,8	,asset.smallAsteroid				,null					,false	,false 	,1		,false			));
 		
 		}
 	public BuildingObjectInfo findById(int id)

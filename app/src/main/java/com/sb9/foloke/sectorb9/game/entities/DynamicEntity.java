@@ -16,9 +16,9 @@ public abstract class DynamicEntity extends Entity {
 	private int debugCounter=0;
 	protected float acceleration;
 	protected boolean movable;
-    public DynamicEntity(float x, float y,float rotation, Bitmap image,String name,Game game)
+    public DynamicEntity(float x, float y,float rotation, Bitmap image,String name,Game game,int ID)
     {
-        super(x,y,rotation,image,name,game);
+        super(x,y,rotation,image,name,game,ID);
         this.rotation=rotation;
 		dx=dy=0;
 		//textSpeed=new Text("0",x,y-32);

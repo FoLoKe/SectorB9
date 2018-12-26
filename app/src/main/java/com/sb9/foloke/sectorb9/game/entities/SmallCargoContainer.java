@@ -7,17 +7,11 @@ import com.sb9.foloke.sectorb9.game.dataSheets.*;
 public class SmallCargoContainer extends CargoContainer
 {
 	final static int ID=1;
-	public SmallCargoContainer(float x,float y,float rotation,ObjectsAsset asset,String name,Game game)
-	{
-		super(x,y,rotation,asset.smallCargoContainer,name,4,game);
-		
-		this.opened=true;
-		energy=true;
-	}
+	
 	public SmallCargoContainer(float x,float y,float rotation,Game game)
 	{
 		
-		super(x,y,rotation,game.buildingsData.findById(ID).image,game.buildingsData.findById(ID).name,game.buildingsData.findById(ID).inventoryCapacity,game);
+		super(x,y,rotation,game.buildingsData.findById(ID).image,game.buildingsData.findById(ID).name,game.buildingsData.findById(ID).inventoryCapacity,game,ID);
 	
 		
 		enabled					=game.buildingsData.findById(ID).enabledByDefault;

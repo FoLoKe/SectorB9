@@ -22,8 +22,6 @@ public class assemblerUI
 	boolean debugOnce=true;
 	public void init(final MainActivity MA,final Assembler target)
 	{
-		
-		///adapter sets EXEPTIONS NEEDS REFACTORING
 		try
 		{
 		

@@ -62,6 +62,7 @@ public class MainActivity extends Activity {
 	public UIinteraction uiInteraction=new UIinteraction();
 	private UIaction uiAction =new UIaction();
 	public HelpUI helpui=new HelpUI();
+	public ShipUI shipUI;//=new ShipUI();
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
@@ -124,4 +125,74 @@ public class MainActivity extends Activity {
 	{
 		return game;
 	}
+	
+	public void saveFile(String fileName) {
+        try {
+            String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString()+File.separator+"sb9";
+            File myDir = new File(root);
+            if (!myDir.exists()) {
+                myDir.mkdir();
+            }
+
+            String fname = "save "+fileName+".txt";
+            File file = new File (myDir, fname);
+            if (file.exists ())
+                file.delete ();
+
+            FileOutputStream out = new FileOutputStream(file);
+            OutputStreamWriter osw = new OutputStreamWriter(out);
+            BufferedWriter writer = new BufferedWriter(osw);
+		
+            writer.write("SB9 debug save");
+			writer.newLine();
+            game.getEntityManager().save(writer);
+            
+            writer.close();
+            osw.close();
+        } catch (Throwable e) {
+           System.out.println(e);
+        }
+    }
+	
+	public String loadFile(String fileName) {
+        
+        try {
+
+            String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString()+File.separator+"sb9";
+            File myDir = new File(root);
+            if (!myDir.exists()) {
+              return  "no directory";
+            }
+
+            String fname = "save "+fileName+".txt";
+            File file = new File (myDir, fname);
+            if (file.exists ())
+            {
+                //InputStream inputStream = openFileInput(fileName);
+                FileInputStream inputStream = new FileInputStream(file);
+
+                if (inputStream != null)
+                {
+					String line;
+                    InputStreamReader isr = new InputStreamReader(inputStream);
+                    BufferedReader reader = new BufferedReader(isr);
+					line=reader.readLine();
+                    game.getEntityManager().load(reader);
+                    inputStream.close();
+                    reader.close();
+                    isr.close();
+					
+                    return line;
+                }
+            }
+            else
+            {
+                return "no such file";
+            }
+        } catch (Throwable t)
+        {
+            return "error:"+ t.getLocalizedMessage();
+        }
+        return "200";
+    }
 }

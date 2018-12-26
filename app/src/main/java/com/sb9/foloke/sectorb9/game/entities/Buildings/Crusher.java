@@ -7,6 +7,7 @@ import java.util.Map;
 import com.sb9.foloke.sectorb9.*;
 import com.sb9.foloke.sectorb9.game.UI.*;
 import com.sb9.foloke.sectorb9.game.Assets.*;
+import com.sb9.foloke.sectorb9.game.UI.Inventory.*;
 
 public class Crusher extends StaticEntity
 {
@@ -14,7 +15,7 @@ public class Crusher extends StaticEntity
 	private UIProgressBar prgBar;
 	private UIcustomImage statusImage;
 	
-	private int inProduction;
+	private Inventory.InventoryItem inProduction;
 	private int count;
 	private Timer prodTimer;
 	//private PointF collisionPoints[];
@@ -22,36 +23,17 @@ public class Crusher extends StaticEntity
 	//private Line2D collisionlines[];
 	private Animation crusherAnim;
 	
+	private boolean noInventorySpaceBlock=false;
+	private boolean noItemsBlock=false;
 	
-	public Crusher(float x, float y,float rotation,ObjectsAsset  objAsset,String name,Game game)
-	{
-		super(x,y,rotation,objAsset.crusher,name,game);
-		crusherAnim=new Animation(objAsset.crusherAnim,15);
-		this.inventoryMaxCapacity=3;
-		this.opened=true;
-		inProduction=0;
-		count=0;prodTimer=new Timer(0);
-		prgBar=new UIProgressBar(this,50,8,-25,-20,game.uiAsset.stunBackground,game.uiAsset.stunLine,game.uiAsset.progressBarBorder,prodTimer.getTick());
-
-		collisionInitPoints=new PointF[4];
-		collisionInitPoints[0]=new PointF(-image.getWidth()/2,-image.getHeight()/2);
-		collisionInitPoints[1]=new PointF(image.getWidth()/2,-image.getHeight()/2);
-		collisionInitPoints[2]=new PointF(image.getWidth()/2,image.getHeight()/2);
-		collisionInitPoints[3]=new PointF(-image.getWidth()/2,image.getHeight()/2);
-		isUsingCustomCollision=true;
-		setCustomCollisionObject(collisionInitPoints);
-		
-		statusImage=new UIcustomImage(game.uiAsset.noEnergySign,5);
-		calculateCollisionObject();
-	}
 	
 	public Crusher(float x, float y,float rotation,Game game)
 	{
-		super(x,y,rotation,game.buildingsData.findById(ID).image,game.buildingsData.findById(ID).name,game);
+		super(x,y,rotation,game.buildingsData.findById(ID).image,game.buildingsData.findById(ID).name,game,ID);
 		crusherAnim=new Animation(game.buildingsData.findById(ID).animation,15);
 		this.inventoryMaxCapacity=3;
 		this.opened=true;
-		inProduction=0;
+		inProduction=new Inventory.InventoryItem(0,0,0,0);
 		count=0;prodTimer=new Timer(0);
 		prgBar=new UIProgressBar(this,50,8,-25,-20,game.uiAsset.stunBackground,game.uiAsset.stunLine,game.uiAsset.progressBarBorder,prodTimer.getTick());
 
@@ -92,48 +74,53 @@ public class Crusher extends StaticEntity
 	{
 		if(energy)
 		{
-		if(inventory.size()>0&&inProduction==0)
-		{
-			for(Map.Entry<Integer,Integer> e: inventory.entrySet())
-			{
-				if(game.itemsData.findById(e.getKey()).crushToID!=0)
+			if(!noItemsBlock)
+				if(inProduction.getID()==0)
 				{
-					inProduction=e.getKey();
-					if(inventory.get(inProduction)>1)
-						inventory.put(inProduction,inventory.get(inProduction)-1);
-					else
-						inventory.remove(inProduction);
-				prodTimer.setTimer(2);
-				game.mAcontext.initInvenories();
-				break;
-				}
-			}
-			
-		}
-		if(inProduction!=0)
-		{
-			crusherAnim.tick();
-			if(prodTimer.tick())
-			{
-
-				
-					if(inventory.containsKey(game.itemsData.findById(inProduction).crushToID))
+					for(Inventory.InventoryItem e :inventory.getArray())
 					{
-						inventory.put(game.itemsData.findById(inProduction).crushToID,inventory.get(game.itemsData.findById(inProduction).crushToID)+1);
+						int crushableID=e.getID();
+						int crushedInto=game.itemsData.findById(crushableID).crushToID;
+						int crushedFromCount=2;
+						if(crushedInto!=0)
+						{				
+							if(inventory.takeOneItemFromAllInventory(crushableID,crushedFromCount))
+							{
+								prodTimer.setTimer(2);
+								game.mAcontext.initInvenories();
+								inProduction.set(crushableID,2);
+								break;
+							}
+						}
 					}
-					else
-						inventory.put(game.itemsData.findById(inProduction).crushToID,1);
-					
-				inProduction=0;
-				MainActivity tAct=game.mAcontext;
-				tAct.initInvenories();
-			}
+				}
+
+			if(!noInventorySpaceBlock)
+				if(inProduction.getID()!=0)
+				{	
+					crusherAnim.tick();
+					if(prodTimer.tick())
+					{
+						int crushableID=inProduction.getID();
+						int crushedInto=game.itemsData.findById(crushableID).crushToID;
+						int crushedIntoCount=1;
+						
+						inventory.addToExistingOrNull(crushedInto,crushedIntoCount);
+						inProduction.set(0,0);
+						game.mAcontext.initInvenories();
+					}
+				{	
+						
+				
+				}
+			
 		}
 		if(prodTimer.getTick()>0)
 			prgBar.tick(prodTimer.getTick()/(1.2f));
 		}
 		
 	}
+
 
 	@Override
 	public void calculateCollisionObject()

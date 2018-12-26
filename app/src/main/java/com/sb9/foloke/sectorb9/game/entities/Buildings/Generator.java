@@ -20,9 +20,9 @@ import java.util.*;
 	Paint consumersPaintOff=new Paint();
 	
 		private ArrayList<StaticEntity> consumers;
-		public Generator(float x, float y,float rotation,Bitmap image,String name,Game game)
+		public Generator(float x, float y,float rotation,Bitmap image,String name,Game game,int ID)
 		{
-			super(x,y,rotation,image,name,game);
+			super(x,y,rotation,image,name,game,ID);
 			collisionInitPoints=new PointF[4];
 			collisionInitPoints[0]=new PointF(-image.getWidth()/2,-image.getHeight()/2);
 			collisionInitPoints[1]=new PointF(image.getWidth()/2,-image.getHeight()/2);

@@ -1,0 +1,64 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+	android:id="@+id/shipui">
+	
+	<LinearLayout
+		android:layout_height="fill_parent"
+		android:layout_width="fill_parent"
+		android:background="#55ffffff">
+		<ScrollView
+			android:id="@+id/PlayerScrollView"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:focusableInTouchMode="true"
+		>
+
+			<TableLayout
+				android:id="@+id/shipUI_InvTable"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textColor="#ffffff"
+				android:layout_margin="10dp">
+				<TableRow>
+					<TextView
+						android:text="debug row"
+						/>
+				</TableRow>
+			</TableLayout>
+			,</ScrollView>
+		<ImageView
+			android:layout_width="5dp"
+			android:layout_height="fill_parent"
+			android:background="#ff000000"
+
+		/>
+			<FrameLayout
+				android:layout_height="fill_parent"
+				android:layout_width="fill_parent"
+				
+				
+				android:background="#55ffffff"
+				>
+				<TableLayout
+					android:gravity="center"
+					android:layout_gravity="center"
+					android:id="@+id/shipUI_ArrangementTable"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:textColor="#ffffff"
+					
+					android:layout_margin="10dp">
+				</TableLayout>
+			</FrameLayout>
+    </LinearLayout>
+	<Button
+		android:layout_gravity="center_horizontal|top"
+		android:layout_height="wrap_content"
+		android:layout_width="wrap_content"
+		android:text="Close"
+		android:id="@+id/shipuiCloseButton"
+		android:textColor="#ffffff"
+	/>
+</FrameLayout>

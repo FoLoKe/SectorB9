@@ -14,10 +14,11 @@ public class Projectile extends DynamicEntity
 	protected boolean active=false;
 	SmallDustPuff dustPuff;
 	boolean collided=false;
+	boolean hasInventory=false;
 	Timer dustDelay;
 	public Projectile(float x,float y,Bitmap image,String name,int lifetime,float speed, float rotation,int damage,Game game)
 	{
-		super(x,y,0,image,name,game);
+		super(x,y,0,image,name,game,0);
 		this.rotation=rotation;
 		this.speed=speed;
 		this.lifetime=lifetime;

@@ -14,20 +14,11 @@ public class FuelGenerator extends Generator
 	private UIProgressBar prgBar;
 	private Timer prodTimer;
 	private Animation fuelGeneratorAnim;
-	public FuelGenerator(float x,float y,float rotation,ObjectsAsset asset,String name,Game game)
-	{
-	super(x,y,rotation,asset.fuelGenerator,name,game);
-	opened=true;
-	inventoryMaxCapacity=1;
-		prodTimer=new Timer(0);
-		prgBar=new UIProgressBar(this,50,8,-25,-20,game.uiAsset.stunBackground,game.uiAsset.stunLine,game.uiAsset.progressBarBorder,prodTimer.getTick());
-	fuelGeneratorAnim=new Animation(asset.fuelGeneratorAnim,15);
-		calculateConsumers();
-	}
+	
 	
 	public FuelGenerator(float x,float y,float rotation,Game game)
 	{
-		super(x,y,rotation,game.buildingsData.findById(ID).image,game.buildingsData.findById(ID).name,game);
+		super(x,y,rotation,game.buildingsData.findById(ID).image,game.buildingsData.findById(ID).name,game,ID);
 		
 		
 		
@@ -48,7 +39,7 @@ public class FuelGenerator extends Generator
 	public void tick()
 	{
 		// TODO: Implement this method
-		if(enabled)
+		/*if(enabled)
 		{
 		super.tick();
 			prodTimer.tick();
@@ -93,7 +84,7 @@ public class FuelGenerator extends Generator
 			fuelGeneratorAnim.tick();
 		image=fuelGeneratorAnim.getImage();
 		}
-		
+		*/
 	}
 
 	@Override

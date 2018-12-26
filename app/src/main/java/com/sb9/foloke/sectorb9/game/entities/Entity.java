@@ -11,6 +11,8 @@ import java.util.*;
 import com.sb9.foloke.sectorb9.game.UI.*;
 import com.sb9.foloke.sectorb9.game.display.*;
 import com.sb9.foloke.sectorb9.game.funtions.*;
+import java.io.*;
+import com.sb9.foloke.sectorb9.game.UI.Inventory.*;
 
 public abstract class Entity {
     protected float x,y;
@@ -19,7 +21,7 @@ public abstract class Entity {
     protected Bitmap image;
 	protected boolean renderable;
 	private int frameTimer;
-	protected Map<Integer,Integer> inventory;
+	//protected Map<Integer,Integer> inventory;
 	protected int inventoryMaxCapacity=0;
 	protected String name;
 	protected float rotation;
@@ -32,8 +34,13 @@ public abstract class Entity {
 	protected boolean isUsingCustomCollision=false;
 	private CustomCollisionObject collisionObject;
 	protected UIProgressBar uIhp;
-    public Entity(float x,float y,float rotation,Bitmap image,String name,Game game)
+	private int ID=0;
+	boolean hasInventory=true;
+	
+	protected Inventory inventory;
+    public Entity(float x,float y,float rotation,Bitmap image,String name,Game game,int ID)
     {
+		this.ID=ID;
 		this.HP=maxHp;
         this.x=x;
         this.y=y;
@@ -42,13 +49,66 @@ public abstract class Entity {
         this.image=image;
 		this.renderable=false;
 		this.name=name;
-		this.inventory=new HashMap<Integer,Integer>();
+		
+		if(game.buildingsData.findById(ID).inventoryCapacity!=0)
+		this.inventory=new Inventory(this,game.buildingsData.findById(ID).inventoryCapacity,4);
 		this.rotation=rotation;
 		this.uIhp=new UIProgressBar(this,50,8,-25,-20,game.uiAsset.hpBackground,game.uiAsset.hpLine,game.uiAsset.progressBarBorder,getHp());
+		this.ID=ID;
     }
+	public void save(BufferedWriter writer)
+	{
+		try{
+			String s=invSave();
+		writer.write(ID+" "+name+" "+x+" "+y+" "+rotation+" "+HP+" "+s);
+		writer.newLine();
+		}
+		catch(Throwable t)
+		{
+			System.out.println(t);
+		}
+	}
+	public void load(String[] words)
+	{
+		try
+		{
+			
+			name=words[1];
+			x=Float.parseFloat(words[2]);
+			y=Float.parseFloat(words[3]);
+			rotation= Float.parseFloat(words[4]);
+			HP=Float.parseFloat(words[5]);
+			String[] invWords;
+			if((invWords = words[6].split(":")).length>0)
+			{
+				for(String s: invWords)
+				{
+					if(s.length()>0)
+					{
+						String elemWords[]=s.split("=");
+						//inventory.put(Integer.parseInt(elemWords[0]),Integer.parseInt(elemWords[1]));
+					}
+				}
+			}
+		}
+		catch(Throwable t)
+		{
+			System.out.println(t);
+		}
+	}
+	private String invSave()
+	{
+		String s=":";
+		for (Inventory.InventoryItem i: inventory.getArray())
+		{
+			s+=i.getID()+"="+i.getCount()+":";
+		}
+		return s;
+	}
     abstract public void render(Canvas canvas);
     abstract public void tick();
-
+	///on destroy
+	///on damage
     public float getX() {
         return x;
     }
@@ -114,7 +174,7 @@ public abstract class Entity {
 	{
 		return frameTimer;
 	}
-	public Map<Integer,Integer> getInventory()
+	public Inventory getInventory()
 	{
 		return inventory;
 	}
@@ -166,18 +226,18 @@ public abstract class Entity {
 	{
 		return game;
 	}
-	public void onDestroy()
+	/*public void onDestroy()
 	{
 		game.getEntityManager().addObject(new DroppedItems(x,y,inventory,game));
-	}
-	public void setInventory(Map<Integer,Integer> inv)
+	}*/
+	/*public void setInventory(Inventory inv)
 	{
 		inventory.clear();
 		for (Map.Entry<Integer,Integer> i: inv.entrySet())
 			{
 				this.inventory.put(i.getKey(),i.getValue());
 			}
-	}
+	}*/
 	public boolean getActive()
 	{
 		return active;

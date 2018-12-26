@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<declare-styleable name="InventoryLinearLayout">
+        <attr name="pos_x" format="integer" />
+		<attr name="pos_y" format="integer" />
+    </declare-styleable>
+
+</resources>

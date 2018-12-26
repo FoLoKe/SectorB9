@@ -25,7 +25,7 @@ public class BigSmelter extends StaticEntity
 
 	public BigSmelter(float x, float y,float rotation,ObjectsAsset  objAsset,String name,Game game)
 	{
-		super(x,y,rotation,objAsset.smelterCold,name,game);
+		super(x,y,rotation,objAsset.smelterCold,name,game,ID);
 		//crusherAnim=new Animation(objAsset.crusherAnim,15);
 		this.inventoryMaxCapacity=3;
 		this.opened=true;
@@ -48,7 +48,7 @@ public class BigSmelter extends StaticEntity
 
 	public BigSmelter(float x, float y,float rotation,Game game)
 	{
-		super(x,y,rotation,game.buildingsData.findById(ID).image,game.buildingsData.findById(ID).name,game);
+		super(x,y,rotation,game.buildingsData.findById(ID).image,game.buildingsData.findById(ID).name,game,ID);
 		smelterInWorkBitmap= game.buildingsData.findById(ID).animation[0];
 		this.inventoryMaxCapacity=3;
 		this.opened=true;
@@ -97,7 +97,7 @@ public class BigSmelter extends StaticEntity
 	@Override
 	public void tick()
 	{
-		if(energy)
+		/*if(energy)
 		{
 			if(inventory.size()>0&&inProduction==0)
 			{
@@ -141,7 +141,7 @@ public class BigSmelter extends StaticEntity
 			if(prodTimer.getTick()>0)
 				prgBar.tick(prodTimer.getTick()/(prodTimeLength*0.6f));
 		}
-		super.calculateCollisionObject();
+		super.calculateCollisionObject();*/
 
 	}
 

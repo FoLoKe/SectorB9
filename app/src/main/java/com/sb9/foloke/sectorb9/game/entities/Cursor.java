@@ -16,7 +16,7 @@ public class Cursor extends DynamicEntity {
 
 		public Cursor(float x, float y, ShipAsset asset,String name,Game game)
 		{
-			super(x,y,0,asset.cursor,name,game);
+			super(x,y,0,asset.cursor,name,game,0);
 			
 			this.dx=this.dy=0;
 			this.drawable=false;

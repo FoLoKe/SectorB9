@@ -14,12 +14,12 @@ public class DroppedItems extends Entity
 	public DroppedItems(float x,float y,Map<Integer,Integer> inventory,Game game)
 	{
 		
-		super(x,y,((new Random()).nextInt(180)),game.buildingsData.findById(ID).image,"g",game);
+		super(x,y,((new Random()).nextInt(180)),game.buildingsData.findById(ID).image,"g",game,0);
 		this.x=x;
 		this.y=y;
 		this.inventoryMaxCapacity=inventory.size();
-		this.inventory=new HashMap<Integer,Integer>();
-		this.setInventory(inventory);
+		//this.inventory=new HashMap<Integer,Integer>();
+		//this.setInventory(inventory);
 		this.collidable=false;
 		this.opened=true;
 	}
@@ -37,7 +37,7 @@ public class DroppedItems extends Entity
 	@Override
 	public void tick()
 	{
-		if(!renderable||!active)
+		/*if(!renderable||!active)
 			return;
 		this.calculateCollisionObject();
 		
@@ -53,7 +53,7 @@ public class DroppedItems extends Entity
 		active=false;
 		renderable=false;
 		opened=false;
-		}
+		}*/
 		// TODO: Implement this method
 	}
 

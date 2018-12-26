@@ -130,5 +130,14 @@ public class UIinteraction
 
 				}
 			});
+		Button openShipButton=MA.findViewById(R.id.openShip);
+		openShipButton.setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View v)
+			{
+				MA.shipUI.init();
+				VF.setDisplayedChild(VF.indexOfChild(MA.findViewById(R.id.shipui)));
+			}
+		});
 	}
 }

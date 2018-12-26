@@ -148,16 +148,19 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         player=new Player(900,900,0,shipAsset,uiAsset,this,"player");
 		excInterface=new InventoryExchangeInterface(this);
 		
-		
-		entityManager.addObject(new ModularLab(1000,900,0,this));
-		entityManager.addObject(new Assembler(900,1000,rand.nextInt(180),this));
-		entityManager.addObject( new SolarPanel(850,900,rand.nextInt(180),this));
+		entityManager.addObject(new FuelGenerator(1200,900,rand.nextInt(180),this));
+		entityManager.addObject(new BigSmelter(1100,900,rand.nextInt(180),this));
+		entityManager.addObject(new ModularLab(1000,900,rand.nextInt(180),this));
+		entityManager.addObject(new Assembler(900,900,rand.nextInt(180),this));
+		entityManager.addObject( new SolarPanel(800,900,rand.nextInt(180),this));
+		entityManager.addObject(new Crusher(700,900,rand.nextInt(180),this));
+		entityManager.addObject(new SmallCargoContainer(600,900,rand.nextInt(180),this));
 		
 		//for building and ship leading
         cursor=new Cursor(900,900,shipAsset,"cursor",this);
 		
 		for (int i=0;i<50;i++)
-		entityManager.addObject(new Asteroid(50*rand.nextInt(50)+25*rand.nextInt(20),100*rand.nextInt(20)+20*rand.nextInt(50),rand.nextInt(180),shipAsset,"asteroid_"+i,this));
+		entityManager.addObject(new Asteroid(50*rand.nextInt(50)+25*rand.nextInt(20),100*rand.nextInt(20)+20*rand.nextInt(50),rand.nextInt(180),this));
 		
         textPointOfTouch=new Text(""+0+" "+0,500,400);
 		textScreenWH=new Text("",500,250);
