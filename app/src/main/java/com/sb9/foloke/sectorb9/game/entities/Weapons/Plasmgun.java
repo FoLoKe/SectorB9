@@ -1,5 +1,6 @@
 package com.sb9.foloke.sectorb9.game.entities.Weapons;
 //import java.util.;
+import com.sb9.foloke.sectorb9.game.Assets.WeaponsAsset;
 import com.sb9.foloke.sectorb9.game.funtions.*;
 import com.sb9.foloke.sectorb9.game.entities.Ships.*;
 import com.sb9.foloke.sectorb9.game.display.*;
@@ -15,7 +16,7 @@ public class Plasmgun extends Weapon
 	public Plasmgun(TurretSystem turret,Game game)
 	{
 		super(turret,game);
-		this.projectiles=new ProjectilesPool(game.weaponAsset.plasm,5,60,damage,game);
+		this.projectiles=new ProjectilesPool(WeaponsAsset.plasm,5,60,damage,game);
 	}
 	public void shoot()
 	{

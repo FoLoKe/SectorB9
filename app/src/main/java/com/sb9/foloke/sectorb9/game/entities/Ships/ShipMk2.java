@@ -5,9 +5,9 @@ import android.graphics.*;
 
 public class ShipMk2 extends Ship
 {
-	public ShipMk2(ShipAsset asset,DynamicEntity holder)
+	public ShipMk2(DynamicEntity holder)
 	{
-		super(asset.player_mk2,asset.engine_mk2,asset.player_mk2_engine_shield,holder);
+		super(ShipAsset.player_mk2,ShipAsset.engine_mk2,ShipAsset.player_mk2_engine_shield,holder);
 		pointOfengine.set(0,12);
 		pointOfShooting.set(shipImage.getWidth()/2,0);
 		

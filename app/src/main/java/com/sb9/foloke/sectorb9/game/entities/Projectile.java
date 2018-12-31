@@ -7,15 +7,13 @@ import com.sb9.foloke.sectorb9.game.ParticleSystem.*;
 public class Projectile extends DynamicEntity
 {
 	private int lifetime;
-	private Timer lifetimer;
+	private Timer lifeTimer;
 	private int damage;
-	//private Entity holder;
-	private float effectDelay=1f;
-	protected boolean active=false;
-	SmallDustPuff dustPuff;
-	boolean collided=false;
-	boolean hasInventory=false;
-	Timer dustDelay;
+	private float effectDelay;
+	private boolean active=false;
+	private SmallDustPuff dustPuff;
+	private boolean collided=false;
+	private Timer dustDelay;
 	public Projectile(float x,float y,Bitmap image,String name,int lifetime,float speed, float rotation,int damage,Game game)
 	{
 		super(x,y,0,image,name,game,0);
@@ -24,9 +22,10 @@ public class Projectile extends DynamicEntity
 		this.lifetime=lifetime;
 		this.collisionBox=new RectF(x+image.getWidth()/2-3,y+image.getHeight()-3,x+image.getWidth()/2+3,y+image.getHeight()/2+3);
 		this.damage=damage;
-		lifetimer=new Timer(0);
-		dustDelay=new Timer(0);
-		dustPuff=new SmallDustPuff(game);
+		this.lifeTimer=new Timer(0);
+		this.dustDelay=new Timer(0);
+		this.dustPuff=new SmallDustPuff(game);
+		this.effectDelay=1f;
 	}
 	@Override
 	public void render(Canvas canvas)
@@ -66,7 +65,7 @@ public class Projectile extends DynamicEntity
 		if(active)
 		{
 			
-			if(lifetimer.tick())
+			if(lifeTimer.tick())
 			{
 				getGame().debugText.setString(name+" ended");
 			active=false;	
@@ -85,7 +84,7 @@ public class Projectile extends DynamicEntity
 								collidedObject=e;
 								collisionFlag=true;
 								collidedObject.applyDamage((damage));
-								this.lifetimer.setTimer(0);
+								this.lifeTimer.setTimer(0);
 								dustDelay.setTimer(effectDelay);
 								calculateCollisionObject();
 								
@@ -134,12 +133,11 @@ public class Projectile extends DynamicEntity
 		setCenterX(point.x);
 		setCenterY(point.y);
 		this.rotation=rotation;
-		this.lifetimer.setTimer(lifetime);
+		this.lifeTimer.setTimer(lifetime);
 		
 		calculateCollisionObject();
 		renderable=true;
 		active=true;
-		//renderable=true;
 	}
 
 	@Override

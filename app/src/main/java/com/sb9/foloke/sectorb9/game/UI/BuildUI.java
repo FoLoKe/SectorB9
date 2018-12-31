@@ -5,25 +5,27 @@ import android.view.View.*;
 import android.view.*;
 import android.graphics.*;
 import android.graphics.drawable.*;
+
+import com.sb9.foloke.sectorb9.game.Assets.UIAsset;
 import com.sb9.foloke.sectorb9.game.entities.*;
 import com.sb9.foloke.sectorb9.game.entities.Buildings.*;
-import org.apache.http.message.*;
+
 
 public class BuildUI
 {
-	static int ObjectID;
-	View prevPressed;
+	private static int ObjectID;
+	private View prevPressed;
 	public void init(final MainActivity MA,final ViewFlipper VF)
 	{
 		
 		ScrollView.LayoutParams lp= new ScrollView.LayoutParams(ScrollView.LayoutParams.WRAP_CONTENT,MA.getResources().getDisplayMetrics().heightPixels);
 		lp.setMargins(10,10,10,10);
 		MA.findViewById(R.id.buildTableLayout).setVisibility(View.VISIBLE);
-		TableLayout table=(TableLayout)MA.findViewById(R.id.buildTableLayout);
+		TableLayout table=MA.findViewById(R.id.buildTableLayout);
 		table.removeAllViews();
 		BitmapFactory.Options options=new BitmapFactory.Options();
         options.inScaled=false;
-		table.setBackground(new BitmapDrawable(MA.getResources(),MA.getGame().uiAsset.uiBgBlur));
+		table.setBackground(new BitmapDrawable(MA.getResources(),UIAsset.uiBgBlur));
 		for(int i=1;i<MA.getGame().buildingsData.getLenght()+1;i++)
 		{
 				TableRow row=new TableRow(MA);
@@ -39,7 +41,7 @@ public class BuildUI
 				
 				testText.setLayoutParams(trp);
 				ObjectID=i;
-				testText.setText(""+ObjectID);
+				testText.setText(ObjectID+"");
 				
 				BitmapDrawable bdrawable;
 				bdrawable = new BitmapDrawable(MA.getResources(),MA.getGame().buildingsData.findById(ObjectID).image);
@@ -51,7 +53,7 @@ public class BuildUI
 						@Override
 						public void onClick(View v)
 						{
-							ObjectID=((TableRow)v).getId();
+							ObjectID=(v).getId();
 							
 							v.setBackgroundColor(Color.RED);
 							if(prevPressed!=null)

@@ -1,5 +1,7 @@
 package com.sb9.foloke.sectorb9.game.UI;
 import com.sb9.foloke.sectorb9.*;
+import com.sb9.foloke.sectorb9.game.Assets.UIAsset;
+
 import android.widget.*;
 import android.view.View.*;
 import android.view.*;
@@ -49,7 +51,7 @@ public class UIaction
         // Устанавливаем действие по нажатию
 		ImageButton shootButton = MA.findViewById(R.id.shootButton);
 		//shootButton.setImageBitmap();
-		shootButton.setBackground(new BitmapDrawable(MA.getResources(),MA.getGame().uiAsset.shootButton));
+		shootButton.setBackground(new BitmapDrawable(MA.getResources(),UIAsset.shootButton));
 		/*LinearLayout.LayoutParams params = */shootButton.getLayoutParams().width=200;
 		shootButton.getLayoutParams().height=200;
 		shootButton.setOnTouchListener

@@ -1,49 +1,42 @@
 package com.sb9.foloke.sectorb9.game.entities;
 
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PointF;
-
 import static java.lang.Math.PI;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import android.graphics.*;
-
 import com.sb9.foloke.sectorb9.game.Assets.ShipAsset;
 import com.sb9.foloke.sectorb9.game.Assets.UIAsset;
-import com.sb9.foloke.sectorb9.game.UI.Text;
 import com.sb9.foloke.sectorb9.game.UI.UIProgressBar;
 import com.sb9.foloke.sectorb9.game.display.*;
-import com.sb9.foloke.sectorb9.game.ParticleSystem.*;
-import java.util.HashMap;
-import java.sql.*;
+
 import com.sb9.foloke.sectorb9.game.funtions.*;
-import org.apache.http.impl.client.*;
 import com.sb9.foloke.sectorb9.game.entities.Ships.*;
 import com.sb9.foloke.sectorb9.game.UI.*;
 
-public class Player extends DynamicEntity 
+public class Player extends DynamicEntity
 {
 	private UIProgressBar stun;
 	public boolean shootFlag;
-	private boolean drawInteractionCitcle=false;
+
 	private Ship ship;
 	private int interactionRadius=150;
-    public Player(float x, float y,float rotation, ShipAsset asset, UIAsset uiasset, Game game,String name)
+    public Player(float x, float y,float rotation, Game game,String name)
     {
-        super(x,y,rotation,asset.player_mk1,name,game,1);		
-		this.ship=new ShipMk1(asset,this);
+        super(x,y,rotation,ShipAsset.player_mk1,name,game,1);
+		this.ship=new ShipMk1(this);
         this.dx=this.dy=0;
         this.movable=false;
 		this.renderable=true;
-		this.stun=new UIProgressBar(this,50,8,-25,+image.getHeight(),uiasset.stunBackground,uiasset.stunLine,uiasset.progressBarBorder,getTimer());
+		this.stun=new UIProgressBar(this,50,8,-25,+image.getHeight(),UIAsset.stunBackground,UIAsset.stunLine,UIAsset.progressBarBorder,getTimer());
 		inventoryMaxCapacity=10;
 		for (int i=0;i<inventory.getHeight();i++)
 		for(int j=0;j<inventory.getWidth();j++)
 				inventory.addNewItem(i*inventory.getWidth()+j,i*inventory.getWidth()+j);
 		calculateCollisionObject();
-		game.mAcontext.shipUI=new ShipUI(this,game.mAcontext);
+		game.mContext.shipUI=new ShipUI(this,game.mContext);
     }
 
     @Override
@@ -62,7 +55,7 @@ public class Player extends DynamicEntity
 			{
 				if(e.collidable)
 				{
-					for (Line2D l: ship.collisionlines)
+					for (Line2D l: ship.getCollisionLines())
 					{
 						if(!e.isUsingCustomCollision)
 						{
@@ -98,12 +91,12 @@ public class Player extends DynamicEntity
 		ship.tick();
     }
 	
-	public void impulse(Entity e)
+	private void impulse(Entity e)
 	{
 		float trotation=360-(float)Math.toDegrees(Math.PI+Math.atan2(-e.getCenterX()+x,-e.getCenterY()+y)); 
 		float mathRotation=(float)(PI/180*trotation);
-		this.dy = -(float) (1*speed * cos(mathRotation));
-		this.dx = (float) (1*speed * sin(mathRotation));
+		this.dy = -(float) (0.02*speed * cos(mathRotation));
+		this.dx = (float) (0.02*speed * sin(mathRotation));
 	}
 
     @Override
@@ -116,7 +109,7 @@ public class Player extends DynamicEntity
 		ship.render(canvas);
 		stun.render(canvas);
 		
-		if(getGame().command==getGame().commandInteraction)
+		if(getGame().command==Game.commandInteraction)
 			drawInteractionCircle(canvas);
 		
 		//renew acceleration after drawing in debug
@@ -165,7 +158,7 @@ public class Player extends DynamicEntity
 		ship.calculateCollisionObject();
 	}
 	
-	public void Shoot()
+	private void Shoot()
 	{
 		if(shootFlag)
 		{
@@ -173,7 +166,7 @@ public class Player extends DynamicEntity
 		}
 	}
 	
-	public void drawInteractionCircle(Canvas canvas)
+	private void drawInteractionCircle(Canvas canvas)
 	{
 		Paint tPaint = new Paint();
 		tPaint.setColor(Color.YELLOW);
@@ -182,16 +175,12 @@ public class Player extends DynamicEntity
 		tPaint.setPathEffect(new DashPathEffect(new float[] { 15, 16}, 0));
 		canvas.drawCircle(getCenterX(),getCenterY(),interactionRadius,tPaint);
 	}
-	public void setDrawInteractionCicle(boolean state)
-	{
-		drawInteractionCitcle=state;
-	}
 	public void setShip()
 	{
 		if (ship.getClass()==ShipMk1.class)
-			ship=new ShipMk2(game.shipAsset,this);
+			ship=new ShipMk2(this);
 		else
-			ship=new ShipMk1(game.shipAsset,this);
+			ship=new ShipMk1(this);
 	}
 	public int getRadius()
 	{

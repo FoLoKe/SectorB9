@@ -6,6 +6,8 @@ import android.graphics.drawable.*;
 import android.view.View.*;
 import android.view.*;
 import android.widget.FrameLayout.*;
+
+import com.sb9.foloke.sectorb9.game.Assets.UIAsset;
 import com.sb9.foloke.sectorb9.game.dataSheets.*;
 import java.util.*;
 import android.net.*;
@@ -15,8 +17,8 @@ import android.util.*;
 
 public class HelpUI
 {
-	static View prevPressed;
-	static int pressedID;
+	private View prevPressed;
+	private static int pressedID;
 	
 	
 	public void init(final MainActivity MA,final ViewFlipper VF,final int view)
@@ -24,8 +26,8 @@ public class HelpUI
 		///list init
 		BitmapFactory.Options options=new BitmapFactory.Options();
         options.inScaled=false;
-		MA.findViewById(R.id.HelpSectionFrameLayout).setBackground(new BitmapDrawable(MA.getGame().mAcontext.getResources(),MA.getGame().uiAsset.uiBgBlur));
-		MA.findViewById(R.id.helpSectionScrollView).setBackground(new BitmapDrawable(MA.getGame().mAcontext.getResources(),MA.getGame().uiAsset.uiBgBlur));
+		MA.findViewById(R.id.HelpSectionFrameLayout).setBackground(new BitmapDrawable(MA.getGame().mContext.getResources(),UIAsset.uiBgBlur));
+		MA.findViewById(R.id.helpSectionScrollView).setBackground(new BitmapDrawable(MA.getGame().mContext.getResources(),UIAsset.uiBgBlur));
 		((TableLayout)MA.findViewById(R.id.HelpSectionTableView)).removeAllViews();
 		
 		//close button
@@ -203,7 +205,7 @@ public class HelpUI
 			
 				//component name
 				TextView itemName = new TextView(MA);
-				String stringItemName =MA.getGame().itemsData.findById(e.getKey()).name+" ";
+				String stringItemName =MA.getGame().itemsData.findById((int)e.getKey()).name+" ";
 				itemName.setText(stringItemName);
 				itemName.setTextColor(textC);
 				itemName.setGravity(Gravity.LEFT|Gravity.TOP);
@@ -211,10 +213,10 @@ public class HelpUI
 				MLR.addView(itemName);
 				
 				//image of component
-				bdrawable = new BitmapDrawable(MA.getResources(),MA.getGame().itemsData.findById(e.getKey()).image);
+				bdrawable = new BitmapDrawable(MA.getResources(),MA.getGame().itemsData.findById((int)e.getKey()).image);
 				ImageView imageOfNededItem=new ImageView(MA);
 				imageOfNededItem.setImageDrawable(bdrawable);
-				imageOfNededItem.setId(e.getKey());
+				imageOfNededItem.setId((int)e.getKey());
 				onSearch(imageOfNededItem,MA);
 				MLR.addView(imageOfNededItem);
 				

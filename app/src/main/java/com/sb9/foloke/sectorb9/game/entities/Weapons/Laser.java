@@ -1,5 +1,7 @@
 package com.sb9.foloke.sectorb9.game.entities.Weapons;
 import android.graphics.*;
+
+import com.sb9.foloke.sectorb9.game.Assets.EffectsAsset;
 import com.sb9.foloke.sectorb9.game.entities.Ships.*;
 import com.sb9.foloke.sectorb9.game.display.*;
 import com.sb9.foloke.sectorb9.game.funtions.*;
@@ -19,11 +21,11 @@ public class Laser extends Weapon
 	public Laser(TurretSystem turret,Game game)
 	{
 		super(turret,game);
-		image=Bitmap.createScaledBitmap(game.effAsset.yellow_pixel, 2, (int)(100), false);
+		image=Bitmap.createScaledBitmap(EffectsAsset.yellow_pixel, 2, (int)(100), false);
 		lenght=100;
 		line=new Line2D(0,0,1,1);
 		line.setThickness(3);
-		laserDamageEffect=new ParticleSystem(game.effAsset.yellow_pixel,turret.getParent().getHolder().getWorldLocation().x,turret.getParent().getHolder().getWorldLocation().y,1f,new PointF(1,1),true,120,game);
+		laserDamageEffect=new ParticleSystem(EffectsAsset.yellow_pixel,turret.getParent().getHolder().getWorldLocation().x,turret.getParent().getHolder().getWorldLocation().y,1f,new PointF(1,1),true,120,game);
 		laserDamageEffect.setAccuracy(new Point(10,10));
 	}
 

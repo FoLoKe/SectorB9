@@ -5,22 +5,21 @@ package com.sb9.foloke.sectorb9.game.entities;
 	import android.graphics.PointF;
 
 	import com.sb9.foloke.sectorb9.game.Assets.ShipAsset;
-	import com.sb9.foloke.sectorb9.game.UI.Text;
+
 import com.sb9.foloke.sectorb9.game.display.*;
 
 public class Cursor extends DynamicEntity {
 		
-		float speed=3;
-		boolean drawable;
-		private Text textdXdY;
 
-		public Cursor(float x, float y, ShipAsset asset,String name,Game game)
+		private boolean drawable;
+
+		public Cursor(float x, float y,String name,Game game)
 		{
-			super(x,y,0,asset.cursor,name,game,0);
+			super(x,y,0,ShipAsset.cursor,name,game,0);
 			
 			this.dx=this.dy=0;
 			this.drawable=false;
-			textdXdY=new Text("",x-100,y-50);
+
 		}
 
 		@Override

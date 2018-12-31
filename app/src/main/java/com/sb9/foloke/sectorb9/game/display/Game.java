@@ -2,21 +2,12 @@ package com.sb9.foloke.sectorb9.game.display;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.PointF;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.SurfaceHolder;
 import android.content.Context;
 import android.graphics.Canvas;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.EditText;
 
 import android.util.*;
 
@@ -37,13 +28,12 @@ import android.app.*;
 import java.util.ArrayList;
 import com.sb9.foloke.sectorb9.*;
 import com.sb9.foloke.sectorb9.game.entities.Buildings.*;
-import android.os.*;
+
 import android.view.ScaleGestureDetector.*;
-import android.view.GestureDetector.*;
 import android.view.*;
 import com.sb9.foloke.sectorb9.game.dataSheets.*;
 import com.sb9.foloke.sectorb9.game.UI.Inventory.*;
-//TODO: MAP BORDER AND PAUSE FIX ON MOVEMENT
+
 
 public class Game extends SurfaceView implements SurfaceHolder.Callback
 {
@@ -55,16 +45,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
     //camera
     private Camera camera;
-	float lastFocusX,lastFocusY;
-    //assets
-    private BitmapFactory.Options options;
-    public ShipAsset shipAsset;
-	public WeaponsAsset weaponAsset;
-    public UIAsset uiAsset;
-	//public InventoryAsset invAsset;
-	
-	public EffectsAsset effAsset;
-	
+
 	private UIcustomImage destroyedImage;
 	
     //objects
@@ -89,13 +70,12 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
     public boolean drawDebugInf=false;
 	boolean playerDestroyed=false;
-	boolean OpenInventory=false;
+
 	boolean gamePause=false;
 	private Timer destroyedTimer;
 	public int command=0;
 	public static final int commandInteraction=1,commandMoving=0;
-	
-	//private UIinventory playerInventory;
+
 	
 	UIinventory inventoryUi;
 	InventoryExchangeInterface excInterface;
@@ -104,14 +84,12 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 	public BuildingsDataSheet buildingsData;
 	public ItemsDataSheet itemsData;
 	
-	//debug 
-	String exchangeFrom;
-	String exchangeTo;
+	//debug
 	Text debugExchange;
 	//private
 	public Text debugText;
 	public Text errorText;
-	public MainActivity mAcontext;
+	public MainActivity mContext;
 	private StaticEntity pressedObject;
 	
     public Game(Context context, AttributeSet attributeSet)
@@ -124,20 +102,21 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 			.getMetrics(displayMetrics);
 		canvasH = displayMetrics.heightPixels;
 		canvasW = displayMetrics.widthPixels;
-		this.mAcontext=(MainActivity)context;
+		this.mContext=(MainActivity)context;
 		this.entityManager=new EntityManager(this);
-        options=new BitmapFactory.Options();
-        options.inScaled=false;
+        BitmapFactory.Options bitmapOptions=new BitmapFactory.Options();
+        bitmapOptions.inScaled=false;
 		Random rand=new Random();
 		
 		
-        background=Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.galactic_outflow,options));
-        shipAsset.init(Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ships_sheet,options)));
-		//invAsset.init(Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ui_inventory_sheet,options)));
-        uiAsset.init(Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ui_asset_sheet,options)));
-		
-		weaponAsset.init(Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ships_sheet,options)));
-		effAsset.init(Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ships_sheet,options)));
+        background=Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.galactic_outflow,bitmapOptions));
+
+		InventoryAsset.init(Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ui_inventory_sheet,bitmapOptions)));
+       	ShipAsset.init(Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ships_sheet,bitmapOptions)));
+        UIAsset.init(Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ui_asset_sheet,bitmapOptions)));
+		WeaponsAsset.init(Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ships_sheet,bitmapOptions)));
+		EffectsAsset.init(Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ships_sheet,bitmapOptions)));
+
 		buildingsData=new BuildingsDataSheet(this);
 		itemsData=new ItemsDataSheet(this);
 		
@@ -145,19 +124,19 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         screenPointOfTouch=new PointF(0,0);
         pointOfTouch=new PointF(0,0);
 		
-        player=new Player(900,900,0,shipAsset,uiAsset,this,"player");
+        player=new Player(900,900,0,this,"player");
 		excInterface=new InventoryExchangeInterface(this);
 		
 		entityManager.addObject(new FuelGenerator(1200,900,rand.nextInt(180),this));
 		entityManager.addObject(new BigSmelter(1100,900,rand.nextInt(180),this));
 		entityManager.addObject(new ModularLab(1000,900,rand.nextInt(180),this));
 		entityManager.addObject(new Assembler(900,900,rand.nextInt(180),this));
-		entityManager.addObject( new SolarPanel(800,900,rand.nextInt(180),this));
+		entityManager.addObject(new SolarPanel(800,900,rand.nextInt(180),this));
 		entityManager.addObject(new Crusher(700,900,rand.nextInt(180),this));
 		entityManager.addObject(new SmallCargoContainer(600,900,rand.nextInt(180),this));
 		
 		//for building and ship leading
-        cursor=new Cursor(900,900,shipAsset,"cursor",this);
+        cursor=new Cursor(900,900,"cursor",this);
 		
 		for (int i=0;i<50;i++)
 		entityManager.addObject(new Asteroid(50*rand.nextInt(50)+25*rand.nextInt(20),100*rand.nextInt(20)+20*rand.nextInt(50),rand.nextInt(180),this));
@@ -174,8 +153,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         camera=new Camera(0,0,scale,player);
 		
 		
-		uIhp=new UIProgressBar(this,canvasW/3,canvasH/20,50,50,uiAsset.hpBackground,uiAsset.hpLine,uiAsset.progressBarBorder,100);
-        destroyedImage=new UIcustomImage(uiAsset,3);
+		uIhp=new UIProgressBar(this,canvasW/3,canvasH/20,50,50,UIAsset.hpBackground,UIAsset.hpLine,UIAsset.progressBarBorder,100);
+        destroyedImage=new UIcustomImage(UIAsset.destroyedText);
 		getHolder().addCallback(this);
         mainThread= new MainThread(getHolder(),this);
         setFocusable(true);
@@ -379,7 +358,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 										if(e instanceof StaticEntity)
 										{
 											pressedObject=(StaticEntity)e;
-											mAcontext.uiInteraction.init(mAcontext,mAcontext.getViewFlipper(),pressedObject);
+											mContext.uiInteraction.init(mContext,mContext.getViewFlipper(),pressedObject);
 										}
 									
 									}							
@@ -411,7 +390,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 	{
 		player=null;
 		camera.setPointOfLook(null);
-		player=new Player(900,900,0,shipAsset,uiAsset,this,"player");
+		player=new Player(900,900,0,this,"player");
 		playerDestroyed=false;
 		camera.setPointOfLook(player);
 		gamePause=false;
@@ -442,7 +421,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 	}
 	public void updateInventory(final Entity caller)
 	{
-		mAcontext.runOnUiThread(new Runnable(){
+		mContext.runOnUiThread(new Runnable(){
 		public void run()
 		{
 			inventoryUi.update(caller);
@@ -473,12 +452,11 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 	
 	public void initAssemblerUI(final Assembler assembler)
 	{
-		mAcontext.runOnUiThread(new Runnable() {  
+		mContext.runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
-					// TODO Auto-generated method stub
 
-					mAcontext.assemblerUIi.init(mAcontext,assembler);
+					mContext.assemblerUIi.init(mContext,assembler);
 				}});
 	}
 }

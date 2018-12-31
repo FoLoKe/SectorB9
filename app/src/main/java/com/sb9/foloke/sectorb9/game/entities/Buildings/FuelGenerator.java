@@ -29,7 +29,7 @@ public class FuelGenerator extends Generator
 		opened					=game.buildingsData.findById(ID).openByDefault;
 		
 		prodTimer=new Timer(0);
-		prgBar=new UIProgressBar(this,50,8,-25,-20,game.uiAsset.stunBackground,game.uiAsset.stunLine,game.uiAsset.progressBarBorder,prodTimer.getTick());
+		prgBar=new UIProgressBar(this,50,8,-25,-20,UIAsset.stunBackground,UIAsset.stunLine,UIAsset.progressBarBorder,prodTimer.getTick());
 		fuelGeneratorAnim=new Animation(game.buildingsData.findById(ID).animation,15);
 		
 		calculateConsumers();

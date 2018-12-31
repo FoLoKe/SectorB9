@@ -132,7 +132,7 @@ public class UIinventory
 		table.removeAllViews();
 		BitmapFactory.Options options=new BitmapFactory.Options();
         options.inScaled=false;
-		table.setBackground(new BitmapDrawable(target.getGame().mAcontext.getResources(),target.getGame().uiAsset.uiBgBlur));
+		table.setBackground(new BitmapDrawable(target.getGame().mContext.getResources(),UIAsset.uiBgBlur));
 		
 		
 			int height=target.getInventory().getHeight();
@@ -174,7 +174,7 @@ public class UIinventory
 
 							ClipData dragData = new ClipData("bug",mimeTypes, item);
 							View.DragShadowBuilder myShadow = new View.DragShadowBuilder(v);
-							excInterface.started(inventory,x,y,calculateCountTotransfer(inventory.getItemCountOnPos(x,y)));
+							excInterface.started(inventory,x,y,calculateCountToTransfer(inventory.getItemCountOnPos(x,y)));
 								
 							v.startDrag(dragData,myShadow,null,0);
 							return true;
@@ -194,7 +194,7 @@ public class UIinventory
 		catch(Exception e){ target.getGame().errorText.setString(e.toString());}
 	}
 	
-	public int calculateCountTotransfer(int count)
+	private int calculateCountToTransfer(int count)
 	{
 		switch(countToTransfer)
 		{
@@ -239,7 +239,7 @@ public class UIinventory
 		return objectTarget;
 	}
 	
-	public void setDragAndDrop(final InventoryFrameLayout IFL,final Entity target)
+	private void setDragAndDrop(final InventoryFrameLayout IFL,final Entity target)
 	{
 		final int ID=target.getInventory().getItemOnPos(IFL.x,IFL.y).x;
 		

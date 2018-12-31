@@ -1,5 +1,7 @@
 package com.sb9.foloke.sectorb9.game.entities.Weapons;
 import android.graphics.*;
+
+import com.sb9.foloke.sectorb9.game.Assets.WeaponsAsset;
 import com.sb9.foloke.sectorb9.game.funtions.*;
 import com.sb9.foloke.sectorb9.game.entities.Ships.*;
 import com.sb9.foloke.sectorb9.game.display.*;
@@ -16,7 +18,7 @@ public class Minigun extends Weapon
 	public Minigun(TurretSystem turret,Game game)
 	{
 		super(turret,game);
-		this.projectiles=new ProjectilesPool(game.weaponAsset.shell,5,500,damage,game);
+		this.projectiles=new ProjectilesPool(WeaponsAsset.shell,5,500,damage,game);
 	}
 	public void shoot()
 	{

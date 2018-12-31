@@ -30,32 +30,7 @@ public class Assembler extends StaticEntity
 
 	
 	EntitySocket[] arms=new EntitySocket[3];
-	public Assembler(float x, float y,float rotation,ObjectsAsset  objAsset,String name,Game game)
-	{
-		super(x,y,rotation,objAsset.smelterCold,name,game,ID);
-		this.inventoryMaxCapacity=5;
-		this.opened=true;
-		inProduction=0;
-		prodTimer=new Timer(0);
-		prgBar=new UIProgressBar(this,50,8,-25,-20,game.uiAsset.stunBackground,game.uiAsset.stunLine,game.uiAsset.progressBarBorder,prodTimer.getTick());
 
-		collisionInitPoints=new PointF[4];
-		collisionInitPoints[0]=new PointF(-image.getWidth()/2,-image.getHeight()/2);
-		collisionInitPoints[1]=new PointF(image.getWidth()/2,-image.getHeight()/2);
-		collisionInitPoints[2]=new PointF(image.getWidth()/2,image.getHeight()/2);
-		collisionInitPoints[3]=new PointF(-image.getWidth()/2,image.getHeight()/2);
-		isUsingCustomCollision=true;
-		setCustomCollisionObject(collisionInitPoints);
-
-		statusImage=new UIcustomImage(game.uiAsset.noEnergySign,5);
-		statusImage2=new UIcustomImage(game.uiAsset.noEnergySign,5);
-		calculateCollisionObject();
-		
-		arms[0]=new EntitySocket(this,new AssemblerArm(x,y,rotation,"",game),rotation,new PointF(10,10));
-		arms[1]=new EntitySocket(this,new AssemblerArm(x,y,rotation,"",game),rotation,new PointF(10,10));
-		arms[2]=new EntitySocket(this,new AssemblerArm(x,y,rotation,"",game),rotation,new PointF(10,10));
-		
-	}
 
 	public Assembler(float x, float y,float rotation,Game game)
 	{
@@ -65,7 +40,7 @@ public class Assembler extends StaticEntity
 		this.opened=true;
 		inProduction=0;
 		prodTimer=new Timer(0);
-		prgBar=new UIProgressBar(this,50,8,-25,-20,game.uiAsset.stunBackground,game.uiAsset.stunLine,game.uiAsset.progressBarBorder,prodTimer.getTick());
+		prgBar=new UIProgressBar(this,50,8,-25,-20,UIAsset.stunBackground,UIAsset.stunLine,UIAsset.progressBarBorder,prodTimer.getTick());
 
 		collisionInitPoints=new PointF[4];
 		collisionInitPoints[0]=new PointF(-image.getWidth()/2,-image.getHeight()/2);
@@ -75,8 +50,8 @@ public class Assembler extends StaticEntity
 		isUsingCustomCollision=true;
 		setCustomCollisionObject(collisionInitPoints);
 
-		statusImage=new UIcustomImage(game.uiAsset.noEnergySign,5);
-		statusImage2=new UIcustomImage(game.uiAsset.turnedOffSign,5);
+		statusImage=new UIcustomImage(UIAsset.noEnergySign);
+		statusImage2=new UIcustomImage(UIAsset.invFullSign);
 		calculateCollisionObject();
 		arms[0]=new EntitySocket(this,new AssemblerArm(x,y,0,"",game),90,new PointF(10,0));
 		arms[1]=new EntitySocket(this,new AssemblerArm(x,y,25,"",game),-90,new PointF(-10,-23));
@@ -153,7 +128,7 @@ public class Assembler extends StaticEntity
 								inProduction=tProduction;
 								productionQueue.remove(0);
 							
-								if(game.mAcontext.assemblerUIi.getOpened())
+								if(game.mContext.assemblerUIi.getOpened())
 									game.initAssemblerUI(this);
 							}
 						}
@@ -169,7 +144,7 @@ public class Assembler extends StaticEntity
 						game.updateInventory(this);
 						assembling=false;
 						inProduction=0;
-						if(game.mAcontext.assemblerUIi.getOpened())
+						if(game.mContext.assemblerUIi.getOpened())
 							game.initAssemblerUI(this);
 					}
 					for(EntitySocket arm:arms)
@@ -208,7 +183,7 @@ public class Assembler extends StaticEntity
 		else
 			///error
 			{}
-		if(game.mAcontext.assemblerUIi.getOpened())
+		if(game.mContext.assemblerUIi.getOpened())
 			game.initAssemblerUI(this);
 	}
 	public ArrayList<Integer> getQueue()

@@ -1,6 +1,8 @@
 package com.sb9.foloke.sectorb9.game.ParticleSystem;
 import android.graphics.*;
 import java.util.*;
+
+import com.sb9.foloke.sectorb9.game.Assets.EffectsAsset;
 import com.sb9.foloke.sectorb9.game.display.*;
 
 public class SmallDustPuff
@@ -10,7 +12,7 @@ public class SmallDustPuff
 	private boolean isActive=true;
 	public SmallDustPuff(Game game)
 	{
-		sparks=new ParticleSystem(game.effAsset.dust_2,0,0,1f,new PointF(0.4f,0.4f),true,5,game);
+		sparks=new ParticleSystem(EffectsAsset.dust_2,0,0,1f,new PointF(0.4f,0.4f),true,5,game);
 		sparks.setAccuracy(new Point(1,1));
 	}
 	public void tick()

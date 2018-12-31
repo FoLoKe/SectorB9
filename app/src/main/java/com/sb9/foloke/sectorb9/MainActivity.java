@@ -85,7 +85,7 @@ public class MainActivity extends Activity {
 		uiAction.init(this,VF);
 		uiInteraction.init(this,VF,null);
 			
-		findViewById(R.id.menuUILinearLayout).setBackground(new BitmapDrawable(this.getResources(),game.uiAsset.uiBgBlur));
+		findViewById(R.id.menuUILinearLayout).setBackground(new BitmapDrawable(this.getResources(),UIAsset.uiBgBlur));
 		
 		final FrameLayout menuUI=findViewById(R.id.menuUI);
 		final MainActivity MA=this;

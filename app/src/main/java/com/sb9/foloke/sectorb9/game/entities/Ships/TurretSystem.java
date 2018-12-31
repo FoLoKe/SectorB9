@@ -1,8 +1,7 @@
 package com.sb9.foloke.sectorb9.game.entities.Ships;
 import android.graphics.*;
-import com.sb9.foloke.sectorb9.game.funtions.*;
+
 import com.sb9.foloke.sectorb9.game.display.*;
-import com.sb9.foloke.sectorb9.game.entities.*;
 import com.sb9.foloke.sectorb9.game.entities.Weapons.*;
 //import java.util.*;
 

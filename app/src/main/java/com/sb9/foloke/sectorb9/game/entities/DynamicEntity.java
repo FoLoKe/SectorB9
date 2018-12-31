@@ -4,19 +4,15 @@ import android.graphics.Bitmap;
 import android.graphics.PointF;
 import android.graphics.Canvas;
 import android.graphics.*;
-
-import com.sb9.foloke.sectorb9.game.UI.Text;
 import com.sb9.foloke.sectorb9.game.display.*;
 
 public abstract class DynamicEntity extends Entity {
 
-    float dx,dy;
-	float speed=3;
-	//Text textSpeed;
-	private int debugCounter=0;
-	protected float acceleration;
-	protected boolean movable;
-    public DynamicEntity(float x, float y,float rotation, Bitmap image,String name,Game game,int ID)
+   	float dx,dy;
+	static float speed=3;
+	float acceleration;
+	boolean movable;
+    DynamicEntity(float x, float y,float rotation, Bitmap image,String name,Game game,int ID)
     {
         super(x,y,rotation,image,name,game,ID);
         this.rotation=rotation;
@@ -35,7 +31,7 @@ public abstract class DynamicEntity extends Entity {
 		canvas.drawLine(getCenterX(),getCenterY(),getCenterX()+dx*20,getCenterY()+dy*20,tPaint);
 		//textSpeed.render(canvas);
 	}
-	public void impulse(PointF pointOfimpulse,float dx,float dy)
+	void impulse(PointF pointOfimpulse,float dx,float dy)
 	{
 		
 		float tdx=this.dx+dx;  //1000-100
@@ -50,11 +46,13 @@ public abstract class DynamicEntity extends Entity {
 		this.dy=tdy*accel;
 		if(this.dy>speed)
 			this.dy=speed;
-			debugCounter++;
-		//textSpeed.setString(accel+"");
 	}
 	public float getAcceleration()
 	{
 		return acceleration;
+	}
+	public boolean getMoveable()
+	{
+		return movable;
 	}
 }

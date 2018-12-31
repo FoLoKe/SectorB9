@@ -8,6 +8,8 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import java.util.*;
+
+import com.sb9.foloke.sectorb9.game.Assets.UIAsset;
 import com.sb9.foloke.sectorb9.game.UI.*;
 import com.sb9.foloke.sectorb9.game.display.*;
 import com.sb9.foloke.sectorb9.game.funtions.*;
@@ -53,7 +55,7 @@ public abstract class Entity {
 		if(game.buildingsData.findById(ID).inventoryCapacity!=0)
 		this.inventory=new Inventory(this,game.buildingsData.findById(ID).inventoryCapacity,4);
 		this.rotation=rotation;
-		this.uIhp=new UIProgressBar(this,50,8,-25,-20,game.uiAsset.hpBackground,game.uiAsset.hpLine,game.uiAsset.progressBarBorder,getHp());
+		this.uIhp=new UIProgressBar(this,50,8,-25,-20,UIAsset.hpBackground,UIAsset.hpLine,UIAsset.progressBarBorder,getHp());
 		this.ID=ID;
     }
 	public void save(BufferedWriter writer)

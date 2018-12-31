@@ -1,25 +1,22 @@
 package com.sb9.foloke.sectorb9.game.UI;
 import com.sb9.foloke.sectorb9.*;
 import android.widget.*;
-import android.content.*;
 import android.view.*;
-import android.widget.AdapterView.*;
 import android.graphics.drawable.*;
 import android.graphics.*;
 import android.text.*;
 import java.util.*;
 import com.sb9.foloke.sectorb9.game.entities.Buildings.*;
-import java.util.concurrent.*;
 
 public class assemblerUI
 {
-	Integer[] itemsIDs;
-	MainActivity MA;
-	ArrayList<Integer> inQueue;
-	int inProduction=0;
-	int newQueue=0;
-	boolean opened;
-	boolean debugOnce=true;
+	private Integer[] itemsIDs;
+	private MainActivity MA;
+	private ArrayList<Integer> inQueue;
+	private int inProduction=0;
+	private int newQueue=0;
+	private boolean opened;
+
 	public void init(final MainActivity MA,final Assembler target)
 	{
 		try
@@ -63,7 +60,7 @@ public class assemblerUI
 				icon.setId(e);
 
 				LLofQueue.addView(icon);
-				icon.setOnClickListener(new OnClickListener()
+				icon.setOnClickListener(new View.OnClickListener()
 					{
 						public void onClick(View view)
 						{
@@ -88,7 +85,7 @@ public class assemblerUI
 					final TableRow row=new TableRow(MA);
 					TableLayout.LayoutParams tableRowParams=
 						new TableLayout.LayoutParams
-					(TableLayout.LayoutParams.WRAP_CONTENT,TableLayout.LayoutParams.FILL_PARENT);
+					(TableLayout.LayoutParams.WRAP_CONTENT,TableLayout.LayoutParams.MATCH_PARENT);
 
 					int leftMargin=10;
 					int topMargin=10;
@@ -106,7 +103,7 @@ public class assemblerUI
 						icon.setId(itemsIDs[i]);
 
 						row.addView(icon);
-						icon.setOnClickListener(new OnClickListener()
+						icon.setOnClickListener(new View.OnClickListener()
 						{
 							public void onClick(View view)
 							{
@@ -134,7 +131,7 @@ public class assemblerUI
 				
 			
 		 Button setProdButton=MA.findViewById(R.id.assembler_uiSetProdButton);
-			setProdButton.setOnClickListener(new OnClickListener(){
+			setProdButton.setOnClickListener(new View.OnClickListener(){
 				@Override
 				public void onClick(View v)
 				{
@@ -150,13 +147,7 @@ public class assemblerUI
 			System.out.println(e);
 		}
 	}
-	
 
-			
-			//icon.setD(MA.getGame().itemsData.findById(itemsIDs[position]).image);
-	
-	
-	//on selected item help
 	private void initHelp(int pressedID)
 			{
 				LinearLayout LR=MA.findViewById(R.id.AssemblerUIHelpLayoutOfInfo);
@@ -178,12 +169,12 @@ public class assemblerUI
 					{
 						//for each component create horizontal layout
 						LinearLayout MLR=new LinearLayout(MA);
-						MLR.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
+						MLR.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT));
 						MLR.setOrientation(LinearLayout.HORIZONTAL);
 
 						//component name
 						TextView itemName = new TextView(MA);
-						String stringItemName =MA.getGame().itemsData.findById(e.getKey()).name+" ";
+						String stringItemName =MA.getGame().itemsData.findById((int)e.getKey()).name+" ";
 						itemName.setText(stringItemName);
 						itemName.setTextColor(textC);
 						itemName.setGravity(Gravity.LEFT|Gravity.TOP);
@@ -191,10 +182,10 @@ public class assemblerUI
 						MLR.addView(itemName);
 
 						//image of component
-						bdrawable = new BitmapDrawable(MA.getResources(),MA.getGame().itemsData.findById(e.getKey()).image);
+						bdrawable = new BitmapDrawable(MA.getResources(),MA.getGame().itemsData.findById((int)e.getKey()).image);
 						ImageView imageOfNededItem=new ImageView(MA);
 						imageOfNededItem.setImageDrawable(bdrawable);
-						imageOfNededItem.setId(e.getKey());
+						imageOfNededItem.setId((int)e.getKey());
 						
 						MLR.addView(imageOfNededItem);
 

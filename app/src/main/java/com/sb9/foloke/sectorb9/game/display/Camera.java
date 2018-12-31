@@ -2,11 +2,9 @@ package com.sb9.foloke.sectorb9.game.display;
 
 import android.graphics.PointF;
 
-import com.sb9.foloke.sectorb9.game.entities.DynamicEntity;
 import com.sb9.foloke.sectorb9.game.entities.Entity;
 import com.sb9.foloke.sectorb9.game.entities.Player;
 
-import java.lang.annotation.Target;
 import android.graphics.*;
 
 public class Camera {

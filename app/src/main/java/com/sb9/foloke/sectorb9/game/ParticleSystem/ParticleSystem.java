@@ -13,7 +13,7 @@ public class ParticleSystem
 	private static int maxCount=120;
 	private float x,y;
 	private float dx,dy;
-	private float lenght=lenght;
+	private float lenght;
 	private Bitmap image;
 	private Point accuracy;
 	private boolean createNew;

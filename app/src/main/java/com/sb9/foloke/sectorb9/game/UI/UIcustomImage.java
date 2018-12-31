@@ -6,16 +6,12 @@ import com.sb9.foloke.sectorb9.game.Assets.*;
 public class UIcustomImage
 {
 	private Bitmap image;
-	public UIcustomImage(UIAsset sheet,int index)
-	{
-		this.image=sheet.getByIndex(index);
-		index=0;
-	}
-	public UIcustomImage(Bitmap image,int index)
+	public UIcustomImage(Bitmap image)
 	{
 		this.image=image;
-		index=0;
+
 	}
+
 	public void render(Canvas canvas,Camera camera)
 	{
 		canvas.save();
@@ -25,10 +21,7 @@ public class UIcustomImage
 	}
 	public void render(Canvas canvas,PointF point)
 	{
-		//canvas.save();
-		//canvas.scale(0.5f,0.5f);
 		canvas.drawBitmap(image,point.x,point.y,null);
-		//canvas.restore();
 	}
 	public void render(Canvas canvas)
 	{

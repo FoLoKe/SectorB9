@@ -4,6 +4,8 @@ import android.widget.*;
 import android.graphics.drawable.*;
 import android.view.View.*;
 import android.view.*;
+
+import com.sb9.foloke.sectorb9.game.Assets.UIAsset;
 import com.sb9.foloke.sectorb9.game.UI.*;
 
 import com.sb9.foloke.sectorb9.game.display.*;
@@ -57,7 +59,7 @@ public class ShipArrangement
 				
 				BitmapDrawable bdrawable;
 
-				bdrawable = new BitmapDrawable(MA.getResources(),MA.getGame().uiAsset.uiBgBlur);
+				bdrawable = new BitmapDrawable(MA.getResources(),UIAsset.uiBgBlur);
 				sprite.setImageDrawable(bdrawable);
 				sprite.setLayoutParams(trp);
 

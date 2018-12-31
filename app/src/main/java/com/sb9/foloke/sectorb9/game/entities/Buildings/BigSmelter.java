@@ -13,11 +13,10 @@ public class BigSmelter extends StaticEntity
 {
 	private final static int ID=5;
 	private UIProgressBar prgBar;
-	private UIcustomImage statusImage;
-	private UIcustomImage statusImage2;
+	private UIcustomImage statusImageNoEnergy;
+	private UIcustomImage statusImageEnebled;
 	private int prodTimeLength=10;
 	private Inventory.InventoryItem inProduction;
-	private int count;
 	private Timer prodTimer;
 	
 	private PointF collisionInitPoints[];
@@ -32,8 +31,8 @@ public class BigSmelter extends StaticEntity
 		this.inventoryMaxCapacity=3;
 		this.opened=true;
 		inProduction=new Inventory.InventoryItem(0,0,0,0);
-		count=0;prodTimer=new Timer(0);
-		prgBar=new UIProgressBar(this,50,8,-25,-20,game.uiAsset.stunBackground,game.uiAsset.stunLine,game.uiAsset.progressBarBorder,prodTimer.getTick());
+		prodTimer=new Timer(0);
+		prgBar=new UIProgressBar(this,50,8,-25,-20,UIAsset.stunBackground,UIAsset.stunLine,UIAsset.progressBarBorder,prodTimer.getTick());
 
 		collisionInitPoints=new PointF[4];
 		collisionInitPoints[0]=new PointF(-image.getWidth()/2,-image.getHeight()/2);
@@ -43,8 +42,8 @@ public class BigSmelter extends StaticEntity
 		isUsingCustomCollision=true;
 		setCustomCollisionObject(collisionInitPoints);
 
-		statusImage=new UIcustomImage(game.uiAsset.noEnergySign,5);
-		statusImage2=new UIcustomImage(game.uiAsset.turnedOffSign,5);
+		statusImageNoEnergy=new UIcustomImage(UIAsset.noEnergySign);
+		statusImageEnebled=new UIcustomImage(UIAsset.invFullSign);
 		calculateCollisionObject();
 	}
 
@@ -63,10 +62,10 @@ public class BigSmelter extends StaticEntity
 		game.debugText.setString(prodTimer.getTick()+"");
 		canvas.restore();
 
-		if(energy==false)
-			statusImage.render(canvas,new PointF(x,y));
-		if(enabled==false)
-			statusImage2.render(canvas,new PointF(x+16,y));
+		if(!energy)
+			statusImageNoEnergy.render(canvas,new PointF(x,y));
+        if(!enabled)
+        	statusImageEnebled.render(canvas,new PointF(x+16,y));
 		if(game.drawDebugInf)
 			drawDebugCollision(canvas);
 	}

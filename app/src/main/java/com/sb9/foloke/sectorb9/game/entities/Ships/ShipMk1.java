@@ -5,9 +5,9 @@ import android.graphics.*;
 
 public class ShipMk1 extends Ship
 {
-	public ShipMk1(ShipAsset shipsAsset,DynamicEntity holder)
+	public ShipMk1(DynamicEntity holder)
 	{
-		super(shipsAsset.player_mk1,shipsAsset.engine_mk1,null,holder);
+		super(ShipAsset.player_mk1,ShipAsset.engine_mk1,null,holder);
 		pointOfengine.set(0,0);
 		pointOfShooting.set(0,0);
 		collisionInitPoints=new PointF[3];

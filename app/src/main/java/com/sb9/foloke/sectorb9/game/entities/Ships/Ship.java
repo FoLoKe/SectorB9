@@ -1,8 +1,9 @@
-package com.sb9.foloke.sectorb9.game.entities;
+package com.sb9.foloke.sectorb9.game.entities.Ships;
 import android.graphics.*;
+
+import com.sb9.foloke.sectorb9.game.Assets.EffectsAsset;
+import com.sb9.foloke.sectorb9.game.entities.DynamicEntity;
 import com.sb9.foloke.sectorb9.game.funtions.*;
-import android.animation.*;
-import com.sb9.foloke.sectorb9.game.entities.Ships.*;
 import com.sb9.foloke.sectorb9.game.ParticleSystem.*;
 
 public class Ship
@@ -14,9 +15,8 @@ public class Ship
 	protected DynamicEntity holder;
 	protected PointF collisionInitPoints[];
 	protected PointF collisionPoints[];
-	//private PointF collisionInitPoints[];
 
-	protected Line2D collisionlines[];
+	protected Line2D collisionLines[];
 	protected TurretSystem turrets[];
 	public ParticleSystem engineSmoke;
 	
@@ -28,7 +28,7 @@ public class Ship
 		this.holder=holder;
 		this.pointOfengine=new PointF(0,0);
 		this.pointOfShooting=new PointF(0,shipImage.getHeight()/2);
-		this.engineSmoke=new ParticleSystem(holder.getGame().effAsset.yellow_pixel,holder.getWorldLocation().x,holder.getWorldLocation().y,1f,new PointF(0.2f,0),true,120,holder.getGame());
+		this.engineSmoke=new ParticleSystem(EffectsAsset.yellow_pixel,holder.getWorldLocation().x,holder.getWorldLocation().y,1f,new PointF(0.2f,0),true,120,holder.getGame());
 		engineSmoke.setAccuracy(new Point(16,1));
 		pointOfEngineSmoke=new PointF(0,shipImage.getHeight()/2);
 		//calculateCollisionObject();
@@ -37,16 +37,16 @@ public class Ship
 	public void setPoints(PointF points[])
 	{
 		this.collisionInitPoints=points;
-		this.collisionlines=new Line2D[points.length];
+		this.collisionLines=new Line2D[points.length];
 		for(int i=0;i<this.collisionInitPoints.length;i++)
-			this.collisionlines[i]=new Line2D(0,0,1,1);
+			this.collisionLines[i]=new Line2D(0,0,1,1);
 
 		this.collisionPoints=new PointF[collisionInitPoints.length];
 	}
 	public void render(Canvas canvas)
 	{
-		canvas.rotate(holder.rotation,holder.getCenterX(),holder.getCenterY());
-		if(holder.movable)
+		canvas.rotate(holder.getWorldRotation(),holder.getCenterX(),holder.getCenterY());
+		if(holder.getMoveable())
 		canvas.drawBitmap(engineImage,holder.getCenterX()-engineImage.getWidth()/2+pointOfengine.x,holder.getCenterY()-engineImage.getHeight()/2+pointOfengine.y-5+(holder.getAcceleration())*5,null);
 		canvas.drawBitmap(shipImage,holder.getCenterX()-shipImage.getWidth()/2,holder.getCenterY()-shipImage.getHeight()/2,null);
 		canvas.restore();
@@ -67,8 +67,8 @@ public class Ship
 			}
 		engineSmoke.render(canvas);
 		
-		if(holder.game.drawDebugInf)
-		for(Line2D l: collisionlines)
+		if(holder.getGame().drawDebugInf)
+		for(Line2D l: collisionLines)
 		{
 			l.render(canvas);
 		}
@@ -81,7 +81,10 @@ public class Ship
 			t.tick();
 		engineSmoke.tick();
 	}
-	
+	public Line2D[] getCollisionLines()
+	{
+			return collisionLines;
+	}
 	public void setPointOfEngine(PointF point)
 	{
 		pointOfengine=point;
@@ -109,9 +112,9 @@ public class Ship
 		}
 		int i=0;
 		for(;i<collisionPoints.length-1;i++)
-		collisionlines[i].set(collisionPoints[i].x,collisionPoints[i].y,collisionPoints[i+1].x,collisionPoints[i+1].y);
+		collisionLines[i].set(collisionPoints[i].x,collisionPoints[i].y,collisionPoints[i+1].x,collisionPoints[i+1].y);
 		//collisionlines[1].set(collisionPoints[1].x,collisionPoints[1].y,collisionPoints[2].x,collisionPoints[2].y);
-		collisionlines[i].set(collisionPoints[i].x,collisionPoints[i].y,collisionPoints[0].x,collisionPoints[0].y);
+		collisionLines[i].set(collisionPoints[i].x,collisionPoints[i].y,collisionPoints[0].x,collisionPoints[0].y);
 		i=0;
 		
 	}

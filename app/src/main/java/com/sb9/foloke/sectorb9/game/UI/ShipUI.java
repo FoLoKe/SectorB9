@@ -91,7 +91,7 @@ public class ShipUI
 			table.removeAllViews();
 			BitmapFactory.Options options=new BitmapFactory.Options();
 			options.inScaled=false;
-			table.setBackground(new BitmapDrawable(target.getGame().mAcontext.getResources(),target.getGame().uiAsset.uiBgBlur));
+			table.setBackground(new BitmapDrawable(target.getGame().mContext.getResources(),UIAsset.uiBgBlur));
 			
 			ImageView imageViewForBackground=context.findViewById(R.id.shipUI_shipImage);
 			Bitmap bitmap=target.getSprite();
@@ -146,16 +146,16 @@ public class ShipUI
 
 						itemCountText.setText("x"+0);
 						itemCountText.setLayoutParams(trp);
-						BitmapDrawable bdrawable;
-						bdrawable = new BitmapDrawable(context.getResources(),context.getGame().itemsData.findById(0).image);
+						BitmapDrawable bDrawable;
+						bDrawable = new BitmapDrawable(context.getResources(),context.getGame().itemsData.findById(0).image);
 
-						sprite.setImageDrawable(bdrawable);
+						sprite.setImageDrawable(bDrawable);
 						InventoryLinearLayout LL=new InventoryLinearLayout(context);
 						row.addView(LL);
 						LL.setOrientation(LinearLayout.HORIZONTAL);
 						//LL.setBackgroundColor(Color.CY);
-						LayoutParams LLP=new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT);
-						LLP.setMargins(10,10,10,10);
+						//LayoutParams LLP=new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT);
+						//LLP.setMargins(10,10,10,10);
 
 						LL.setOnTouchListener(new OnTouchListener()
 							{
