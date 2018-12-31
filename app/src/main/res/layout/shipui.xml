@@ -41,6 +41,12 @@
 				
 				android:background="#55ffffff"
 				>
+				<ImageView
+					android:layout_width="fill_parent"
+					android:layout_height="fill_parent"
+					android:id="@+id/shipUI_shipImage"
+					
+					/>
 				<TableLayout
 					android:gravity="center"
 					android:layout_gravity="center"

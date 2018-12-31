@@ -62,7 +62,7 @@ public class MainActivity extends Activity {
 	public UIinteraction uiInteraction=new UIinteraction();
 	private UIaction uiAction =new UIaction();
 	public HelpUI helpui=new HelpUI();
-	public ShipUI shipUI;//=new ShipUI();
+	public ShipUI shipUI;
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
@@ -76,7 +76,7 @@ public class MainActivity extends Activity {
 		TableLayout playerTable=findViewById(R.id.PlayerTableLayout);
 		TableLayout objectTable=findViewById(R.id.ObjectTableLayout);
 
-		game.initInventoryUI(playerTable,objectTable,this);
+		game.makeInventoryUI(playerTable,objectTable,this);
 		
 		VF = findViewById(R.id.UIFlipper);
 		VF.setDisplayedChild(VF.indexOfChild(findViewById(R.id.actionUI)));
@@ -107,16 +107,7 @@ public class MainActivity extends Activity {
 			});
     }
 	
-	public void initInvenories()
-	{
-		runOnUiThread(new Runnable() {  
-				@Override
-				public void run() {
-					// TODO Auto-generated method stub
-
-					game.initObjInventory();
-				}});
-	}
+	
 	public ViewFlipper getViewFlipper()
 	{
 		return VF;

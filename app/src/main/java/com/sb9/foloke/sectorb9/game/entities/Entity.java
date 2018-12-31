@@ -86,7 +86,7 @@ public abstract class Entity {
 					if(s.length()>0)
 					{
 						String elemWords[]=s.split("=");
-						//inventory.put(Integer.parseInt(elemWords[0]),Integer.parseInt(elemWords[1]));
+						inventory.addNewItem(Integer.parseInt(elemWords[0]),Integer.parseInt(elemWords[1]));
 					}
 				}
 			}
@@ -265,5 +265,9 @@ public abstract class Entity {
 	public void setWorldRotation(float rotation)
 	{
 		this.rotation=rotation;
+	}
+	public Bitmap getSprite()
+	{
+		return image;
 	}
 }

@@ -7,6 +7,7 @@ import com.sb9.foloke.sectorb9.game.entities.*;
 import com.sb9.foloke.sectorb9.game.display.*;
 import java.util.Map;
 import com.sb9.foloke.sectorb9.*;
+import com.sb9.foloke.sectorb9.game.UI.Inventory.*;
 
 public class BigSmelter extends StaticEntity
 {
@@ -15,36 +16,14 @@ public class BigSmelter extends StaticEntity
 	private UIcustomImage statusImage;
 	private UIcustomImage statusImage2;
 	private int prodTimeLength=10;
-	private int inProduction;
+	private Inventory.InventoryItem inProduction;
 	private int count;
 	private Timer prodTimer;
 	
 	private PointF collisionInitPoints[];
-	//private Animation crusherAnim;
-	Bitmap smelterInWorkBitmap;
+	private Bitmap smelterInWorkBitmap;
 
-	public BigSmelter(float x, float y,float rotation,ObjectsAsset  objAsset,String name,Game game)
-	{
-		super(x,y,rotation,objAsset.smelterCold,name,game,ID);
-		//crusherAnim=new Animation(objAsset.crusherAnim,15);
-		this.inventoryMaxCapacity=3;
-		this.opened=true;
-		inProduction=0;
-		count=0;prodTimer=new Timer(0);
-		prgBar=new UIProgressBar(this,50,8,-25,-20,game.uiAsset.stunBackground,game.uiAsset.stunLine,game.uiAsset.progressBarBorder,prodTimer.getTick());
-
-		collisionInitPoints=new PointF[4];
-		collisionInitPoints[0]=new PointF(-image.getWidth()/2,-image.getHeight()/2);
-		collisionInitPoints[1]=new PointF(image.getWidth()/2,-image.getHeight()/2);
-		collisionInitPoints[2]=new PointF(image.getWidth()/2,image.getHeight()/2);
-		collisionInitPoints[3]=new PointF(-image.getWidth()/2,image.getHeight()/2);
-		isUsingCustomCollision=true;
-		setCustomCollisionObject(collisionInitPoints);
-
-		statusImage=new UIcustomImage(game.uiAsset.noEnergySign,5);
-		statusImage2=new UIcustomImage(game.uiAsset.noEnergySign,5);
-		calculateCollisionObject();
-	}
+	
 
 	public BigSmelter(float x, float y,float rotation,Game game)
 	{
@@ -52,7 +31,7 @@ public class BigSmelter extends StaticEntity
 		smelterInWorkBitmap= game.buildingsData.findById(ID).animation[0];
 		this.inventoryMaxCapacity=3;
 		this.opened=true;
-		inProduction=0;
+		inProduction=new Inventory.InventoryItem(0,0,0,0);
 		count=0;prodTimer=new Timer(0);
 		prgBar=new UIProgressBar(this,50,8,-25,-20,game.uiAsset.stunBackground,game.uiAsset.stunLine,game.uiAsset.progressBarBorder,prodTimer.getTick());
 
@@ -76,11 +55,10 @@ public class BigSmelter extends StaticEntity
 			return;
 		canvas.save();
 		canvas.rotate(rotation,getCenterX(),getCenterY());
-		if(inProduction==0)
+		if(inProduction.getID()==0)
 		canvas.drawBitmap(image,x,y,null);
 		else
 		canvas.drawBitmap(smelterInWorkBitmap,x,y,null);
-		//if(prodTimer.getTick()>0)
 		prgBar.render(canvas);
 		game.debugText.setString(prodTimer.getTick()+"");
 		canvas.restore();
@@ -91,64 +69,53 @@ public class BigSmelter extends StaticEntity
 			statusImage2.render(canvas,new PointF(x+16,y));
 		if(game.drawDebugInf)
 			drawDebugCollision(canvas);
-		// TODO: Implement this method
 	}
 
 	@Override
 	public void tick()
 	{
-		/*if(energy)
+		if(energy)
 		{
-			if(inventory.size()>0&&inProduction==0)
+			///make flag on inventory empty
+			if(inProduction.getID()==0)
 			{
-				for(Map.Entry<Integer,Integer> e: inventory.entrySet())
+				for(Inventory.InventoryItem e: inventory.getArray())
 				{
-					if(game.itemsData.findById(e.getKey()).smeltToID!=0)
+					if(game.itemsData.findById(e.getID()).smeltToID!=0)
 					{
-						if(e.getValue()>=2)
+						int toProdID=e.getID();
+						int toProdCount=2;
+						if(inventory.takeOneItemFromAllInventory(toProdID,toProdCount))
 						{
-						inProduction=e.getKey();
-						prodTimer.setTimer(prodTimeLength);
-						if(inventory.get(inProduction)>2)
-							inventory.put(inProduction,inventory.get(inProduction)-2);
-						else
-							inventory.remove(inProduction);
-							game.mAcontext.initInvenories();
-						break;
+							inProduction.set(toProdID,toProdCount);
+							prodTimer.setTimer(prodTimeLength);
+							game.updateInventory(this);
+							break;
 						}
 					}
 				}
 
 			}
-			if(inProduction!=0)
+			//flag on inventory full
+			if(inProduction.getID()!=0)
 			{
-				
 				if(prodTimer.tick())
 				{
-
-						if(inventory.containsKey(game.itemsData.findById(inProduction).smeltToID))
-						{
-							inventory.put(game.itemsData.findById(inProduction).smeltToID,inventory.get(game.itemsData.findById(inProduction).smeltToID)+1);
-						}
-						else
-							inventory.put(game.itemsData.findById(inProduction).smeltToID,1);
-
-					inProduction=0;
-					MainActivity tAct=game.mAcontext;
-					tAct.initInvenories();
+					if(inventory.addToExistingOrNull(game.itemsData.findById(inProduction.getID()).smeltToID,1))
+					{game.updateInventory(this);
+					inProduction.set(0,0);}
 				}
 			}
 			if(prodTimer.getTick()>0)
 				prgBar.tick(prodTimer.getTick()/(prodTimeLength*0.6f));
 		}
-		super.calculateCollisionObject();*/
+		super.calculateCollisionObject();
 
 	}
 
 	@Override
 	public void calculateCollisionObject()
 	{
-		// TODO: Implement this method
 		super.calculateCollisionObject();
 		calculateCustomCollisionObject();
 	}

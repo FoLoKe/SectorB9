@@ -39,27 +39,20 @@ public class FuelGenerator extends Generator
 	public void tick()
 	{
 		// TODO: Implement this method
-		/*if(enabled)
+		if(enabled)
 		{
 		super.tick();
 			prodTimer.tick();
 		}
-		float a =prodTimer.getTick();
-		if(prodTimer.getTick()<=0)
 		
-		if(inventory.size()>0)
-		{
+		if(prodTimer.getTick()<=0)
+			if(true)
+			{
 			
-					if(inventory.containsKey(3))
+					if(inventory.takeOneItemFromAllInventory(3,1))
 					{
-					prodTimer.setTimer(50);
-					
-						if(inventory.get(3)>1)
-							inventory.put(3,inventory.get(3)-1);
-						else
-							inventory.remove(3);
-						MainActivity tAct=game.mAcontext;
-						tAct.initInvenories();
+						prodTimer.setTimer(50);
+						game.updateInventory(this);
 						if(!enabled)
 						{
 							onAndOff();
@@ -84,7 +77,7 @@ public class FuelGenerator extends Generator
 			fuelGeneratorAnim.tick();
 		image=fuelGeneratorAnim.getImage();
 		}
-		*/
+		calculateCollisionObject();
 	}
 
 	@Override

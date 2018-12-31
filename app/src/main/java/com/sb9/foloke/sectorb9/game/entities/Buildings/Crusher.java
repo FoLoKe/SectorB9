@@ -18,9 +18,7 @@ public class Crusher extends StaticEntity
 	private Inventory.InventoryItem inProduction;
 	private int count;
 	private Timer prodTimer;
-	//private PointF collisionPoints[];
 	private PointF collisionInitPoints[];
-	//private Line2D collisionlines[];
 	private Animation crusherAnim;
 	
 	private boolean noInventorySpaceBlock=false;
@@ -87,7 +85,7 @@ public class Crusher extends StaticEntity
 							if(inventory.takeOneItemFromAllInventory(crushableID,crushedFromCount))
 							{
 								prodTimer.setTimer(2);
-								game.mAcontext.initInvenories();
+								game.updateInventory(this);
 								inProduction.set(crushableID,2);
 								break;
 							}
@@ -107,7 +105,7 @@ public class Crusher extends StaticEntity
 						
 						inventory.addToExistingOrNull(crushedInto,crushedIntoCount);
 						inProduction.set(0,0);
-						game.mAcontext.initInvenories();
+						game.updateInventory(this);
 					}
 				{	
 						

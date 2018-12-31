@@ -47,26 +47,81 @@ import android.widget.ActionMenuView.*;
 //import java.util.*;
 public class UIinventory
 {
-	private TableLayout table;
+	private TableLayout playerTable,objectTable;
 	final private MainActivity context;
-	private Entity target;
-	InventoryExchangeInterface excInterface;
-	
+	private Entity playerTarget,objectTarget;
+	private InventoryExchangeInterface excInterface;
+	private int countToTransfer=1;
 	
 	
 
-	public UIinventory(TableLayout table,final MainActivity context,Entity target,InventoryExchangeInterface excInterface)
+	public UIinventory(TableLayout playerTable,Entity playerTarget,TableLayout objectTable,Entity objectTarget,InventoryExchangeInterface excInterface,MainActivity MA)
 	{
-		this.target=target;	
-		this.table=table;
-		this.context=context;
+		this.playerTarget=playerTarget;	
+		this.playerTable=playerTable;
+		this.objectTable=objectTable;
+		this.objectTarget=objectTarget;
+		this.context=MA;
 		this.excInterface=excInterface;
-		if(target!=null)
-		init();
+		
+		
+		update(null);
+		Button but1=MA.findViewById(R.id.InventoryUI_oneItemButton);
+		but1.setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View v){countToTransfer=1;
+			resetButtonColor(v);
+			}});
+			
+		MA.findViewById(R.id.InventoryUI_halfItemButton).setOnClickListener(new OnClickListener(){
+				@Override
+				public void onClick(View v){countToTransfer=2;
+				resetButtonColor(v);
+		}});
+				
+		MA.findViewById(R.id.InventoryUI_allItemButton).setOnClickListener(new OnClickListener(){
+				@Override
+				public void onClick(View v){countToTransfer=3;
+					resetButtonColor(v);
+				}});
+	}
+	public void update(Entity caller)
+	{
+		if(caller==null||caller==playerTarget||caller==objectTarget)
+		{
+			if(playerTarget!=null||playerTable!=null)
+			init(playerTable,playerTarget);
+			if(objectTable!=null||objectTarget!=null)
+			init(objectTable,objectTarget);
+			resetButtonColor(null);
+		}
 	}
 	
+	public void resetButtonColor(View v)
+	{
+		context.findViewById(R.id.InventoryUI_halfItemButton).setBackgroundColor(Color.parseColor("#22ffffff"));
+		context.findViewById(R.id.InventoryUI_allItemButton).setBackgroundColor(Color.parseColor("#22ffffff"));
+		context.findViewById(R.id.InventoryUI_oneItemButton).setBackgroundColor(Color.parseColor("#22ffffff"));
+		if(v!=null)
+		v.setBackgroundColor(Color.parseColor("#55ffffff"));
+		else
+		switch (countToTransfer)
+		{
+			case 1:
+				
+				context.findViewById(R.id.InventoryUI_oneItemButton).setBackgroundColor(Color.parseColor("#55ffffff"));
+				break;
+			case 2:
+				context.findViewById(R.id.InventoryUI_halfItemButton).setBackgroundColor(Color.parseColor("#55ffffff"));
+				break;
+			default:
+				context.findViewById(R.id.InventoryUI_allItemButton).setBackgroundColor(Color.parseColor("#55ffffff"));
+				break;
+		}
+		
+		}
 	///UNDER REFACTORING
-	public void init()
+	public void init(TableLayout table,Entity target)
 	{
 		try
 		{
@@ -86,11 +141,7 @@ public class UIinventory
 		for(int i=0;i<height;i++)
 		{
 			final TableRow row=new TableRow(context);
-			TableLayout.LayoutParams tableRowParams=
-				new TableLayout.LayoutParams
-			(TableLayout.LayoutParams.WRAP_CONTENT,TableLayout.LayoutParams.FILL_PARENT);
-
-			
+			TableLayout.LayoutParams tableRowParams=new TableLayout.LayoutParams(TableLayout.LayoutParams.WRAP_CONTENT,TableLayout.LayoutParams.FILL_PARENT);
 			row.setLayoutParams(tableRowParams);
 			
 			for(int j=0;j<width;j++)
@@ -98,70 +149,97 @@ public class UIinventory
 				final int x=j;
 				final int y=i;
 				final Inventory inventory=target.getInventory();
-					ImageView sprite=new ImageView(context);
-					TextView itemCountText=new TextView(context);
-					
-					itemCountText.setTextColor(Color.parseColor("#ffffffff"));
-					int itemcount=target.getInventory().getItemOnPos(j,i).y;
-					if(itemcount!=0)
-					itemCountText.setText(itemcount+"");
-					itemCountText.setTextSize(10);
-					
-					
-					sprite.setImageDrawable(new BitmapDrawable(context.getResources(),context.getGame().itemsData.findById(target.getInventory().getItemOnPos(j,i).x).image));
-					InventoryFrameLayout IFL=new InventoryFrameLayout(context);
-					IFL.setX(j);
-					IFL.setY(i);
-					row.addView(IFL);
 				
-					IFL.setOnTouchListener(new OnTouchListener()
+				ImageView sprite=new ImageView(context);
+				TextView itemCountText=new TextView(context);
+				itemCountText.setTextColor(Color.parseColor("#ffffffff"));
+				int itemcount=target.getInventory().getItemOnPos(j,i).y;
+				if(itemcount!=0)
+					itemCountText.setText(itemcount+"");
+				itemCountText.setTextSize(10);
+					
+				sprite.setImageDrawable(new BitmapDrawable(context.getResources(),context.getGame().itemsData.findById(target.getInventory().getItemOnPos(j,i).x).image));
+				InventoryFrameLayout IFL=new InventoryFrameLayout(context);
+				IFL.setX(j);
+				IFL.setY(i);
+				row.addView(IFL);
+				
+				IFL.setOnTouchListener(new OnTouchListener()
+					{
+						@Override
+						public boolean onTouch(View v,MotionEvent e)
 						{
-							@Override
-							public boolean onTouch(View v,MotionEvent e)
-							{
-								ClipData.Item item = new ClipData.Item((CharSequence)v.getTag());
-								String[] mimeTypes = {ClipDescription.MIMETYPE_TEXT_PLAIN};
+							ClipData.Item item = new ClipData.Item((CharSequence)v.getTag());
+							String[] mimeTypes = {ClipDescription.MIMETYPE_TEXT_PLAIN};
 
-								ClipData dragData = new ClipData("bug",mimeTypes, item);
-								View.DragShadowBuilder myShadow = new View.DragShadowBuilder(v);
-								excInterface.started(inventory,x,y,inventory.getItemCountOnPos(x,y));
+							ClipData dragData = new ClipData("bug",mimeTypes, item);
+							View.DragShadowBuilder myShadow = new View.DragShadowBuilder(v);
+							excInterface.started(inventory,x,y,calculateCountTotransfer(inventory.getItemCountOnPos(x,y)));
 								
-								v.startDrag(dragData,myShadow,null,0);
-								return true;
-							}
-						});
-						setDragAndDrop(IFL);
+							v.startDrag(dragData,myShadow,null,0);
+							return true;
+						}
+					});
+					setDragAndDrop(IFL,target);
 						
 					IFL.addView(sprite);
-					
 					IFL.addView(itemCountText);
 				}
-				//empty
-				
 			table.addView(row);
+			}
+			
+			if(table.getVisibility()==View.GONE)
+				table.setVisibility(View.VISIBLE);
 		}
-
-		if(table.getVisibility()==View.GONE)
-		table.setVisibility(View.VISIBLE);
-		target.getGame().errorText.setString("all good");
-		}
-		catch(Exception e)
-		{ target.getGame().errorText.setString(e.toString());}
+		catch(Exception e){ target.getGame().errorText.setString(e.toString());}
 	}
 	
-	public TableLayout getTable()
+	public int calculateCountTotransfer(int count)
 	{
-		return table;
+		switch(countToTransfer)
+		{
+			case 1:
+				count=1;
+				break;
+			case 2:
+				if(count!=1)
+				count=count/2;
+				else
+					count=1;
+				break;
+			default:
+			break;
+		}
+		return count;
 	}
-	public void setTarget(Entity target)
+	public int getCountToTransfer()
 	{
-		this.target=target;
+		
+		return countToTransfer;
 	}
-	public Entity getTarget()
+	public TableLayout getTableOfPlayer()
 	{
-		return target;
+		return playerTable;
 	}
-	public void setDragAndDrop(final InventoryFrameLayout IFL)
+	public void setPlayerTarget(Entity target)
+	{
+		this.playerTarget=target;
+	}
+	public Entity getPlayerTarget()
+	{
+		return playerTarget;
+	}
+	
+	public void setObjectTarget(Entity target)
+	{
+		this.objectTarget=target;
+	}
+	public Entity getObjectTarget()
+	{
+		return objectTarget;
+	}
+	
+	public void setDragAndDrop(final InventoryFrameLayout IFL,final Entity target)
 	{
 		final int ID=target.getInventory().getItemOnPos(IFL.x,IFL.y).x;
 		

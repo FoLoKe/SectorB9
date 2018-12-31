@@ -96,8 +96,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 	public static final int commandInteraction=1,commandMoving=0;
 	
 	//private UIinventory playerInventory;
-	UIinventory playerInv;
-	UIinventory objectInv;
+	
+	UIinventory inventoryUi;
 	InventoryExchangeInterface excInterface;
 	UIProgressBar uIhp;
 	objectOptionsUI objOptionsUI=new objectOptionsUI();
@@ -422,40 +422,34 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 		return player;
 	}
 	
-	public UIinventory getPlayerUIInventory()
+	public UIinventory getInventoryUi()
 	{
-		return playerInv;
+		
+		return inventoryUi;
 	}
 	
-	public void initInventoryUI(TableLayout playerTable,TableLayout objectTable,MainActivity context)
+	public void makeInventoryUI(TableLayout playerTable,TableLayout objectTable,MainActivity context)
 	{
-		objectInv=new UIinventory(objectTable,context,null,excInterface);
-		playerInv=new UIinventory(playerTable,context,player,excInterface);
+		
+		inventoryUi=new UIinventory(playerTable,player,objectTable,null,excInterface,context);
 	}
 	
-	public UIinventory getObjectUIInventory()
-	{
-		return objectInv;
-	}
+	
 	
 	public EntityManager getEntityManager()
 	{
 		return entityManager;
 	}
-	public void initPlayerInventory()
+	public void updateInventory(final Entity caller)
 	{
-		playerInv.init();
+		mAcontext.runOnUiThread(new Runnable(){
+		public void run()
+		{
+			inventoryUi.update(caller);
+		}
+		});
 	}
-	public void initObjInventory()
-	{
-		mAcontext.runOnUiThread(new Runnable() {  
-				@Override
-				public void run() {
-					// TODO Auto-generated method stub
-
-					objectInv.init();
-				}});
-	}
+	
 	
 	public void setPause(boolean state)
 	{

@@ -58,9 +58,9 @@ public class ShipUI
 	ShipArrangement shipArrangement;
 	
 
-	public ShipUI(Entity playerShip,final MainActivity context)
+	public ShipUI(Entity player,final MainActivity context)
 	{
-		this.target=playerShip;
+		this.target=player;
 		this.context=context;
 		//this.excInterface=excInterface;
 		this.table=this.context.findViewById(R.id.shipUI_InvTable);
@@ -92,7 +92,24 @@ public class ShipUI
 			BitmapFactory.Options options=new BitmapFactory.Options();
 			options.inScaled=false;
 			table.setBackground(new BitmapDrawable(target.getGame().mAcontext.getResources(),target.getGame().uiAsset.uiBgBlur));
+			
+			ImageView imageViewForBackground=context.findViewById(R.id.shipUI_shipImage);
+			Bitmap bitmap=target.getSprite();
+			imageViewForBackground.setImageBitmap(bitmap);
+			imageViewForBackground.setScaleType(ImageView.ScaleType.MATRIX);
+			Matrix m = imageViewForBackground.getImageMatrix();
+		
+			RectF drawableRect = new RectF(0, 0, bitmap.getWidth(), bitmap.getHeight());
+			RectF viewRect = new RectF(0, 0, 200, 200);
+			m.setRectToRect(drawableRect, viewRect, Matrix.ScaleToFit.CENTER);
+			imageViewForBackground.setImageMatrix(m);
 
+			// add ImageView to the Layout
+			
+			// set LinearLayout as ContentView
+			
+			
+			//spriteForBackground.setImageBitmap();
 
 			int maxRowElems=3;
 

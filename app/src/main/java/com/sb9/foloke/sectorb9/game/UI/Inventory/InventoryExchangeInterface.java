@@ -26,16 +26,15 @@ public class InventoryExchangeInterface
 		if(itemCatcher!=null)
 		{
 			if(itemCatcher.equaOrNullOnPosByID(cx,cy,itemHolder.getItemIdOnPos(x,y)))
-			if(itemHolder.takeItemFromPos(x,y,itemCount))
-			{
-				itemCatcher.addItemToPos(cx,cy,itemID,itemCount);
-			}
+				if(itemHolder.takeItemFromPos(x,y,itemCount))
+				{
+					itemCatcher.addItemToPos(cx,cy,itemID,itemCount);
+				}
 		}
 		itemHolder=null;
 		itemID=0;
 		itemCount=0;
-		game.initObjInventory();
-		game.initPlayerInventory();
+		game.updateInventory(itemCatcher.parent);
 		
 	}
 	

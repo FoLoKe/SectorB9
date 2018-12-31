@@ -12,6 +12,7 @@ import android.util.*;
 import android.content.res.*;
 import com.sb9.foloke.sectorb9.game.entities.Buildings.Components.*;
 import java.util.ArrayList;
+import com.sb9.foloke.sectorb9.game.UI.Inventory.*;
 
 public class Assembler extends StaticEntity
 {
@@ -26,14 +27,12 @@ public class Assembler extends StaticEntity
 	private ArrayList<Integer> productionQueue=new ArrayList<Integer>();
 	private PointF collisionInitPoints[];
 	private Animation assemblerAnim;
-	//private Animation crusherAnim;
 
 	
 	EntitySocket[] arms=new EntitySocket[3];
 	public Assembler(float x, float y,float rotation,ObjectsAsset  objAsset,String name,Game game)
 	{
 		super(x,y,rotation,objAsset.smelterCold,name,game,ID);
-		//crusherAnim=new Animation(objAsset.crusherAnim,15);
 		this.inventoryMaxCapacity=5;
 		this.opened=true;
 		inProduction=0;
@@ -96,15 +95,11 @@ public class Assembler extends StaticEntity
 			return;
 		canvas.save();
 		canvas.rotate(rotation,getCenterX(),getCenterY());
-		//Bitmap debugBitmap=rotate(game.buildingsData.asset.smallCargoContainer,debugRotation);
-		
-		
 		
 		if(!assembling)
 		canvas.drawBitmap(image,x,y,null);
 		else
 			canvas.drawBitmap(assemblerAnim.getImage(),x,y,null);
-		//if(prodTimer.getTick()>0)
 		prgBar.render(canvas);
 		game.debugText.setString(prodTimer.getTick()+"");
 		
@@ -117,7 +112,7 @@ public class Assembler extends StaticEntity
 			statusImage2.render(canvas,new PointF(x+16,y));
 		if(game.drawDebugInf)
 			drawDebugCollision(canvas);
-		// TODO: Implement this method
+		
 		for(EntitySocket arm:arms)
 		arm.render(canvas);
 		
@@ -126,63 +121,36 @@ public class Assembler extends StaticEntity
 	@Override
 	public void tick()
 	{
-		/*try
+		try
 		{
 			game.textInProduction.setString(inProduction+"");
 			game.textInQueue.setString(productionQueue+"");
-		if(energy)
-		{
-			//error check
-			
-				//items search 
+			if(energy)
+			{
+				//if not working
 				if(!assembling)
 				{
 				for(EntitySocket arm:arms)
 					arm.setRotation(0);
 					if(productionQueue.size()>0)
 					{
-						
-						if(inventory.size()>0)
+						//not every tick!
+						//make flag for update button
+						if(true)
 						{
 						int tProduction=productionQueue.get(0);
-							boolean allOk=true;
-							boolean toProduce[]=new boolean[game.itemsData.findById(tProduction).madeFrom.size()];
-							int i=0;
-							for(Map.Entry<Integer,Integer> e: game.itemsData.findById(tProduction).madeFrom.entrySet())
+						ArrayList<Inventory.InventoryItem> tItems=new ArrayList<Inventory.InventoryItem>();
+							for(Map.Entry<Integer,Integer> e : game.itemsData.findById(tProduction).madeFrom.entrySet())
 							{
-								toProduce[i]=false;
-								if(inventory.containsKey(e.getKey()))
-									if(inventory.get(e.getKey())>=e.getValue())
-									{
-										toProduce[i]=true;
-									}
-								i++;
+								tItems.add(new Inventory.InventoryItem(0,0,e.getKey(),e.getValue()));
 							}
-						
-							//all items found?
-							for(int j=0;j<game.itemsData.findById(tProduction).madeFrom.size();j++)
+							if(inventory.takeArrayItemFromAllInventory(tItems))
 							{
-								if(toProduce[j]==false)
-									allOk=false;
-							}
-			
-							if(allOk)
-							{
-								for(Map.Entry<Integer,Integer> e: game.itemsData.findById(tProduction).madeFrom.entrySet())
-								{
-									if(inventory.get(e.getKey())>e.getValue())
-									{
-										inventory.put(e.getKey(),inventory.get(e.getKey())-e.getValue());
-									}
-									else
-									{
-										inventory.remove(e.getKey());
-									}
-								}
-								game.initObjInventory();
+								
+								game.updateInventory(this);
 								assembling=true;
 								prodTimer.setTimer(prodTimeLength);
-								inProduction=productionQueue.get(0);
+								inProduction=tProduction;
 								productionQueue.remove(0);
 							
 								if(game.mAcontext.assemblerUIi.getOpened())
@@ -191,43 +159,34 @@ public class Assembler extends StaticEntity
 						}
 					}
 				}
-				//production
+				
+				//if in work
 				if(assembling)
 				{
 					if(prodTimer.tick())
 					{
-						if(inventory.containsKey(inProduction))
-						{
-							inventory.put(inProduction,inventory.get(inProduction)+1);
-						}
-						else
-							inventory.put(inProduction,1);
-						game.initObjInventory();
+						inventory.addToExistingOrNull(inProduction,1);
+						game.updateInventory(this);
 						assembling=false;
 						inProduction=0;
 						if(game.mAcontext.assemblerUIi.getOpened())
 							game.initAssemblerUI(this);
 					}
-				for(EntitySocket arm:arms)
-					arm.tick();
+					for(EntitySocket arm:arms)
+						arm.tick();
 					assemblerAnim.tick();
 				}
 				if(prodTimer.getTick()>0)
 					prgBar.tick(prodTimer.getTick()/(prodTimeLength*0.6f));
-		}
-		super.calculateCollisionObject();
-		
 			}
-			catch(Exception e)
-			{
-				System.out.println(e);
-			}*/
+			super.calculateCollisionObject();
+		}
+		catch(Exception e){System.out.println(e);}
 	}
 
 	@Override
 	public void calculateCollisionObject()
 	{
-		// TODO: Implement this method
 		super.calculateCollisionObject();
 		calculateCustomCollisionObject();
 	}
@@ -244,7 +203,6 @@ public class Assembler extends StaticEntity
 	}
 	public void addQueue(int ID)
 	{
-		//Map<Integer,Integer> a=game.itemsData.findById(ID).madeFrom;
 		if(!game.itemsData.findById(ID).madeFrom.containsValue(0))
 			productionQueue.add(ID);
 		else

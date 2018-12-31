@@ -1,9 +1,7 @@
 package com.sb9.foloke.sectorb9.game.UI.Inventory;
 import android.graphics.*;
-//import org.w3c.dom.*;
 import java.util.*;
 import com.sb9.foloke.sectorb9.game.entities.*;
-//import android.content.*;
 
 public class Inventory
 {
@@ -13,7 +11,7 @@ public class Inventory
 	ArrayList<InventoryItem> items=new ArrayList<InventoryItem>();
 	public static class InventoryItem
 	{
-		int pos,row; ///from 0,0 left
+		int pos,row; ///from 0,0 left up
 		
 		int ID=0,count=0;
 		Color backgroundColor;
@@ -60,6 +58,7 @@ public class Inventory
 	public int getHeight(){return height;}
 	public boolean addNewItem(int ID,int count)
 	{
+		if(ID!=0)
 		for(InventoryItem i: items)
 		{
 			if(i.ID==0)
@@ -74,6 +73,7 @@ public class Inventory
 	
 	public boolean addItemToPos(int x,int y,int itemID,int itemCount)
 	{
+		if(itemID!=0&&itemCount!=0)
 		for(InventoryItem i: items)
 		{
 			if((i.pos==x)&&(i.row==y))
@@ -90,6 +90,7 @@ public class Inventory
 	
 	public boolean contains(int ID)
 	{
+		if(ID!=0)
 		for(InventoryItem i: items)
 		{
 			if((i.ID==ID))
@@ -101,6 +102,7 @@ public class Inventory
 	}
 	public boolean contains(int ID,int count)
 	{
+		if (ID!=0&&count!=0)
 		for(InventoryItem i: items)
 		{
 			if((i.ID==ID)&&(i.count>=count))
@@ -112,6 +114,7 @@ public class Inventory
 	}
 	public Point getPosByID(int ID)
 	{
+		if(ID!=0)
 		for(InventoryItem i: items)
 		{
 			if((i.ID==ID))
@@ -123,6 +126,7 @@ public class Inventory
 	}
 	public boolean takeItemFromPos(int x,int y,int count)
 	{
+		if(count!=0)
 		for(InventoryItem i: items)
 		{
 			if((i.pos==x)&&(i.row==y))
@@ -140,6 +144,7 @@ public class Inventory
 	}
 	public boolean takeItemByID(int ID,int count)
 	{
+		if(ID!=0&&count!=0)
 		for(InventoryItem i: items)
 		{
 			if((i.ID)==ID)
@@ -170,6 +175,7 @@ public class Inventory
 	}
 	public boolean equalOnPosByID(int x,int y,int ID)
 	{
+		if(ID!=0)
 		for(InventoryItem i: items)
 		{
 			if((i.pos==x)&&(i.row==y)&&(i.ID==ID))
@@ -179,6 +185,7 @@ public class Inventory
 	}
 	public boolean equaOrNullOnPosByID(int x,int y,int ID)
 	{
+		if(ID!=0)
 		for(InventoryItem i: items)
 		{
 			if((i.pos==x)&&(i.row==y)&&((i.ID==ID)||(i.ID==0)))
@@ -209,6 +216,9 @@ public class Inventory
 	}
 	public boolean containsOneItemInAllInventory(int ID,int count)
 	{
+		if (ID==0||count==0)
+		return false;
+		
 		int inventoryCount=0;
 		for(Inventory.InventoryItem e: items)
 		{
@@ -221,6 +231,7 @@ public class Inventory
 	}
 	public boolean takeOneItemFromAllInventory(int ID,int count)
 	{
+		if(ID!=0&&count!=0)
 		if(containsOneItemInAllInventory(ID,count))
 		{
 			for(Inventory.InventoryItem e: items)
@@ -245,9 +256,28 @@ public class Inventory
 		return false;
 		
 	}
+	
+	public boolean takeArrayItemFromAllInventory(ArrayList<Inventory.InventoryItem> array)
+	{
+		for(InventoryItem i:array)
+		{
+			if(!containsOneItemInAllInventory(i.ID,i.count))
+			{
+				return false;
+			}
+		}
+		for(InventoryItem i:array)
+		{
+			if(!takeOneItemFromAllInventory(i.ID,i.count))
+			{
+				return false;
+			}
+		}
+		return true;
+	}
 	public boolean addToExistingOrNull(int ID,int count)
 	{
-		boolean hasFreespace=true;
+		if(ID!=0&&count!=0)
 		for(InventoryItem i: items)
 		{
 			if(i.ID==ID)
@@ -262,7 +292,7 @@ public class Inventory
 	}
 	public boolean addToExistingOrNull(InventoryItem item)
 	{
-		boolean hasFreespace=true;
+		if(item.ID!=0&&item.count!=0)
 		for(InventoryItem i: items)
 		{
 			if(i.ID==item.ID)
