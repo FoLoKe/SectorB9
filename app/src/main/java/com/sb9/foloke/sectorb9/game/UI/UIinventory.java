@@ -132,7 +132,7 @@ public class UIinventory
 		table.removeAllViews();
 		BitmapFactory.Options options=new BitmapFactory.Options();
         options.inScaled=false;
-		table.setBackground(new BitmapDrawable(target.getGame().mContext.getResources(),UIAsset.uiBgBlur));
+		table.setBackground(new BitmapDrawable(target.getGame().getMainActivity().getResources(),UIAsset.uiBgBlur));
 		
 		
 			int height=target.getInventory().getHeight();

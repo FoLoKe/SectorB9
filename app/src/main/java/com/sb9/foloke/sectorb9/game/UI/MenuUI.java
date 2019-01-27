@@ -5,11 +5,12 @@ import com.sb9.foloke.sectorb9.*;
 import android.view.*;
 import android.widget.CompoundButton.*;
 
-public class UImenu
+public class MenuUI
 {
+	int prevViewID=0;
 	public void init(final MainActivity MA,final ViewFlipper VF,final int view)
 	{
-		
+		prevViewID=view;
 		Button closeMenuButton=MA.findViewById(R.id.closeMenu);
 		closeMenuButton.setOnClickListener
 		(new OnClickListener() 
@@ -35,7 +36,16 @@ public class UImenu
 					VF.setDisplayedChild(VF.indexOfChild(MA.findViewById(R.id.help_sectionUI)));
 				}
 			});
-			
+		Button openMapButton=MA.findViewById(R.id.menu_openMapButton);
+		openMapButton.setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View v)
+			{
+				MA.mapUI.init(MA,VF);
+				VF.setDisplayedChild(VF.indexOfChild(MA.findViewById(R.id.map_ui)));
+			}
+		});
+		
 		Switch menuDebugSwitch = MA.findViewById(R.id.debug_switch);
 
 		menuDebugSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener()
@@ -60,5 +70,9 @@ public class UImenu
 				{
 					MA.loadFile("test");
 				}});
+	}
+	public int getPrevViewID()
+	{
+		return prevViewID;
 	}
 }

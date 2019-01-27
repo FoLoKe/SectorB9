@@ -57,5 +57,9 @@
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:layout_gravity="center"/>
+	<include layout="@layout/map_ui"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:layout_gravity="center"/>
 </ViewFlipper>
 </FrameLayout>

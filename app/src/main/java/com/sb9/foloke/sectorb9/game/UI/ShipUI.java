@@ -91,7 +91,7 @@ public class ShipUI
 			table.removeAllViews();
 			BitmapFactory.Options options=new BitmapFactory.Options();
 			options.inScaled=false;
-			table.setBackground(new BitmapDrawable(target.getGame().mContext.getResources(),UIAsset.uiBgBlur));
+			table.setBackground(new BitmapDrawable(target.getGame().getMainActivity().getResources(),UIAsset.uiBgBlur));
 			
 			ImageView imageViewForBackground=context.findViewById(R.id.shipUI_shipImage);
 			Bitmap bitmap=target.getSprite();

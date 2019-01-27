@@ -36,7 +36,7 @@ public class Player extends DynamicEntity
 		for(int j=0;j<inventory.getWidth();j++)
 				inventory.addNewItem(i*inventory.getWidth()+j,i*inventory.getWidth()+j);
 		calculateCollisionObject();
-		game.mContext.shipUI=new ShipUI(this,game.mContext);
+		game.getMainActivity().shipUI=new ShipUI(this,game.getMainActivity());
     }
 
     @Override
@@ -95,8 +95,8 @@ public class Player extends DynamicEntity
 	{
 		float trotation=360-(float)Math.toDegrees(Math.PI+Math.atan2(-e.getCenterX()+x,-e.getCenterY()+y)); 
 		float mathRotation=(float)(PI/180*trotation);
-		this.dy = -(float) (0.02*speed * cos(mathRotation));
-		this.dx = (float) (0.02*speed * sin(mathRotation));
+		this.dy = -(float) (0.2*speed * cos(mathRotation));
+		this.dx = (float) (0.2*speed * sin(mathRotation));
 	}
 
     @Override

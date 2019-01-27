@@ -58,11 +58,13 @@ public class MainActivity extends Activity {
 	private ViewFlipper VF;
 	private BuildUI buildUI=new BuildUI();
 	public assemblerUI assemblerUIi=new assemblerUI();
-	private UImenu uiMenu=new UImenu();
+	public MenuUI menuUI=new MenuUI();
 	public UIinteraction uiInteraction=new UIinteraction();
 	private UIaction uiAction =new UIaction();
 	public HelpUI helpui=new HelpUI();
 	public ShipUI shipUI;
+	public MapUI mapUI;
+	
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
@@ -71,8 +73,11 @@ public class MainActivity extends Activity {
         setContentView(R.layout.main_activity);
         game=findViewById(R.id.Game);
 		options=new BitmapFactory.Options();
+		
         options.inScaled=false;
 		helpui.init(this,VF,1);
+		
+		
 		TableLayout playerTable=findViewById(R.id.PlayerTableLayout);
 		TableLayout objectTable=findViewById(R.id.ObjectTableLayout);
 
@@ -87,9 +92,10 @@ public class MainActivity extends Activity {
 			
 		findViewById(R.id.menuUILinearLayout).setBackground(new BitmapDrawable(this.getResources(),UIAsset.uiBgBlur));
 		
-		final FrameLayout menuUI=findViewById(R.id.menuUI);
+		final FrameLayout menuUIFrame=findViewById(R.id.menuUI);
 		final MainActivity MA=this;
-		
+		mapUI=new MapUI(this);
+		mapUI.init(this,VF);
 		Button menuButton=findViewById(R.id.Menu);
 		menuButton.setOnClickListener
 		
@@ -99,8 +105,8 @@ public class MainActivity extends Activity {
 				public void onClick(View v) 
 				{
 					final int a=VF.getDisplayedChild();
-					uiMenu.init(MA,VF,a);
-					VF.setDisplayedChild(VF.indexOfChild(menuUI));
+					menuUI.init(MA,VF,a);
+					VF.setDisplayedChild(VF.indexOfChild(menuUIFrame));
 					game.setPause(true);
 					v.setVisibility(View.GONE);
 				}
@@ -136,7 +142,7 @@ public class MainActivity extends Activity {
 		
             writer.write("SB9 debug save");
 			writer.newLine();
-            game.getEntityManager().save(writer);
+            game.save(writer);
             
             writer.close();
             osw.close();
@@ -168,7 +174,7 @@ public class MainActivity extends Activity {
                     InputStreamReader isr = new InputStreamReader(inputStream);
                     BufferedReader reader = new BufferedReader(isr);
 					line=reader.readLine();
-                    game.getEntityManager().load(reader);
+                    game.load(reader);
                     inputStream.close();
                     reader.close();
                     isr.close();

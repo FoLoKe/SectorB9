@@ -33,6 +33,9 @@ import android.view.ScaleGestureDetector.*;
 import android.view.*;
 import com.sb9.foloke.sectorb9.game.dataSheets.*;
 import com.sb9.foloke.sectorb9.game.UI.Inventory.*;
+import android.graphics.*;
+import com.sb9.foloke.sectorb9.game.Managers.*;
+import java.io.*;
 
 
 public class Game extends SurfaceView implements SurfaceHolder.Callback
@@ -52,50 +55,53 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
     private Player player;
     private Cursor cursor;
 	
-	//objects manager
-	protected EntityManager entityManager;
+	//world manager
+	private WorldManager worldManager;
 	
-    //UI
+	
+	
+    //UI texts
 
     private Text textPointOfTouch;
 	private Text textScreenWH;
 	public Text textFPS;
 	public Text textInProduction;
 	public Text textInQueue;
+	public Text debugText;
+	public Text errorText;
+	private Text debugExchange;
+	
+	///camera positioning
     private float scale=5;
-
     private float canvasH,canvasW;
     private PointF pointOfTouch;
     private PointF screenPointOfTouch;
 
+	///booleans
     public boolean drawDebugInf=false;
-	boolean playerDestroyed=false;
-
-	boolean gamePause=false;
+	private boolean playerDestroyed=false;
+	private boolean gamePause=false;
 	private Timer destroyedTimer;
 	public int command=0;
 	public static final int commandInteraction=1,commandMoving=0;
 
-	
-	UIinventory inventoryUi;
-	InventoryExchangeInterface excInterface;
-	UIProgressBar uIhp;
-	objectOptionsUI objOptionsUI=new objectOptionsUI();
+	//UIs NEEDS REWORK
+	private UIinventory inventoryUi;
+	private InventoryExchangeInterface excInterface;
+	private UIProgressBar uIhp;
+	private objectOptionsUI objOptionsUI=new objectOptionsUI();
 	public BuildingsDataSheet buildingsData;
 	public ItemsDataSheet itemsData;
 	
-	//debug
-	Text debugExchange;
-	//private
-	public Text debugText;
-	public Text errorText;
-	public MainActivity mContext;
+	
+	private MainActivity mContext;
 	private StaticEntity pressedObject;
 	
     public Game(Context context, AttributeSet attributeSet)
     {
 		
         super(context, attributeSet);
+		worldManager=new WorldManager((MainActivity)context,this);
 		DisplayMetrics displayMetrics = new DisplayMetrics();
 		((Activity) getContext()).getWindowManager()
 			.getDefaultDisplay()
@@ -103,10 +109,10 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 		canvasH = displayMetrics.heightPixels;
 		canvasW = displayMetrics.widthPixels;
 		this.mContext=(MainActivity)context;
-		this.entityManager=new EntityManager(this);
+		
         BitmapFactory.Options bitmapOptions=new BitmapFactory.Options();
         bitmapOptions.inScaled=false;
-		Random rand=new Random();
+		
 		
 		
         background=Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.galactic_outflow,bitmapOptions));
@@ -127,19 +133,10 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         player=new Player(900,900,0,this,"player");
 		excInterface=new InventoryExchangeInterface(this);
 		
-		entityManager.addObject(new FuelGenerator(1200,900,rand.nextInt(180),this));
-		entityManager.addObject(new BigSmelter(1100,900,rand.nextInt(180),this));
-		entityManager.addObject(new ModularLab(1000,900,rand.nextInt(180),this));
-		entityManager.addObject(new Assembler(900,900,rand.nextInt(180),this));
-		entityManager.addObject(new SolarPanel(800,900,rand.nextInt(180),this));
-		entityManager.addObject(new Crusher(700,900,rand.nextInt(180),this));
-		entityManager.addObject(new SmallCargoContainer(600,900,rand.nextInt(180),this));
 		
 		//for building and ship leading
         cursor=new Cursor(900,900,"cursor",this);
 		
-		for (int i=0;i<50;i++)
-		entityManager.addObject(new Asteroid(50*rand.nextInt(50)+25*rand.nextInt(20),100*rand.nextInt(20)+20*rand.nextInt(50),rand.nextInt(180),this));
 		
         textPointOfTouch=new Text(""+0+" "+0,500,400);
 		textScreenWH=new Text("",500,250);
@@ -156,6 +153,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 		uIhp=new UIProgressBar(this,canvasW/3,canvasH/20,50,50,UIAsset.hpBackground,UIAsset.hpLine,UIAsset.progressBarBorder,100);
         destroyedImage=new UIcustomImage(UIAsset.destroyedText);
 		getHolder().addCallback(this);
+		worldManager.loadDebugWorld();
         mainThread= new MainThread(getHolder(),this);
         setFocusable(true);
 		
@@ -206,20 +204,10 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         		player.RotationToPoint(pointOfTouch);
         		player.tick();
 				//player.Shoot();
-				entityManager.tick();
+				worldManager.updateWorld();
+				//entityManager.tick();
 				uIhp.tick(player.getHp());
-				for(Entity e : entityManager.getArray())
-				{
-					if(e.getActive())
-					{
-						if(e.getCollsionBox().intersect(camera.getScreenRect()))
-							e.setRenderable(true);
-						else
-							e.setRenderable(false);
-					}
-					else
-						e.setRenderable(false);
-				}
+				
 			}
         	camera.tick(scale,canvasW,canvasH);
 			
@@ -248,15 +236,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 			{
             	camera.render(canvas);
             	player.drawVelocity(canvas);
-				for(Entity e: entityManager.getArray())
-				{
-					e.drawDebugBox(canvas);
-				}
         	}
-			for(Entity e: entityManager.getArray())
-			{
-				e.render(canvas);
-			}
+			worldManager.renderWorld(canvas);
 			
 			if(pressedObject!=null)
 			{pressedObject.calculateCollisionObject();
@@ -264,17 +245,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 			}
         	canvas.restore();
 			//UI
-			if(drawDebugInf)
-			{
-				textScreenWH.render(canvas);	
-				textPointOfTouch.render(canvas);
-				debugExchange.render(canvas);
-				debugText.render(canvas);
-				errorText.render(canvas);
-				textFPS.render(canvas);
-				textInProduction.render(canvas);
-				textInQueue.render(canvas);
-			}
+			
 			if(command==commandMoving)
 			uIhp.render(canvas);
 			
@@ -282,6 +253,18 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 		//TODO: make PLAYER DESTROYED CLOSE INVENTORY
 		if(playerDestroyed)
 			destroyedImage.render(canvas);
+		}
+		if(drawDebugInf)
+		{
+			canvas.drawColor(Color.BLACK);
+			textScreenWH.render(canvas);	
+			textPointOfTouch.render(canvas);
+			debugExchange.render(canvas);
+			debugText.render(canvas);
+			errorText.render(canvas);
+			textFPS.render(canvas);
+			textInProduction.render(canvas);
+			textInQueue.render(canvas);
 		}
 		
     }
@@ -325,47 +308,29 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 					
 					switch (command)
 					{
-					case commandMoving:
-                    player.setMovable(true);
-					break;
-					case commandInteraction: 
-						break;
+						case commandMoving:
+         		           	player.setMovable(true);
+							break;
+							
+						case commandInteraction: 
+							break;
 					}
-			
                     break;
+					
                 case MotionEvent.ACTION_MOVE:
-                    pointOfTouch.set((x-canvasW/2)/camera.getScale()+player.getCenterX(),(y-canvasH/2)/camera.getScale()+player.getCenterY());
-                    
+                    pointOfTouch.set((x-canvasW/2)/camera.getScale()+player.getCenterX(),(y-canvasH/2)/camera.getScale()+player.getCenterY()); 
                     break;
-                    case MotionEvent.ACTION_UP:
-						
-						
+					
+                case MotionEvent.ACTION_UP:	
 					switch (command)
 					{
 						case commandMoving:
 							cursor.setDrawable(false);
-                        player.setMovable(false);
-						break;
+                       		player.setMovable(false);
+							break;
 						case commandInteraction:
-							for(Entity e: entityManager.getArray())
-							{
-								if(e.getCollisionBox().contains(pointOfTouch.x,pointOfTouch.y))
-								{
-									if(Math.sqrt(
-									(e.getCenterX()-player.getCenterX())*(e.getCenterX()-player.getCenterX())
-												 +(e.getCenterY()-player.getCenterY())*(e.getCenterY()-player.getCenterY()))-32<player.getRadius())											 
-									{								
-										if(e instanceof StaticEntity)
-										{
-											pressedObject=(StaticEntity)e;
-											mContext.uiInteraction.init(mContext,mContext.getViewFlipper(),pressedObject);
-										}
-									
-									}							
-									textPointOfTouch.setString(Math.sqrt((e.getCenterX()-player.getCenterX())*(e.getCenterX()-player.getCenterX())
-																		 +(e.getCenterY()-player.getCenterY())*(e.getCenterY()-player.getCenterY()))+"");
-								}
-							}
+							worldManager.interactionCheck(pointOfTouch.x,pointOfTouch.y);
+							
 							break;
 						}
                     break;
@@ -378,7 +343,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
     }
 	public ArrayList<Entity> getEntities()
 	{
-		return entityManager.getArray();
+		return worldManager.getEntityManager().getArray();
 	}
 	public void setPlayerDestroyed(boolean condition)
 	{
@@ -403,7 +368,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 	
 	public UIinventory getInventoryUi()
 	{
-		
 		return inventoryUi;
 	}
 	
@@ -415,10 +379,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 	
 	
 	
-	public EntityManager getEntityManager()
-	{
-		return entityManager;
-	}
+	
 	public void updateInventory(final Entity caller)
 	{
 		mContext.runOnUiThread(new Runnable(){
@@ -444,6 +405,10 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 	{
 		pressedObject=null;
 	}
+	public void setPressedObject(StaticEntity pressedObject)
+	{
+		this.pressedObject=pressedObject;
+	}
 	
 	public PointF getTouchPoint()
 	{
@@ -458,5 +423,25 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
 					mContext.assemblerUIi.init(mContext,assembler);
 				}});
+	}
+	public MainActivity getMainActivity()
+	{
+		return mContext;
+	}
+	public Camera getCamera()
+	{
+		return camera;
+	}
+	public void addObject(Entity e)
+	{
+		worldManager.addObject(e);
+	}
+	public void save(BufferedWriter w)
+	{
+		worldManager.save(w);
+	}
+	public void load(BufferedReader r)
+	{
+		worldManager.load(r);
 	}
 }

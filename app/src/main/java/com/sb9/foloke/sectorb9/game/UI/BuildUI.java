@@ -93,22 +93,22 @@ public class BuildUI
 						case 0:
 							break;
 						case 1:
-							MA.getGame().getEntityManager().addObject(new SmallCargoContainer(MA.getGame().getTouchPoint().x-16,MA.getGame().getTouchPoint().y-16,10,MA.getGame()));
+							MA.getGame().addObject(new SmallCargoContainer(MA.getGame().getTouchPoint().x-16,MA.getGame().getTouchPoint().y-16,10,MA.getGame()));
 							break;
 						case 2:
-							MA.getGame().getEntityManager().addObject(new Crusher(MA.getGame().getTouchPoint().x-16,MA.getGame().getTouchPoint().y-16,10,MA.getGame()));
+							MA.getGame().addObject(new Crusher(MA.getGame().getTouchPoint().x-16,MA.getGame().getTouchPoint().y-16,10,MA.getGame()));
 							break;
 						case 3:
-							MA.getGame().getEntityManager().addObject(new SolarPanel(MA.getGame().getTouchPoint().x-16,MA.getGame().getTouchPoint().y-16,10,MA.getGame()));
+							MA.getGame().addObject(new SolarPanel(MA.getGame().getTouchPoint().x-16,MA.getGame().getTouchPoint().y-16,10,MA.getGame()));
 							break;
 						case 4:
-							MA.getGame().getEntityManager().addObject(new FuelGenerator(MA.getGame().getTouchPoint().x-16,MA.getGame().getTouchPoint().y-16,10,MA.getGame()));
+							MA.getGame().addObject(new FuelGenerator(MA.getGame().getTouchPoint().x-16,MA.getGame().getTouchPoint().y-16,10,MA.getGame()));
 							break;
 						case 5:
-							MA.getGame().getEntityManager().addObject(new BigSmelter(MA.getGame().getTouchPoint().x-16,MA.getGame().getTouchPoint().y-16,10,MA.getGame()));
+							MA.getGame().addObject(new BigSmelter(MA.getGame().getTouchPoint().x-16,MA.getGame().getTouchPoint().y-16,10,MA.getGame()));
 							break;
 						case 6:
-							MA.getGame().getEntityManager().addObject(new Assembler(MA.getGame().getTouchPoint().x-16,MA.getGame().getTouchPoint().y-16,10,MA.getGame()));
+							MA.getGame().addObject(new Assembler(MA.getGame().getTouchPoint().x-16,MA.getGame().getTouchPoint().y-16,10,MA.getGame()));
 							break;
 					}
 				}

@@ -26,8 +26,8 @@ public class HelpUI
 		///list init
 		BitmapFactory.Options options=new BitmapFactory.Options();
         options.inScaled=false;
-		MA.findViewById(R.id.HelpSectionFrameLayout).setBackground(new BitmapDrawable(MA.getGame().mContext.getResources(),UIAsset.uiBgBlur));
-		MA.findViewById(R.id.helpSectionScrollView).setBackground(new BitmapDrawable(MA.getGame().mContext.getResources(),UIAsset.uiBgBlur));
+		MA.findViewById(R.id.HelpSectionFrameLayout).setBackground(new BitmapDrawable(MA.getGame().getMainActivity().getResources(),UIAsset.uiBgBlur));
+		MA.findViewById(R.id.helpSectionScrollView).setBackground(new BitmapDrawable(MA.getGame().getMainActivity().getResources(),UIAsset.uiBgBlur));
 		((TableLayout)MA.findViewById(R.id.HelpSectionTableView)).removeAllViews();
 		
 		//close button

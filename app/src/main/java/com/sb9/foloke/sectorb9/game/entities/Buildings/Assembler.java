@@ -128,7 +128,7 @@ public class Assembler extends StaticEntity
 								inProduction=tProduction;
 								productionQueue.remove(0);
 							
-								if(game.mContext.assemblerUIi.getOpened())
+								if(game.getMainActivity().assemblerUIi.getOpened())
 									game.initAssemblerUI(this);
 							}
 						}
@@ -144,7 +144,7 @@ public class Assembler extends StaticEntity
 						game.updateInventory(this);
 						assembling=false;
 						inProduction=0;
-						if(game.mContext.assemblerUIi.getOpened())
+						if(game.getMainActivity().assemblerUIi.getOpened())
 							game.initAssemblerUI(this);
 					}
 					for(EntitySocket arm:arms)
@@ -183,7 +183,7 @@ public class Assembler extends StaticEntity
 		else
 			///error
 			{}
-		if(game.mContext.assemblerUIi.getOpened())
+		if(game.getMainActivity().assemblerUIi.getOpened())
 			game.initAssemblerUI(this);
 	}
 	public ArrayList<Integer> getQueue()
