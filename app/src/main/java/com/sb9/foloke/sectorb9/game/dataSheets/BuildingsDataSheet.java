@@ -1,4 +1,4 @@
-package com.sb9.foloke.sectorb9.game.DataSheets;
+package com.sb9.foloke.sectorb9.game.dataSheets;
 import java.util.*;
 import android.graphics.*;
 
