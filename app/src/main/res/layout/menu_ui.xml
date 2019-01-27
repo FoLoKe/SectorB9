@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:id="@+id/menuUI"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	
+>
+	<Button
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:textColor="#ffffff"
+		android:text="Close Menu"
+		android:id="@+id/closeMenu"
+		android:layout_gravity="top|center"
+	/>
+	<LinearLayout
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:orientation="vertical"
+		android:layout_gravity="center"
+		android:id="@+id/menuUILinearLayout"
+		android:layout_margin="5dp"
+		android:layout_marginTop="100dp">
+		<TextView
+			android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+			android:text="MENU"
+			android:layout_gravity="center_horizontal|top"
+			android:textColor="#ffffff"
+
+		/>
+		<Switch
+			android:id="@+id/debug_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+			android:layout_gravity="right"
+			android:textColor="#ffffff"
+            android:text="Draw Debug Information"
+            android:textOff="off"
+            android:textOn="on" />
+		<Switch
+			android:id="@+id/monitored_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+			android:layout_gravity="right"
+			android:textColor="#ffffff"
+            android:text="test"
+            android:textOff="off"
+            android:textOn="on" 
+			/>
+		<Button
+			android:id="@+id/menu_uiOpenHelpButton"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Help"
+			android:textColor="#ffffff"
+			android:layout_gravity="center"
+			/>
+		<Button
+			android:id="@+id/menu_save"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Save"
+			android:textColor="#ffffff"
+			android:layout_gravity="center"
+			/>
+		<Button
+			android:id="@+id/menu_load"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Load"
+			android:textColor="#ffffff"
+			android:layout_gravity="center"
+		/>
+		<Button
+			android:id="@+id/menu_openMapButton"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Galaxy Map"
+			android:textColor="#ffffff"
+			android:layout_gravity="center"
+		/>
+
+	</LinearLayout>
+</FrameLayout>

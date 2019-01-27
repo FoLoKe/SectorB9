@@ -6,7 +6,7 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 
 public class Text {
-    private String string="";
+    private String string;
     private float x,y;
     public Text(String string,float x,float y)
     {

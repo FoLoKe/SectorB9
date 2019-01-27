@@ -1,0 +1,80 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+	android:id="@+id/map_ui"
+	android:background="#55ffffff">
+	
+	
+<LinearLayout
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
+	<LinearLayout
+		android:layout_height="wrap_content"
+		android:layout_width="wrap_content"
+		android:orientation="vertical">
+		<Button
+			android:id="@+id/map_closeButton"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Close"
+			android:textColor="#ffffff"
+			android:layout_gravity="center|top"
+		/>
+	<TextView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="info"/>
+	<Button
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:id="@+id/map_uiWarpButton"
+		android:text="Warp"/>
+</LinearLayout>
+	<ImageView
+		android:layout_width="10dp"
+		android:layout_height="match_parent"
+		android:background="#000000"
+		/>
+	<FrameLayout
+		android:id="@+id/map_tilesFrameLayout"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		>
+		<ScrollView
+			android:orientation="horizontal"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			
+			
+			>
+			<HorizontalScrollView
+				android:orientation="vertical"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				
+				
+				>
+				
+	<FrameLayout
+		android:layout_height="wrap_content"
+		android:layout_width="wrap_content"
+		android:id="@+id/map_uiSecondFrameLayout">
+				<TableLayout
+					android:id="@+id/map_uiTilesTable"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					
+					>
+					<TableRow>
+						<TextView
+							android:text="test"
+							/>
+					</TableRow>
+				</TableLayout>
+	</FrameLayout>
+			</HorizontalScrollView>
+		</ScrollView>
+	</FrameLayout>
+</LinearLayout>	
+</FrameLayout>
