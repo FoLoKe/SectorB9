@@ -8,11 +8,11 @@ import android.view.*;
 import android.widget.FrameLayout.*;
 
 import com.sb9.foloke.sectorb9.game.Assets.UIAsset;
-import com.sb9.foloke.sectorb9.game.dataSheets.*;
+import com.sb9.foloke.sectorb9.game.DataSheets.ItemsDataSheet;
+
 import java.util.*;
-import android.net.*;
+
 import android.text.*;
-import android.text.style.*;
 import android.util.*;
 
 public class HelpUI
@@ -26,8 +26,8 @@ public class HelpUI
 		///list init
 		BitmapFactory.Options options=new BitmapFactory.Options();
         options.inScaled=false;
-		MA.findViewById(R.id.HelpSectionFrameLayout).setBackground(new BitmapDrawable(MA.getGame().getMainActivity().getResources(),UIAsset.uiBgBlur));
-		MA.findViewById(R.id.helpSectionScrollView).setBackground(new BitmapDrawable(MA.getGame().getMainActivity().getResources(),UIAsset.uiBgBlur));
+		MA.findViewById(R.id.HelpSectionFrameLayout).setBackground(new BitmapDrawable(MA.getResources(),UIAsset.uiBgBlur));
+		MA.findViewById(R.id.helpSectionScrollView).setBackground(new BitmapDrawable(MA.getResources(),UIAsset.uiBgBlur));
 		((TableLayout)MA.findViewById(R.id.HelpSectionTableView)).removeAllViews();
 		
 		//close button
@@ -39,17 +39,17 @@ public class HelpUI
 				public void onClick(View v) 
 				{
 					VF.setDisplayedChild(view);
-					MA.getGame().setPause(false);
+					MA.getGameManager().setPause(false);
 					MA.findViewById(R.id.Menu).setVisibility(View.VISIBLE);
 				}
 			});
 
 		//list containment
-		for(int i=1;i<MA.getGame().itemsData.getLenght();i++)
+		for(int i = 1; i<ItemsDataSheet.getLenght(); i++)
 		{
 			TextView text= new TextView(MA);
 			text.setText(
-			MA.getGame().itemsData.findById(i).name);
+			ItemsDataSheet.findById(i).name);
 			text.setTextColor(Color.WHITE);
 			TableRow row=new TableRow(MA);
 			row.addView(text);
@@ -87,7 +87,7 @@ public class HelpUI
 		
 		//name of selected item
 		TextView text= new TextView(MA);
-		text.setText( MA.getGame().itemsData.findById(pressedID).name+" ");
+		text.setText( ItemsDataSheet.findById(pressedID).name+" ");
 		text.setTextColor(textC);
 		text.setGravity(Gravity.CENTER|Gravity.TOP);
 		text.setTextSize(25);
@@ -96,20 +96,20 @@ public class HelpUI
 		//image of selected item
 		ImageView imageOfitem=new ImageView(MA);
 		BitmapDrawable bdrawable;
-		bdrawable = new BitmapDrawable(MA.getResources(),MA.getGame().itemsData.findById(pressedID).image);
+		bdrawable = new BitmapDrawable(MA.getResources(),ItemsDataSheet.findById(pressedID).image);
 		imageOfitem.setImageDrawable(bdrawable);
 		LR.addView(imageOfitem);
 		
 		//description of selected item
 		TextView infoText= new TextView(MA);
-		infoText.setText( MA.getGame().itemsData.findById(pressedID).info);
+		infoText.setText( ItemsDataSheet.findById(pressedID).info);
 		infoText.setTextColor(textC);
 		infoText.setGravity(Gravity.LEFT|Gravity.TOP);
 		infoText.setTextSize(25);
 		LR.addView(infoText);
 		
 		//can be prodused by crushing item:
-		if(MA.getGame().itemsData.findById(pressedID).crushFromID!=0)
+		if(ItemsDataSheet.findById(pressedID).crushFromID!=0)
 		{
 			//title
 			TextView crushedFromText = new TextView(MA);
@@ -121,14 +121,14 @@ public class HelpUI
 		
 			//name of crushable item
 			TextView crushObjectName = new TextView(MA);
-			int crushid=MA.getGame().itemsData.findById(pressedID).crushFromID;
-			crushObjectName.setText( MA.getGame().itemsData.findById(crushid).name+" ");
+			int crushid=ItemsDataSheet.findById(pressedID).crushFromID;
+			crushObjectName.setText( ItemsDataSheet.findById(crushid).name+" ");
 			crushObjectName.setTextColor(textC);
 			crushObjectName.setGravity(Gravity.LEFT|Gravity.TOP);
 			crushObjectName.setTextSize(25);
 			
 			
-			bdrawable = new BitmapDrawable(MA.getResources(),MA.getGame().itemsData.findById(crushid).image);
+			bdrawable = new BitmapDrawable(MA.getResources(),ItemsDataSheet.findById(crushid).image);
 			ImageView imageOfCrushableitem=new ImageView(MA);
 			imageOfCrushableitem.setImageDrawable(bdrawable);
 			imageOfCrushableitem.setId(crushid);
@@ -148,10 +148,10 @@ public class HelpUI
 		}
 		
 		//can be prodused by smelting an item:
-		if(MA.getGame().itemsData.findById(pressedID).smeltFromID!=0)
+		if(ItemsDataSheet.findById(pressedID).smeltFromID!=0)
 		{
 			//title
-			int smeltId=MA.getGame().itemsData.findById(pressedID).smeltFromID;
+			int smeltId=ItemsDataSheet.findById(pressedID).smeltFromID;
 			String text1="can be ";
 			String text2="smelted ";
 			TextView smeltFromText = new TextView(MA);
@@ -163,13 +163,13 @@ public class HelpUI
 			
 			//object name
 			TextView smeltFromObjectName = new TextView(MA);
-			smeltFromObjectName.setText(MA.getGame().itemsData.findById(MA.getGame().itemsData.findById(pressedID).smeltFromID).name+" ");
+			smeltFromObjectName.setText(ItemsDataSheet.findById(ItemsDataSheet.findById(pressedID).smeltFromID).name+" ");
 			smeltFromObjectName.setTextColor(textC);
 			smeltFromObjectName.setGravity(Gravity.LEFT|Gravity.TOP);
 			smeltFromObjectName.setTextSize(25);
 			
 			//image of an item
-			bdrawable = new BitmapDrawable(MA.getResources(),MA.getGame().itemsData.findById(smeltId).image);
+			bdrawable = new BitmapDrawable(MA.getResources(),ItemsDataSheet.findById(smeltId).image);
 			ImageView imageOfSmeeltableItem=new ImageView(MA);
 			imageOfSmeeltableItem.setImageDrawable(bdrawable);
 			imageOfSmeeltableItem.setId(smeltId);
@@ -186,7 +186,7 @@ public class HelpUI
 		}
 		
 		//can be produsedbfrom components:
-		if(!MA.getGame().itemsData.findById(pressedID).madeFrom.containsKey(0))
+		if(!ItemsDataSheet.findById(pressedID).madeFrom.containsKey(0))
 		{
 			//title
 			TextView madeFromText = new TextView(MA);
@@ -196,7 +196,7 @@ public class HelpUI
 			madeFromText.setTextSize(25);
 			LR.addView(madeFromText);
 			
-			for(Map.Entry e:MA.getGame().itemsData.findById(pressedID).madeFrom.entrySet())
+			for(Map.Entry e:ItemsDataSheet.findById(pressedID).madeFrom.entrySet())
 			{
 				//for each component create horizontal layout
 				LinearLayout MLR=new LinearLayout(MA);
@@ -205,7 +205,7 @@ public class HelpUI
 			
 				//component name
 				TextView itemName = new TextView(MA);
-				String stringItemName =MA.getGame().itemsData.findById((int)e.getKey()).name+" ";
+				String stringItemName =ItemsDataSheet.findById((int)e.getKey()).name+" ";
 				itemName.setText(stringItemName);
 				itemName.setTextColor(textC);
 				itemName.setGravity(Gravity.LEFT|Gravity.TOP);
@@ -213,7 +213,7 @@ public class HelpUI
 				MLR.addView(itemName);
 				
 				//image of component
-				bdrawable = new BitmapDrawable(MA.getResources(),MA.getGame().itemsData.findById((int)e.getKey()).image);
+				bdrawable = new BitmapDrawable(MA.getResources(),ItemsDataSheet.findById((int)e.getKey()).image);
 				ImageView imageOfNededItem=new ImageView(MA);
 				imageOfNededItem.setImageDrawable(bdrawable);
 				imageOfNededItem.setId((int)e.getKey());
@@ -234,7 +234,7 @@ public class HelpUI
 			}
 		}
 			//recycling
-			if(MA.getGame().itemsData.findById(pressedID).crushToID!=0||MA.getGame().itemsData.findById(pressedID).smeltToID!=0)
+			if(ItemsDataSheet.findById(pressedID).crushToID!=0||ItemsDataSheet.findById(pressedID).smeltToID!=0)
 			{
 				ImageView iv=new ImageView(MA);
 				LR.addView(iv);
@@ -254,7 +254,7 @@ public class HelpUI
 				title.setTextSize(25);
 				LR.addView(title);
 				
-				if(MA.getGame().itemsData.findById(pressedID).crushToID!=0)
+				if(ItemsDataSheet.findById(pressedID).crushToID!=0)
 				{
 					TextView crushedFromText = new TextView(MA);
 					crushedFromText.setText(Html.fromHtml("<font color=\"#81abc7\">"+"crusher "+"</font>"+"to: "));
@@ -265,14 +265,14 @@ public class HelpUI
 
 					//name of crushable item
 					TextView crushObjectName = new TextView(MA);
-					int crushid=MA.getGame().itemsData.findById(pressedID).crushToID;
-					crushObjectName.setText( MA.getGame().itemsData.findById(crushid).name+" ");
+					int crushid=ItemsDataSheet.findById(pressedID).crushToID;
+					crushObjectName.setText( ItemsDataSheet.findById(crushid).name+" ");
 					crushObjectName.setTextColor(textC);
 					crushObjectName.setGravity(Gravity.LEFT|Gravity.TOP);
 					crushObjectName.setTextSize(25);
 
 
-					bdrawable = new BitmapDrawable(MA.getResources(),MA.getGame().itemsData.findById(crushid).image);
+					bdrawable = new BitmapDrawable(MA.getResources(),ItemsDataSheet.findById(crushid).image);
 					ImageView imageOfCrushableitem=new ImageView(MA);
 					imageOfCrushableitem.setImageDrawable(bdrawable);
 					imageOfCrushableitem.setId(crushid);
@@ -289,9 +289,9 @@ public class HelpUI
 					//added to vertical linearLayout
 					LR.addView(MLR);
 				}
-				if(MA.getGame().itemsData.findById(pressedID).smeltToID!=0)
+				if(ItemsDataSheet.findById(pressedID).smeltToID!=0)
 				{
-					int smeltId=MA.getGame().itemsData.findById(pressedID).smeltToID;
+					int smeltId=ItemsDataSheet.findById(pressedID).smeltToID;
 					
 					TextView smeltFromText = new TextView(MA);
 					smeltFromText.setText(Html.fromHtml("<font color=\"#c77800\">"+"smelter "+"</font>"+"to: "));
@@ -302,13 +302,13 @@ public class HelpUI
 
 					//object name
 					TextView smeltFromObjectName = new TextView(MA);
-					smeltFromObjectName.setText(MA.getGame().itemsData.findById(smeltId).name+" ");
+					smeltFromObjectName.setText(ItemsDataSheet.findById(smeltId).name+" ");
 					smeltFromObjectName.setTextColor(textC);
 					smeltFromObjectName.setGravity(Gravity.LEFT|Gravity.TOP);
 					smeltFromObjectName.setTextSize(25);
 
 					//image of an item
-					bdrawable = new BitmapDrawable(MA.getResources(),MA.getGame().itemsData.findById(smeltId).image);
+					bdrawable = new BitmapDrawable(MA.getResources(),ItemsDataSheet.findById(smeltId).image);
 					ImageView imageOfSmeeltableItem=new ImageView(MA);
 					imageOfSmeeltableItem.setImageDrawable(bdrawable);
 					imageOfSmeeltableItem.setId(smeltId);

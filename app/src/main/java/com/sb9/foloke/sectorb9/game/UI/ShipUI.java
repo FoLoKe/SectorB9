@@ -3,48 +3,25 @@ package com.sb9.foloke.sectorb9.game.UI;
 import com.sb9.foloke.sectorb9.game.Assets.*;
 import android.graphics.*;
 import android.widget.*;
-import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.os.Bundle;
-import android.os.Environment;
 //import android.support.v4.app.ActivityCompat;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.EditText;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import com.sb9.foloke.sectorb9.R;
 
-import com.sb9.foloke.sectorb9.game.display.Game;
-import android.widget.*;
-import android.util.*;
 import android.view.*;
-import android.content.Context;
-import com.sb9.foloke.sectorb9.game.entities.Entity;
+
+import com.sb9.foloke.sectorb9.game.DataSheets.ItemsDataSheet;
+import com.sb9.foloke.sectorb9.game.Entities.Entity;
 import com.sb9.foloke.sectorb9.*;
 import android.content.*;
 import android.view.View.*;
 import com.sb9.foloke.sectorb9.game.UI.Inventory.*;
-import java.util.*;
-import android.widget.ActionMenuView.*;
 import com.sb9.foloke.sectorb9.game.UI.ShipUis.*;
 //import java.util.*;
 public class ShipUI
@@ -91,7 +68,7 @@ public class ShipUI
 			table.removeAllViews();
 			BitmapFactory.Options options=new BitmapFactory.Options();
 			options.inScaled=false;
-			table.setBackground(new BitmapDrawable(target.getGame().getMainActivity().getResources(),UIAsset.uiBgBlur));
+			table.setBackground(new BitmapDrawable(context.getResources(),UIAsset.uiBgBlur));
 			
 			ImageView imageViewForBackground=context.findViewById(R.id.shipUI_shipImage);
 			Bitmap bitmap=target.getSprite();
@@ -147,7 +124,7 @@ public class ShipUI
 						itemCountText.setText("x"+0);
 						itemCountText.setLayoutParams(trp);
 						BitmapDrawable bDrawable;
-						bDrawable = new BitmapDrawable(context.getResources(),context.getGame().itemsData.findById(0).image);
+						bDrawable = new BitmapDrawable(context.getResources(), ItemsDataSheet.findById(0).image);
 
 						sprite.setImageDrawable(bDrawable);
 						InventoryLinearLayout LL=new InventoryLinearLayout(context);
@@ -188,10 +165,10 @@ public class ShipUI
 			if(table.getVisibility()==View.GONE)
 				table.setVisibility(View.VISIBLE);
 			shipArrangement.init();
-			target.getGame().errorText.setString("all good");
+
 		}
 		catch(Exception e)
-		{ target.getGame().errorText.setString(e.toString());}
+		{ System.out.println(e); }
 	}
 	
 	public TableLayout getTable()

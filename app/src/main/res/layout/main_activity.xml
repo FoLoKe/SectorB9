@@ -4,7 +4,7 @@
 	android:layout_width="match_parent"
 	android:layout_height="match_parent">
 
-    <com.sb9.foloke.sectorb9.game.display.Game
+    <com.sb9.foloke.sectorb9.game.display.GamePanel
         android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/Game"/>

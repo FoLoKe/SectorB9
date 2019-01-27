@@ -2,19 +2,19 @@ package com.sb9.foloke.sectorb9;
 
 import android.graphics.Canvas;
 import android.view.SurfaceHolder;
-import com.sb9.foloke.sectorb9.game.display.Game;
+import com.sb9.foloke.sectorb9.game.display.GamePanel;
 
 public class MainThread extends Thread
 {
     private int FPS =60;
     private double averageFPS;
     private SurfaceHolder surfaceHolder;
-    private Game mapPanel;
+    private GamePanel mapPanel;
     private boolean running;
     private static Canvas canvas;
 
 
-    public MainThread(SurfaceHolder surfaceHolder,Game mapPanel)
+    public MainThread(SurfaceHolder surfaceHolder, GamePanel mapPanel)
     {
         super();
         this.surfaceHolder=surfaceHolder;

@@ -1,11 +1,11 @@
 package com.sb9.foloke.sectorb9.game.ParticleSystem;
 import android.graphics.*;
-import com.sb9.foloke.sectorb9.game.funtions.*;
+
+import com.sb9.foloke.sectorb9.game.Managers.GameManager;
+import com.sb9.foloke.sectorb9.game.Funtions.*;
 import java.util.Random;
 import java.util.ArrayList;
-import com.sb9.foloke.sectorb9.game.display.*;
 import java.util.List;
-import com.sb9.foloke.sectorb9.game.entities.*;
 
 public class ParticleSystem
 {
@@ -22,7 +22,7 @@ public class ParticleSystem
 	private Timer delay;
 	private Random rand=new Random();
 	ArrayList<Particle> particles;
-	public ParticleSystem(Bitmap image,float x,float y,float lenght,PointF dXY,boolean randomDirection,int count,Game game)
+	public ParticleSystem(Bitmap image, float x, float y, float lenght, PointF dXY, boolean randomDirection, int count, GameManager gameManager)
 	{
 		this.maxCount=count;
 		this.accuracy=new Point(1,1);
@@ -40,16 +40,7 @@ public class ParticleSystem
 		}
 		
 	}
-	//static Bitmap image;
-	
 
-	/*public ProjectilesPool(Bitmap image,Entity target,float speed, int maxSize,Game game) {
-		projectiles=new ArrayList<Projectile>();
-		for(int i=0;i<maxSize;i++)
-		{
-			projectiles.add(new Projectile(0,0,image,"p"+i,(int)1,speed,0,target,game));
-		}
-	}*/
 	public List<Particle> getArray()
 	{
 		return particles;

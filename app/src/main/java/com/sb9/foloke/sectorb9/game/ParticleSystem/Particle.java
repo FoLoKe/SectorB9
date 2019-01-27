@@ -1,7 +1,7 @@
 package com.sb9.foloke.sectorb9.game.ParticleSystem;
 import android.graphics.*;
-import com.sb9.foloke.sectorb9.game.funtions.*;
-import com.sb9.foloke.sectorb9.game.entities.*;
+import com.sb9.foloke.sectorb9.game.Funtions.*;
+
 import java.util.Random;
 
 public class Particle

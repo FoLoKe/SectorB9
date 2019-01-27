@@ -8,13 +8,11 @@ import android.view.*;
 import com.sb9.foloke.sectorb9.game.Assets.UIAsset;
 import com.sb9.foloke.sectorb9.game.UI.*;
 
-import com.sb9.foloke.sectorb9.game.display.*;
-import com.sb9.foloke.sectorb9.game.funtions.*;
-import com.sb9.foloke.sectorb9.game.entities.*;
+import com.sb9.foloke.sectorb9.game.Entities.*;
 
 public class ShipArrangement
 {
-	Game game;
+	//private GameManager gameManager;
 	int itemCount,itemID;
 	Entity itemHolder;
 	private class ShipModule
@@ -36,7 +34,7 @@ public class ShipArrangement
 	ShipUI parent;
 	public ShipArrangement(MainActivity MA,ShipUI parent)
 	{
-		this.game=MA.getGame();
+		//this.gameManager =MA.getGameManager();
 		this.MA=MA;
 		this.parent=parent;
 		for(int i=0;i<height;i++)

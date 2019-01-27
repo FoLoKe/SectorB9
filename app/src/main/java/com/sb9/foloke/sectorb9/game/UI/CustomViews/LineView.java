@@ -2,7 +2,7 @@ package com.sb9.foloke.sectorb9.game.UI.CustomViews;
 import android.view.*;
 import android.content.*;
 import android.graphics.*;
-import com.sb9.foloke.sectorb9.game.funtions.*;
+import com.sb9.foloke.sectorb9.game.Funtions.*;
 
 public class LineView extends View
 {

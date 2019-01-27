@@ -2,8 +2,8 @@ package com.sb9.foloke.sectorb9.game.display;
 
 import android.graphics.PointF;
 
-import com.sb9.foloke.sectorb9.game.entities.Entity;
-import com.sb9.foloke.sectorb9.game.entities.Player;
+import com.sb9.foloke.sectorb9.game.Entities.Entity;
+import com.sb9.foloke.sectorb9.game.Entities.Player;
 
 import android.graphics.*;
 
@@ -38,9 +38,9 @@ public class Camera {
 	
 	public void render(Canvas canvas)
 	{
-		if(pointOfLook.getGame().drawDebugInf)
+		if(pointOfLook.getGameManager().drawDebugInfo)
 		{
-			if(pointOfLook.getGame().drawDebugInf)
+			if(pointOfLook.getGameManager().drawDebugInfo)
 				screenRect.set(pointOfLook.getCenterX()-canvasW/(2*scale)+10,pointOfLook.getCenterY()-canvasH/(2*scale)+10,pointOfLook.getCenterX()+canvasW/(2*scale)-10,pointOfLook.getCenterY()+canvasH/(2*scale)-10);
 			Paint tPaint=new Paint();
 			tPaint.setStyle(Paint.Style.STROKE);

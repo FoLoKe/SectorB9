@@ -3,12 +3,12 @@ import android.widget.*;
 import com.sb9.foloke.sectorb9.*;
 import android.view.View.*;
 import android.view.*;
-import android.graphics.drawable.*;
+
 import com.sb9.foloke.sectorb9.game.Assets.*;
 import android.graphics.*;
-import android.content.*;
+
 import java.util.*;
-import com.sb9.foloke.sectorb9.game.funtions.*;
+import com.sb9.foloke.sectorb9.game.Funtions.*;
 import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
 
 
@@ -159,6 +159,6 @@ public class MapUI
 		private void warpToSector(MapTile tile)
 		{
 			///////DEBUG///////
-			MA.getGame().debugText.setString(""+tile.getPoint());
+
 		};
 }

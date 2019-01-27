@@ -1,27 +1,16 @@
 package com.sb9.foloke.sectorb9;
 
 
-import android.Manifest;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.pm.PackageManager;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Environment;
 //import android.support.v4.app.ActivityCompat;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.EditText;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -30,37 +19,29 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
-import com.sb9.foloke.sectorb9.game.display.Game;
+
 import android.widget.*;
-import android.util.*;
 import android.view.*;
+
+
+import com.sb9.foloke.sectorb9.game.Managers.GameManager;
 import com.sb9.foloke.sectorb9.game.UI.*;
 import com.sb9.foloke.sectorb9.game.Assets.*;
-import android.content.*;
-import android.opengl.*;
-import android.view.View.*;
-import android.view.InputDevice.*;
-import android.os.*;
-import android.widget.ViewSwitcher.*;
-import android.widget.CompoundButton.*;
-import android.app.*;
+import com.sb9.foloke.sectorb9.game.display.GamePanel;
 
 public class MainActivity extends Activity {
 
-    private Game game;
-	public boolean inventoryOpened=false;
+    private GamePanel gamePanel;
+
 	
-	private BitmapFactory.Options options;
+
 	private ViewFlipper VF;
 	private BuildUI buildUI=new BuildUI();
-	public assemblerUI assemblerUIi=new assemblerUI();
+	public AssemblerUI assemblerUIi=new AssemblerUI();
 	public MenuUI menuUI=new MenuUI();
-	public UIinteraction uiInteraction=new UIinteraction();
-	private UIaction uiAction =new UIaction();
+	public InteractionUI uiInteraction=new InteractionUI();
+	private ActionUI uiAction =new ActionUI();
 	public HelpUI helpui=new HelpUI();
 	public ShipUI shipUI;
 	public MapUI mapUI;
@@ -71,8 +52,8 @@ public class MainActivity extends Activity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.main_activity);
-        game=findViewById(R.id.Game);
-		options=new BitmapFactory.Options();
+        gamePanel =findViewById(R.id.Game);
+        BitmapFactory.Options options=new BitmapFactory.Options();
 		
         options.inScaled=false;
 		helpui.init(this,VF,1);
@@ -81,7 +62,7 @@ public class MainActivity extends Activity {
 		TableLayout playerTable=findViewById(R.id.PlayerTableLayout);
 		TableLayout objectTable=findViewById(R.id.ObjectTableLayout);
 
-		game.makeInventoryUI(playerTable,objectTable,this);
+		gamePanel.getGameManager().makeInventoryUI(playerTable,objectTable,this);
 		
 		VF = findViewById(R.id.UIFlipper);
 		VF.setDisplayedChild(VF.indexOfChild(findViewById(R.id.actionUI)));
@@ -107,7 +88,7 @@ public class MainActivity extends Activity {
 					final int a=VF.getDisplayedChild();
 					menuUI.init(MA,VF,a);
 					VF.setDisplayedChild(VF.indexOfChild(menuUIFrame));
-					game.setPause(true);
+					gamePanel.getGameManager().setPause(true);
 					v.setVisibility(View.GONE);
 				}
 			});
@@ -117,10 +98,6 @@ public class MainActivity extends Activity {
 	public ViewFlipper getViewFlipper()
 	{
 		return VF;
-	}
-	public Game getGame()
-	{
-		return game;
 	}
 	
 	public void saveFile(String fileName) {
@@ -142,23 +119,23 @@ public class MainActivity extends Activity {
 		
             writer.write("SB9 debug save");
 			writer.newLine();
-            game.save(writer);
+            gamePanel.save(writer);
             
             writer.close();
             osw.close();
         } catch (Throwable e) {
-           System.out.println(e);
+           System.err.print(e);
         }
     }
 	
-	public String loadFile(String fileName) {
+	public void loadFile(String fileName) {
         
         try {
 
             String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString()+File.separator+"sb9";
             File myDir = new File(root);
             if (!myDir.exists()) {
-              return  "no directory";
+              return; // "no directory";
             }
 
             String fname = "save "+fileName+".txt";
@@ -170,26 +147,28 @@ public class MainActivity extends Activity {
 
                 if (inputStream != null)
                 {
-					String line;
                     InputStreamReader isr = new InputStreamReader(inputStream);
                     BufferedReader reader = new BufferedReader(isr);
-					line=reader.readLine();
-                    game.load(reader);
+                    gamePanel.load(reader);
                     inputStream.close();
                     reader.close();
                     isr.close();
 					
-                    return line;
+                    return; //all ok;
                 }
             }
             else
             {
-                return "no such file";
+                return;// "no such file";
             }
         } catch (Throwable t)
         {
-            return "error:"+ t.getLocalizedMessage();
+            return;// "error:"+ t.getLocalizedMessage();
         }
-        return "200";
+    }
+
+    public GameManager getGameManager()
+    {
+        return gamePanel.getGameManager();
     }
 }

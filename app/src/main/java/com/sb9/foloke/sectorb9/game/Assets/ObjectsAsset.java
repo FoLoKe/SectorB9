@@ -1,6 +1,5 @@
 package com.sb9.foloke.sectorb9.game.Assets;
 import android.graphics.*;
-import com.sb9.foloke.sectorb9.game.entities.*;
 
 public class ObjectsAsset
 {

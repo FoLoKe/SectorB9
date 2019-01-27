@@ -20,7 +20,7 @@ public class MenuUI
 				{
 					
 					VF.setDisplayedChild(view);
-					MA.getGame().setPause(false);
+					MA.getGameManager().setPause(false);
 					MA.findViewById(R.id.Menu).setVisibility(View.VISIBLE);
 				}
 			});
@@ -52,7 +52,7 @@ public class MenuUI
 			{
 				@Override
 				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-					MA.getGame().drawDebugInf=isChecked;
+					MA.getGameManager().drawDebugInfo=isChecked;
 				}
 			});
 			

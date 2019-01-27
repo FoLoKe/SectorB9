@@ -7,8 +7,9 @@ import android.graphics.*;
 import android.graphics.drawable.*;
 
 import com.sb9.foloke.sectorb9.game.Assets.UIAsset;
-import com.sb9.foloke.sectorb9.game.entities.*;
-import com.sb9.foloke.sectorb9.game.entities.Buildings.*;
+import com.sb9.foloke.sectorb9.game.DataSheets.BuildingsDataSheet;
+import com.sb9.foloke.sectorb9.game.Entities.*;
+import com.sb9.foloke.sectorb9.game.Entities.Buildings.*;
 
 
 public class BuildUI
@@ -26,7 +27,7 @@ public class BuildUI
 		BitmapFactory.Options options=new BitmapFactory.Options();
         options.inScaled=false;
 		table.setBackground(new BitmapDrawable(MA.getResources(),UIAsset.uiBgBlur));
-		for(int i=1;i<MA.getGame().buildingsData.getLenght()+1;i++)
+		for(int i = 1; i< BuildingsDataSheet.getLenght()+1; i++)
 		{
 				TableRow row=new TableRow(MA);
 				
@@ -44,7 +45,7 @@ public class BuildUI
 				testText.setText(ObjectID+"");
 				
 				BitmapDrawable bdrawable;
-				bdrawable = new BitmapDrawable(MA.getResources(),MA.getGame().buildingsData.findById(ObjectID).image);
+				bdrawable = new BitmapDrawable(MA.getResources(),BuildingsDataSheet.findById(ObjectID).image);
 
 				sprite.setImageDrawable(bdrawable);
 				
@@ -93,22 +94,22 @@ public class BuildUI
 						case 0:
 							break;
 						case 1:
-							MA.getGame().addObject(new SmallCargoContainer(MA.getGame().getTouchPoint().x-16,MA.getGame().getTouchPoint().y-16,10,MA.getGame()));
+							MA.getGameManager().addObject(new SmallCargoContainer(MA.getGameManager().getTouchPoint().x-16,MA.getGameManager().getTouchPoint().y-16,10,MA.getGameManager()));
 							break;
 						case 2:
-							MA.getGame().addObject(new Crusher(MA.getGame().getTouchPoint().x-16,MA.getGame().getTouchPoint().y-16,10,MA.getGame()));
+							MA.getGameManager().addObject(new Crusher(MA.getGameManager().getTouchPoint().x-16,MA.getGameManager().getTouchPoint().y-16,10,MA.getGameManager()));
 							break;
 						case 3:
-							MA.getGame().addObject(new SolarPanel(MA.getGame().getTouchPoint().x-16,MA.getGame().getTouchPoint().y-16,10,MA.getGame()));
+							MA.getGameManager().addObject(new SolarPanel(MA.getGameManager().getTouchPoint().x-16,MA.getGameManager().getTouchPoint().y-16,10,MA.getGameManager()));
 							break;
 						case 4:
-							MA.getGame().addObject(new FuelGenerator(MA.getGame().getTouchPoint().x-16,MA.getGame().getTouchPoint().y-16,10,MA.getGame()));
+							MA.getGameManager().addObject(new FuelGenerator(MA.getGameManager().getTouchPoint().x-16,MA.getGameManager().getTouchPoint().y-16,10,MA.getGameManager()));
 							break;
 						case 5:
-							MA.getGame().addObject(new BigSmelter(MA.getGame().getTouchPoint().x-16,MA.getGame().getTouchPoint().y-16,10,MA.getGame()));
+							MA.getGameManager().addObject(new BigSmelter(MA.getGameManager().getTouchPoint().x-16,MA.getGameManager().getTouchPoint().y-16,10,MA.getGameManager()));
 							break;
 						case 6:
-							MA.getGame().addObject(new Assembler(MA.getGame().getTouchPoint().x-16,MA.getGame().getTouchPoint().y-16,10,MA.getGame()));
+							MA.getGameManager().addObject(new Assembler(MA.getGameManager().getTouchPoint().x-16,MA.getGameManager().getTouchPoint().y-16,10,MA.getGameManager()));
 							break;
 					}
 				}

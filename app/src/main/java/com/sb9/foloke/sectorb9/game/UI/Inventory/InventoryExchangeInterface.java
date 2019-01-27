@@ -1,16 +1,16 @@
 package com.sb9.foloke.sectorb9.game.UI.Inventory;
+import com.sb9.foloke.sectorb9.game.Managers.GameManager;
 import com.sb9.foloke.sectorb9.game.display.*;
-import com.sb9.foloke.sectorb9.game.entities.*;
 
 public class InventoryExchangeInterface
 {
-	Game game;
+	GameManager gameManager;
 	int itemCount,itemID,x,y;
 	
 	Inventory itemHolder;
-	public InventoryExchangeInterface(Game game)
+	public InventoryExchangeInterface(GameManager gameManager)
 	{
-		this.game=game;
+		this.gameManager = gameManager;
 	}
 	public void started(Inventory inventory,int x,int y,int count)
 	{
@@ -34,7 +34,7 @@ public class InventoryExchangeInterface
 		itemHolder=null;
 		itemID=0;
 		itemCount=0;
-		game.updateInventory(itemCatcher.parent);
+		gameManager.updateInventory(itemCatcher.parent);
 		
 	}
 	
