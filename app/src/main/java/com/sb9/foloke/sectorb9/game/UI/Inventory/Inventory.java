@@ -1,7 +1,7 @@
 package com.sb9.foloke.sectorb9.game.UI.Inventory;
 import android.graphics.*;
 import java.util.*;
-import com.sb9.foloke.sectorb9.game.entities.*;
+import com.sb9.foloke.sectorb9.game.Entities.*;
 
 public class Inventory
 {

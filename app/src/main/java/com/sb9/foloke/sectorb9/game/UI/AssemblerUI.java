@@ -7,8 +7,8 @@ import android.graphics.*;
 import android.text.*;
 import java.util.*;
 
-import com.sb9.foloke.sectorb9.game.dataSheets.ItemsDataSheet;
-import com.sb9.foloke.sectorb9.game.entities.Buildings.*;
+import com.sb9.foloke.sectorb9.game.DataSheets.ItemsDataSheet;
+import com.sb9.foloke.sectorb9.game.Entities.Buildings.*;
 
 public class AssemblerUI
 {

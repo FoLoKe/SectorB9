@@ -1,5 +1,5 @@
 package com.sb9.foloke.sectorb9.game.UI;
-import com.sb9.foloke.sectorb9.game.entities.*;
+import com.sb9.foloke.sectorb9.game.Entities.*;
 import android.widget.*;
 import com.sb9.foloke.sectorb9.R;
 import com.sb9.foloke.sectorb9.*;

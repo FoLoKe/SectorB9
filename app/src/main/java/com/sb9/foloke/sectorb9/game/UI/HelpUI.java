@@ -8,7 +8,7 @@ import android.view.*;
 import android.widget.FrameLayout.*;
 
 import com.sb9.foloke.sectorb9.game.Assets.UIAsset;
-import com.sb9.foloke.sectorb9.game.dataSheets.ItemsDataSheet;
+import com.sb9.foloke.sectorb9.game.DataSheets.ItemsDataSheet;
 
 import java.util.*;
 

@@ -1,4 +1,4 @@
-package com.sb9.foloke.sectorb9.game.entities;
+package com.sb9.foloke.sectorb9.game.Entities;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -13,7 +13,7 @@ import com.sb9.foloke.sectorb9.game.Managers.GameManager;
 import com.sb9.foloke.sectorb9.game.UI.ProgressBarUI;
 
 import com.sb9.foloke.sectorb9.game.Funtions.*;
-import com.sb9.foloke.sectorb9.game.entities.Ships.*;
+import com.sb9.foloke.sectorb9.game.Entities.Ships.*;
 import com.sb9.foloke.sectorb9.game.UI.*;
 
 public class Player extends DynamicEntity

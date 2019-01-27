@@ -1,6 +1,6 @@
-package com.sb9.foloke.sectorb9.game.entities.Weapons;
+package com.sb9.foloke.sectorb9.game.Entities.Weapons;
 import com.sb9.foloke.sectorb9.game.Managers.GameManager;
-import com.sb9.foloke.sectorb9.game.entities.Ships.*;
+import com.sb9.foloke.sectorb9.game.Entities.Ships.*;
 
 import android.graphics.*;
 

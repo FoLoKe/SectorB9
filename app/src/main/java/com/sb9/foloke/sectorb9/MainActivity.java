@@ -28,7 +28,7 @@ import android.view.*;
 import com.sb9.foloke.sectorb9.game.Managers.GameManager;
 import com.sb9.foloke.sectorb9.game.UI.*;
 import com.sb9.foloke.sectorb9.game.Assets.*;
-import com.sb9.foloke.sectorb9.game.display.GamePanel;
+import com.sb9.foloke.sectorb9.game.Display.GamePanel;
 
 public class MainActivity extends Activity {
 

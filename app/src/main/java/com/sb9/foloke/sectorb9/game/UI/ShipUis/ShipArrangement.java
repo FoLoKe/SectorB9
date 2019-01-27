@@ -8,7 +8,7 @@ import android.view.*;
 import com.sb9.foloke.sectorb9.game.Assets.UIAsset;
 import com.sb9.foloke.sectorb9.game.UI.*;
 
-import com.sb9.foloke.sectorb9.game.entities.*;
+import com.sb9.foloke.sectorb9.game.Entities.*;
 
 public class ShipArrangement
 {

@@ -2,7 +2,7 @@ package com.sb9.foloke.sectorb9;
 
 import android.graphics.Canvas;
 import android.view.SurfaceHolder;
-import com.sb9.foloke.sectorb9.game.display.GamePanel;
+import com.sb9.foloke.sectorb9.game.Display.GamePanel;
 
 public class MainThread extends Thread
 {

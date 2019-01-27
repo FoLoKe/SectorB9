@@ -1,4 +1,4 @@
-package com.sb9.foloke.sectorb9.game.entities;
+package com.sb9.foloke.sectorb9.game.Entities;
 import android.graphics.*;
 
 import com.sb9.foloke.sectorb9.game.Managers.GameManager;

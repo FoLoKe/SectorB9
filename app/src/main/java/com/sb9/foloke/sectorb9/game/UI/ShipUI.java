@@ -16,8 +16,8 @@ import com.sb9.foloke.sectorb9.R;
 
 import android.view.*;
 
-import com.sb9.foloke.sectorb9.game.dataSheets.ItemsDataSheet;
-import com.sb9.foloke.sectorb9.game.entities.Entity;
+import com.sb9.foloke.sectorb9.game.DataSheets.ItemsDataSheet;
+import com.sb9.foloke.sectorb9.game.Entities.Entity;
 import com.sb9.foloke.sectorb9.*;
 import android.content.*;
 import android.view.View.*;

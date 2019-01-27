@@ -1,6 +1,6 @@
 package com.sb9.foloke.sectorb9.game.Funtions;
 import android.graphics.*;
-import com.sb9.foloke.sectorb9.game.entities.*;
+import com.sb9.foloke.sectorb9.game.Entities.*;
 
 public class CustomCollisionObject
 {

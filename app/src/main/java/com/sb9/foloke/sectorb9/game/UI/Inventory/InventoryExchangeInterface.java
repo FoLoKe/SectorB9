@@ -1,6 +1,5 @@
 package com.sb9.foloke.sectorb9.game.UI.Inventory;
 import com.sb9.foloke.sectorb9.game.Managers.GameManager;
-import com.sb9.foloke.sectorb9.game.display.*;
 
 public class InventoryExchangeInterface
 {

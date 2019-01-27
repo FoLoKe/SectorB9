@@ -1,8 +1,8 @@
-package com.sb9.foloke.sectorb9.game.entities;
+package com.sb9.foloke.sectorb9.game.Entities;
 import android.graphics.*;
 
 import com.sb9.foloke.sectorb9.game.Managers.GameManager;
-import com.sb9.foloke.sectorb9.game.dataSheets.BuildingsDataSheet;
+import com.sb9.foloke.sectorb9.game.DataSheets.BuildingsDataSheet;
 
 public class SmallCargoContainer extends CargoContainer
 {

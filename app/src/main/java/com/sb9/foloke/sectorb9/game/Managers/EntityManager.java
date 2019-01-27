@@ -1,15 +1,15 @@
 package com.sb9.foloke.sectorb9.game.Managers;
 import java.util.*;
 
-import com.sb9.foloke.sectorb9.game.entities.Asteroid;
-import com.sb9.foloke.sectorb9.game.entities.Entity;
-import com.sb9.foloke.sectorb9.game.entities.SmallCargoContainer;
+import com.sb9.foloke.sectorb9.game.Entities.Asteroid;
+import com.sb9.foloke.sectorb9.game.Entities.Entity;
+import com.sb9.foloke.sectorb9.game.Entities.SmallCargoContainer;
 
 
 import android.graphics.*;
 
 import java.io.*;
-import com.sb9.foloke.sectorb9.game.entities.Buildings.*;
+import com.sb9.foloke.sectorb9.game.Entities.Buildings.*;
 
 
 public class EntityManager
