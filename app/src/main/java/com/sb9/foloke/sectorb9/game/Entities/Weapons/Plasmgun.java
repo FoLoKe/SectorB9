@@ -1,12 +1,12 @@
-package com.sb9.foloke.sectorb9.game.Entities.Weapons;
+package com.sb9.foloke.sectorb9.game.entities.Weapons;
 //import java.util.;
 import com.sb9.foloke.sectorb9.game.Assets.WeaponsAsset;
 import com.sb9.foloke.sectorb9.game.Managers.GameManager;
 import com.sb9.foloke.sectorb9.game.Funtions.*;
-import com.sb9.foloke.sectorb9.game.Entities.Ships.*;
+import com.sb9.foloke.sectorb9.game.entities.Ships.*;
 
 import android.graphics.*;
-import com.sb9.foloke.sectorb9.game.Entities.*;
+import com.sb9.foloke.sectorb9.game.entities.*;
 
 public class Plasmgun extends Weapon
 {

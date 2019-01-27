@@ -1,8 +1,8 @@
 package com.sb9.foloke.sectorb9.game.Funtions;
 //import android.content.*;
 import android.graphics.*;
-import com.sb9.foloke.sectorb9.game.Entities.*;
-import com.sb9.foloke.sectorb9.game.Entities.Buildings.Components.*;
+import com.sb9.foloke.sectorb9.game.entities.*;
+import com.sb9.foloke.sectorb9.game.entities.Buildings.Components.*;
 
 
 public class EntitySocket

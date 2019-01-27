@@ -1,4 +1,4 @@
-package com.sb9.foloke.sectorb9.game.Entities;
+package com.sb9.foloke.sectorb9.game.entities;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -10,7 +10,7 @@ import android.graphics.RectF;
 import com.sb9.foloke.sectorb9.game.Assets.UIAsset;
 import com.sb9.foloke.sectorb9.game.Managers.GameManager;
 import com.sb9.foloke.sectorb9.game.UI.*;
-import com.sb9.foloke.sectorb9.game.DataSheets.BuildingsDataSheet;
+import com.sb9.foloke.sectorb9.game.dataSheets.BuildingsDataSheet;
 import com.sb9.foloke.sectorb9.game.Funtions.*;
 import java.io.*;
 import com.sb9.foloke.sectorb9.game.UI.Inventory.*;

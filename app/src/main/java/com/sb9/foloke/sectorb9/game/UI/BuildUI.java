@@ -7,9 +7,9 @@ import android.graphics.*;
 import android.graphics.drawable.*;
 
 import com.sb9.foloke.sectorb9.game.Assets.UIAsset;
-import com.sb9.foloke.sectorb9.game.DataSheets.BuildingsDataSheet;
-import com.sb9.foloke.sectorb9.game.Entities.*;
-import com.sb9.foloke.sectorb9.game.Entities.Buildings.*;
+import com.sb9.foloke.sectorb9.game.dataSheets.BuildingsDataSheet;
+import com.sb9.foloke.sectorb9.game.entities.*;
+import com.sb9.foloke.sectorb9.game.entities.Buildings.*;
 
 
 public class BuildUI

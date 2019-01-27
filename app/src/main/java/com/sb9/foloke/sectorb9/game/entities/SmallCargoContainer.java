@@ -1,23 +1,23 @@
-package com.sb9.foloke.sectorb9.game.entities;
+package com.sb9.foloke.sectorb9.game.Entities;
 import android.graphics.*;
-import com.sb9.foloke.sectorb9.game.Assets.*;
-import com.sb9.foloke.sectorb9.game.display.*;
-import com.sb9.foloke.sectorb9.game.dataSheets.*;
+
+import com.sb9.foloke.sectorb9.game.Managers.GameManager;
+import com.sb9.foloke.sectorb9.game.DataSheets.BuildingsDataSheet;
 
 public class SmallCargoContainer extends CargoContainer
 {
 	final static int ID=1;
 	
-	public SmallCargoContainer(float x,float y,float rotation,Game game)
+	public SmallCargoContainer(float x, float y, float rotation, GameManager gameManager)
 	{
 		
-		super(x,y,rotation,game.buildingsData.findById(ID).image,game.buildingsData.findById(ID).name,game.buildingsData.findById(ID).inventoryCapacity,game,ID);
+		super(x,y,rotation, BuildingsDataSheet.findById(ID).image, BuildingsDataSheet.findById(ID).name, BuildingsDataSheet.findById(ID).inventoryCapacity, gameManager,ID);
 	
 		
-		enabled					=game.buildingsData.findById(ID).enabledByDefault;
-		inventoryMaxCapacity	=game.buildingsData.findById(ID).inventoryCapacity;
-		isInteractable			=game.buildingsData.findById(ID).interactableByDefault;
-		opened					=game.buildingsData.findById(ID).openByDefault;
+		enabled					= BuildingsDataSheet.findById(ID).enabledByDefault;
+		inventoryMaxCapacity	= BuildingsDataSheet.findById(ID).inventoryCapacity;
+		isInteractable			= BuildingsDataSheet.findById(ID).interactableByDefault;
+		opened					= BuildingsDataSheet.findById(ID).openByDefault;
 		energy=true;
 	}
 	

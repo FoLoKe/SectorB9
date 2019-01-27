@@ -1,4 +1,4 @@
-package com.sb9.foloke.sectorb9.game.Entities;
+package com.sb9.foloke.sectorb9.game.entities;
 
 import android.graphics.Bitmap;
 

@@ -13,11 +13,11 @@ import android.util.*;
 import com.sb9.foloke.sectorb9.MainThread;
 
 import com.sb9.foloke.sectorb9.game.Managers.GameManager;
-import com.sb9.foloke.sectorb9.game.Entities.Player;
+import com.sb9.foloke.sectorb9.game.entities.Player;
 
 import com.sb9.foloke.sectorb9.game.UI.Text;
-import com.sb9.foloke.sectorb9.game.Entities.Cursor;
-import com.sb9.foloke.sectorb9.game.Entities.*;
+import com.sb9.foloke.sectorb9.game.entities.Cursor;
+import com.sb9.foloke.sectorb9.game.entities.*;
 
 
 
@@ -26,7 +26,7 @@ import com.sb9.foloke.sectorb9.*;
 
 import android.view.ScaleGestureDetector.*;
 import android.view.*;
-import android.graphics.*;
+
 import java.io.*;
 
 import static com.sb9.foloke.sectorb9.game.Managers.GameManager.commandInteraction;

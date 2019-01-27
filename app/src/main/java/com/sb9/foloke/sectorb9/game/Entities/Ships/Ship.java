@@ -1,8 +1,8 @@
-package com.sb9.foloke.sectorb9.game.Entities.Ships;
+package com.sb9.foloke.sectorb9.game.entities.Ships;
 import android.graphics.*;
 
 import com.sb9.foloke.sectorb9.game.Assets.EffectsAsset;
-import com.sb9.foloke.sectorb9.game.Entities.DynamicEntity;
+import com.sb9.foloke.sectorb9.game.entities.DynamicEntity;
 import com.sb9.foloke.sectorb9.game.Funtions.*;
 import com.sb9.foloke.sectorb9.game.ParticleSystem.*;
 

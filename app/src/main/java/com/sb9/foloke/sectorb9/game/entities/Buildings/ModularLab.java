@@ -1,18 +1,20 @@
-package com.sb9.foloke.sectorb9.game.entities.Buildings;
-import com.sb9.foloke.sectorb9.game.entities.*;
+package com.sb9.foloke.sectorb9.game.Entities.Buildings;
+import com.sb9.foloke.sectorb9.game.Managers.GameManager;
+import com.sb9.foloke.sectorb9.game.DataSheets.BuildingsDataSheet;
+import com.sb9.foloke.sectorb9.game.Entities.*;
 import android.graphics.*;
-import com.sb9.foloke.sectorb9.game.display.*;
-import com.sb9.foloke.sectorb9.game.funtions.*;
-import com.sb9.foloke.sectorb9.game.entities.Buildings.Components.*;
+
+import com.sb9.foloke.sectorb9.game.Funtions.*;
+import com.sb9.foloke.sectorb9.game.Entities.Buildings.Components.*;
 
 public class ModularLab extends StaticEntity
 {
 	final static int ID=7;
 	EntitySocket floatingReader;
-	public ModularLab(float x,float y,float rotation,Game game)
+	public ModularLab(float x, float y, float rotation, GameManager gameManager)
 	{
-		super(x,y,rotation,game.buildingsData.findById(ID).image,game.buildingsData.findById(ID).name,game,ID);
-		floatingReader=new EntitySocket(this,new ModularLabReaderComponent(x+8,y+8,0,"",game),90,new PointF(50,0));
+		super(x,y,rotation, BuildingsDataSheet.findById(ID).image, BuildingsDataSheet.findById(ID).name, gameManager,ID);
+		floatingReader=new EntitySocket(this,new ModularLabReaderComponent(x+8,y+8,0,"", gameManager),90,new PointF(50,0));
 		
 	}
 

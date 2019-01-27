@@ -1,7 +1,7 @@
 package com.sb9.foloke.sectorb9.game.Managers;
 import com.sb9.foloke.sectorb9.*;
-import com.sb9.foloke.sectorb9.game.Entities.*;
-import com.sb9.foloke.sectorb9.game.Entities.Buildings.*;
+import com.sb9.foloke.sectorb9.game.entities.*;
+import com.sb9.foloke.sectorb9.game.entities.Buildings.*;
 
 import java.util.*;
 

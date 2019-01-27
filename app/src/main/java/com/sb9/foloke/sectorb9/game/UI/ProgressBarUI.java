@@ -2,7 +2,7 @@ package com.sb9.foloke.sectorb9.game.UI;
 import android.graphics.*;
 
 import com.sb9.foloke.sectorb9.game.Managers.GameManager;
-import com.sb9.foloke.sectorb9.game.Entities.Entity;
+import com.sb9.foloke.sectorb9.game.entities.Entity;
 
 public class ProgressBarUI
 {

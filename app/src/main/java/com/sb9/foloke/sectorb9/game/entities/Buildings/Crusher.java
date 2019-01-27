@@ -1,8 +1,8 @@
-package com.sb9.foloke.sectorb9.game.Entities.Buildings;
+package com.sb9.foloke.sectorb9.game.entities.Buildings;
 import com.sb9.foloke.sectorb9.game.Managers.GameManager;
-import com.sb9.foloke.sectorb9.game.DataSheets.BuildingsDataSheet;
-import com.sb9.foloke.sectorb9.game.DataSheets.ItemsDataSheet;
-import com.sb9.foloke.sectorb9.game.Entities.*;
+import com.sb9.foloke.sectorb9.game.dataSheets.BuildingsDataSheet;
+import com.sb9.foloke.sectorb9.game.dataSheets.ItemsDataSheet;
+import com.sb9.foloke.sectorb9.game.entities.*;
 import android.graphics.*;
 
 import com.sb9.foloke.sectorb9.game.Funtions.*;

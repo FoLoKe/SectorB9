@@ -1,16 +1,17 @@
-package com.sb9.foloke.sectorb9.game.entities.Weapons;
-import com.sb9.foloke.sectorb9.game.entities.Ships.*;
-import com.sb9.foloke.sectorb9.game.display.*;
+package com.sb9.foloke.sectorb9.game.Entities.Weapons;
+import com.sb9.foloke.sectorb9.game.Managers.GameManager;
+import com.sb9.foloke.sectorb9.game.Entities.Ships.*;
+
 import android.graphics.*;
 
 abstract public class Weapon
 {
 	protected TurretSystem turret;
-	protected Game game;
-	public Weapon(TurretSystem turret,Game game)
+	protected GameManager gameManager;
+	public Weapon(TurretSystem turret, GameManager gameManager)
 	{
 		this.turret=turret;
-		this.game=game;
+		this.gameManager = gameManager;
 	}
 	abstract public void tick();
 	abstract public void shoot();

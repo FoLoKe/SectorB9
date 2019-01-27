@@ -1,4 +1,4 @@
-package com.sb9.foloke.sectorb9.game.Entities;
+package com.sb9.foloke.sectorb9.game.entities;
 
 	import android.graphics.Canvas;
     import android.graphics.PointF;
@@ -8,7 +8,7 @@ package com.sb9.foloke.sectorb9.game.Entities;
 	import static java.lang.Math.sin;
 
 	import com.sb9.foloke.sectorb9.game.Managers.GameManager;
-	import com.sb9.foloke.sectorb9.game.DataSheets.BuildingsDataSheet;
+	import com.sb9.foloke.sectorb9.game.dataSheets.BuildingsDataSheet;
 
 public class Asteroid extends DynamicEntity {
 

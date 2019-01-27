@@ -2,8 +2,8 @@ package com.sb9.foloke.sectorb9.game.display;
 
 import android.graphics.PointF;
 
-import com.sb9.foloke.sectorb9.game.Entities.Entity;
-import com.sb9.foloke.sectorb9.game.Entities.Player;
+import com.sb9.foloke.sectorb9.game.entities.Entity;
+import com.sb9.foloke.sectorb9.game.entities.Player;
 
 import android.graphics.*;
 

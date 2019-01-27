@@ -3,9 +3,9 @@ import android.widget.*;
 import com.sb9.foloke.sectorb9.*;
 import android.view.View.*;
 import android.view.*;
-import com.sb9.foloke.sectorb9.game.Entities.*;
+import com.sb9.foloke.sectorb9.game.entities.*;
 import android.graphics.*;
-import com.sb9.foloke.sectorb9.game.Entities.Buildings.*;
+import com.sb9.foloke.sectorb9.game.entities.Buildings.*;
 
 public class InteractionUI
 {
