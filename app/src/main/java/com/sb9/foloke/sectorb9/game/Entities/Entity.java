@@ -141,9 +141,14 @@ public abstract class Entity {
     }
 
     public PointF getWorldLocation()
-    {
-        return new PointF(x,y);
-    }
+	{
+		return new PointF(x,y);
+	}
+
+	public PointF getCenterWorldLocation()
+	{
+		return new PointF(getCenterX(),getCenterY());
+	}
 
     public void setWorldLocation(PointF location)
     {

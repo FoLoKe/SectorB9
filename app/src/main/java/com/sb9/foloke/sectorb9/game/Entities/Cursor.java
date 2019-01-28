@@ -33,10 +33,7 @@ public class Cursor extends DynamicEntity {
 			canvas.drawBitmap(image,x-image.getWidth()/2,y-image.getHeight()/2,new Paint());
 		}
 
-		@Override
-		public void RotationToPoint(PointF targetPoint) {
-			// rotation=(float)-Math.toDegrees(Math.PI+Math.atan2(targetPoint.x-x,targetPoint.y-y));   /coord rotation
-		}
+
 
 		public float getCenterX()
 		{

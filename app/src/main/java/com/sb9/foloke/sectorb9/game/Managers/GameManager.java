@@ -103,7 +103,7 @@ public class GameManager {
 
 
         player.addMovement(gamePanel.screenPointOfTouch,gamePanel.canvasW,gamePanel.canvasH);
-        player.RotationToPoint(gamePanel.pointOfTouch);
+        //player.RotationToPoint(gamePanel.pointOfTouch);
         player.tick();
 
         uIhp.tick(player.getHp());
@@ -119,7 +119,11 @@ public class GameManager {
         player.drawVelocity(canvas);
     }
 
-    public void interactionCheck(float x,float y)
+    public GamePanel getGamePanel() {
+        return gamePanel;
+    }
+
+    public void interactionCheck(float x, float y)
     {
         worldManager.interactionCheck(x,y);
     }

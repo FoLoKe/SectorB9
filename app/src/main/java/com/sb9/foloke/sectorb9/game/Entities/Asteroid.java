@@ -83,10 +83,7 @@ public class Asteroid extends DynamicEntity {
 				
 			}
 		}
-		@Override
-		public void RotationToPoint(PointF targetPoint) {
-			// rotation=(float)-Math.toDegrees(Math.PI+Math.atan2(targetPoint.x-x,targetPoint.y-y));   /coord rotation
-		}
+
 
 		
 

@@ -45,6 +45,7 @@ public class Ship
 	}
 	public void render(Canvas canvas)
 	{
+        canvas.save();
 		canvas.rotate(holder.getWorldRotation(),holder.getCenterX(),holder.getCenterY());
 		if(holder.getMoveable())
 		canvas.drawBitmap(engineImage,holder.getCenterX()-engineImage.getWidth()/2+pointOfengine.x,holder.getCenterY()-engineImage.getHeight()/2+pointOfengine.y-5+(holder.getAcceleration())*5,null);
@@ -99,7 +100,7 @@ public class Ship
 		//collisionPath.reset();
 		for (int i=0;i<collisionPoints.length;i++)
 		{
-			float x1 = holder.getCenterX()-collisionInitPoints[i].x - holder.getCenterX();
+			float x1 = -collisionInitPoints[i].x ;
 			float y1 = holder.getCenterY()+collisionInitPoints[i].y - holder.getCenterY();
 
 			float x2 = (float)(x1 * Math.cos(mathRotation) - y1 * Math.sin(mathRotation));

@@ -15,9 +15,11 @@ public class Projectile extends DynamicEntity
 	private SmallDustPuff dustPuff;
 	private boolean collided=false;
 	private Timer dustDelay;
-	public Projectile(float x, float y, Bitmap image, String name, int lifetime, float speed, float rotation, int damage, GameManager gameManager)
+	private Entity parent;
+	public Projectile(float x, float y, Bitmap image, String name, int lifetime, float speed, float rotation, int damage,Entity parent, GameManager gameManager)
 	{
 		super(x,y,0,image,name, gameManager,0);
+		this.parent=parent;
 		this.rotation=rotation;
 		this.speed=speed;
 		this.lifetime=lifetime;
@@ -78,6 +80,7 @@ public class Projectile extends DynamicEntity
 					Entity collidedObject=null;
 						for (Entity e : gameManager.getEntities())
 						{
+							if(e!=parent)
 							if (e.getCollsionBox().intersect(collisionBox))
 							{
 								
@@ -112,11 +115,7 @@ public class Projectile extends DynamicEntity
 		// TODO: Implement this method
 	}
 
-	@Override
-	public void RotationToPoint(PointF targetPoint)
-	{
-		// TODO: Implement this method
-	}
+
 	public void setActive(boolean condition)
 	{
 		active=condition;

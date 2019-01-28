@@ -106,7 +106,7 @@ public class Player extends DynamicEntity
 		if(!renderable)
 			return;
 			
-        canvas.save();
+
 		ship.render(canvas);
 		stun.render(canvas);
 		
@@ -117,10 +117,6 @@ public class Player extends DynamicEntity
 		acceleration=0;
     }
 
-    @Override
-    public void RotationToPoint(PointF targetPoint) {
-		// rotation=(float)-Math.toDegrees(Math.PI+Math.atan2(targetPoint.x-x,targetPoint.y-y));   /coord rotation
-	}
 
     
 

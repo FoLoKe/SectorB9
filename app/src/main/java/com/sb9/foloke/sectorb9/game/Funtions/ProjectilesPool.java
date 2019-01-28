@@ -9,12 +9,13 @@ public class ProjectilesPool
 {
 	static Bitmap image;
 	ArrayList<Projectile> projectiles;
-	
-	public ProjectilesPool(Bitmap image, float speed, int maxSize, int damage, GameManager gameManager) {
+	Entity parent;
+	public ProjectilesPool(Bitmap image, float speed, int maxSize, int damage,Entity parent, GameManager gameManager) {
+		this.parent=parent;
 		projectiles=new ArrayList<Projectile>();
 		for(int i=0;i<maxSize;i++)
 		{
-			projectiles.add(new Projectile(0,0,image,"p"+i,(int)1,speed,0,damage, gameManager));
+			projectiles.add(new Projectile(0,0,image,"p"+i,(int)1,speed,0,damage,parent, gameManager));
 		}
 		}
 		public List<Projectile> getArray()

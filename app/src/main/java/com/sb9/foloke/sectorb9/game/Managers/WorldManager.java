@@ -38,7 +38,7 @@ public class WorldManager
 		background=Bitmap.createBitmap(BitmapFactory.decodeResource(MA.getResources(),R.drawable.galactic_outflow,bitmapOptions));
 
 		Random rand=new Random();
-		
+        entityManager.addObject(new EnemyShip(900,1000,0, "debug enemy",gameManager));
 		entityManager.addObject(new FuelGenerator(1200,900,rand.nextInt(180), gameManager));
 		entityManager.addObject(new BigSmelter(1100,900,rand.nextInt(180), gameManager));
 		entityManager.addObject(new ModularLab(1000,900,rand.nextInt(180), gameManager));
@@ -74,6 +74,7 @@ public class WorldManager
 	{
 		canvas.drawBitmap(background,0,0,null);
 		entityManager.render(canvas);
+
 		//debug information
 		if(gameManager.drawDebugInfo)
 		for(Entity e: entityManager.getArray())

@@ -5,7 +5,15 @@ import android.graphics.PointF;
 import android.graphics.Canvas;
 import android.graphics.*;
 
+import com.sb9.foloke.sectorb9.MainActivity;
 import com.sb9.foloke.sectorb9.game.Managers.GameManager;
+
+import java.util.Vector;
+
+import static java.lang.Math.PI;
+import static java.lang.Math.abs;
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
 
 
 public abstract class DynamicEntity extends Entity {
@@ -14,14 +22,14 @@ public abstract class DynamicEntity extends Entity {
 	static float speed=3;
 	float acceleration;
 	boolean movable;
+	PointF frontPoint=new PointF(1,0);
     DynamicEntity(float x, float y, float rotation, Bitmap image, String name, GameManager gameManager, int ID)
     {
         super(x,y,rotation,image,name, gameManager,ID);
         this.rotation=rotation;
 		dx=dy=0;
-		//textSpeed=new Text("0",x,y-32);
     }
-    abstract public void RotationToPoint(PointF targetPoint);
+
 	
 	public void drawVelocity(Canvas canvas)
 	{
@@ -33,7 +41,7 @@ public abstract class DynamicEntity extends Entity {
 		canvas.drawLine(getCenterX(),getCenterY(),getCenterX()+dx*20,getCenterY()+dy*20,tPaint);
 		//textSpeed.render(canvas);
 	}
-	void impulse(PointF pointOfimpulse,float dx,float dy)
+	public void impulse(PointF pointOfimpulse,float dx,float dy)
 	{
 		
 		float tdx=this.dx+dx;  //1000-100
@@ -48,6 +56,53 @@ public abstract class DynamicEntity extends Entity {
 		this.dy=tdy*accel;
 		if(this.dy>speed)
 			this.dy=speed;
+	}
+
+    @Override
+    public void tick() {
+        if(rotation>360)
+            rotation=0;
+        if(rotation<0)
+            rotation=360;
+
+        float mathRotation=(float)(Math.PI/180*getWorldRotation());
+        float x1 =0 ;
+        float y1 =-10 ;
+
+        float x2 = (float)(x1 * Math.cos(mathRotation) - y1 * Math.sin(mathRotation));
+        float y2 = (float)(x1 * Math.sin(mathRotation) + y1 * Math.cos(mathRotation));
+        frontPoint.set(x2,y2);
+
+        x += dx;
+        y += dy;
+        dx = dy = 0;
+
+        calculateCollisionObject();
+    }
+
+    public boolean rotationToPoint(PointF point,float p)
+	{
+        PointF B=new PointF(getCenterX()-point.x,getCenterY()-point.y);
+        float sinPhi = (frontPoint.x*B.y - frontPoint.y*B.x);
+
+        if (sinPhi < -2)
+            rotation++;
+        if (sinPhi >=2)
+            rotation--;
+
+        if(sinPhi>-10-10*p&&sinPhi<10+10*p)
+            return true;
+        return false;
+	}
+
+	public void addMovement()
+	{
+	    acceleration=0.5f;
+			float mathRotation=(float)(PI/180*rotation);
+			 //screen relative rotation
+			this.dy = -(float) (acceleration*speed * cos(mathRotation));
+			this.dx = (float) (acceleration*speed * sin(mathRotation));
+
 	}
 	public float getAcceleration()
 	{

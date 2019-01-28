@@ -17,7 +17,7 @@ public class Plasmgun extends Weapon
 	public Plasmgun(TurretSystem turret, GameManager gameManager)
 	{
 		super(turret, gameManager);
-		this.projectiles=new ProjectilesPool(WeaponsAsset.plasm,5,60,damage, gameManager);
+		this.projectiles=new ProjectilesPool(WeaponsAsset.plasm,5,60,damage,turret.getParent().getHolder(), gameManager);
 	}
 	public void shoot()
 	{
