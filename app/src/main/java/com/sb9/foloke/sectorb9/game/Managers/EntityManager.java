@@ -22,10 +22,12 @@ public class EntityManager
 
 		entityArray=new ArrayList<Entity>();
 	}
+
 	public void addObject(Entity entity)
 	{
 		entityArray.add(entity);
 	}
+
 	public void render(Canvas canvas)
 	{
 		for(Entity e : entityArray)
@@ -33,6 +35,7 @@ public class EntityManager
 			e.render(canvas);
 		}
 	}
+
 	public void tick()
 	{
 		for(Entity e: entityArray)
@@ -40,18 +43,22 @@ public class EntityManager
 			e.tick();
 		}
 	}
+
 	public ArrayList<Entity> getArray()
 	{
 		return entityArray;
 	}
+
 	public void deleteObject(Entity entity)
 	{
 		entityArray.remove(entity);
 	}
+
 	public Entity getObject(int index)
 	{
 		return entityArray.get(index);
 	}
+
 	public void save(BufferedWriter writer)
 	{
 		for(Entity e:entityArray)
@@ -59,6 +66,7 @@ public class EntityManager
 			e.save(writer);
 		}
 	}
+
 	public void load(BufferedReader reader)
 	{
 		try
@@ -131,4 +139,9 @@ public class EntityManager
 		
 		return e;
 	}
+
+	public void reload()
+    {
+        entityArray.clear();
+    }
 }

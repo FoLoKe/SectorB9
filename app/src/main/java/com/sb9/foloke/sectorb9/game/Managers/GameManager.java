@@ -3,6 +3,7 @@ package com.sb9.foloke.sectorb9.game.Managers;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Point;
 import android.graphics.PointF;
 import android.widget.TableLayout;
 
@@ -109,6 +110,7 @@ public class GameManager {
 
         worldManager.updateWorld();
     }
+
     public void render(Canvas canvas)
     {
         worldManager.renderWorld(canvas);
@@ -116,16 +118,19 @@ public class GameManager {
         if(drawDebugInfo)
         player.drawVelocity(canvas);
     }
+
     public void interactionCheck(float x,float y)
     {
         worldManager.interactionCheck(x,y);
     }
+
     public void setPlayerDestroyed(boolean condition)
     {
         playerDestroyed=condition;
         destroyedTimer=new Timer(2);
         gamePause=condition;
     }
+
     public void createNewPlayer()
     {
         player=null;
@@ -140,7 +145,6 @@ public class GameManager {
     {
         return worldManager.getEntityManager().getArray();
     }
-
 
     public Player getPlayer()
     {
@@ -158,9 +162,6 @@ public class GameManager {
         inventoryUi=new InventoryUI(playerTable,player,objectTable,null,excInterface,context);
     }
 
-
-
-
     public void updateInventory(final Entity caller)
     {
         MA.runOnUiThread(new Runnable(){
@@ -170,7 +171,6 @@ public class GameManager {
             }
         });
     }
-
 
     public void setPause(boolean state)
     {
@@ -186,6 +186,7 @@ public class GameManager {
     {
         worldManager.save(w);
     }
+
     public void load(BufferedReader r)
     {
         worldManager.load(r);
@@ -215,6 +216,7 @@ public class GameManager {
                 MA.assemblerUIi.init(MA,assembler);
             }});
     }
+
     public MainActivity getMainActivity()
     {
         return MA;
@@ -228,5 +230,16 @@ public class GameManager {
     public void addObject(Entity e)
     {
         worldManager.addObject(e);
+    }
+
+    public Point getCurrentSector()
+    {
+        return worldManager.getSector();
+    }
+
+    public void warpToLocation(int x,int y)
+    {
+
+        worldManager.warpToSector(x,y);
     }
 }

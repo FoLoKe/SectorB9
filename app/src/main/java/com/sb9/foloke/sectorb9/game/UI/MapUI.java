@@ -19,6 +19,11 @@ public class MapUI
 	private MapTile playerMapPositionView;
 	private static LineView line;
 	private MainActivity MA;
+	private Point currentSector;
+	private final int mapWidth=32;
+	private final int mapHeight=32;
+	private ArrayList<MapTile> mapTiles=new ArrayList<MapTile>();
+
 	public MapUI(final MainActivity MA)
 	{
 		//line=new LineView(MA);
@@ -44,12 +49,11 @@ public class MapUI
 			return row;
 		}
 	}
-	private Point currentSector=new Point(2,9);
-	private int mapWidth=32;
-	private int mapHeight=32;
-	private ArrayList<MapTile> mapTiles=new ArrayList<MapTile>();
+
 	public void init(final MainActivity MA ,final ViewFlipper VF)
 	{
+		currentSector=MA.getGameManager().getCurrentSector();
+
 		MA.findViewById(R.id.map_closeButton).setOnClickListener(
 		new OnClickListener(){
 			@Override
@@ -65,17 +69,17 @@ public class MapUI
 			public void onClick(View v)
 			{
 				warpToSector(pastClickedView);
+				MA.toActionFast();
+
 			}
+
 		});
-		
 		FrameLayout TFR=MA.findViewById(R.id.map_uiSecondFrameLayout);
 		
 		TFR.removeViewInLayout(line);
 		
 		
 		final LineView line2=new LineView(MA);
-		//
-		
 
 		TFR.addView(line2);
 		///THE HELL IT IS NOT WORKING
@@ -113,8 +117,6 @@ public class MapUI
 										line=line2;
 								
 								update();
-								//MA.getGame().debugText.setString(getMapLine().getFirstPoint().x+" "+getMapLine().getFirstPoint().y+
-								//" : "+getMapLine().getSecondPoint().x+" "+getMapLine().getSecondPoint().y);
 							}
 						});
 						row.addView(tile);
@@ -147,18 +149,20 @@ public class MapUI
 				}
 			}
 	}
-	public Line2D getMapLine()
+	private Line2D getMapLine()
 	{
 		int a[]=new int[2];
 		playerMapPositionView.getLocationOnScreen(a);
 		return new Line2D(playerMapPositionView.getX()+playerMapPositionView.getWidth()/2,playerMapPositionView.getRow().getY()+playerMapPositionView.getHeight()/2,pastClickedView.getX()+pastClickedView.getWidth()/2,pastClickedView.getRow().getY()+pastClickedView.getHeight()/2);
 	}
+
 	private void update()
 	{
-		}
-		private void warpToSector(MapTile tile)
-		{
-			///////DEBUG///////
 
-		};
+	}
+
+	private void warpToSector(MapTile tile)
+    {
+		MA.getGameManager().warpToLocation(tile.x,tile.y);
+    };
 }

@@ -61,14 +61,14 @@ public class MenuUI
 			@Override
 			public void onClick(View v)
 			{
-				MA.saveFile("test");
+				MA.saveFile("sector-"+MA.getGameManager().getCurrentSector().x+"-"+MA.getGameManager().getCurrentSector().y);
 			}});
 		Button loadButton=MA.findViewById(R.id.menu_load);
 		loadButton.setOnClickListener(new OnClickListener(){
 				@Override
 				public void onClick(View v)
 				{
-					MA.loadFile("test");
+					MA.loadFile("sector-"+MA.getGameManager().getCurrentSector().x+"-"+MA.getGameManager().getCurrentSector().y);
 				}});
 	}
 	public int getPrevViewID()

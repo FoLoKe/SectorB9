@@ -16,8 +16,9 @@ public class WorldManager
 
 	//background
 	private Bitmap background;
-	///booleans
 
+	////current sector
+	private int sectorX=0,sectorY=0;
 
 
 	public WorldManager(MainActivity MA, GameManager gameManager)
@@ -30,6 +31,8 @@ public class WorldManager
 	}
 	public void loadDebugWorld()
 	{
+		sectorX=2;
+		sectorY=9;
 		BitmapFactory.Options bitmapOptions=new BitmapFactory.Options();
 		bitmapOptions.inScaled=false;
 		background=Bitmap.createBitmap(BitmapFactory.decodeResource(MA.getResources(),R.drawable.galactic_outflow,bitmapOptions));
@@ -120,4 +123,34 @@ public class WorldManager
 	{
 		entityManager.load(r);
 	}
+
+	public Point getSector()
+	{
+		return new Point(sectorX,sectorY);
+	}
+
+	public void randomSector()
+    {
+
+       entityManager.reload();
+        Random rand=new Random();
+
+        Entity e=entityManager.createObject(rand.nextInt(6));
+        e.setWorldLocation(new PointF(900,900));
+        entityManager.addObject(e);
+        for (int i=0;i<50;i++)
+            entityManager.addObject(new Asteroid(50*rand.nextInt(50)+25*rand.nextInt(20),100*rand.nextInt(20)+20*rand.nextInt(50),rand.nextInt(180), gameManager));
+    }
+
+    public void warpToSector(int x,int y)
+    {
+        MA.saveFile("sector-"+sectorX+"-"+sectorY);
+       sectorX=x;
+       sectorY=y;
+        if(MA.loadFile("sector-"+x+"-"+y)==1)
+        {
+           randomSector();
+           MA.saveFile("sector-"+x+"-"+y);
+        }
+    }
 }

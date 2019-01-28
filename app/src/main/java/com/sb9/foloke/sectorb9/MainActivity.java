@@ -128,14 +128,14 @@ public class MainActivity extends Activity {
         }
     }
 	
-	public void loadFile(String fileName) {
+	public int loadFile(String fileName) {
         
         try {
 
             String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString()+File.separator+"sb9";
             File myDir = new File(root);
             if (!myDir.exists()) {
-              return; // "no directory";
+              return -1; // "no directory";
             }
 
             String fname = "save "+fileName+".txt";
@@ -154,21 +154,29 @@ public class MainActivity extends Activity {
                     reader.close();
                     isr.close();
 					
-                    return; //all ok;
+                    return 0; //all ok;
                 }
             }
             else
             {
-                return;// "no such file";
+                return 1;// "no such file";
             }
         } catch (Throwable t)
         {
-            return;// "error:"+ t.getLocalizedMessage();
+            return -2;// "error:"+ t.getLocalizedMessage();
         }
+        return -3;
     }
 
     public GameManager getGameManager()
     {
         return gamePanel.getGameManager();
+    }
+
+    public void toActionFast()
+    {
+        getGameManager().setPause(false);
+        findViewById(R.id.Menu).setVisibility(View.VISIBLE);
+        VF.setDisplayedChild(VF.indexOfChild(findViewById(R.id.actionUI)));
     }
 }
