@@ -81,7 +81,6 @@ public class EntityManager
 			Entity e=createObject(tID);
 			e.load(words);
 			addObject(e);
-			e.calculateCollisionObject();
 			}
 		}
 		catch(Throwable t)

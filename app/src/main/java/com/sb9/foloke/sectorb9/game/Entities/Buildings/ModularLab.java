@@ -23,17 +23,19 @@ public class ModularLab extends StaticEntity
 	{
 		canvas.drawBitmap(image,x,y,null);
 		floatingReader.render(canvas,getCenterX(),getCenterY(),rotation);
-		
-		
-		// TODO: Implement this method
+
+
+        if(gameManager.drawDebugInfo)
+            drawDebugCollision(canvas);
 	}
 
 	@Override
 	public void tick()
 	{
-		// TODO: Implement this method
+
 		super.tick();
 		floatingReader.tick();
+
 	}
 
 	

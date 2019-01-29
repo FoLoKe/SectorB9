@@ -3,9 +3,12 @@ package com.sb9.foloke.sectorb9.game.Entities;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+//import android.graphics.Matrix;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.RectF;
+
 
 import com.sb9.foloke.sectorb9.game.Assets.UIAsset;
 import com.sb9.foloke.sectorb9.game.Managers.GameManager;
@@ -13,11 +16,16 @@ import com.sb9.foloke.sectorb9.game.UI.*;
 import com.sb9.foloke.sectorb9.game.DataSheets.BuildingsDataSheet;
 import com.sb9.foloke.sectorb9.game.Funtions.*;
 import java.io.*;
+import java.lang.reflect.Array;
+import java.util.Vector;
+
 import com.sb9.foloke.sectorb9.game.UI.Inventory.*;
 
 public abstract class Entity {
     protected float x,y;
-    protected RectF collisionBox;
+    //protected RectF collisionBox;
+	private PointF collisionInitPoints[];
+
 
     protected Bitmap image;
 	protected boolean renderable;
@@ -31,11 +39,13 @@ public abstract class Entity {
 	protected boolean active=true;
 	protected boolean collidable=true;
 	protected boolean opened=false;
-	protected boolean isUsingCustomCollision=false;
+
 	private CustomCollisionObject collisionObject;
 	protected ProgressBarUI uIhp;
 	private int ID=0;
-	
+
+    Matrix transformMatrix=new Matrix();
+
 	protected Inventory inventory;
 
     public Entity(float x, float y, float rotation, Bitmap image, String name, GameManager gameManager, int ID)
@@ -45,7 +55,7 @@ public abstract class Entity {
         this.x=x;
         this.y=y;
 		this.gameManager = gameManager;
-        this.collisionBox=new RectF(x,y,x+image.getWidth(),y+image.getHeight());
+
         this.image=image;
 		this.renderable=false;
 		this.name=name;
@@ -55,6 +65,18 @@ public abstract class Entity {
 		this.rotation=rotation;
 		this.uIhp=new ProgressBarUI(this,50,8,-25,-20,UIAsset.hpBackground,UIAsset.hpLine,UIAsset.progressBarBorder,getHp());
 		this.ID=ID;
+		createCollision();
+
+    }
+
+    protected void createCollision()
+    {
+        collisionInitPoints=new PointF[4];
+        collisionInitPoints[0]=new PointF(-image.getWidth()/2,-image.getHeight()/2);
+        collisionInitPoints[1]=new PointF(image.getWidth()/2,-image.getHeight()/2);
+        collisionInitPoints[2]=new PointF(image.getWidth()/2,image.getHeight()/2);
+        collisionInitPoints[3]=new PointF(-image.getWidth()/2,image.getHeight()/2);
+        setCollisionObject(collisionInitPoints);
     }
 
 	public void save(BufferedWriter writer)
@@ -114,6 +136,10 @@ public abstract class Entity {
 
     abstract public void tick();
 
+
+
+
+
     public float getX() {
         return x;
     }
@@ -130,15 +156,6 @@ public abstract class Entity {
         this.y = y;
     }
 
-    public void drawDebugBox(Canvas canvas)
-    {
-		if(!renderable)
-			return;
-        Paint temppaint=new Paint();
-        temppaint.setColor(Color.rgb(0,255,0));
-        temppaint.setStyle(Paint.Style.STROKE);
-        canvas.drawRect(collisionBox,temppaint);
-    }
 
     public PointF getWorldLocation()
 	{
@@ -166,10 +183,7 @@ public abstract class Entity {
         return y+image.getHeight()/2;
     }
 
-	public RectF getCollsionBox()
-	{
-		return collisionBox;
-	}
+
 
 	public void setRenderable(boolean renderable)
 	{
@@ -197,10 +211,6 @@ public abstract class Entity {
 		return inventory;
 	}
 
-	public RectF getCollisionBox()
-	{
-		return collisionBox;
-	}
 
 	public String getName()
 	{
@@ -219,10 +229,6 @@ public abstract class Entity {
 		HP-=damage;
 	}
 
-	public void calculateCollisionObject()
-    {
-        this.collisionBox.set(x,y,x+image.getWidth(),y+image.getHeight());
-    }
 
 	public void setCenterX(float x)
 	{
@@ -266,14 +272,18 @@ public abstract class Entity {
 		return opened;
 	}
 
-	public CustomCollisionObject getCustomCollisionObject()
+	public CustomCollisionObject getCollisionObject()
 	{
 		return collisionObject;
 	}
 
-	public void setCustomCollisionObject(PointF points[])
+	public void setCollisionObject(PointF points[])
 	{
+        transformMatrix.reset();
+        transformMatrix.postRotate(rotation);
 		collisionObject=new CustomCollisionObject(points,this);
+
+        calculateCollisionObject();
 	}
 
 	public void drawDebugCollision(Canvas canvas)
@@ -281,9 +291,9 @@ public abstract class Entity {
 		collisionObject.render(canvas);
 	}
 
-	public void calculateCustomCollisionObject()
+	public void calculateCollisionObject()
 	{
-		collisionObject.calculateCollisionObject();
+		collisionObject.calculateCollisionObject(transformMatrix);
 	}
 
 	public void setWorldRotation(float rotation)

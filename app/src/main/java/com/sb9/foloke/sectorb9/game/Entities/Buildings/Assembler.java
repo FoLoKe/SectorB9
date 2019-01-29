@@ -25,7 +25,7 @@ public class Assembler extends StaticEntity
 	private Timer prodTimer;
 	private boolean assembling=false;
 	private ArrayList<Integer> productionQueue=new ArrayList<Integer>();
-	private PointF collisionInitPoints[];
+
 	private Animation assemblerAnim;
 
 	
@@ -42,17 +42,11 @@ public class Assembler extends StaticEntity
 		prodTimer=new Timer(0);
 		prgBar=new ProgressBarUI(this,50,8,-25,-20,UIAsset.stunBackground,UIAsset.stunLine,UIAsset.progressBarBorder,prodTimer.getTick());
 
-		collisionInitPoints=new PointF[4];
-		collisionInitPoints[0]=new PointF(-image.getWidth()/2,-image.getHeight()/2);
-		collisionInitPoints[1]=new PointF(image.getWidth()/2,-image.getHeight()/2);
-		collisionInitPoints[2]=new PointF(image.getWidth()/2,image.getHeight()/2);
-		collisionInitPoints[3]=new PointF(-image.getWidth()/2,image.getHeight()/2);
-		isUsingCustomCollision=true;
-		setCustomCollisionObject(collisionInitPoints);
+
 
 		statusImage=new CustomImageUI(UIAsset.noEnergySign);
 		statusImage2=new CustomImageUI(UIAsset.invFullSign);
-		calculateCollisionObject();
+
 		arms[0]=new EntitySocket(this,new AssemblerArm(x,y,0,"", gameManager),90,new PointF(10,0));
 		arms[1]=new EntitySocket(this,new AssemblerArm(x,y,25,"", gameManager),-90,new PointF(-10,-23));
 		arms[2]=new EntitySocket(this,new AssemblerArm(x,y,15,"", gameManager),-90,new PointF(-10,23));
@@ -79,9 +73,9 @@ public class Assembler extends StaticEntity
 		
 		canvas.restore();
 
-		if(energy==false)
+		if(!energy)
 			statusImage.render(canvas,new PointF(x,y));
-		if(enabled==false)
+		if(!enabled)
 			statusImage2.render(canvas,new PointF(x+16,y));
 		if(gameManager.drawDebugInfo)
 			drawDebugCollision(canvas);
@@ -150,17 +144,11 @@ public class Assembler extends StaticEntity
 				if(prodTimer.getTick()>0)
 					prgBar.tick(prodTimer.getTick()/(prodTimeLength*0.6f));
 			}
-			super.calculateCollisionObject();
+
 		}
 		catch(Exception e){System.out.println(e);}
 	}
 
-	@Override
-	public void calculateCollisionObject()
-	{
-		super.calculateCollisionObject();
-		calculateCustomCollisionObject();
-	}
 
 	@Override
 	public void onAndOff()

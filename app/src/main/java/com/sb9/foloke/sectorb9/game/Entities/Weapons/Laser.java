@@ -54,10 +54,12 @@ public class Laser extends Weapon
 			tpaint.setColor(Color.RED);
 			line.set(tpointOfShooting.x,tpointOfShooting.y,tfpointOfShooting.x,tfpointOfShooting.y);
 			for (Entity e: gameManager.getEntities())
+				if(e!=turret.getParent().getHolder())
 				if(e.getActive())
-					if(line.intersect(e.getCollisionBox()))
+					//TODO: BUG
+					if((e.getCollisionObject().intersect(line)))
 						{
-							//TODO: CHECK IF THER TWO COLLISIONS
+							//TODO: CHECK IF THERE TWO COLLISIONS
 							e.applyDamage(1);
 							laserDamageEffect.draw(line.getPoint().x,line.getPoint().y,rnd.nextInt(360),new PointF(0,0));
 							line.set(tpointOfShooting.x,tpointOfShooting.y,line.getPoint().x,line.getPoint().y);

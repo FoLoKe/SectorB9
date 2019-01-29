@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.*;
 
 import com.sb9.foloke.sectorb9.MainActivity;
+import com.sb9.foloke.sectorb9.game.Funtions.Line2D;
 import com.sb9.foloke.sectorb9.game.Managers.GameManager;
 
 import java.util.Vector;
@@ -22,7 +23,8 @@ public abstract class DynamicEntity extends Entity {
 	static float speed=3;
 	float acceleration;
 	boolean movable;
-	PointF frontPoint=new PointF(1,0);
+	private PointF frontPoint=new PointF(1,0);
+
     DynamicEntity(float x, float y, float rotation, Bitmap image, String name, GameManager gameManager, int ID)
     {
         super(x,y,rotation,image,name, gameManager,ID);
@@ -39,15 +41,16 @@ public abstract class DynamicEntity extends Entity {
 		tPaint.setColor(Color.rgb(255,255,0));
 		tPaint.setStrokeWidth(5);
 		canvas.drawLine(getCenterX(),getCenterY(),getCenterX()+dx*20,getCenterY()+dy*20,tPaint);
-		//textSpeed.render(canvas);
 	}
+
 	public void impulse(PointF pointOfimpulse,float dx,float dy)
 	{
 		
 		float tdx=this.dx+dx;  //1000-100
 		float tdy=this.dy+dy;  //500-100
-		
-		float accel=speed/(float)Math.sqrt(tdx*tdx+tdy*tdy); //1 of speed% 3/1300
+        float accel=0;
+        if(tdx!=0&&tdy!=0)
+		accel=speed/(float)Math.sqrt(tdx*tdx+tdy*tdy); //1 of speed% 3/1300
 	
 		
 		this.dx=tdx*accel;
@@ -60,6 +63,9 @@ public abstract class DynamicEntity extends Entity {
 
     @Override
     public void tick() {
+       /////////
+
+        calculateCollisionObject();
         if(rotation>360)
             rotation=0;
         if(rotation<0)
@@ -73,21 +79,54 @@ public abstract class DynamicEntity extends Entity {
         float y2 = (float)(x1 * Math.sin(mathRotation) + y1 * Math.cos(mathRotation));
         frontPoint.set(x2,y2);
 
+        for (Entity e : getGameManager().getEntities())
+        {
+            if(e!=this)
+            if(e.active)
+            {
+                if(e.collidable)
+                {
+                    if ((e.getCollisionObject().intersects(getCollisionObject())))
+                    {
+                        if(!(this instanceof Projectile)) {
+                            onCollide(e);
+                            break;
+                        }
+                        else
+                        {
+                            if(((Projectile) this).getParent()!=e) {
+                                onCollide(e);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if(getHp()<=0)
+        {
+            ////make on destroy image
+            return;
+        }
+        //no inertia damping
+        timerTick();
+
         x += dx;
         y += dy;
         dx = dy = 0;
-
-        calculateCollisionObject();
     }
+
+    public abstract void onCollide(Entity e);
 
     public boolean rotationToPoint(PointF point,float p)
 	{
         PointF B=new PointF(getCenterX()-point.x,getCenterY()-point.y);
         float sinPhi = (frontPoint.x*B.y - frontPoint.y*B.x);
 
-        if (sinPhi < -2)
+        if (sinPhi < -5)
             rotation++;
-        if (sinPhi >=2)
+        if (sinPhi >=5)
             rotation--;
 
         if(sinPhi>-10-10*p&&sinPhi<10+10*p)

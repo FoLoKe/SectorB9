@@ -44,7 +44,6 @@ public class ProjectilesPool
 				if(!p.getActive())
 				{
 					p.shoot(point,rotation);
-					//p.getGame().debugText.setString(p.getName());
 					return;
 				}
 			}

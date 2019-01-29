@@ -13,6 +13,10 @@ import com.sb9.foloke.sectorb9.game.Entities.Ships.ShipMk1;
 import com.sb9.foloke.sectorb9.game.Funtions.CustomCollisionObject;
 import com.sb9.foloke.sectorb9.game.Managers.GameManager;
 
+import static java.lang.Math.PI;
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
+
 public class EnemyShip extends DynamicEntity {
 
     private EnemyAI AI;
@@ -37,15 +41,30 @@ public class EnemyShip extends DynamicEntity {
         AI.tick();
 
         ship.tick();
-        ship.calculateCollisionObject();
+        ship.calculateCollisionObject(transformMatrix);
 
     }
 
+    private void impulse(Entity e)
+    {
+        float trotation=360-(float)Math.toDegrees(Math.PI+Math.atan2(-e.getCenterX()+x,-e.getCenterY()+y));
+        float mathRotation=(float)(PI/180*trotation);
+        this.dy = -(float) (0.2*speed * cos(mathRotation));
+        this.dx = (float) (0.2*speed * sin(mathRotation));
+    }
+
     @Override
-    public CustomCollisionObject getCustomCollisionObject() {
+    public void onCollide(Entity e) {
+        if (e instanceof DynamicEntity)
+            ((DynamicEntity)e).impulse(new PointF(0,0),dx,dy);
+        impulse(e);
+    }
+
+    @Override
+    public CustomCollisionObject getCollisionObject() {
 
         ///return from ship
-        return super.getCustomCollisionObject();
+        return ship.getCollisonObject();
     }
 
     public void shoot()

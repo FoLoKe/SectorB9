@@ -46,6 +46,7 @@ public class WorldManager
 		entityManager.addObject(new SolarPanel(800,900,rand.nextInt(180), gameManager));
 		entityManager.addObject(new Crusher(700,900,rand.nextInt(180), gameManager));
 		entityManager.addObject(new SmallCargoContainer(600,900,rand.nextInt(180), gameManager));
+        entityManager.addObject(gameManager.getPlayer());
 		for (int i=0;i<50;i++)
 			entityManager.addObject(new Asteroid(50*rand.nextInt(50)+25*rand.nextInt(20),100*rand.nextInt(20)+20*rand.nextInt(50),rand.nextInt(180), gameManager));
 	}
@@ -57,7 +58,7 @@ public class WorldManager
 		{
 			if(e.getActive())
 			{
-				if(e.getCollsionBox().intersect(gameManager.getCamera().getScreenRect()))
+				if(gameManager.getCamera().getScreenRect().contains(e.getCenterX(),e.getCenterY()))
 					e.setRenderable(true);
 				else
 					e.setRenderable(false);
@@ -79,17 +80,18 @@ public class WorldManager
 		if(gameManager.drawDebugInfo)
 		for(Entity e: entityManager.getArray())
 		{
-			e.drawDebugBox(canvas);
+			//e.drawDebugBox(canvas);
 		}
 
 	}
 	
 	public void interactionCheck(float x,float y)
 	{
+		
 		Player player=gameManager.getPlayer();
 		for(Entity e: entityManager.getArray())
 		{
-			if(e.getCollisionBox().contains(x,y))
+			if(e.getCollisionObject().intersect(new RectF(x-32,y-32,x+32,y+32)))
 			{
 				if(Math.sqrt(
 					   (e.getCenterX()-player.getCenterX())*(e.getCenterX()-player.getCenterX())

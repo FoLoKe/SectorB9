@@ -166,10 +166,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 
         	}
 
-			
+
 			if(pressedObject!=null)
-			{pressedObject.calculateCollisionObject();
-				pressedObject.drawDebugBox(canvas);
+			{
+				pressedObject.drawDebugCollision(canvas);
 			}
         	canvas.restore();
 			//UI

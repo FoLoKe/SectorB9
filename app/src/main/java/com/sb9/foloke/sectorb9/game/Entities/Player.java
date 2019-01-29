@@ -35,7 +35,6 @@ public class Player extends DynamicEntity
 		for (int i=0;i<inventory.getHeight();i++)
 		for(int j=0;j<inventory.getWidth();j++)
 				inventory.addNewItem(i*inventory.getWidth()+j,i*inventory.getWidth()+j);
-		calculateCollisionObject();
 
 		gameManager.getMainActivity().shipUI=new ShipUI(this, gameManager.getMainActivity());
     }
@@ -43,50 +42,8 @@ public class Player extends DynamicEntity
     @Override
     public void tick() 
 	{
-		if(getHp()<=0)
-		{
-			////make on destroy image
-			return;
-		}
-        //no inertia damping
-		timerTick();
-		for (Entity e : getGameManager().getEntities())
-		{
-			if(e.active)
-			{
-				if(e.collidable)
-				{
-					for (Line2D l: ship.getCollisionLines())
-					{
-						if(!e.isUsingCustomCollision)
-						{
-						if ((l.intersect(e.getCollisionBox())))
-							{
-								if (e.getClass().equals(DynamicEntity.class))
-									((DynamicEntity)e).impulse(new PointF(0,0),dx,dy);
-								impulse(e);
-								break;
-							}
-						}
-						else
-						{
-							if ((e.getCustomCollisionObject().intersect(l)))
-							{
-								if (e.getClass().equals(DynamicEntity.class))
-									((DynamicEntity)e).impulse(new PointF(0,0),dx,dy);
-								impulse(e);
-								break;
-							}
-						}
-					}
-				}
-			}
-		}
-        x += dx;
-        y += dy;
-        dx = dy = 0;
-		
-		calculateCollisionObject();
+	    super.tick();
+
 		stun.tick(getTimer());
 		Shoot();
 		ship.tick();
@@ -117,8 +74,29 @@ public class Player extends DynamicEntity
 		acceleration=0;
     }
 
+    @Override
+    public void onCollide(Entity e) {
+        if (e.getClass().equals(DynamicEntity.class))
+            ((DynamicEntity)e).impulse(new PointF(0,0),dx,dy);
+        impulse(e);
+    }
 
-    
+
+    @Override
+    public void calculateCollisionObject()
+    {
+        transformMatrix.reset();
+        transformMatrix.postRotate(rotation);
+
+        if(ship!=null)
+       ship.calculateCollisionObject(transformMatrix);
+    }
+
+    @Override
+    public CustomCollisionObject getCollisionObject()
+    {
+        return ship.getCollisonObject();
+    }
 
 
     public void addMovement(PointF screenPoint,float screenW, float screenH) 
@@ -148,12 +126,7 @@ public class Player extends DynamicEntity
         this.movable = movable;
     }
 	
-	//custom collision
-	@Override
-	public void calculateCollisionObject()
-	{
-		ship.calculateCollisionObject();
-	}
+
 	
 	private void Shoot()
 	{

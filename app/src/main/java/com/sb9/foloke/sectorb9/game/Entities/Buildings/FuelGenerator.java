@@ -77,15 +77,17 @@ public class FuelGenerator extends Generator
 			fuelGeneratorAnim.tick();
 		image=fuelGeneratorAnim.getImage();
 		}
-		calculateCollisionObject();
+
 	}
 
 	@Override
 	public void render(Canvas canvas)
 	{
-		// TODO: Implement this method
+
 		super.render(canvas);
 		prgBar.render(canvas);
+		if(gameManager.drawDebugInfo)
+			drawDebugCollision(canvas);
 	}
 	
 	

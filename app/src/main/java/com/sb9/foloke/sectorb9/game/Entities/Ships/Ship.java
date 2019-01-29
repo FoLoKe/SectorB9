@@ -3,6 +3,7 @@ import android.graphics.*;
 
 import com.sb9.foloke.sectorb9.game.Assets.EffectsAsset;
 import com.sb9.foloke.sectorb9.game.Entities.DynamicEntity;
+import com.sb9.foloke.sectorb9.game.Entities.Entity;
 import com.sb9.foloke.sectorb9.game.Funtions.*;
 import com.sb9.foloke.sectorb9.game.ParticleSystem.*;
 
@@ -13,10 +14,10 @@ public class Ship
 	protected PointF pointOfShooting;
 	protected PointF pointOfEngineSmoke;
 	protected DynamicEntity holder;
-	protected PointF collisionInitPoints[];
-	protected PointF collisionPoints[];
 
-	protected Line2D collisionLines[];
+	private CustomCollisionObject collisonObject;
+	protected PointF collisionInitPoints[];
+
 	protected TurretSystem turrets[];
 	public ParticleSystem engineSmoke;
 	
@@ -31,17 +32,11 @@ public class Ship
 		this.engineSmoke=new ParticleSystem(EffectsAsset.yellow_pixel,holder.getWorldLocation().x,holder.getWorldLocation().y,1f,new PointF(0.2f,0),true,120,holder.getGameManager());
 		engineSmoke.setAccuracy(new Point(16,1));
 		pointOfEngineSmoke=new PointF(0,shipImage.getHeight()/2);
-		//calculateCollisionObject();
-		
 	}
 	public void setPoints(PointF points[])
 	{
 		this.collisionInitPoints=points;
-		this.collisionLines=new Line2D[points.length];
-		for(int i=0;i<this.collisionInitPoints.length;i++)
-			this.collisionLines[i]=new Line2D(0,0,1,1);
-
-		this.collisionPoints=new PointF[collisionInitPoints.length];
+		collisonObject=new CustomCollisionObject(points,holder);
 	}
 	public void render(Canvas canvas)
 	{
@@ -62,17 +57,13 @@ public class Ship
 			float mathRotation=(float)(Math.PI/180*(holder.getWorldRotation()));
 			PointF tpointOfEngineSmoke =new PointF((float)((pointOfEngineSmoke.x )* Math.cos(mathRotation) - pointOfEngineSmoke.y * Math.sin(mathRotation))
 												,(float)(pointOfEngineSmoke.x * Math.sin(mathRotation) + pointOfEngineSmoke.y * Math.cos(mathRotation)));
-			//tpointOfShooting.set(pointOfEngineSmoke.x+tpointOfShooting.x,pointOfEngineSmoke.x+tpointOfShooting.y);
+
 			engineSmoke.draw(holder.getCenterX()+tpointOfEngineSmoke.x,holder.getCenterY()+tpointOfEngineSmoke.y,holder.getWorldRotation(), (pointOfEngineSmoke));
-			//canvas.drawCircle(holder.getCenterX()+tpointOfEngineSmoke.x,holder.getCenterY()+tpointOfEngineSmoke.y,1,tpaint);
 			}
 		engineSmoke.render(canvas);
 		
 		if(holder.getGameManager().drawDebugInfo)
-		for(Line2D l: collisionLines)
-		{
-			l.render(canvas);
-		}
+			collisonObject.render(canvas);
 		
 	}
 	
@@ -82,10 +73,12 @@ public class Ship
 			t.tick();
 		engineSmoke.tick();
 	}
-	public Line2D[] getCollisionLines()
-	{
-			return collisionLines;
+
+
+	public CustomCollisionObject getCollisonObject() {
+		return collisonObject;
 	}
+
 	public void setPointOfEngine(PointF point)
 	{
 		pointOfengine=point;
@@ -94,30 +87,9 @@ public class Ship
 	{
 		pointOfShooting=point;
 	}
-	public void calculateCollisionObject()
+	public void calculateCollisionObject(Matrix matrix)
 	{
-		float mathRotation=(float)(Math.PI/180*holder.getWorldRotation());
-		//collisionPath.reset();
-		for (int i=0;i<collisionPoints.length;i++)
-		{
-			float x1 = -collisionInitPoints[i].x ;
-			float y1 = holder.getCenterY()+collisionInitPoints[i].y - holder.getCenterY();
-
-			float x2 = (float)(x1 * Math.cos(mathRotation) - y1 * Math.sin(mathRotation));
-			float y2 = (float)(x1 * Math.sin(mathRotation) + y1 * Math.cos(mathRotation));
-
-			if(collisionPoints[i]==null)
-				collisionPoints[i]=new PointF(x2 + holder.getCenterX(),y2+holder.getCenterY());
-			else
-				collisionPoints[i].set(x2 + holder.getCenterX(),y2+holder.getCenterY());
-		}
-		int i=0;
-		for(;i<collisionPoints.length-1;i++)
-		collisionLines[i].set(collisionPoints[i].x,collisionPoints[i].y,collisionPoints[i+1].x,collisionPoints[i+1].y);
-		//collisionlines[1].set(collisionPoints[1].x,collisionPoints[1].y,collisionPoints[2].x,collisionPoints[2].y);
-		collisionLines[i].set(collisionPoints[i].x,collisionPoints[i].y,collisionPoints[0].x,collisionPoints[0].y);
-		i=0;
-		
+		collisonObject.calculateCollisionObject(matrix);
 	}
 	
 	public void shoot()

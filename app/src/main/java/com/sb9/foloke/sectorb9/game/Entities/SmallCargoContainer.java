@@ -26,8 +26,10 @@ public class SmallCargoContainer extends CargoContainer
 	{
 		if(!renderable)
 			return;
-		// TODO: Implement this method
+
 		canvas.drawBitmap(image,x,y,null);
+		if(gameManager.drawDebugInfo)
+			drawDebugCollision(canvas);
 	}
 
 	@Override
@@ -38,7 +40,7 @@ public class SmallCargoContainer extends CargoContainer
 			active=false;
 			return;
 		}
-		this.collisionBox.set(x,y,x+image.getWidth(),y+image.getHeight());
-		// TODO: Implement this method
+
+
 	}
 }

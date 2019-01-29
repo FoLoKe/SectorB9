@@ -37,28 +37,27 @@ public abstract class StaticEntity extends Entity {
 	{
 		if(enabled)
 			enabled=false;
-			else
-				enabled=true;
-		}
-		public boolean getEnabled()
-		{
-			return enabled;
-		}
-		public boolean getInteractable()
-		{
-			return isInteractable;
-		}
-		public void setPowerSupplier(StaticEntity entity)
-		{
-			powerSupplier=entity;
-		}
-
-		@Override
-		public void tick()
-		{
-			// TODO: Implement this method
-			calculateCollisionObject();
-		}
+		else
+		    enabled=true;
+	}
+	public boolean getEnabled()
+    {
+        return enabled;
+    }
+    public boolean getInteractable()
+    {
+        return isInteractable;
+    }
+    public void setPowerSupplier(StaticEntity entity)
+    {
+        powerSupplier=entity;
+    }
+    @Override
+    public void tick()
+    {
+        ///STATIC NO COLLISION DIFFERENCE
+        //super.tick();
+    }
 
 		
 }

@@ -18,13 +18,7 @@ import java.util.*;
 		public Generator(float x, float y, float rotation, Bitmap image, String name, GameManager gameManager, int ID)
 		{
 			super(x,y,rotation,image,name, gameManager,ID);
-			collisionInitPoints=new PointF[4];
-			collisionInitPoints[0]=new PointF(-image.getWidth()/2,-image.getHeight()/2);
-			collisionInitPoints[1]=new PointF(image.getWidth()/2,-image.getHeight()/2);
-			collisionInitPoints[2]=new PointF(image.getWidth()/2,image.getHeight()/2);
-			collisionInitPoints[3]=new PointF(-image.getWidth()/2,image.getHeight()/2);
-			isUsingCustomCollision=true;
-			setCustomCollisionObject(collisionInitPoints);
+
 			consumers=new ArrayList<StaticEntity>();
 			
 			
@@ -41,8 +35,7 @@ import java.util.*;
 			circlePaint.setStyle(Paint.Style.STROKE);
 			circlePaint.setStrokeWidth(2);
 			circlePaint.setPathEffect(new DashPathEffect(new float[] { 15, 16}, 0));
-			calculateCustomCollisionObject();
-			calculateCollisionObject();
+
 			if(enabled)
 				calculateConsumers();
 		}
@@ -76,12 +69,7 @@ import java.util.*;
 		public void tick()
 		{super.tick();}
 
-		@Override
-		public void calculateCollisionObject()
-		{
-			super.calculateCollisionObject();
-			calculateCustomCollisionObject();
-		}
+
 		public void giveEnergy(StaticEntity target)
 		{
 			if(target.getEnergy())

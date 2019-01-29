@@ -50,9 +50,12 @@ public class Cursor extends DynamicEntity {
 		}
 
 
-		
+	@Override
+	public void onCollide(Entity e) {
 
-		public void setDrawable(boolean drawable) {
+	}
+
+	public void setDrawable(boolean drawable) {
 			this.drawable = drawable;
 		}
 

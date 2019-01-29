@@ -18,8 +18,8 @@ public class BigSmelter extends StaticEntity
 	private int prodTimeLength=10;
 	private Inventory.InventoryItem inProduction;
 	private Timer prodTimer;
-	
-	private PointF collisionInitPoints[];
+
+
 	private Bitmap smelterInWorkBitmap;
 
 	
@@ -34,17 +34,13 @@ public class BigSmelter extends StaticEntity
 		prodTimer=new Timer(0);
 		prgBar=new ProgressBarUI(this,50,8,-25,-20,UIAsset.stunBackground,UIAsset.stunLine,UIAsset.progressBarBorder,prodTimer.getTick());
 
-		collisionInitPoints=new PointF[4];
-		collisionInitPoints[0]=new PointF(-image.getWidth()/2,-image.getHeight()/2);
-		collisionInitPoints[1]=new PointF(image.getWidth()/2,-image.getHeight()/2);
-		collisionInitPoints[2]=new PointF(image.getWidth()/2,image.getHeight()/2);
-		collisionInitPoints[3]=new PointF(-image.getWidth()/2,image.getHeight()/2);
-		isUsingCustomCollision=true;
-		setCustomCollisionObject(collisionInitPoints);
+
+
+
 
 		statusImageNoEnergy=new CustomImageUI(UIAsset.noEnergySign);
 		statusImageEnebled=new CustomImageUI(UIAsset.invFullSign);
-		calculateCollisionObject();
+
 	}
 
 	@Override
@@ -73,6 +69,7 @@ public class BigSmelter extends StaticEntity
 	@Override
 	public void tick()
 	{
+	    super.tick();
 		if(energy)
 		{
 			///make flag on inventory empty
@@ -109,16 +106,11 @@ public class BigSmelter extends StaticEntity
 			if(prodTimer.getTick()>0)
 				prgBar.tick(prodTimer.getTick()/(prodTimeLength*0.6f));
 		}
-		super.calculateCollisionObject();
+
 
 	}
 
-	@Override
-	public void calculateCollisionObject()
-	{
-		super.calculateCollisionObject();
-		calculateCustomCollisionObject();
-	}
+
 
 	@Override
 	public void onAndOff()

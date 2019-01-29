@@ -23,12 +23,12 @@ public class Projectile extends DynamicEntity
 		this.rotation=rotation;
 		this.speed=speed;
 		this.lifetime=lifetime;
-		this.collisionBox=new RectF(x+image.getWidth()/2-3,y+image.getHeight()-3,x+image.getWidth()/2+3,y+image.getHeight()/2+3);
 		this.damage=damage;
 		this.lifeTimer=new Timer(0);
 		this.dustDelay=new Timer(0);
 		this.dustPuff=new SmallDustPuff(gameManager);
 		this.effectDelay=1f;
+
 	}
 	@Override
 	public void render(Canvas canvas)
@@ -46,77 +46,58 @@ public class Projectile extends DynamicEntity
 			
 		canvas.drawBitmap(image,x,y,null);
 		canvas.restore();
-		drawDebugBox(canvas);
-		
+
+            if(gameManager.drawDebugInfo)
+                drawDebugCollision(canvas);
 		}
-		// TODO: Implement this method
+
 	}
 
 	@Override
 	public void tick()
 	{
+
 		dustPuff.tick();
 		if(collided)
 		{
-		if (dustDelay.tick())
-		{
-			collided=false;
-			active=false;
+		    if (dustDelay.tick())
+		    {
+			    collided=false;
+			    active=false;
+		    }
+		    return;
 		}
-		return;
-		}
-		if(active)
-		{
-			
-			if(lifeTimer.tick())
-			{
-				active=false;
-				return;
-			}
-			else
-			{
-				
-					boolean collisionFlag=false;
-					Entity collidedObject=null;
-						for (Entity e : gameManager.getEntities())
-						{
-							if(e!=parent)
-							if (e.getCollsionBox().intersect(collisionBox))
-							{
-								
-								collidedObject=e;
-								collisionFlag=true;
-								collidedObject.applyDamage((damage));
-								this.lifeTimer.setTimer(0);
-								dustDelay.setTimer(effectDelay);
-								calculateCollisionObject();
-								
-								collided=true;
-								return;
-							}
-						}
+		if(active) {
+            super.tick();
+            if (lifeTimer.tick()) {
+                if(!collided)
+                active = false;
+                return;
+            } else {
+                float mathRotation = (float) (3.14 / 180 * rotation);
 
-					if (!collisionFlag)
-					{
-						float mathRotation=(float)(3.14/180*rotation);
-						//shooter relative rotation
-						this.dy = -(float) (speed * Math.cos(mathRotation));
-						this.dx = (float) (speed * Math.sin(mathRotation));
-						x += dx;
-						y += dy;
-						//dx = dy = 0;
-					}
-					calculateCollisionObject();
-					
-					
-				}
-			}
+                this.dy = -(float) (speed * Math.cos(mathRotation));
+                this.dx = (float) (speed * Math.sin(mathRotation));
+                x += dx;
+                y += dy;
+                dx = dy = 0;
+            }
+        }
 			
-		// TODO: Implement this method
+
 	}
 
+    @Override
+    public void onCollide(Entity e){
 
-	public void setActive(boolean condition)
+       e.applyDamage((damage));
+
+        dustDelay.setTimer(effectDelay);
+        collided=true;
+        this.lifeTimer.setTimer(0);
+    }
+
+    public void setActive(boolean condition)
 	{
 		active=condition;
 	}
@@ -133,20 +114,13 @@ public class Projectile extends DynamicEntity
 		setCenterY(point.y);
 		this.rotation=rotation;
 		this.lifeTimer.setTimer(lifetime);
-		
-		calculateCollisionObject();
+
+
 		renderable=true;
 		active=true;
 	}
 
-	@Override
-	public void calculateCollisionObject()
-	{
-		// TODO: Implement this method
-		//super.calculateCollisionObject();
-		collisionBox.set(x+image.getWidth()/2-3,y+image.getHeight()/2-3,x+image.getWidth()/2+3,y+image.getHeight()/2+3);
-	}
-	
-	
-	
+    public Entity getParent() {
+        return parent;
+    }
 }

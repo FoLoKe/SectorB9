@@ -36,16 +36,10 @@ public class Crusher extends StaticEntity
 		count=0;prodTimer=new Timer(0);
 		prgBar=new ProgressBarUI(this,50,8,-25,-20,UIAsset.stunBackground,UIAsset.stunLine,UIAsset.progressBarBorder,prodTimer.getTick());
 
-		collisionInitPoints=new PointF[4];
-		collisionInitPoints[0]=new PointF(-image.getWidth()/2,-image.getHeight()/2);
-		collisionInitPoints[1]=new PointF(image.getWidth()/2,-image.getHeight()/2);
-		collisionInitPoints[2]=new PointF(image.getWidth()/2,image.getHeight()/2);
-		collisionInitPoints[3]=new PointF(-image.getWidth()/2,image.getHeight()/2);
-		isUsingCustomCollision=true;
-		setCustomCollisionObject(collisionInitPoints);
+
 
 		statusImage=new CustomImageUI(UIAsset.invFullSign);
-		calculateCollisionObject();
+
 	}
 
 	@Override
@@ -71,6 +65,7 @@ public class Crusher extends StaticEntity
 	@Override
 	public void tick()
 	{
+	   	super.tick();
 		if(energy)
 		{
 			if(!noItemsBlock)
@@ -121,13 +116,7 @@ public class Crusher extends StaticEntity
 	}
 
 
-	@Override
-	public void calculateCollisionObject()
-	{
-		// TODO: Implement this method
-		super.calculateCollisionObject();
-		calculateCustomCollisionObject();
-	}
+
 
 	@Override
 	public void onAndOff()
