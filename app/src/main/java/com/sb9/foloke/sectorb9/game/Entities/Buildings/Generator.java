@@ -7,9 +7,9 @@ import java.util.*;
 
 	public class Generator extends StaticEntity
 	{
-		private PointF collisionInitPoints[];
+
 		private int radius=200;
-		protected int energyCount=3;
+		private int energyCount=3;
 		Paint circlePaint = new Paint();
 		Paint consumersPaintOn=new Paint();
 	Paint consumersPaintOff=new Paint();

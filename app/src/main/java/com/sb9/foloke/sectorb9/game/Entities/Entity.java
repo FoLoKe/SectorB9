@@ -3,12 +3,10 @@ package com.sb9.foloke.sectorb9.game.Entities;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-//import android.graphics.Matrix;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.RectF;
-
 
 import com.sb9.foloke.sectorb9.game.Assets.UIAsset;
 import com.sb9.foloke.sectorb9.game.Managers.GameManager;
@@ -16,14 +14,11 @@ import com.sb9.foloke.sectorb9.game.UI.*;
 import com.sb9.foloke.sectorb9.game.DataSheets.BuildingsDataSheet;
 import com.sb9.foloke.sectorb9.game.Funtions.*;
 import java.io.*;
-import java.lang.reflect.Array;
-import java.util.Vector;
-
 import com.sb9.foloke.sectorb9.game.UI.Inventory.*;
 
 public abstract class Entity {
     protected float x,y;
-    //protected RectF collisionBox;
+    protected RectF renderBox=new RectF();
 	private PointF collisionInitPoints[];
 
 
@@ -43,13 +38,16 @@ public abstract class Entity {
 	private CustomCollisionObject collisionObject;
 	protected ProgressBarUI uIhp;
 	private int ID=0;
-
+    private float width=2,height=2;
     Matrix transformMatrix=new Matrix();
-
+    private Paint debugPaint=new Paint();
 	protected Inventory inventory;
 
     public Entity(float x, float y, float rotation, Bitmap image, String name, GameManager gameManager, int ID)
     {
+        debugPaint.setColor(Color.RED);
+        debugPaint.setStyle(Paint.Style.STROKE);
+        debugPaint.setStrokeWidth(2);
 		this.ID=ID;
 		this.HP=maxHp;
         this.x=x;
@@ -71,11 +69,17 @@ public abstract class Entity {
 
     protected void createCollision()
     {
+
+        if(width<image.getWidth())
+            width=image.getWidth();
+        if(height<image.getHeight())
+            height=image.getHeight();
         collisionInitPoints=new PointF[4];
-        collisionInitPoints[0]=new PointF(-image.getWidth()/2,-image.getHeight()/2);
-        collisionInitPoints[1]=new PointF(image.getWidth()/2,-image.getHeight()/2);
-        collisionInitPoints[2]=new PointF(image.getWidth()/2,image.getHeight()/2);
-        collisionInitPoints[3]=new PointF(-image.getWidth()/2,image.getHeight()/2);
+        collisionInitPoints[0]=new PointF(-width/2,-height/2);
+        collisionInitPoints[1]=new PointF(width/2,-height/2);
+        collisionInitPoints[2]=new PointF(width/2,height/2);
+        collisionInitPoints[3]=new PointF(-width/2,height/2);
+        renderBox.set(0,0,width,height);
         setCollisionObject(collisionInitPoints);
     }
 
@@ -115,6 +119,7 @@ public abstract class Entity {
 					}
 				}
 			}
+			setCollisionObject(collisionInitPoints);
 		}
 		catch(Throwable t)
 		{
@@ -134,7 +139,10 @@ public abstract class Entity {
 
     abstract public void render(Canvas canvas);
 
-    abstract public void tick();
+    public void tick()
+    {
+        renderBox.set(getCenterX()-32,getCenterY()-32,getCenterX()+32,getCenterY()+32);
+    }
 
 
 
@@ -173,6 +181,10 @@ public abstract class Entity {
         y=location.y;
     }
 
+	public Matrix getTransformMatrix() {
+		return transformMatrix;
+	}
+
 	public float getCenterX()
     {
         return x+image.getWidth()/2;
@@ -201,6 +213,7 @@ public abstract class Entity {
 			frameTimer=0;
 			
 	}
+
 	public int getTimer()
 	{
 		return frameTimer;
@@ -222,13 +235,10 @@ public abstract class Entity {
 		return rotation;
 	}
 
-
-
 	public void applyDamage(int damage)
 	{
 		HP-=damage;
 	}
-
 
 	public void setCenterX(float x)
 	{
@@ -277,7 +287,7 @@ public abstract class Entity {
 		return collisionObject;
 	}
 
-	public void setCollisionObject(PointF points[])
+	private void setCollisionObject(PointF points[])
 	{
         transformMatrix.reset();
         transformMatrix.postRotate(rotation);
@@ -289,6 +299,7 @@ public abstract class Entity {
 	public void drawDebugCollision(Canvas canvas)
 	{
 		collisionObject.render(canvas);
+		canvas.drawRect(renderBox,debugPaint);
 	}
 
 	public void calculateCollisionObject()
@@ -305,4 +316,9 @@ public abstract class Entity {
 	{
 		return image;
 	}
+
+	public RectF getRenderBox()
+    {
+        return renderBox;
+    }
 }

@@ -6,6 +6,7 @@ public class Line2D
 	private float x1,y1,x2,y2;
 	float intersectionX=0,intersectionY=0;
 	float tintersectionX=-1,tintersectionY=-1;
+	boolean collided;
 	Paint paint;
 	public Line2D(float x1,float y1,float x2,float y2)
 	{
@@ -50,26 +51,10 @@ public class Line2D
 
 		
 			// optionally, draw a circle where the lines meet
-			float tfintersectionX = x1 + (uA * (x2-x1));
-			float tfintersectionY = y1 + (uA * (y2-y1));
-			double a =Math.sqrt((tfintersectionX-x1)*(tfintersectionX-x1)+(tfintersectionY-y1)*(tfintersectionY-y1));
-			double b=Math.sqrt((tintersectionX-x1)*(tintersectionX-x1)+(tintersectionY-y1)*(tintersectionY-y1));
-			if(tintersectionX!=-1)
-			if(b>a)
-			{
-			intersectionX=tintersectionX=tfintersectionX;
-			intersectionY=tintersectionY=tfintersectionY;
-			}
-			else 
-				return false;
-				else
-				{
-					intersectionX=tintersectionX=tfintersectionX;
-					intersectionY=tintersectionY=tfintersectionY;
-					return true;
-				}
-			//ellipse(intersectionX, intersectionY, 20, 20);
+            intersectionX = x1 + (uA * (x2-x1));
+            intersectionY = y1 + (uA * (y2-y1));
 
+            collided=true;
 			return true;
 		}
 		return false;
@@ -83,30 +68,25 @@ public class Line2D
 		if (uA >= 0 && uA <= 1 && uB >= 0 && uB <= 1) {
 
 			// optionally, draw a circle where the lines meet
-			/*intersectionX = x1 + (uA * (x2-x1));
-			intersectionY = y1 + (uA * (y2-y1));*/
+			intersectionX = x1 + (uA * (x2-x1));
+			intersectionY = y1 + (uA * (y2-y1));
+            line.setIntersection(intersectionX,intersectionY);
 
-			tintersectionX = x1 + (uA * (x2-x1));
-			tintersectionY = y1 + (uA * (y2-y1));
-			if(Math.sqrt(tintersectionX*tintersectionX+tintersectionY+tintersectionY)>Math.sqrt(tintersectionX*intersectionX+intersectionY*intersectionY))
-			{
-				intersectionX=tintersectionX;
-				intersectionY=tintersectionY;
-			}
-			//ellipse(intersectionX, intersectionY, 20, 20);
-
+            collided=true;
 			return true;
 		}
+
 		return false;
 	}
 	
 	
 	public void render(Canvas canvas )
 	{
-		
+
 		canvas.drawLine(x1,y1,x2,y2,paint);
-		
+        if(collided)
 		canvas.drawCircle(intersectionX, intersectionY, 2,paint);
+		collided=false;
 	}
 	public void set(float x1,float y1,float x2,float y2)
 	{
@@ -119,6 +99,13 @@ public class Line2D
 	{
 		return new PointF(intersectionX,intersectionY);
 	}
+
+	private void setIntersection(float x,float y)
+    {
+        intersectionX=x;
+        intersectionY=y;
+    }
+
 	public PointF getFirstPoint()
 	{
 		return( new PointF(x1,y1));

@@ -64,7 +64,7 @@ public abstract class DynamicEntity extends Entity {
     @Override
     public void tick() {
        /////////
-
+        super.tick();
         calculateCollisionObject();
         if(rotation>360)
             rotation=0;
@@ -147,8 +147,16 @@ public abstract class DynamicEntity extends Entity {
 	{
 		return acceleration;
 	}
+
 	public boolean getMoveable()
 	{
 		return movable;
 	}
+
+    @Override
+    public void calculateCollisionObject() {
+        transformMatrix.reset();
+        transformMatrix.postRotate(rotation);
+        super.calculateCollisionObject();
+    }
 }

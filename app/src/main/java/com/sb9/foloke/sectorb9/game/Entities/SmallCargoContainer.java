@@ -35,6 +35,7 @@ public class SmallCargoContainer extends CargoContainer
 	@Override
 	public void tick()
 	{
+		super.tick();
 		if(getHp()<=0)
 		{
 			active=false;

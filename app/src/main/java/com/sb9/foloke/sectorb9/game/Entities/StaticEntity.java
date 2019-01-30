@@ -56,7 +56,7 @@ public abstract class StaticEntity extends Entity {
     public void tick()
     {
         ///STATIC NO COLLISION DIFFERENCE
-        //super.tick();
+        super.tick();
     }
 
 		

@@ -1,14 +1,14 @@
 package com.sb9.foloke.sectorb9.game.DataSheets;
+
 import java.util.*;
 import android.graphics.*;
-
 import com.sb9.foloke.sectorb9.game.Assets.*;
 import com.sb9.foloke.sectorb9.*;
 
 public class BuildingsDataSheet
 {
+    private static ArrayList<BuildingObjectInfo> objects = new ArrayList<BuildingObjectInfo>();
 
-	private static ArrayList<BuildingObjectInfo> objects = new ArrayList<BuildingObjectInfo>();
 	public class BuildingObjectInfo
 	{
 		public String name;
@@ -34,6 +34,7 @@ public class BuildingsDataSheet
 		}
 		
 	}
+
 	public BuildingsDataSheet(MainActivity MA)
 	{
 		BitmapFactory.Options options=new BitmapFactory.Options();
@@ -49,8 +50,8 @@ public class BuildingsDataSheet
 		objects.add(new BuildingObjectInfo("assembler"				,6	,ObjectsAsset.assembler					,ObjectsAsset.assemblerAnim	,true	,true	,8		,true			));
 		objects.add(new BuildingObjectInfo("lab_mk1"				,7	,ObjectsAsset.lab_mk1						,null					,true	,true	,10		,true			));
 		objects.add(new BuildingObjectInfo("smallAsteroid"			,8	,ObjectsAsset.smallAsteroid				,null					,false	,false 	,1		,false			));
-		
-		}
+	}
+
 	public static BuildingObjectInfo findById(int id)
 	{
 		for(BuildingObjectInfo e:objects)
@@ -60,6 +61,7 @@ public class BuildingsDataSheet
 		}
 		return objects.get(0);
 	}
+
 	public static int getLenght()
 	{
 		return objects.size();

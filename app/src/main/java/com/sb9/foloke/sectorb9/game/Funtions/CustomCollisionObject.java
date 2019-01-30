@@ -70,13 +70,15 @@ public class CustomCollisionObject
 	}
 	public boolean intersect(Line2D line)
 	{
+		boolean collision=false;
 		for(Line2D l: collisionlines)
 		{
+
 			if(l.lineLine(line))
-				return true;
+				collision=true;
 
 		}
-		return false;
+		return  collision;
 
 	}
 	public void render(Canvas canvas)
@@ -96,4 +98,8 @@ public class CustomCollisionObject
         }
         return false;
     }
+
+	public Line2D[] getCollisionlines() {
+		return collisionlines;
+	}
 }

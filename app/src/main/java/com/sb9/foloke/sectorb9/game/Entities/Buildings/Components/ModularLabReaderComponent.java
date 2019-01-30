@@ -20,7 +20,7 @@ public class ModularLabReaderComponent extends ComponentEntity
 	@Override
 	public void render(Canvas canvas)
 	{
-		// TODO: Implement this method
+
 	}
 
 
@@ -55,8 +55,9 @@ public class ModularLabReaderComponent extends ComponentEntity
 	@Override
 	public void tick()
 	{
+		super.tick();
 		labStream.tick();
-		// TODO: Implement this method
+
 		if(clockward)
 			rotation++;
 		else

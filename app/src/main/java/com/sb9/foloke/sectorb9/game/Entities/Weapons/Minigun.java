@@ -18,7 +18,7 @@ public class Minigun extends Weapon
 	public Minigun(TurretSystem turret, GameManager gameManager)
 	{
 		super(turret, gameManager);
-		this.projectiles=new ProjectilesPool(WeaponsAsset.plasm,5,500,damage,turret.getParent().getHolder(), gameManager);
+		this.projectiles=new ProjectilesPool(WeaponsAsset.shell,5,500,damage,turret.getParent().getHolder(), gameManager);
 	}
 	public void shoot()
 	{

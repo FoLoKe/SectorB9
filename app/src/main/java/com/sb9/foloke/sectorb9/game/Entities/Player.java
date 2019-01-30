@@ -85,8 +85,7 @@ public class Player extends DynamicEntity
     @Override
     public void calculateCollisionObject()
     {
-        transformMatrix.reset();
-        transformMatrix.postRotate(rotation);
+        super.calculateCollisionObject();
 
         if(ship!=null)
        ship.calculateCollisionObject(transformMatrix);

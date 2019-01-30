@@ -13,15 +13,22 @@ public class Laser extends Weapon
 {
 	private ParticleSystem laserDamageEffect;
 	private boolean active=false;
-	private Bitmap image;
-	private PointF finalPoint;
+	//private Bitmap image;
+	private PointF hitPoint;
 	private Line2D line;
-	private float lenght;
+	private float lenght=200;
 	private Random rnd=new Random();
+	private float[] initShootVector;
+	private float[] tempShootVector=new float[4];
+	private Entity hitedEntity;
 	public Laser(TurretSystem turret, GameManager gameManager)
 	{
 		super(turret, gameManager);
-		image=Bitmap.createScaledBitmap(EffectsAsset.yellow_pixel, 2, (int)(100), false);
+		initShootVector=new float[]{turret.getPointOfShooting().x,
+                turret.getPointOfShooting().y,
+                turret.getPointOfShooting().x,
+                turret.getPointOfShooting().y-lenght};
+		//image=Bitmap.createScaledBitmap(EffectsAsset.yellow_pixel, 2, (int)(100), false);
 		lenght=100;
 		line=new Line2D(0,0,1,1);
 		line.setThickness(3);
@@ -32,9 +39,7 @@ public class Laser extends Weapon
 	@Override
 	public void tick()
 	{
-		
 		laserDamageEffect.tick();
-		// TODO: Implement this method
 	}
 
 	@Override
@@ -42,29 +47,37 @@ public class Laser extends Weapon
 	{
 		if(active)
 		{
-			float mathRotation=(float)(Math.PI/180*(turret.getParent().getHolder().getWorldRotation()));
-			PointF tpointOfShooting =new PointF((float)(turret.getPointOfShooting().x * Math.cos(mathRotation) - turret.getPointOfShooting().y * Math.sin(mathRotation))
-											,(float)(turret.getPointOfShooting().x * Math.sin(mathRotation) + turret.getPointOfShooting().y * Math.cos(mathRotation)));
-			tpointOfShooting.set(turret.getParent().getHolder().getCenterX()+tpointOfShooting.x,turret.getParent().getHolder().getCenterY()+tpointOfShooting.y);
-		
-			PointF tfpointOfShooting =new PointF((float)(turret.getPointOfShooting().x * Math.cos(mathRotation) - (turret.getPointOfShooting().y-lenght) * Math.sin(mathRotation))
-												,(float)(turret.getPointOfShooting().x * Math.sin(mathRotation) + (turret.getPointOfShooting().y-lenght) * Math.cos(mathRotation)));
-			tfpointOfShooting.set(turret.getParent().getHolder().getCenterX()+tfpointOfShooting.x,turret.getParent().getHolder().getCenterY()+tfpointOfShooting.y);
-			Paint tpaint=new Paint();
-			tpaint.setColor(Color.RED);
-			line.set(tpointOfShooting.x,tpointOfShooting.y,tfpointOfShooting.x,tfpointOfShooting.y);
+            hitedEntity=null;
+            float distance=lenght;
+            float tDistance;
+
+		    turret.getParent().getHolder().getTransformMatrix().mapVectors(tempShootVector,initShootVector);
+
+			line.set(tempShootVector[0]+turret.getParent().getHolder().getCenterX(),
+                    tempShootVector[1]+turret.getParent().getHolder().getCenterY(),
+                    tempShootVector[2]+turret.getParent().getHolder().getCenterX(),
+                    tempShootVector[3]+turret.getParent().getHolder().getCenterY());
 			for (Entity e: gameManager.getEntities())
 				if(e!=turret.getParent().getHolder())
-				if(e.getActive())
-					//TODO: BUG
-					if((e.getCollisionObject().intersect(line)))
+				    if(e.getActive())
+					    for(Line2D CE : e.getCollisionObject().getCollisionlines())
 						{
-							//TODO: CHECK IF THERE TWO COLLISIONS
-							e.applyDamage(1);
-							laserDamageEffect.draw(line.getPoint().x,line.getPoint().y,rnd.nextInt(360),new PointF(0,0));
-							line.set(tpointOfShooting.x,tpointOfShooting.y,line.getPoint().x,line.getPoint().y);
-							break;
+						    if(CE.lineLine(line)) {
+                                tDistance = distanceTo(line.getPoint());
+                                turret.getParent().getHolder().getGameManager().getGamePanel().debugText.setString("" + distance);
+                                if (tDistance < distance) {
+                                    distance = tDistance;
+                                    hitedEntity = e;
+                                    hitPoint = line.getPoint();
+                                }
+                            }
 						}
+            if (hitedEntity!=null) {
+                hitedEntity.applyDamage(1);
+                laserDamageEffect.draw(hitPoint.x, hitPoint.y, rnd.nextInt(360), new PointF(0, 0));
+                line.set(tempShootVector[0] + turret.getParent().getHolder().getCenterX(),
+                        tempShootVector[1] + turret.getParent().getHolder().getCenterY(),hitPoint.x, hitPoint.y);
+            }
 			line.render(canvas);
 		}
 		laserDamageEffect.render(canvas);
@@ -76,4 +89,11 @@ public class Laser extends Weapon
 	{
 		active=true;
 	}
+
+	private float distanceTo(PointF p)
+    {
+        float x=tempShootVector[0] + turret.getParent().getHolder().getCenterX()-p.x;
+        float y=tempShootVector[1] + turret.getParent().getHolder().getCenterY()-p.y;
+        return (float)Math.sqrt(x*x+y*y);
+    }
 }

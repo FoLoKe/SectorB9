@@ -38,7 +38,7 @@ public class WorldManager
 		background=Bitmap.createBitmap(BitmapFactory.decodeResource(MA.getResources(),R.drawable.galactic_outflow,bitmapOptions));
 
 		Random rand=new Random();
-        entityManager.addObject(new EnemyShip(900,1000,0, "debug enemy",gameManager));
+        //entityManager.addObject(new EnemyShip(900,1000,0, "debug enemy",gameManager));
 		entityManager.addObject(new FuelGenerator(1200,900,rand.nextInt(180), gameManager));
 		entityManager.addObject(new BigSmelter(1100,900,rand.nextInt(180), gameManager));
 		entityManager.addObject(new ModularLab(1000,900,rand.nextInt(180), gameManager));
@@ -58,7 +58,8 @@ public class WorldManager
 		{
 			if(e.getActive())
 			{
-				if(gameManager.getCamera().getScreenRect().contains(e.getCenterX(),e.getCenterY()))
+
+				if((gameManager.getCamera().getScreenRect().contains(e.getRenderBox()))||(RectF.intersects(gameManager.getCamera().getScreenRect(),e.getRenderBox())))
 					e.setRenderable(true);
 				else
 					e.setRenderable(false);
@@ -75,19 +76,11 @@ public class WorldManager
 	{
 		canvas.drawBitmap(background,0,0,null);
 		entityManager.render(canvas);
-
-		//debug information
-		if(gameManager.drawDebugInfo)
-		for(Entity e: entityManager.getArray())
-		{
-			//e.drawDebugBox(canvas);
-		}
-
 	}
 	
 	public void interactionCheck(float x,float y)
 	{
-		
+
 		Player player=gameManager.getPlayer();
 		for(Entity e: entityManager.getArray())
 		{
@@ -117,6 +110,7 @@ public class WorldManager
 	{
 		return entityManager;
 	}
+
 	public void save(BufferedWriter w)
 	{
 		entityManager.save(w);
@@ -140,9 +134,10 @@ public class WorldManager
 
         Entity e=entityManager.createObject(rand.nextInt(6));
         e.setWorldLocation(new PointF(900,900));
+        e.calculateCollisionObject();
         entityManager.addObject(e);
-        for (int i=0;i<50;i++)
-            entityManager.addObject(new Asteroid(50*rand.nextInt(50)+25*rand.nextInt(20),100*rand.nextInt(20)+20*rand.nextInt(50),rand.nextInt(180), gameManager));
+        //for (int i=0;i<50;i++)
+          //  entityManager.addObject(new Asteroid(50*rand.nextInt(50)+25*rand.nextInt(20),100*rand.nextInt(20)+20*rand.nextInt(50),rand.nextInt(180), gameManager));
     }
 
     public void warpToSector(int x,int y)

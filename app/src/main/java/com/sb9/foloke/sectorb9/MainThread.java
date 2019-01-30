@@ -6,7 +6,7 @@ import com.sb9.foloke.sectorb9.game.Display.GamePanel;
 
 public class MainThread extends Thread
 {
-    private int FPS =60;
+    private int FPS =30;
     private double averageFPS;
     private SurfaceHolder surfaceHolder;
     private GamePanel mapPanel;
@@ -45,7 +45,9 @@ public class MainThread extends Thread
                     this.mapPanel.render(canvas);
                 }
             }
-            catch(Exception e){}
+            catch(Exception e){
+                System.out.print(e);
+            }
 
             finally{if(canvas!=null)
                 try{
@@ -67,7 +69,7 @@ public class MainThread extends Thread
                 averageFPS= 1000/((totalTime/frameCount)/1000000);
                 frameCount=0;
                 totalTime=0;
-				mapPanel.textFPS.setString("fps: "+averageFPS);
+				mapPanel.textFPS.setString("FPS: "+averageFPS);
                 System.out.println(averageFPS);
             }
         }

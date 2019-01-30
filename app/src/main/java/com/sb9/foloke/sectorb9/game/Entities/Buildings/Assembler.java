@@ -1,4 +1,5 @@
 package com.sb9.foloke.sectorb9.game.Entities.Buildings;
+
 import com.sb9.foloke.sectorb9.game.Managers.GameManager;
 import com.sb9.foloke.sectorb9.game.UI.*;
 import com.sb9.foloke.sectorb9.game.Assets.*;
@@ -7,9 +8,7 @@ import com.sb9.foloke.sectorb9.game.DataSheets.ItemsDataSheet;
 import com.sb9.foloke.sectorb9.game.Funtions.*;
 import android.graphics.*;
 import com.sb9.foloke.sectorb9.game.Entities.*;
-
 import java.util.Map;
-
 import com.sb9.foloke.sectorb9.game.Entities.Buildings.Components.*;
 import java.util.ArrayList;
 import com.sb9.foloke.sectorb9.game.UI.Inventory.*;
@@ -88,6 +87,7 @@ public class Assembler extends StaticEntity
 	@Override
 	public void tick()
 	{
+	    super.tick();
 		try
 		{
 			if(energy)

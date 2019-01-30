@@ -38,7 +38,7 @@ public class FuelGenerator extends Generator
 	@Override
 	public void tick()
 	{
-		// TODO: Implement this method
+		super.tick();
 		if(enabled)
 		{
 		super.tick();
@@ -83,7 +83,8 @@ public class FuelGenerator extends Generator
 	@Override
 	public void render(Canvas canvas)
 	{
-
+		if(!renderable)
+			return;
 		super.render(canvas);
 		prgBar.render(canvas);
 		if(gameManager.drawDebugInfo)

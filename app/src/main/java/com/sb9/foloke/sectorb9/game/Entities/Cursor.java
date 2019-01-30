@@ -24,7 +24,7 @@ public class Cursor extends DynamicEntity {
 
 		@Override
 		public void tick() {
-			
+			super.tick();
 		}
 
 		@Override

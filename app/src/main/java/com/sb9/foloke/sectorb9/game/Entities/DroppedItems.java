@@ -37,6 +37,7 @@ public class DroppedItems extends Entity
 	@Override
 	public void tick()
 	{
+		super.tick();
 		/*if(!renderable||!active)
 			return;
 		this.calculateCollisionObject();

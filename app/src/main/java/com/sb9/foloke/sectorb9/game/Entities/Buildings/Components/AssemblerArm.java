@@ -18,9 +18,8 @@ public class AssemblerArm extends ComponentEntity
 
 	@Override
 	public void render(Canvas canvas)
-	{//canvas.save();
-		
-		// TODO: Implement this method
+	{
+
 	}
 	@Override
 public void render(Canvas canvas,float x,float y,float rotation)
@@ -38,8 +37,10 @@ public void render(Canvas canvas,float x,float y,float rotation)
 	@Override
 	public void tick()
 	{
+		super.tick();
+		super.timerTick();
 		sparks.tick();
-		// TODO: Implement this method
+
 		if(clockward)
 		rotation++;
 		else

@@ -1,36 +1,23 @@
 package com.sb9.foloke.sectorb9.game.Display;
 
-
 import android.graphics.PointF;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.SurfaceHolder;
 import android.content.Context;
 import android.graphics.Canvas;
-
 import android.util.*;
-
 import com.sb9.foloke.sectorb9.MainThread;
-
 import com.sb9.foloke.sectorb9.game.Managers.GameManager;
-
-
 import com.sb9.foloke.sectorb9.game.UI.Text;
 import com.sb9.foloke.sectorb9.game.Entities.*;
-
-
-
 import android.app.*;
 import com.sb9.foloke.sectorb9.*;
-
 import android.view.ScaleGestureDetector.*;
 import android.view.*;
-
 import java.io.*;
-
 import static com.sb9.foloke.sectorb9.game.Managers.GameManager.commandInteraction;
 import static com.sb9.foloke.sectorb9.game.Managers.GameManager.commandMoving;
-
 
 public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 {
@@ -41,7 +28,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
     private Camera camera;
 
     //objects
-
     private Cursor cursor;
 
     //UI texts
@@ -60,50 +46,43 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
     public PointF pointOfTouch;
     public PointF screenPointOfTouch;
 
-
-
-
-	
-	private MainActivity mContext;
+	private MainActivity MA;
 	public StaticEntity pressedObject;
 	private GameManager gameManager;
+
     public GamePanel(Context context, AttributeSet attributeSet)
     {
-
         super(context, attributeSet);
+        this.MA=(MainActivity)context;
 		DisplayMetrics displayMetrics = new DisplayMetrics();
 		((Activity) getContext()).getWindowManager()
 			.getDefaultDisplay()
 			.getMetrics(displayMetrics);
 		canvasH = displayMetrics.heightPixels;
 		canvasW = displayMetrics.widthPixels;
-		this.mContext=(MainActivity)context;
+
 
         screenPointOfTouch=new PointF(0,0);
         pointOfTouch=new PointF(0,0);
-		
 
         textPointOfTouch=new Text(""+0+" "+0,500,400);
 		textScreenWH=new Text("",500,250);
 		debugText=new Text("",500,350);
 		debugExchange=new Text("exchange",500,300);
 		errorText=new Text("",500,450);
-		textFPS=new Text("",500,500);
+		textFPS=new Text("",0,30);
 		textInProduction=new Text("",500,550);
 		textInQueue=new Text("",500,600);
 		textScreenWH.setString(canvasW+"x"+canvasH);
 
-        gameManager= new GameManager(this,(MainActivity) mContext);
+        gameManager= new GameManager(this, MA);
 
         camera=new Camera(0,0,scale,gameManager.getPlayer());
 
         //for building and ship leading
         cursor=new Cursor(900,900,"cursor",gameManager);
 
-
-
 		getHolder().addCallback(this);
-
 
         mainThread= new MainThread(getHolder(),this);
         setFocusable(true);
@@ -115,7 +94,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
     {
         mainThread.setRunning(true);
         mainThread.start();
-
     }
 
     @Override
@@ -131,8 +109,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
             {e.printStackTrace();}
         }
     }
+
     @Override
     public void surfaceChanged(SurfaceHolder p1, int p2, int p3, int p4) { }
+
     public void tick()
     {
             cursor.setWorldLocation(pointOfTouch);
@@ -140,6 +120,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
         	gameManager.tick();
 			
     }
+
     public void render(Canvas canvas)
     {
 
@@ -163,7 +144,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
         	if (gameManager.drawDebugInfo)
 			{
             	camera.render(canvas);
-
         	}
 
 
@@ -176,9 +156,9 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 			
 			if(gameManager.command==commandMoving)
 			gameManager.uIhp.render(canvas);
-			
-		
 
+
+        textFPS.render(canvas);
 		if(gameManager.drawDebugInfo)
 		{
 			//canvas.drawColor(Color.BLACK);
@@ -187,35 +167,38 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 			debugExchange.render(canvas);
 			debugText.render(canvas);
 			errorText.render(canvas);
-			textFPS.render(canvas);
+
 			textInProduction.render(canvas);
 			textInQueue.render(canvas);
 		}
 		
     }
-	
-	
 
-		private SimpleOnScaleGestureListener gestureListener = new SimpleOnScaleGestureListener() {
-			@Override
-			public boolean onScaleBegin(ScaleGestureDetector detector) {
-				return true;
-			}
+    private SimpleOnScaleGestureListener gestureListener = new SimpleOnScaleGestureListener()
+	{
+    	@Override
+		public boolean onScaleBegin(ScaleGestureDetector detector)
+		{
+			return true;
+		}
 
-			@Override
-			public boolean onScale(ScaleGestureDetector detector) {
-				scale *= detector.getScaleFactor();
-				// Don't let the object get too small or too large.
-				scale = Math.max(1f, Math.min(scale, 5.0f));
-				return true;
-			}
+		@Override
+		public boolean onScale(ScaleGestureDetector detector)
+		{
+			scale *= detector.getScaleFactor();
+			// Don't let the object get too small or too large.
+			scale = Math.max(1f, Math.min(scale, 5.0f));
+			return true;
+		}
 			
 			
-		};
+	};
 
-		private ScaleGestureDetector gestureDetector = new ScaleGestureDetector(getContext(), gestureListener);
-  		@Override
-   		public boolean onTouchEvent(MotionEvent event) {
+    private ScaleGestureDetector gestureDetector = new ScaleGestureDetector(getContext(), gestureListener);
+
+    @Override
+	public boolean onTouchEvent(MotionEvent event)
+	{
 		if(!gameManager.gamePause)
 		{
 			gestureDetector.onTouchEvent(event);
@@ -268,9 +251,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                 return true;
     }
 
-	
-
-
 	public void save(BufferedWriter w)
 	{
 		gameManager.save(w);
@@ -293,5 +273,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 
     public GameManager getGameManager() {
         return gameManager;
+    }
+
+    public MainActivity getMainActivity()
+    {
+        return MA;
     }
 }
