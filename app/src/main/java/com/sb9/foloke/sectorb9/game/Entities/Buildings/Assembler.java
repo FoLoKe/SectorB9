@@ -61,6 +61,7 @@ public class Assembler extends StaticEntity
 		
 		if(!renderable)
 			return;
+		super.render(canvas);
 		canvas.save();
 		canvas.rotate(rotation,getCenterX(),getCenterY());
 		
@@ -142,7 +143,7 @@ public class Assembler extends StaticEntity
 					assemblerAnim.tick();
 				}
 				if(prodTimer.getTick()>0)
-					prgBar.tick(prodTimer.getTick()/(prodTimeLength*0.6f));
+					prgBar.set(prodTimer.getTick()/(prodTimeLength*0.6f));
 			}
 
 		}

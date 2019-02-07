@@ -20,10 +20,12 @@ import static java.lang.Math.sin;
 public abstract class DynamicEntity extends Entity {
 
    	float dx,dy;
-	static float speed=3;
-	float acceleration;
+	static float speed=1;
+	float acceleration=0;
+	float targetAcceleration=0;
+	float deceleraton=0.05f;
 	boolean movable;
-	private PointF frontPoint=new PointF(1,0);
+	PointF frontPoint=new PointF(1,0);
 
     DynamicEntity(float x, float y, float rotation, Bitmap image, String name, GameManager gameManager, int ID)
     {
@@ -49,7 +51,7 @@ public abstract class DynamicEntity extends Entity {
 		float tdx=this.dx+dx;  //1000-100
 		float tdy=this.dy+dy;  //500-100
         float accel=0;
-        if(tdx!=0&&tdy!=0)
+        if(tdx!=0||tdy!=0)
 		accel=speed/(float)Math.sqrt(tdx*tdx+tdy*tdy); //1 of speed% 3/1300
 	
 		
@@ -61,60 +63,91 @@ public abstract class DynamicEntity extends Entity {
 			this.dy=speed;
 	}
 
+	private void calculateMovement()
+	{
+		if(acceleration<targetAcceleration)
+			acceleration+=0.01;
+		else
+			acceleration-=0.01;
+			
+		if(acceleration<0)
+			acceleration=0;
+		if(acceleration>1)
+			acceleration=1;
+
+		
+		this.dy =  (acceleration*speed * this.frontPoint.y);
+		this.dx = (acceleration*speed *this.frontPoint.x);
+		targetAcceleration-=0.05;
+		
+		
+	}
+	
     @Override
     public void tick() {
        /////////
+		
         super.tick();
+		
+		
         calculateCollisionObject();
+		
+		calculateMovement();
+		
         if(rotation>360)
             rotation=0;
         if(rotation<0)
             rotation=360;
 
-        float mathRotation=(float)(Math.PI/180*getWorldRotation());
-        float x1 =0 ;
-        float y1 =-10 ;
+   
+        float[] vector =new float[]{0,-1};
+        transformMatrix.mapVectors(vector);
 
-        float x2 = (float)(x1 * Math.cos(mathRotation) - y1 * Math.sin(mathRotation));
-        float y2 = (float)(x1 * Math.sin(mathRotation) + y1 * Math.cos(mathRotation));
-        frontPoint.set(x2,y2);
-
+        
+        frontPoint.set(vector[0],vector[1]);
+		
         for (Entity e : getGameManager().getEntities())
         {
+			double timecheck=System.nanoTime();
+			
             if(e!=this)
-            if(e.active)
-            {
-                if(e.collidable)
-                {
-                    if ((e.getCollisionObject().intersects(getCollisionObject())))
-                    {
-                        if(!(this instanceof Projectile)) {
-                            onCollide(e);
-                            break;
-                        }
-                        else
-                        {
-                            if(((Projectile) this).getParent()!=e) {
-                                onCollide(e);
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
+			{
+				
+           		if(e.active)
+           	 	{
+               	 	if(e.collidable)
+                	{
+                    	if ((e.getCollisionObject().intersects(getCollisionObject())))
+                    	{
+                        	if(!(this instanceof Projectile)) {
+                            	onCollide(e);
+                            	break;
+                        	}
+                        	else
+                        	{
+                            	if(((Projectile) this).getParent()!=e) {
+                                	onCollide(e);
+                                	break;
+                            	}
+                        	}
+                    	}
+						gameManager.getGamePanel().textDebug2.setString(System.nanoTime()-timecheck+"ms");
+                	}
+            	}
+			}
         }
 
-        if(getHp()<=0)
-        {
-            ////make on destroy image
-            return;
-        }
-        //no inertia damping
+  
+       
         timerTick();
 
         x += dx;
         y += dy;
         dx = dy = 0;
+		if(x<0)
+			x=0;
+		if(y<0)
+			y=0;
     }
 
     public abstract void onCollide(Entity e);
@@ -136,13 +169,16 @@ public abstract class DynamicEntity extends Entity {
 
 	public void addMovement()
 	{
+		
+		targetAcceleration=1;
 	    acceleration=0.5f;
-			float mathRotation=(float)(PI/180*rotation);
+		float mathRotation=(float)(PI/180*rotation);
 			 //screen relative rotation
-			this.dy = -(float) (acceleration*speed * cos(mathRotation));
-			this.dx = (float) (acceleration*speed * sin(mathRotation));
+		this.dy = -(float) (acceleration*speed * cos(mathRotation));
+		this.dx = (float) (acceleration*speed * sin(mathRotation));
 
 	}
+	
 	public float getAcceleration()
 	{
 		return acceleration;
@@ -159,4 +195,17 @@ public abstract class DynamicEntity extends Entity {
         transformMatrix.postRotate(rotation);
         super.calculateCollisionObject();
     }
+
+	@Override
+	public void render(Canvas canvas)
+	{
+		if(!renderable)
+			return;
+		if(this.HP<this.maxHp)
+			uIhp.render(canvas);
+		if(gameManager.drawDebugInfo)
+			drawVelocity(canvas);
+	}
+
+	
 }

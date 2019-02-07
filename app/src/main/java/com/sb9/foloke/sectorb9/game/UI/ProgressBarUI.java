@@ -54,7 +54,7 @@ public class ProgressBarUI
 		}
 		}
 	}
-	public void tick(float percent)
+	public void set(float percent)
 	{
 		this.percent=percent;
 		int tSizeX=(int)(sizeX*percent/100);

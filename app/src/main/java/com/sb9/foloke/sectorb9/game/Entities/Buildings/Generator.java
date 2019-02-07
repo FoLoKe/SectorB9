@@ -43,8 +43,10 @@ import java.util.*;
 		@Override
 		public void render(Canvas canvas)
 		{
+			
 			if(!renderable)
 				return;
+			super.render(canvas);
 			canvas.save();
 			canvas.rotate(rotation,getCenterX(),getCenterY());
 			canvas.drawBitmap(image,x,y,null);

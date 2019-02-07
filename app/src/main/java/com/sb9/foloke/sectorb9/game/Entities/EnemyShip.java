@@ -31,6 +31,7 @@ public class EnemyShip extends DynamicEntity {
 
     @Override
     public void render(Canvas canvas) {
+		super.render(canvas);
         ship.render(canvas);
 
     }

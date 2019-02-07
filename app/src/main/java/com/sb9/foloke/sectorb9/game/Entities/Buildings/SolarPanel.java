@@ -1,6 +1,7 @@
 package com.sb9.foloke.sectorb9.game.Entities.Buildings;
 import com.sb9.foloke.sectorb9.game.Managers.GameManager;
 import com.sb9.foloke.sectorb9.game.DataSheets.BuildingsDataSheet;
+import android.graphics.*;
 
 public class SolarPanel extends Generator
 {
@@ -16,4 +17,7 @@ public class SolarPanel extends Generator
 	
 	
 	}
+
+
+	
 }

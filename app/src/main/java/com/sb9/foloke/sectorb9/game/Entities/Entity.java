@@ -17,59 +17,57 @@ import java.io.*;
 import com.sb9.foloke.sectorb9.game.UI.Inventory.*;
 
 public abstract class Entity {
+	
+	private float width=2,height=2;
+	private float relativeCentreX,relativeCenterY;
     protected float x,y;
-    protected RectF renderBox=new RectF();
-	private PointF collisionInitPoints[];
-
-
-    protected Bitmap image;
-	protected boolean renderable;
+	protected float maxHp=100;
+	protected float HP;
+	protected float rotation;
+	
+	private int ID=0;
 	private int frameTimer;
 	protected int inventoryMaxCapacity=0;
-	protected String name;
-	protected float rotation;
-	protected GameManager gameManager;
-	private float maxHp=100;
-	private float HP;
+	
+	protected boolean renderable=false;
 	protected boolean active=true;
 	protected boolean collidable=true;
 	protected boolean opened=false;
-
+	
+	private PointF collisionInitPoints[];
+	private Paint debugPaint=new Paint();
 	private CustomCollisionObject collisionObject;
 	protected ProgressBarUI uIhp;
-	private int ID=0;
-    private float width=2,height=2;
-    Matrix transformMatrix=new Matrix();
-    private Paint debugPaint=new Paint();
+	protected String name;
+	protected GameManager gameManager;
+    protected Matrix transformMatrix=new Matrix();
 	protected Inventory inventory;
-
+	protected RectF renderBox=new RectF();
+	protected Bitmap image;
+	
     public Entity(float x, float y, float rotation, Bitmap image, String name, GameManager gameManager, int ID)
     {
-        debugPaint.setColor(Color.RED);
-        debugPaint.setStyle(Paint.Style.STROKE);
-        debugPaint.setStrokeWidth(2);
+        this.debugPaint.setColor(Color.RED);
+        this.debugPaint.setStyle(Paint.Style.STROKE);
+        this.debugPaint.setStrokeWidth(2);
 		this.ID=ID;
 		this.HP=maxHp;
         this.x=x;
         this.y=y;
 		this.gameManager = gameManager;
-
         this.image=image;
-		this.renderable=false;
+		this.relativeCenterY=image.getHeight()/2;
+		this.relativeCentreX=image.getWidth()/2;
 		this.name=name;
-		
-		//if(BuildingsDataSheet.findById(ID).inventoryCapacity!=0)
 		this.inventory=new Inventory(this, BuildingsDataSheet.findById(ID).inventoryCapacity,4);
 		this.rotation=rotation;
 		this.uIhp=new ProgressBarUI(this,50,8,-25,-20,UIAsset.hpBackground,UIAsset.hpLine,UIAsset.progressBarBorder,getHp());
 		this.ID=ID;
 		createCollision();
-
     }
 
     protected void createCollision()
     {
-
         if(width<image.getWidth())
             width=image.getWidth();
         if(height<image.getHeight())
@@ -100,8 +98,7 @@ public abstract class Entity {
 	public void load(String[] words)
 	{
 		try
-		{
-			
+		{		
 			name=words[1];
 			x=Float.parseFloat(words[2]);
 			y=Float.parseFloat(words[3]);
@@ -144,10 +141,6 @@ public abstract class Entity {
         renderBox.set(getCenterX()-32,getCenterY()-32,getCenterX()+32,getCenterY()+32);
     }
 
-
-
-
-
     public float getX() {
         return x;
     }
@@ -163,7 +156,6 @@ public abstract class Entity {
     public void setY(float y) {
         this.y = y;
     }
-
 
     public PointF getWorldLocation()
 	{
@@ -187,15 +179,13 @@ public abstract class Entity {
 
 	public float getCenterX()
     {
-        return x+image.getWidth()/2;
+        return x+relativeCentreX;
     }
 
     public float getCenterY()
     {
-        return y+image.getHeight()/2;
+        return y+relativeCenterY;
     }
-
-
 
 	public void setRenderable(boolean renderable)
 	{
@@ -210,8 +200,7 @@ public abstract class Entity {
 	public void timerTick()
 	{
 		if((frameTimer-=1)<0)
-			frameTimer=0;
-			
+			frameTimer=0;	
 	}
 
 	public int getTimer()
@@ -223,7 +212,6 @@ public abstract class Entity {
 	{
 		return inventory;
 	}
-
 
 	public String getName()
 	{
@@ -238,16 +226,24 @@ public abstract class Entity {
 	public void applyDamage(int damage)
 	{
 		HP-=damage;
+		uIhp.set(HP);
+		if(HP<=0)
+			onDestroy();			
 	}
-
+	
+	private void onDestroy()
+	{
+		active=false;
+	}
+	
 	public void setCenterX(float x)
 	{
-		this.x=x-image.getWidth()/2;
+		this.x=x-relativeCentreX;
 	}
 
 	public void setCenterY(float y)
 	{
-		this.y=y-image.getHeight()/2;
+		this.y=y-relativeCenterY;
 	}
 
 	public float getHp()
@@ -260,18 +256,6 @@ public abstract class Entity {
 		return gameManager;
 	}
 
-	/*public void onDestroy()
-	{
-		game.getEntityManager().addObject(new DroppedItems(x,y,inventory,game));
-	}*/
-	/*public void setInventory(Inventory inv)
-	{
-		inventory.clear();
-		for (Map.Entry<Integer,Integer> i: inv.entrySet())
-			{
-				this.inventory.put(i.getKey(),i.getValue());
-			}
-	}*/
 	public boolean getActive()
 	{
 		return active;
@@ -292,7 +276,6 @@ public abstract class Entity {
         transformMatrix.reset();
         transformMatrix.postRotate(rotation);
 		collisionObject=new CustomCollisionObject(points,this);
-
         calculateCollisionObject();
 	}
 

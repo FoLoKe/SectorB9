@@ -17,7 +17,7 @@ public class Particle
 	float dx,dy;
 	Random rnd=new Random();
 	PointF dXY;
-	
+	Paint optionsPaint=new Paint();
 	boolean randomDirection=true;
 	//Entity holder;
 	
@@ -40,15 +40,15 @@ public class Particle
 	{
 		if(active)
 		{
-			canvas.save();
-			canvas.rotate(rotation,getCenterX(),getCenterY());
-			Paint tPaint=new Paint();
+			//canvas.save();
+			//canvas.rotate(rotation,getCenterX(),getCenterY());
+			
 			//100% = lifetime
 			//%= lifetimer.gettick()
 			
-			tPaint.setAlpha((int)(255*lifetimer.getTick()/(60*(lifetime))));
-			canvas.drawBitmap(image,x-image.getWidth()/2,y-image.getHeight()/2,tPaint);
-			canvas.restore();
+			optionsPaint.setAlpha((int)(255*lifetimer.getTick()/(60*(lifetime))));
+			canvas.drawBitmap(image,x-image.getWidth()/2,y-image.getHeight()/2,optionsPaint);
+			//canvas.restore();
 			//drawDebugBox(canvas);
 		}
 	}
@@ -97,22 +97,21 @@ public class Particle
 		
 		if(randomDirection)
 		{
-		if(rnd.nextBoolean())
-			dx=tPoint.x;
-		else
-			dx=-tPoint.x;
-		if(rnd.nextBoolean())
-		dy=tPoint.y;
-		else
-			dy=-tPoint.y;
+			if(rnd.nextBoolean())
+				dx=tPoint.x;
+			else
+				dx=-tPoint.x;
+			if(rnd.nextBoolean())
+				dy=tPoint.y;
+			else
+				dy=-tPoint.y;
 		}
 		else
 		{
 			dx=tPoint.x;
 			dy=tPoint.y;
 		}
-		//this.dy = -(float) (dXY.x*Math.cos(mathRotation));
-		//this.dx = (float) (dXY.y*Math.sin(mathRotation));
+		
 		this.lifetimer.setTimer(lifetime);
 
 		//calculateCollisionObject();

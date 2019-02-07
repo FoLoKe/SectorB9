@@ -21,17 +21,21 @@ public class ObjectsAsset
 		fuelGenerator=Bitmap.createBitmap(sheet,0,2*32,32,64);
 		crusherAnim=new Bitmap[]{crusher,Bitmap.createBitmap(sheet,3*32,0,32,64)
 		,Bitmap.createBitmap(sheet,4*32,0,32,64)};
-		fuelGeneratorAnim=new Bitmap[]{fuelGenerator,Bitmap.createBitmap(sheet,1*32,2*32,32,64),
-			Bitmap.createBitmap(sheet,2*32,2*32,32,64),Bitmap.createBitmap(sheet,1*32,2*32,32,64),
-			};
+		fuelGeneratorAnim=new Bitmap[]{
+			fuelGenerator,
+			Bitmap.createBitmap(sheet,1*32,2*32,32,64),
+			Bitmap.createBitmap(sheet,2*32,2*32,32,64),
+			Bitmap.createBitmap(sheet,1*32,2*32,32,64)};
+			
 		smelterCold=Bitmap.createBitmap(sheet,6*32,0,64,64);
 		smelterHot=new Bitmap[]{Bitmap.createBitmap(sheet,6*32,2*32,64,64)};
 		assembler=Bitmap.createBitmap(sheet,0*32,4*32,32,64);
-		assemblerAnim=new Bitmap[]{Bitmap.createBitmap(sheet,1*32,4*32,32,64),
-		Bitmap.createBitmap(sheet,2*32,4*32,32,64),
-		Bitmap.createBitmap(sheet,3*32,4*32,32,64),
-		Bitmap.createBitmap(sheet,4*32,4*32,32,64),
-		};
+		assemblerAnim=new Bitmap[]{
+			Bitmap.createBitmap(sheet,1*32,4*32,32,64),
+			Bitmap.createBitmap(sheet,2*32,4*32,32,64),
+			Bitmap.createBitmap(sheet,3*32,4*32,32,64),
+			Bitmap.createBitmap(sheet,4*32,4*32,32,64)};
+			
 		assembler_arm1=Bitmap.createBitmap(sheet,0,6*32,32,32);
 		lab_mk1=Bitmap.createBitmap(sheet,3*32,2*32,64,64);
 		labreader_mk1=Bitmap.createBitmap(sheet,5*32,2*32,32,32);

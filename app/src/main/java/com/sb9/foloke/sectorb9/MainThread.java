@@ -6,7 +6,7 @@ import com.sb9.foloke.sectorb9.game.Display.GamePanel;
 
 public class MainThread extends Thread
 {
-    private int FPS =30;
+    private int FPS =60;
     private double averageFPS;
     private SurfaceHolder surfaceHolder;
     private GamePanel mapPanel;
@@ -19,6 +19,7 @@ public class MainThread extends Thread
         super();
         this.surfaceHolder=surfaceHolder;
         this.mapPanel=mapPanel;
+		mapPanel.linkThread(this);
     }
 
     @Override
@@ -78,4 +79,11 @@ public class MainThread extends Thread
     {
         running=b;
     }
+	public void switchFrameLimit(boolean state)
+	{
+		if(state)
+			FPS=30;
+		else
+			FPS=60;
+	}
 }

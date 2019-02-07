@@ -24,9 +24,10 @@ public class SmallCargoContainer extends CargoContainer
 	@Override
 	public void render(Canvas canvas)
 	{
+		
 		if(!renderable)
 			return;
-
+		super.render(canvas);
 		canvas.drawBitmap(image,x,y,null);
 		if(gameManager.drawDebugInfo)
 			drawDebugCollision(canvas);

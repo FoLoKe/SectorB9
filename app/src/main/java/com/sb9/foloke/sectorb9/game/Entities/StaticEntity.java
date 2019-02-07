@@ -4,10 +4,10 @@ import android.graphics.Bitmap;
 
 import com.sb9.foloke.sectorb9.game.Managers.GameManager;
 import com.sb9.foloke.sectorb9.game.UI.Text;
+import android.graphics.*;
 
 public abstract class StaticEntity extends Entity {
 	
-	private Text textName;
 	
 	private String name;
 	protected boolean energy=false;
@@ -17,9 +17,7 @@ public abstract class StaticEntity extends Entity {
 	
     public StaticEntity(float x, float y, float rotation, Bitmap image, String name, GameManager gameManager, int ID)
     {
-        super(x,y,rotation,image,name, gameManager,ID);
-        //this.name=name;
-		textName=new Text("0",x,y-32);
+        super(x,y,rotation,image,name, gameManager,ID);	
     }
 	public String getName()
 	{
@@ -40,6 +38,19 @@ public abstract class StaticEntity extends Entity {
 		else
 		    enabled=true;
 	}
+	
+
+	@Override
+	public void render(Canvas canvas)
+	{
+		if(HP<maxHp)
+		{
+			uIhp.render(canvas);
+		}
+	}
+	
+
+
 	public boolean getEnabled()
     {
         return enabled;

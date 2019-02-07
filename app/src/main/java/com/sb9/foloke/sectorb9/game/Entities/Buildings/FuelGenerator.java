@@ -41,7 +41,6 @@ public class FuelGenerator extends Generator
 		super.tick();
 		if(enabled)
 		{
-		super.tick();
 			prodTimer.tick();
 		}
 		
@@ -70,7 +69,7 @@ public class FuelGenerator extends Generator
 					onAndOff();
 			}
 		if(prodTimer.getTick()>0)
-			prgBar.tick(prodTimer.getTick()/(30f));
+			prgBar.set(prodTimer.getTick()/(30f));
 		
 		if(enabled)
 		{
@@ -83,6 +82,7 @@ public class FuelGenerator extends Generator
 	@Override
 	public void render(Canvas canvas)
 	{
+		
 		if(!renderable)
 			return;
 		super.render(canvas);

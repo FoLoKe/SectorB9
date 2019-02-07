@@ -126,7 +126,7 @@ public class EntityManager
 			}
 			case 8:
 			{
-				e=new Asteroid(0,0,0, gameManager);
+				e=new Asteroid(0,0,0, gameManager,0);
 				break;
 			}
 			default:

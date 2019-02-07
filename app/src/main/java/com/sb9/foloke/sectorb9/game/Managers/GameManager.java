@@ -83,8 +83,8 @@ public class GameManager {
         player=new Player(900,900,0,this,"player");
 
         worldManager=new WorldManager(MA,this);
-
-        worldManager.loadDebugWorld();
+		worldManager.lodEmptyWorld();
+     	//worldManager.loadDebugWorld();
     }
 
     public void tick()
@@ -101,12 +101,13 @@ public class GameManager {
             return;
         }
 
-
+		player.rotationToPoint(gamePanel.pointOfTouch,5);
+		
         player.addMovement(gamePanel.screenPointOfTouch,gamePanel.canvasW,gamePanel.canvasH);
         //player.RotationToPoint(gamePanel.pointOfTouch);
         player.tick();
 
-        uIhp.tick(player.getHp());
+        uIhp.set(player.getHp());
 
         worldManager.updateWorld();
     }

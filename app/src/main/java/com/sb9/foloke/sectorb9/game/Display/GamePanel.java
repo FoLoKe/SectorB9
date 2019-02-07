@@ -34,7 +34,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
     private Text textPointOfTouch;
 	private Text textScreenWH;
 	public Text textFPS;
-	public Text textInProduction;
+	public Text textDebug2;
 	public Text textInQueue;
 	public Text debugText;
 	public Text errorText;
@@ -49,6 +49,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 	private MainActivity MA;
 	public StaticEntity pressedObject;
 	private GameManager gameManager;
+	private MainThread MT;
 
     public GamePanel(Context context, AttributeSet attributeSet)
     {
@@ -71,7 +72,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 		debugExchange=new Text("exchange",500,300);
 		errorText=new Text("",500,450);
 		textFPS=new Text("",0,30);
-		textInProduction=new Text("",500,550);
+		textDebug2=new Text("",500,550);
 		textInQueue=new Text("",500,600);
 		textScreenWH.setString(canvasW+"x"+canvasH);
 
@@ -85,10 +86,21 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 		getHolder().addCallback(this);
 
         mainThread= new MainThread(getHolder(),this);
-        setFocusable(true);
+        setFocusable(false);
+		
+		cursor.setDrawable(true);
 		
     }
 
+	public void linkThread(MainThread MT)
+	{
+		this.MT=MT;
+	}
+	
+	public void setFrameLimiter(boolean state)
+	{
+		MT.switchFrameLimit(state);
+	}
     @Override
     public void surfaceCreated(SurfaceHolder p1)
     {
@@ -168,7 +180,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 			debugText.render(canvas);
 			errorText.render(canvas);
 
-			textInProduction.render(canvas);
+			textDebug2.render(canvas);
 			textInQueue.render(canvas);
 		}
 		
@@ -212,8 +224,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
 					
-                    pointOfTouch.set((x-canvasW/2)/camera.getScale()+player.getCenterX(),(y-canvasH/2)/camera.getScale()+player.getCenterY());
-					cursor.setDrawable(true);
+                    //pointOfTouch.set((x-canvasW/2)/camera.getScale()+player.getCenterX(),(y-canvasH/2)/camera.getScale()+player.getCenterY());
+					//cursor.setDrawable(true);
 					
 					switch (gameManager.command)
 					{
@@ -227,14 +239,14 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                     break;
 					
                 case MotionEvent.ACTION_MOVE:
-                    pointOfTouch.set((x-canvasW/2)/camera.getScale()+player.getCenterX(),(y-canvasH/2)/camera.getScale()+player.getCenterY()); 
+                   // pointOfTouch.set((x-canvasW/2)/camera.getScale()+player.getCenterX(),(y-canvasH/2)/camera.getScale()+player.getCenterY()); 
                     break;
 					
                 case MotionEvent.ACTION_UP:	
 					switch (gameManager.command)
 					{
 						case commandMoving:
-							cursor.setDrawable(false);
+							//cursor.setDrawable(false);
                        		player.setMovable(false);
 							break;
 						case commandInteraction:

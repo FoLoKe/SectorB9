@@ -14,39 +14,25 @@ public class Asteroid extends StaticEntity {
 
     final static int ID=8;
 		
-	public Asteroid(float x, float y, float rotation, GameManager gameManager)
+	public Asteroid(float x, float y, float rotation, GameManager gameManager,int resID)
 	{
 		super(x,y,rotation, BuildingsDataSheet.findById(ID).image, BuildingsDataSheet.findById(ID).name, gameManager,ID);
-
+		inventory.addNewItem(resID,5);	
 	}
 	
-		@Override
-		public void tick() {
+	@Override
+	public void tick() {
 	    super.tick();
-
-			if(active)
-			{
-			if(!renderable)
-				return;
-			if(getHp()<=0)
-			{
-					active=false;
-					//onDestroy();
-					return;
-					}
-			uIhp.tick(getHp());
-			}
-			
-		}
+	}
 
 		@Override
 		public void render(Canvas canvas) {
+			
 		if(active)
 			{
 				if(!renderable)
 					return;
-				if(getHp()<100)
-					uIhp.render(canvas);
+				super.render(canvas);
 				canvas.save();
 				canvas.rotate(rotation,getCenterX(),getCenterY());
 				canvas.drawBitmap(image,x,y,null);
@@ -55,25 +41,5 @@ public class Asteroid extends StaticEntity {
 					drawDebugCollision(canvas);
 			}
 		}
-
-
-		
-
-		
-		public float getCenterX()
-		{
-			return x+image.getWidth()/2;
-		}
-		public float getCenterY()
-		{
-			return y+image.getHeight()/2;
-		}
-
-		public PointF getWorldLocation()
-		{
-			return new PointF(x,y);
-		}
-
-
 	
 }

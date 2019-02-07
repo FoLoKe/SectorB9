@@ -55,7 +55,13 @@ public class MenuUI
 					MA.getGameManager().drawDebugInfo=isChecked;
 				}
 			});
-			
+		Switch frameLimmiterSwitch=MA.findViewById(R.id.framelimiter_switch);
+		frameLimmiterSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener(){
+				@Override
+				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+					MA.getGameManager().getGamePanel().setFrameLimiter(isChecked);
+					}
+		});
 		Button saveButton=MA.findViewById(R.id.menu_save);
 		saveButton.setOnClickListener(new OnClickListener(){
 			@Override

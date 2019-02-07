@@ -45,8 +45,10 @@ public class Crusher extends StaticEntity
 	@Override
 	public void render(Canvas canvas)
 	{
+		
 		if(!renderable)
 			return;
+		super.render(canvas);
 		canvas.save();
 		canvas.rotate(rotation,getCenterX(),getCenterY());
 		canvas.drawBitmap(crusherAnim.getImage(),x,y,null);
@@ -110,7 +112,7 @@ public class Crusher extends StaticEntity
 			
 		}
 		if(prodTimer.getTick()>0)
-			prgBar.tick(prodTimer.getTick()/(1.2f));
+			prgBar.set(prodTimer.getTick()/(1.2f));
 		}
 		
 	}

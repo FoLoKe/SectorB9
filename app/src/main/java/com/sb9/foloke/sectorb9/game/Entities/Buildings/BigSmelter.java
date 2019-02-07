@@ -46,8 +46,10 @@ public class BigSmelter extends StaticEntity
 	@Override
 	public void render(Canvas canvas)
 	{
+		
 		if(!renderable)
 			return;
+		super.render(canvas);
 		canvas.save();
 		canvas.rotate(rotation,getCenterX(),getCenterY());
 		if(inProduction.getID()==0)
@@ -104,7 +106,7 @@ public class BigSmelter extends StaticEntity
 				}
 			}
 			if(prodTimer.getTick()>0)
-				prgBar.tick(prodTimer.getTick()/(prodTimeLength*0.6f));
+				prgBar.set(prodTimer.getTick()/(prodTimeLength*0.6f));
 		}
 
 

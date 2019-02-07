@@ -20,7 +20,6 @@ public class WorldManager
 	////current sector
 	private int sectorX=0,sectorY=0;
 
-
 	public WorldManager(MainActivity MA, GameManager gameManager)
 	{
 		this.MA=MA;
@@ -29,6 +28,25 @@ public class WorldManager
 		
 		
 	}
+	
+	public void lodEmptyWorld()
+	{
+		sectorX=1;
+		sectorY=1;
+		BitmapFactory.Options bitmapOptions=new BitmapFactory.Options();
+		bitmapOptions.inScaled=false;
+		background=Bitmap.createBitmap(BitmapFactory.decodeResource(MA.getResources(),R.drawable.galactic_outflow,bitmapOptions));
+		//entityManager.addObject(new EnemyShip(900,1000,0, "debug enemy",gameManager));
+		//entityManager.addObject(new EnemyShip(900,1032,0, "debug enemy",gameManager));
+		//entityManager.addObject(new EnemyShip(900,968,0, "debug enemy",gameManager));
+		entityManager.addObject(gameManager.getPlayer());
+		
+		Random rand=new Random();
+		
+		for (int i=0;i<50;i++)
+			entityManager.addObject(new Asteroid(50*rand.nextInt(50)+25*rand.nextInt(20),100*rand.nextInt(20)+20*rand.nextInt(50),rand.nextInt(180), gameManager,rand.nextInt(10)));
+	}
+	
 	public void loadDebugWorld()
 	{
 		sectorX=2;
@@ -38,7 +56,7 @@ public class WorldManager
 		background=Bitmap.createBitmap(BitmapFactory.decodeResource(MA.getResources(),R.drawable.galactic_outflow,bitmapOptions));
 
 		Random rand=new Random();
-        //entityManager.addObject(new EnemyShip(900,1000,0, "debug enemy",gameManager));
+        
 		entityManager.addObject(new FuelGenerator(1200,900,rand.nextInt(180), gameManager));
 		entityManager.addObject(new BigSmelter(1100,900,rand.nextInt(180), gameManager));
 		entityManager.addObject(new ModularLab(1000,900,rand.nextInt(180), gameManager));
@@ -48,19 +66,22 @@ public class WorldManager
 		entityManager.addObject(new SmallCargoContainer(600,900,rand.nextInt(180), gameManager));
         entityManager.addObject(gameManager.getPlayer());
 		for (int i=0;i<50;i++)
-			entityManager.addObject(new Asteroid(50*rand.nextInt(50)+25*rand.nextInt(20),100*rand.nextInt(20)+20*rand.nextInt(50),rand.nextInt(180), gameManager));
+			entityManager.addObject(new Asteroid(50*rand.nextInt(50)+25*rand.nextInt(20),100*rand.nextInt(20)+20*rand.nextInt(50),rand.nextInt(180), gameManager,rand.nextInt(10)));
 	}
 	
 	public void updateWorld()
 	{
-		//Render Box
+		int i=0;
 		for(Entity e : entityManager.getArray())
 		{
 			if(e.getActive())
 			{
 
 				if((gameManager.getCamera().getScreenRect().contains(e.getRenderBox()))||(RectF.intersects(gameManager.getCamera().getScreenRect(),e.getRenderBox())))
+				{
 					e.setRenderable(true);
+					i++;
+				}
 				else
 					e.setRenderable(false);
 			}
@@ -69,11 +90,13 @@ public class WorldManager
 		}
 		
 		//objects ticks
+		gameManager.gamePanel.debugText.setString("objects in render:"+ i);
 		entityManager.tick();
 	}
 	
 	public void renderWorld(Canvas canvas)
 	{
+		//if(background!=null)
 		canvas.drawBitmap(background,0,0,null);
 		entityManager.render(canvas);
 	}
@@ -128,23 +151,21 @@ public class WorldManager
 
 	public void randomSector()
     {
-
-       entityManager.reload();
+       	entityManager.reload();
         Random rand=new Random();
-
         Entity e=entityManager.createObject(rand.nextInt(6));
         e.setWorldLocation(new PointF(900,900));
         e.calculateCollisionObject();
         entityManager.addObject(e);
-        //for (int i=0;i<50;i++)
-          //  entityManager.addObject(new Asteroid(50*rand.nextInt(50)+25*rand.nextInt(20),100*rand.nextInt(20)+20*rand.nextInt(50),rand.nextInt(180), gameManager));
+        for (int i=0;i<50;i++)
+           entityManager.addObject(new Asteroid(50*rand.nextInt(50)+25*rand.nextInt(20),100*rand.nextInt(20)+20*rand.nextInt(50),rand.nextInt(180), gameManager,rand.nextInt(10)));
     }
 
     public void warpToSector(int x,int y)
     {
-        MA.saveFile("sector-"+sectorX+"-"+sectorY);
-       sectorX=x;
-       sectorY=y;
+		MA.saveFile("sector-"+sectorX+"-"+sectorY);
+		sectorX=x;
+		sectorY=y;
         if(MA.loadFile("sector-"+x+"-"+y)==1)
         {
            randomSector();
