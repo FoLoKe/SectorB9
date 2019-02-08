@@ -17,6 +17,18 @@
 		android:id="@+id/Menu"
 		android:layout_gravity="top|right"
 	/>
+<LinearLayout
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:layout_gravity="left|bottom"
+	android:id="@+id/ActiontUi_buttonsLinearLayout"
+	>
+	<ImageButton
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:id="@+id/shootButton"
+	/>
+</LinearLayout>
 <ViewFlipper
 	android:id="@+id/UIFlipper"
 	android:layout_width="match_parent"

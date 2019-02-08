@@ -30,7 +30,7 @@ public class Player extends DynamicEntity
         this.dx=this.dy=0;
         this.movable=false;
 		this.renderable=true;
-		//this.speed=1;
+		speed=1;
 		this.inventoryMaxCapacity=10;
 		for (int i=0;i<inventory.getHeight();i++)
 		for(int j=0;j<inventory.getWidth();j++)

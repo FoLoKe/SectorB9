@@ -20,7 +20,7 @@ import static java.lang.Math.sin;
 public abstract class DynamicEntity extends Entity {
 
    	float dx,dy;
-	static float speed=1;
+	float speed=1;
 	float acceleration=0;
 	float targetAcceleration=0;
 	float deceleraton=0.05f;
@@ -72,12 +72,13 @@ public abstract class DynamicEntity extends Entity {
 			
 		if(acceleration<0)
 			acceleration=0;
-		if(acceleration>1)
-			acceleration=1;
+		//if(acceleration>1)
+		//	acceleration=1;
 
 		
 		this.dy =  (acceleration*speed * this.frontPoint.y);
 		this.dx = (acceleration*speed *this.frontPoint.x);
+		if(targetAcceleration>0)
 		targetAcceleration-=0.05;
 		
 		
@@ -108,11 +109,8 @@ public abstract class DynamicEntity extends Entity {
 		
         for (Entity e : getGameManager().getEntities())
         {
-			double timecheck=System.nanoTime();
-			
             if(e!=this)
 			{
-				
            		if(e.active)
            	 	{
                	 	if(e.collidable)
@@ -131,14 +129,10 @@ public abstract class DynamicEntity extends Entity {
                             	}
                         	}
                     	}
-						gameManager.getGamePanel().textDebug2.setString(System.nanoTime()-timecheck+"ms");
                 	}
             	}
 			}
         }
-
-  
-       
         timerTick();
 
         x += dx;
@@ -169,19 +163,18 @@ public abstract class DynamicEntity extends Entity {
 
 	public void addMovement()
 	{
-		
 		targetAcceleration=1;
-	    acceleration=0.5f;
-		float mathRotation=(float)(PI/180*rotation);
+	    //acceleration=0;
+		//float mathRotation=(float)(PI/180*rotation);
 			 //screen relative rotation
-		this.dy = -(float) (acceleration*speed * cos(mathRotation));
-		this.dx = (float) (acceleration*speed * sin(mathRotation));
+		//this.dy = -(float) (acceleration*speed * cos(mathRotation));
+		//this.dx = (float) (acceleration*speed * sin(mathRotation));
 
 	}
 	
 	public float getAcceleration()
 	{
-		return acceleration;
+		return targetAcceleration;
 	}
 
 	public boolean getMoveable()

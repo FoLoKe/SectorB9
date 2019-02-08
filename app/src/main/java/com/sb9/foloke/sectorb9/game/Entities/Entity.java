@@ -275,7 +275,7 @@ public abstract class Entity {
 	{
         transformMatrix.reset();
         transformMatrix.postRotate(rotation);
-		collisionObject=new CustomCollisionObject(points,this);
+		collisionObject=new CustomCollisionObject(width,height,0,0);
         calculateCollisionObject();
 	}
 
@@ -287,7 +287,7 @@ public abstract class Entity {
 
 	public void calculateCollisionObject()
 	{
-		collisionObject.calculateCollisionObject(transformMatrix);
+		collisionObject.calculateCollisionObject(x,y);
 	}
 
 	public void setWorldRotation(float rotation)

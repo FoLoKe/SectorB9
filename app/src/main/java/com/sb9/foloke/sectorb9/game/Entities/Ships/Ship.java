@@ -36,7 +36,7 @@ public class Ship
 	public void setPoints(PointF points[])
 	{
 		this.collisionInitPoints=points;
-		collisonObject=new CustomCollisionObject(points,holder);
+		collisonObject=new CustomCollisionObject(shipImage.getWidth(),shipImage.getHeight(),0,0);
 	}
 	public void render(Canvas canvas)
 	{
@@ -89,7 +89,7 @@ public class Ship
 	}
 	public void calculateCollisionObject(Matrix matrix)
 	{
-		collisonObject.calculateCollisionObject(matrix);
+		collisonObject.calculateCollisionObject(holder.getX(),holder.getY());
 	}
 	
 	public void shoot()

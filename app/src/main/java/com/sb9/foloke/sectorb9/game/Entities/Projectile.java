@@ -17,7 +17,7 @@ public class Projectile extends DynamicEntity
 	private boolean collided=false;
 	//private Timer dustDelay;
 	private Entity parent;
-	
+	private float addedAcceleration;
 	
 	public Projectile(float x, float y, Bitmap image, String name, int lifetime, float speed, float rotation, int damage,Entity parent, GameManager gameManager)
 	{
@@ -42,17 +42,16 @@ public class Projectile extends DynamicEntity
 			//dustPuff.render(canvas,x,y);
 		}
 		else
-		if(active)
-		{
-		canvas.save();
-		canvas.rotate(rotation,getCenterX(),getCenterY());
-			
-		canvas.drawBitmap(image,x,y,null);
-		canvas.restore();
+			if(active)
+			{
+				canvas.save();
+				canvas.rotate(rotation,getCenterX(),getCenterY());	
+				canvas.drawBitmap(image,x,y,null);
+				canvas.restore();
 
-            if(gameManager.drawDebugInfo)
-                drawDebugCollision(canvas);
-		}
+   		        if(gameManager.drawDebugInfo)
+               		drawDebugCollision(canvas);
+			}
 
 	}
 
@@ -61,7 +60,8 @@ public class Projectile extends DynamicEntity
 	{
 		if(active) 
 		{
-			
+			targetAcceleration=1f+addedAcceleration;
+			acceleration=targetAcceleration;
             super.tick();
 			
             if (lifeTimer.tick())
@@ -70,8 +70,8 @@ public class Projectile extends DynamicEntity
                	 	active = false;
 				return;
 			}
-			acceleration=1;
-		
+			
+			gameManager.getGamePanel().textDebug2.setString(targetAcceleration+"");
 			//dustPuff.tick();
 			if(collided)
 			{
@@ -89,9 +89,7 @@ public class Projectile extends DynamicEntity
 
     @Override
     public void onCollide(Entity e){
-
-       e.applyDamage((damage));
-
+       	e.applyDamage((damage));
         //dustDelay.setTimer(effectDelay);
         collided=true;
         this.lifeTimer.setTimer(0);
@@ -105,7 +103,7 @@ public class Projectile extends DynamicEntity
 	{
 		return active;
 	}
-	public void shoot(PointF point,float rotation)
+	public void shoot(PointF point,float rotation,float acceleration)
 	{
 		active=false;
 		collided=false;
@@ -114,7 +112,7 @@ public class Projectile extends DynamicEntity
 		setCenterY(point.y);
 		this.rotation=rotation;
 		this.lifeTimer.setTimer(lifetime);
-
+		addedAcceleration=acceleration;
 
 		renderable=true;
 		active=true;

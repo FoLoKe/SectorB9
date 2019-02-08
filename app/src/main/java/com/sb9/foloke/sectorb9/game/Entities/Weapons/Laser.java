@@ -60,9 +60,8 @@ public class Laser extends Weapon
 			for (Entity e: gameManager.getEntities())
 				if(e!=turret.getParent().getHolder())
 				    if(e.getActive())
-					    for(Line2D CE : e.getCollisionObject().getCollisionlines())
-						{
-						    if(CE.lineLine(line)) {
+						    if(line.intersect(e.getCollisionObject().getCollisionBox())) 
+								{
                                 tDistance = distanceTo(line.getPoint());
                                 turret.getParent().getHolder().getGameManager().getGamePanel().debugText.setString("" + distance);
                                 if (tDistance < distance) {
@@ -70,7 +69,7 @@ public class Laser extends Weapon
                                     hitedEntity = e;
                                     hitPoint = line.getPoint();
                                 }
-                            }
+                            
 						}
             if (hitedEntity!=null) {
                 hitedEntity.applyDamage(1);

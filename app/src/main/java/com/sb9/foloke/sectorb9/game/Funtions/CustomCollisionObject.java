@@ -4,13 +4,16 @@ import com.sb9.foloke.sectorb9.game.Entities.*;
 
 public class CustomCollisionObject
 {
-	
-	private PointF collisionPoints[];
-	private PointF collisionInitPoints[];
-	private Line2D collisionlines[];
-	private Entity parent;
+	///calculations is too heavy make rectangles
+	private float width,height,offsetX,offsetY;
+	private RectF collisionBox;
+	//private PointF collisionPoints[];
+	//private PointF collisionInitPoints[];
+	//private Line2D collisionlines[];
+	//private Entity parent;
+	private Paint paint;
 
-	public CustomCollisionObject(PointF collisionInitPoints[],Entity parent)
+	/*public CustomCollisionObject(PointF collisionInitPoints[],Entity parent)
 	{
 		this.parent=parent;
 		this.collisionInitPoints=collisionInitPoints;
@@ -32,11 +35,50 @@ public class CustomCollisionObject
             else
                 collisionPoints[i].set(x + parent.getCenterX(),y+parent.getCenterY());
         }
+	}*/
+	
+	public CustomCollisionObject(float widht,float heigth,float offsetX,float offsetY)
+	{
+		this.width=widht;
+		this.height=heigth;
+		this.offsetX=offsetX;
+		this.offsetY=offsetY;
+		collisionBox=new RectF();
+		paint=new Paint();
+		paint.setColor(Color.GREEN);
+		paint.setStyle(Paint.Style.STROKE);
 	}
 	
-	public void calculateCollisionObject(Matrix m)
+	public void calculateCollisionObject(float x,float y)
+	{
+		
+		collisionBox.set(x+offsetX,y+offsetY,x+width+offsetX,y+height+offsetY);
+	}
+	
+	public boolean intersect(RectF obj)
+	{
+		
+		return collisionBox.intersects(obj,collisionBox);
+		
+	}
+	
+	public boolean intersects(CustomCollisionObject obj)
+	{
+		return RectF.intersects(obj.getCollisionBox(),collisionBox);
+	}
+	
+	public RectF getCollisionBox()
+	{
+		return collisionBox;
+	}
+	public void render(Canvas canvas)
+	{
+		canvas.drawRect(collisionBox,paint);
+	}
+	/*public void calculateCollisionObject(Matrix m)
 	{
 
+		
 		for (int i=0;i<collisionInitPoints.length;i++)
 		{
 		    float[] temp={0,0};
@@ -54,11 +96,13 @@ public class CustomCollisionObject
                 collisionlines[i].set(collisionPoints[i].x,collisionPoints[i].y
                         ,collisionPoints[0].x,collisionPoints[0].y);
         }
+	
 
 	}
 	
 	public boolean intersect(RectF rect)
 	{
+		
 		for(Line2D l: collisionlines)
 		{
 			if(l.intersect(rect))
@@ -70,6 +114,7 @@ public class CustomCollisionObject
 	}
 	public boolean intersect(Line2D line)
 	{
+		double timecheck=System.nanoTime();
 		boolean collision=false;
 		for(Line2D l: collisionlines)
 		{
@@ -78,7 +123,9 @@ public class CustomCollisionObject
 				collision=true;
 
 		}
+		parent.getGameManager().getGamePanel().textDebug2.setString(System.nanoTime()-timecheck+"ms");
 		return  collision;
+		
 
 	}
 	public void render(Canvas canvas)
@@ -101,5 +148,5 @@ public class CustomCollisionObject
 
 	public Line2D[] getCollisionlines() {
 		return collisionlines;
-	}
+	}*/
 }

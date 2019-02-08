@@ -15,37 +15,40 @@ public class ProjectilesPool
 		projectiles=new ArrayList<Projectile>();
 		for(int i=0;i<maxSize;i++)
 		{
-			projectiles.add(new Projectile(0,0,image,"p"+i,(int)1,speed,0,damage,parent, gameManager));
+			projectiles.add(new Projectile(0,0,image,"p"+i,(int)4,speed,0,damage,parent, gameManager));
 		}
+	}
+	
+	public List<Projectile> getArray()
+	{
+		return projectiles;
+	}
+	
+	public void tick()
+	{
+		for(Projectile p:projectiles)
+		{	
+			p.tick();
 		}
-		public List<Projectile> getArray()
+	}
+	
+	public void render(Canvas canvas)
+	{
+		for(Projectile p:projectiles)
 		{
-			return projectiles;
+			p.render(canvas);
 		}
-		public void tick()
+	}
+	
+	public void shoot(PointF point,float rotation)
+	{
+		for(Projectile p:projectiles)
 		{
-			for(Projectile p:projectiles)
+			if(!p.getActive())
 			{
-				
-				p.tick();
+				p.shoot(point,rotation,((DynamicEntity)parent).getAcceleration());
+				return;
 			}
 		}
-		public void render(Canvas canvas)
-		{
-			for(Projectile p:projectiles)
-			{
-				p.render(canvas);
-			}
-		}
-		public void shoot(PointF point,float rotation)
-		{
-			for(Projectile p:projectiles)
-			{
-				if(!p.getActive())
-				{
-					p.shoot(point,rotation);
-					return;
-				}
-			}
-		}
+	}
 }
