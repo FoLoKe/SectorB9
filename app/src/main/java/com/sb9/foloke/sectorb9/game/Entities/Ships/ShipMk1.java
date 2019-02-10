@@ -16,6 +16,8 @@ public class ShipMk1 extends Ship
 		collisionInitPoints[2]=new PointF(shipImage.getWidth()/2,shipImage.getHeight()/2);
 		setPoints(collisionInitPoints);
 		turrets=new TurretSystem[1];
+		holder.setSpeed(3);
+		holder.setRotationSpeed(5);
 		turrets[0]=new TurretSystem(pointOfShooting,1,holder.getGameManager(),this);
 	}
 }

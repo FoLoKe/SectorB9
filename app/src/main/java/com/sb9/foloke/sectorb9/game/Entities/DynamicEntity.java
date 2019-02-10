@@ -4,19 +4,12 @@ import android.graphics.Bitmap;
 import android.graphics.PointF;
 import android.graphics.Canvas;
 import android.graphics.*;
-
-import com.sb9.foloke.sectorb9.MainActivity;
-import com.sb9.foloke.sectorb9.game.Funtions.Line2D;
 import com.sb9.foloke.sectorb9.game.Managers.GameManager;
 
-import java.util.Vector;
-
-import static java.lang.Math.PI;
 import static java.lang.Math.abs;
-import static java.lang.Math.cos;
-import static java.lang.Math.sin;
 
 
+///TODO NO COLLISION WITH TEAM AND DO NOT DAMAGE
 public abstract class DynamicEntity extends Entity {
 
    	float dx,dy;
@@ -24,9 +17,12 @@ public abstract class DynamicEntity extends Entity {
 	float acceleration=0;
 	float targetAcceleration=0;
 	float deceleraton=0.05f;
+	float rotationSpeed=0.01f;
 	boolean movable;
 	PointF frontPoint=new PointF(1,0);
-
+	float frontAcceleration=0.01f;
+	float frontDeceleration=0.01f;
+	
     DynamicEntity(float x, float y, float rotation, Bitmap image, String name, GameManager gameManager, int ID)
     {
         super(x,y,rotation,image,name, gameManager,ID);
@@ -42,7 +38,7 @@ public abstract class DynamicEntity extends Entity {
 		Paint tPaint=new Paint();
 		tPaint.setColor(Color.rgb(255,255,0));
 		tPaint.setStrokeWidth(5);
-		canvas.drawLine(getCenterX(),getCenterY(),getCenterX()+dx*20,getCenterY()+dy*20,tPaint);
+		canvas.drawLine(getCenterX(),getCenterY(),getCenterX()+frontPoint.x*acceleration*20,getCenterY()+frontPoint.y*acceleration*20,tPaint);
 	}
 
 	public void impulse(PointF pointOfimpulse,float dx,float dy)
@@ -66,9 +62,9 @@ public abstract class DynamicEntity extends Entity {
 	private void calculateMovement()
 	{
 		if(acceleration<targetAcceleration)
-			acceleration+=0.01;
+			acceleration+=frontAcceleration;
 		else
-			acceleration-=0.01;
+			acceleration-=frontDeceleration;
 			
 		if(acceleration<0)
 			acceleration=0;
@@ -149,15 +145,25 @@ public abstract class DynamicEntity extends Entity {
     public boolean rotationToPoint(PointF point,float p)
 	{
         PointF B=new PointF(getCenterX()-point.x,getCenterY()-point.y);
+		float BLength=(float)Math.sqrt(B.x*B.x+B.y*B.y);
+		B.set(B.x/BLength,B.y/BLength);
         float sinPhi = (frontPoint.x*B.y - frontPoint.y*B.x);
-
-        if (sinPhi < -5)
-            rotation++;
-        if (sinPhi >=5)
-            rotation--;
-
-        if(sinPhi>-10-10*p&&sinPhi<10+10*p)
+		
+		if(sinPhi>-0.02&&sinPhi<0.02)
             return true;
+		sinPhi*=100;
+		if(Math.abs(sinPhi)<rotationSpeed)
+		{
+			rotation-=sinPhi/2;
+		}
+		else
+		{
+    	    if (sinPhi < 0)
+          		rotation+=rotationSpeed;
+        	if (sinPhi >=0)
+				rotation-=rotationSpeed;
+		}
+       
         return false;
 	}
 
@@ -199,6 +205,24 @@ public abstract class DynamicEntity extends Entity {
 		if(gameManager.drawDebugInfo)
 			drawVelocity(canvas);
 	}
-
 	
+	public void setSpeed(float speed)
+	{
+		this.speed=speed;
+	}
+
+	public void setRotationSpeed(float rotationSpeed)
+	{
+		this.rotationSpeed=rotationSpeed;
+	}
+	
+	public void setFrontAcceleration(float frontAcceleration)
+	{
+		this.frontAcceleration=frontAcceleration;
+	}
+	
+	public void setFrontDeceleration(float frontDeceleration)
+	{
+		this.frontDeceleration=frontDeceleration;
+	}
 }

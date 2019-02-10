@@ -11,14 +11,15 @@ import com.sb9.foloke.sectorb9.game.Entities.*;
 public class Minigun extends Weapon
 {
 	private Timer fireDelay=new Timer(0);
-	private int fireRate= 300;
+	private int fireRate= 200;
 	public  ProjectilesPool projectiles;
 	private int damage=2;
+	private float projectileSpeed=3;
 	
 	public Minigun(TurretSystem turret, GameManager gameManager)
 	{
 		super(turret, gameManager);
-		this.projectiles=new ProjectilesPool(WeaponsAsset.shell,1,500,damage,turret.getParent().getHolder(), gameManager);
+		this.projectiles=new ProjectilesPool(WeaponsAsset.shell,projectileSpeed,300,damage,turret.getParent().getHolder(), gameManager);
 	}
 	public void shoot()
 	{

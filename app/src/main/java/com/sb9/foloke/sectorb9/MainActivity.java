@@ -29,6 +29,9 @@ import com.sb9.foloke.sectorb9.game.Managers.GameManager;
 import com.sb9.foloke.sectorb9.game.UI.*;
 import com.sb9.foloke.sectorb9.game.Assets.*;
 import com.sb9.foloke.sectorb9.game.Display.GamePanel;
+import android.*;
+import android.content.pm.*;
+import android.os.*;
 
 public class MainActivity extends Activity {
 
@@ -45,15 +48,19 @@ public class MainActivity extends Activity {
 	public HelpUI helpui=new HelpUI();
 	public ShipUI shipUI;
 	public MapUI mapUI;
-	
+	private static final int PERMISSION_REQUEST_CODE = 123;
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+		if(!hasPermissions())
+			requestPerms();
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.main_activity);
         gamePanel =findViewById(R.id.Game);
         BitmapFactory.Options options=new BitmapFactory.Options();
+		
+		
 		
         options.inScaled=false;
 		helpui.init(this,VF,1);
@@ -178,5 +185,26 @@ public class MainActivity extends Activity {
         getGameManager().setPause(false);
         findViewById(R.id.Menu).setVisibility(View.VISIBLE);
         VF.setDisplayedChild(VF.indexOfChild(findViewById(R.id.actionUI)));
+    }
+	
+	private boolean hasPermissions(){
+        int res = 0;
+        //string array of permissions,
+        String[] permissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
+
+        for (String perms : permissions){
+            res = checkCallingOrSelfPermission(perms);
+            if (!(res == PackageManager.PERMISSION_GRANTED)){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void requestPerms(){
+        String[] permissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            requestPermissions(permissions,PERMISSION_REQUEST_CODE);
+        }
     }
 }

@@ -24,7 +24,7 @@ public abstract class Entity {
 	protected float maxHp=100;
 	protected float HP;
 	protected float rotation;
-	
+	public final int TEAM=0;
 	private int ID=0;
 	private int frameTimer;
 	protected int inventoryMaxCapacity=0;

@@ -7,6 +7,7 @@ import java.util.*;
 
 import android.graphics.*;
 import java.io.*;
+import com.sb9.foloke.sectorb9.game.Funtions.*;
 
 public class WorldManager
 {
@@ -36,7 +37,7 @@ public class WorldManager
 		BitmapFactory.Options bitmapOptions=new BitmapFactory.Options();
 		bitmapOptions.inScaled=false;
 		background=Bitmap.createBitmap(BitmapFactory.decodeResource(MA.getResources(),R.drawable.galactic_outflow,bitmapOptions));
-		//entityManager.addObject(new EnemyShip(900,1000,0, "debug enemy",gameManager));
+		
 		//entityManager.addObject(new EnemyShip(900,1032,0, "debug enemy",gameManager));
 		//entityManager.addObject(new EnemyShip(900,968,0, "debug enemy",gameManager));
 		entityManager.addObject(gameManager.getPlayer());
@@ -133,7 +134,10 @@ public class WorldManager
 	{
 		return entityManager;
 	}
-
+	public GameManager getGameManager()
+	{
+		return gameManager;
+	}
 	public void save(BufferedWriter w)
 	{
 		entityManager.save(w);
@@ -149,17 +153,7 @@ public class WorldManager
 		return new Point(sectorX,sectorY);
 	}
 
-	public void randomSector()
-    {
-       	entityManager.reload();
-        Random rand=new Random();
-        Entity e=entityManager.createObject(rand.nextInt(6));
-        e.setWorldLocation(new PointF(900,900));
-        e.calculateCollisionObject();
-        entityManager.addObject(e);
-        for (int i=0;i<50;i++)
-           entityManager.addObject(new Asteroid(50*rand.nextInt(50)+25*rand.nextInt(20),100*rand.nextInt(20)+20*rand.nextInt(50),rand.nextInt(180), gameManager,rand.nextInt(10)));
-    }
+	
 
     public void warpToSector(int x,int y)
     {
@@ -168,7 +162,7 @@ public class WorldManager
 		sectorY=y;
         if(MA.loadFile("sector-"+x+"-"+y)==1)
         {
-           randomSector();
+           WorldGenerator.makeRandomSector(this);
            MA.saveFile("sector-"+x+"-"+y);
         }
     }
