@@ -7,21 +7,16 @@ import android.graphics.*;
 
 public class DroppedItems extends Entity
 {
-	private final static int ID=0;
+	private final static int ID=9;
 	float x,y;
 	//Game game;
 	//protected HashMap<Integer,Integer> inventory;
-	public DroppedItems(float x, float y, Map<Integer,Integer> inventory, GameManager gameManager)
+	public DroppedItems(Entity e)
 	{
 		
-		super(x,y,((new Random()).nextInt(180)), BuildingsDataSheet.findById(ID).image,"g", gameManager,0);
-		this.x=x;
-		this.y=y;
-		this.inventoryMaxCapacity=inventory.size();
-		//this.inventory=new HashMap<Integer,Integer>();
-		//this.setInventory(inventory);
-		this.collidable=false;
-		this.opened=true;
+		super(e.getX(),e.getY(),e.getWorldRotation(), e.getGameManager(),ID);
+		inventory=e.getInventory();
+		
 	}
 	public void render(Canvas canvas)
 	{

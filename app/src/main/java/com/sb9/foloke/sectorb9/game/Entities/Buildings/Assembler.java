@@ -33,10 +33,9 @@ public class Assembler extends StaticEntity
 
 	public Assembler(float x, float y, float rotation, GameManager gameManager)
 	{
-		super(x,y,rotation, BuildingsDataSheet.findById(ID).image,BuildingsDataSheet.findById(ID).name, gameManager,ID);
+		super(x,y,rotation, gameManager,ID);
 		assemblerAnim=new Animation( BuildingsDataSheet.findById(ID).animation,30);
-		this.inventoryMaxCapacity=5;
-		this.opened=true;
+		
 		inProduction=0;
 		prodTimer=new Timer(0);
 		prgBar=new ProgressBarUI(this,50,8,-25,-20,UIAsset.stunBackground,UIAsset.stunLine,UIAsset.progressBarBorder,prodTimer.getTick());
@@ -119,7 +118,7 @@ public class Assembler extends StaticEntity
 								inProduction=tProduction;
 								productionQueue.remove(0);
 							
-								if(gameManager.getMainActivity().assemblerUIi.getOpened())
+								if(AssemblerUI.getOpened())
 									gameManager.initAssemblerUI(this);
 							}
 						}
@@ -135,7 +134,7 @@ public class Assembler extends StaticEntity
 						gameManager.updateInventory(this);
 						assembling=false;
 						inProduction=0;
-						if(gameManager.getMainActivity().assemblerUIi.getOpened())
+						if(AssemblerUI.getOpened())
 							gameManager.initAssemblerUI(this);
 					}
 					for(EntitySocket arm:arms)
@@ -168,7 +167,7 @@ public class Assembler extends StaticEntity
 		else
 			///error
 			{}
-		if(gameManager.getMainActivity().assemblerUIi.getOpened())
+		if(AssemblerUI.getOpened())
 			gameManager.initAssemblerUI(this);
 	}
 	public ArrayList<Integer> getQueue()

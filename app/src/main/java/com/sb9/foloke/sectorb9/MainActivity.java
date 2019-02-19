@@ -32,19 +32,23 @@ import com.sb9.foloke.sectorb9.game.Display.GamePanel;
 import android.*;
 import android.content.pm.*;
 import android.os.*;
+import com.sb9.foloke.sectorb9.game.UI.MainMenu.*;
+import android.graphics.*;
+import android.view.View.*;
+import android.app.*;
+import android.content.*;
 
 public class MainActivity extends Activity {
 
-    private GamePanel gamePanel;
+    private static GamePanel gamePanel;
 
 	
 
 	private ViewFlipper VF;
 	private BuildUI buildUI=new BuildUI();
-	public AssemblerUI assemblerUIi=new AssemblerUI();
+	
 	public MenuUI menuUI=new MenuUI();
-	public InteractionUI uiInteraction=new InteractionUI();
-	private ActionUI uiAction =new ActionUI();
+	
 	public HelpUI helpui=new HelpUI();
 	public ShipUI shipUI;
 	public MapUI mapUI;
@@ -56,15 +60,89 @@ public class MainActivity extends Activity {
 		if(!hasPermissions())
 			requestPerms();
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		prepareMenu();
+	}
+	
+	public void prepareMenu()
+	{
+		setContentView(R.layout.main_menu);
+		
+		Button startNewGameButton= findViewById(R.id.new_game_button);
+	
+		startNewGameButton.setOnClickListener(new OnClickListener()
+		{
+			public void onClick(View v)
+			{
+				makeOnNewGameDialog();
+			}
+		});
+		
+		Button loadGameButton= findViewById(R.id.load_game_button);
+		
+		loadGameButton.setOnClickListener(new OnClickListener()
+			{
+				public void onClick(View v)
+				{
+					loadGame();
+				}
+			});
+	}
+	
+	private void makeOnNewGameDialog()
+	{
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		
+		LinearLayout LL=new LinearLayout(this);
+		LL.setGravity(Gravity.CENTER);
+		final EditText input = new EditText(MainActivity.this);  
+		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+			LinearLayout.LayoutParams.WRAP_CONTENT,
+			LinearLayout.LayoutParams.WRAP_CONTENT);
+		LL.setLayoutParams(lp);
+		LL.setOrientation(LinearLayout.VERTICAL);
+		input.setLayoutParams(lp);
+		
+		final TextView text = new TextView(MainActivity.this);  
+		text.setLayoutParams(lp);
+		text.setText("Enter save name");
+
+		builder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					
+					prepareNewGame(input.getText().toString());
+				}
+			});
+		builder.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					
+					
+				}
+			});
+		
+		AlertDialog dialog = builder.create();
+		
+		LL.addView(text);
+		LL.addView(input);
+		
+		dialog.setView(LL);
+		dialog.show();
+	}
+	
+	private void prepareNewGame(String s)
+	{
+		if(s==""||s==null||s==" "||s.length()==0)
+		{
+			makeToast("wrong savename");
+			return;
+		}
+		
         setContentView(R.layout.main_activity);
         gamePanel =findViewById(R.id.Game);
+		gamePanel.getGameManager().setSaveName(s);
         BitmapFactory.Options options=new BitmapFactory.Options();
-		
-		
 		
         options.inScaled=false;
 		helpui.init(this,VF,1);
-		
 		
 		TableLayout playerTable=findViewById(R.id.PlayerTableLayout);
 		TableLayout objectTable=findViewById(R.id.ObjectTableLayout);
@@ -75,51 +153,113 @@ public class MainActivity extends Activity {
 		VF.setDisplayedChild(VF.indexOfChild(findViewById(R.id.actionUI)));
 		
 		buildUI.init(this,VF);
-		uiAction.init(this,VF);
-		uiInteraction.init(this,VF,null);
+		ActionUI.init(this,VF);
+		InteractionUI.init(this,VF,null);
 			
 		findViewById(R.id.menuUILinearLayout).setBackground(new BitmapDrawable(this.getResources(),UIAsset.uiBgBlur));
 		
 		final FrameLayout menuUIFrame=findViewById(R.id.menuUI);
 		final MainActivity MA=this;
+		
 		mapUI=new MapUI(this);
 		mapUI.init(this,VF);
 		Button menuButton=findViewById(R.id.Menu);
-		menuButton.setOnClickListener
-		
-		(new OnClickListener() 
+		menuButton.setOnClickListener(new OnClickListener() 
+		{
+			@Override
+			public void onClick(View v) 
 			{
-				@Override
-				public void onClick(View v) 
-				{
-					final int a=VF.getDisplayedChild();
-					menuUI.init(MA,VF,a);
-					VF.setDisplayedChild(VF.indexOfChild(menuUIFrame));
-					gamePanel.getGameManager().setPause(true);
-					v.setVisibility(View.GONE);
-				}
-			});
-    }
+				final int a=VF.getDisplayedChild();
+				menuUI.init(MA,VF,a);
+				VF.setDisplayedChild(VF.indexOfChild(menuUIFrame));
+				gamePanel.getGameManager().setPause(true);
+				v.setVisibility(View.GONE);
+			}
+		});
+	}
 	
+	public int prepareNewLoad(String s)
+	{
+		prepareNewGame(s);
+		String fileName="";
+		String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString()+File.separator+"sb9"+File.separator+s;
+		File myDir = new File(root);
+		if (!myDir.exists()) {
+			makeToast("Error: no directory");
+			return -1;
+		}
+		String metaFileName="meta.txt";
+		File metaFile = new File (myDir, metaFileName);
+		if (!metaFile.exists ())
+		{makeToast("Error: no metaFile");
+			return -4;}
+		else
+		{
+			try
+			{
+				FileInputStream inputStream = new FileInputStream(metaFile);	
+				if (inputStream != null)
+				{
+					InputStreamReader isr = new InputStreamReader(inputStream);
+					BufferedReader reader = new BufferedReader(isr);
+					fileName=reader.readLine();
+					inputStream.close();
+					reader.close();
+					isr.close();
+				}
+			}
+			catch(Exception e){
+				makeToast(e.toString());
+				return -5;}
+		}
+		gamePanel.getGameManager().getPlayer().initShip();
+		loadFile(fileName,s);
+		makeToast("Successfully loaded");
+		return 0;
+	}
+    
+	public void loadGame()
+	{
+		setContentView(R.layout.load_game_ui);
+		LoadGameUI.init(this);
+		
+	}
 	
 	public ViewFlipper getViewFlipper()
 	{
 		return VF;
 	}
 	
-	public void saveFile(String fileName) {
+	public void saveFile(String fileName,String saveName) {
         try {
-            String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString()+File.separator+"sb9";
+			String fname = "save"+fileName+".txt";
+            String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString()+File.separator+"sb9"+File.separator+saveName;
             File myDir = new File(root);
             if (!myDir.exists()) {
                 myDir.mkdir();
             }
+			
+			String metaFileName="meta.txt";
+			File metaFile = new File (myDir, metaFileName);
+				if (metaFile.exists ())
+					metaFile.delete ();
+			FileOutputStream mout = new FileOutputStream(metaFile);
+            OutputStreamWriter mosw = new OutputStreamWriter(mout);
+            BufferedWriter mwriter = new BufferedWriter(mosw);
 
-            String fname = "save "+fileName+".txt";
+            mwriter.write(fname);
+			mwriter.newLine();
+            
+
+            mwriter.close();
+            mosw.close();
+					
+            
             File file = new File (myDir, fname);
             if (file.exists ())
                 file.delete ();
-
+			Bitmap image=getBitmapFromView(findViewById(R.id.Game));
+			image.compress(Bitmap.CompressFormat.JPEG, 100, new FileOutputStream(new File(root,"image.jpg")));
             FileOutputStream out = new FileOutputStream(file);
             OutputStreamWriter osw = new OutputStreamWriter(out);
             BufferedWriter writer = new BufferedWriter(osw);
@@ -130,26 +270,27 @@ public class MainActivity extends Activity {
             
             writer.close();
             osw.close();
+			makeToast("Successfully saved");
         } catch (Throwable e) {
+			makeToast(e.toString());
            System.err.print(e);
         }
     }
 	
-	public int loadFile(String fileName) {
+	public int loadFile(String fileName,String SaveName) {
         
         try {
-
-            String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString()+File.separator+"sb9";
-            File myDir = new File(root);
-            if (!myDir.exists()) {
-              return -1; // "no directory";
-            }
-
-            String fname = "save "+fileName+".txt";
-            File file = new File (myDir, fname);
+			String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString()+File.separator+"sb9"+File.separator+SaveName;
+			File myDir = new File(root);
+			if (!myDir.exists()) {
+				makeToast("Error: no directory");
+				return -1;
+			}
+               
+            File file = new File (myDir, fileName);
             if (file.exists ())
             {
-                //InputStream inputStream = openFileInput(fileName);
+               
                 FileInputStream inputStream = new FileInputStream(file);
 
                 if (inputStream != null)
@@ -160,18 +301,21 @@ public class MainActivity extends Activity {
                     inputStream.close();
                     reader.close();
                     isr.close();
-					
-                    return 0; //all ok;
+					makeToast("Successfully loaded file");
+                    return 0;
                 }
             }
             else
             {
-                return 1;// "no such file";
+				makeToast("Error: no such file from meta");
+                return 1;
             }
         } catch (Throwable t)
         {
-            return -2;// "error:"+ t.getLocalizedMessage();
+			makeToast(t.toString());
+            return -2;
         }
+		makeToast("Cant reach that!");
         return -3;
     }
 
@@ -189,7 +333,6 @@ public class MainActivity extends Activity {
 	
 	private boolean hasPermissions(){
         int res = 0;
-        //string array of permissions,
         String[] permissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
         for (String perms : permissions){
@@ -207,4 +350,25 @@ public class MainActivity extends Activity {
             requestPermissions(permissions,PERMISSION_REQUEST_CODE);
         }
     }
+	
+	public static Bitmap getBitmapFromView(View view) {
+		
+		view.setDrawingCacheEnabled(true);
+		view.buildDrawingCache(true);	
+		final Bitmap bitmap = Bitmap.createBitmap( view.getDrawingCache() );
+		Canvas c=new Canvas(bitmap);
+		gamePanel.render(c);
+		view.setDrawingCacheEnabled(false);
+		view.destroyDrawingCache();
+		return bitmap;
+		
+	}
+	
+	public void makeToast(String toastText)
+	{
+		Context context = getApplicationContext();
+		int duration = Toast.LENGTH_SHORT;
+		Toast toast = Toast.makeText(context, toastText, duration);
+		toast.show();
+	}
 }

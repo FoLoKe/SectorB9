@@ -22,11 +22,13 @@ public class EnemyShip extends DynamicEntity {
     private EnemyAI AI;
     private Ship ship;
 
-    public EnemyShip(int x, int y, int rotation, String name, GameManager gameManager)
+    public EnemyShip(int x, int y, int rotation, GameManager gameManager)
     {
-        super(x,y,rotation, ShipAsset.cursor,name,gameManager,-1);
+        super(x,y,rotation,gameManager,-1);
         this.ship=new ShipMk1(this);
         AI=new EnemyAI(this);
+	
+		TEAM=2;
     }
 
     @Override
@@ -42,31 +44,21 @@ public class EnemyShip extends DynamicEntity {
         AI.tick();
 
         ship.tick();
-        ship.calculateCollisionObject(transformMatrix);
-
     }
-
-    private void impulse(Entity e)
+	
+	@Override
+    public void calculateCollisionObject()
     {
-        float trotation=360-(float)Math.toDegrees(Math.PI+Math.atan2(-e.getCenterX()+x,-e.getCenterY()+y));
-        float mathRotation=(float)(PI/180*trotation);
-        this.dy = -(float) (0.2*speed * cos(mathRotation));
-        this.dx = (float) (0.2*speed * sin(mathRotation));
+        super.calculateCollisionObject();
+
+        if(ship!=null)
+			ship.calculateCollisionObject(transformMatrix);
     }
 
+    
+   
     @Override
-    public void onCollide(Entity e) {
-        if (e instanceof DynamicEntity)
-            ((DynamicEntity)e).impulse(new PointF(0,0),dx,dy);
-        impulse(e);
-    }
-
-    @Override
-    public CustomCollisionObject getCollisionObject() {
-
-        ///return from ship
-        return ship.getCollisonObject();
-    }
+    public CustomCollisionObject getCollisionObject() {return ship.getCollisonObject();}
 
     public void shoot()
     {

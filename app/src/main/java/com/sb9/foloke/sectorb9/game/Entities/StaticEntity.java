@@ -10,14 +10,12 @@ public abstract class StaticEntity extends Entity {
 	
 	
 	private String name;
-	protected boolean energy=false;
-	protected boolean enabled=true;
-	protected boolean isInteractable=true;
+	
 	protected StaticEntity powerSupplier=null;
 	
-    public StaticEntity(float x, float y, float rotation, Bitmap image, String name, GameManager gameManager, int ID)
+    public StaticEntity(float x, float y, float rotation, GameManager gameManager, int ID)
     {
-        super(x,y,rotation,image,name, gameManager,ID);	
+        super(x,y,rotation, gameManager,ID);	
     }
 	public String getName()
 	{

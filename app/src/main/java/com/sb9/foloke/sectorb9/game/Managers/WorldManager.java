@@ -8,13 +8,14 @@ import java.util.*;
 import android.graphics.*;
 import java.io.*;
 import com.sb9.foloke.sectorb9.game.Funtions.*;
+import com.sb9.foloke.sectorb9.game.UI.*;
 
 public class WorldManager
 {
 	private MainActivity MA;
 	private EntityManager entityManager;
 	private GameManager gameManager;
-
+	private CustomCollisionObject interObject;
 	//background
 	private Bitmap background;
 
@@ -26,7 +27,7 @@ public class WorldManager
 		this.MA=MA;
 		this.gameManager = gameManager;
 		this.entityManager=new EntityManager(gameManager);
-		
+		interObject=new CustomCollisionObject(2,2,gameManager);
 		
 	}
 	
@@ -37,9 +38,11 @@ public class WorldManager
 		BitmapFactory.Options bitmapOptions=new BitmapFactory.Options();
 		bitmapOptions.inScaled=false;
 		background=Bitmap.createBitmap(BitmapFactory.decodeResource(MA.getResources(),R.drawable.galactic_outflow,bitmapOptions));
-		
-		//entityManager.addObject(new EnemyShip(900,1032,0, "debug enemy",gameManager));
-		//entityManager.addObject(new EnemyShip(900,968,0, "debug enemy",gameManager));
+		entityManager.addObject(new EnemyShip(910,2000,0,gameManager));
+		//entityManager.addObject(new EnemyShip(2000,900,0,"",gameManager));
+		//entityManager.addObject(new EnemyShip(200,200,45,"",gameManager));
+		//entityManager.addObject(new EnemyShip(400,400,90, "debug enemy",gameManager));
+		//entityManager.addObject(new EnemyShip(3000,3000,315, "debug enemy",gameManager));
 		entityManager.addObject(gameManager.getPlayer());
 		
 		Random rand=new Random();
@@ -66,6 +69,7 @@ public class WorldManager
 		entityManager.addObject(new Crusher(700,900,rand.nextInt(180), gameManager));
 		entityManager.addObject(new SmallCargoContainer(600,900,rand.nextInt(180), gameManager));
         entityManager.addObject(gameManager.getPlayer());
+		entityManager.addObject(new EnemyShip(700,900,0,gameManager));
 		for (int i=0;i<50;i++)
 			entityManager.addObject(new Asteroid(50*rand.nextInt(50)+25*rand.nextInt(20),100*rand.nextInt(20)+20*rand.nextInt(50),rand.nextInt(180), gameManager,rand.nextInt(10)));
 	}
@@ -104,11 +108,11 @@ public class WorldManager
 	
 	public void interactionCheck(float x,float y)
 	{
-
+		interObject.calculateCollisionObject(x,y);
 		Player player=gameManager.getPlayer();
 		for(Entity e: entityManager.getArray())
 		{
-			if(e.getCollisionObject().intersect(new RectF(x-32,y-32,x+32,y+32)))
+			if(e.getCollisionObject().intersects(interObject))
 			{
 				if(Math.sqrt(
 					   (e.getCenterX()-player.getCenterX())*(e.getCenterX()-player.getCenterX())
@@ -117,7 +121,7 @@ public class WorldManager
 					if(e instanceof StaticEntity)
 					{
 						gameManager.setPressedObject((StaticEntity)e);
-						MA.uiInteraction.init(MA,MA.getViewFlipper(),(StaticEntity)e);
+						InteractionUI.init(MA,MA.getViewFlipper(),(StaticEntity)e);
 					}
 
 				}							
@@ -146,6 +150,7 @@ public class WorldManager
 	public void load(BufferedReader r)
 	{
 		entityManager.load(r);
+		entityManager.addObject(gameManager.getPlayer());
 	}
 
 	public Point getSector()
@@ -157,13 +162,19 @@ public class WorldManager
 
     public void warpToSector(int x,int y)
     {
-		MA.saveFile("sector-"+sectorX+"-"+sectorY);
+		MA.saveFile("sector-"+sectorX+"-"+sectorY,gameManager.getSaveName());
 		sectorX=x;
 		sectorY=y;
-        if(MA.loadFile("sector-"+x+"-"+y)==1)
+        if(MA.loadFile("sector-"+x+"-"+y,gameManager.getSaveName())==1)
         {
            WorldGenerator.makeRandomSector(this);
-           MA.saveFile("sector-"+x+"-"+y);
+			MA.saveFile("sector-"+x+"-"+y,gameManager.getSaveName());
         }
     }
+	
+	public void spawnDestroyed(Entity e)
+	{
+		entityManager.addObject(new DroppedItems(e));
+		entityManager.deleteObject(e);
+	}
 }

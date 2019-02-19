@@ -32,11 +32,13 @@ import com.sb9.foloke.sectorb9.game.Funtions.Timer;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.util.ArrayList;
+import com.sb9.foloke.sectorb9.game.UI.*;
 
 public class GameManager {
 
     MainActivity MA;
     GamePanel gamePanel;
+	String saveName="0";
     //UIs
     private InventoryUI inventoryUi;
     private InventoryExchangeInterface excInterface;
@@ -105,7 +107,7 @@ public class GameManager {
 		
         player.addMovement(gamePanel.screenPointOfTouch,gamePanel.canvasW,gamePanel.canvasH);
         //player.RotationToPoint(gamePanel.pointOfTouch);
-        player.tick();
+       // player.tick();
 
         uIhp.set(player.getHp());
 
@@ -119,7 +121,10 @@ public class GameManager {
         if(drawDebugInfo)
         player.drawVelocity(canvas);
     }
-
+	public void spawnDestroyed(Entity e)
+	{
+		worldManager.spawnDestroyed(e);
+	}
     public GamePanel getGamePanel() {
         return gamePanel;
     }
@@ -195,6 +200,7 @@ public class GameManager {
     public void load(BufferedReader r)
     {
         worldManager.load(r);
+		
     }
 
     public void nullPressedObject()
@@ -218,7 +224,7 @@ public class GameManager {
             @Override
             public void run() {
 
-                MA.assemblerUIi.init(MA,assembler);
+                AssemblerUI.init(MA,assembler);
             }});
     }
 
@@ -247,4 +253,15 @@ public class GameManager {
 
         worldManager.warpToSector(x,y);
     }
+	
+	public String getSaveName()
+	{
+		return saveName;
+	}
+	
+	public void setSaveName(String s)
+	{
+		saveName=s;
+	}
+	
 }

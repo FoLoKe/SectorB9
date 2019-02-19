@@ -6,24 +6,6 @@
 	android:id="@+id/action_uiFrameLayout"
     >
     
-	<LinearLayout
-		android:layout_gravity="left"
-		android:orientation="vertical"
-		android:gravity="bottom"
-		android:layout_width="wrap_content"
-		android:layout_height="match_parent"
-		android:clickable="false" 
-		android:focusable="false">
-		
-		<Button
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:textColor="#ffffff"
-			android:text="DEBUG"
-			android:id="@+id/DEBUG"
-		/>
-
-	</LinearLayout>
 	
 	<LinearLayout
 		android:layout_gravity="center|top"

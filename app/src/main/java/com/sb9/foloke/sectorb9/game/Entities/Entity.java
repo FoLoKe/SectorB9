@@ -18,13 +18,13 @@ import com.sb9.foloke.sectorb9.game.UI.Inventory.*;
 
 public abstract class Entity {
 	
-	private float width=2,height=2;
-	private float relativeCentreX,relativeCenterY;
+	protected float width=2,height=2;
+	protected float relativeCentreX,relativeCenterY;
     protected float x,y;
 	protected float maxHp=100;
 	protected float HP;
 	protected float rotation;
-	public final int TEAM=0;
+	public int TEAM=0;
 	private int ID=0;
 	private int frameTimer;
 	protected int inventoryMaxCapacity=0;
@@ -33,8 +33,10 @@ public abstract class Entity {
 	protected boolean active=true;
 	protected boolean collidable=true;
 	protected boolean opened=false;
+	protected boolean energy=false;
+	protected boolean enabled=true;
+	protected boolean isInteractable=true;
 	
-	private PointF collisionInitPoints[];
 	private Paint debugPaint=new Paint();
 	private CustomCollisionObject collisionObject;
 	protected ProgressBarUI uIhp;
@@ -45,26 +47,38 @@ public abstract class Entity {
 	protected RectF renderBox=new RectF();
 	protected Bitmap image;
 	
-    public Entity(float x, float y, float rotation, Bitmap image, String name, GameManager gameManager, int ID)
+    public Entity(float x, float y, float rotation, GameManager gameManager, int ID)
     {
         this.debugPaint.setColor(Color.RED);
         this.debugPaint.setStyle(Paint.Style.STROKE);
         this.debugPaint.setStrokeWidth(2);
 		this.ID=ID;
+		
+		applyStandartOptions();
 		this.HP=maxHp;
         this.x=x;
         this.y=y;
 		this.gameManager = gameManager;
-        this.image=image;
+        
 		this.relativeCenterY=image.getHeight()/2;
 		this.relativeCentreX=image.getWidth()/2;
-		this.name=name;
-		this.inventory=new Inventory(this, BuildingsDataSheet.findById(ID).inventoryCapacity,4);
+		;
+		this.inventory=new Inventory(this, inventoryMaxCapacity,4);
 		this.rotation=rotation;
 		this.uIhp=new ProgressBarUI(this,50,8,-25,-20,UIAsset.hpBackground,UIAsset.hpLine,UIAsset.progressBarBorder,getHp());
-		this.ID=ID;
+		
 		createCollision();
     }
+	private void applyStandartOptions()
+	{
+		enabled					= BuildingsDataSheet.findById(ID).enabledByDefault;
+		inventoryMaxCapacity	= BuildingsDataSheet.findById(ID).inventoryCapacity;
+		isInteractable			= BuildingsDataSheet.findById(ID).interactableByDefault;
+		opened					= BuildingsDataSheet.findById(ID).openByDefault;
+		image					= BuildingsDataSheet.findById(ID).image;
+		name					= BuildingsDataSheet.findById(ID).name;
+		
+	}
 
     protected void createCollision()
     {
@@ -72,13 +86,10 @@ public abstract class Entity {
             width=image.getWidth();
         if(height<image.getHeight())
             height=image.getHeight();
-        collisionInitPoints=new PointF[4];
-        collisionInitPoints[0]=new PointF(-width/2,-height/2);
-        collisionInitPoints[1]=new PointF(width/2,-height/2);
-        collisionInitPoints[2]=new PointF(width/2,height/2);
-        collisionInitPoints[3]=new PointF(-width/2,height/2);
+        
+        
         renderBox.set(0,0,width,height);
-        setCollisionObject(collisionInitPoints);
+        setCollisionObject();
     }
 
 	public void save(BufferedWriter writer)
@@ -116,7 +127,7 @@ public abstract class Entity {
 					}
 				}
 			}
-			setCollisionObject(collisionInitPoints);
+			setCollisionObject();
 		}
 		catch(Throwable t)
 		{
@@ -136,6 +147,10 @@ public abstract class Entity {
 
     abstract public void render(Canvas canvas);
 
+	public void setImage(Bitmap i)
+	{
+		image=i;
+	}
     public void tick()
     {
         renderBox.set(getCenterX()-32,getCenterY()-32,getCenterX()+32,getCenterY()+32);
@@ -208,20 +223,11 @@ public abstract class Entity {
 		return frameTimer;
 	}
 
-	public Inventory getInventory()
-	{
-		return inventory;
-	}
+	public Inventory getInventory(){return inventory;}
 
-	public String getName()
-	{
-		return name;
-	}
+	public String getName(){return name;}
 
-	public float getWorldRotation()
-	{
-		return rotation;
-	}
+	public float getWorldRotation(){return rotation;}
 
 	public void applyDamage(int damage)
 	{
@@ -231,25 +237,14 @@ public abstract class Entity {
 			onDestroy();			
 	}
 	
-	private void onDestroy()
-	{
-		active=false;
-	}
+	private void onDestroy(){active=false;
+	gameManager.spawnDestroyed(this);}
 	
-	public void setCenterX(float x)
-	{
-		this.x=x-relativeCentreX;
-	}
+	public void setCenterX(float x){this.x=x-relativeCentreX;}
 
-	public void setCenterY(float y)
-	{
-		this.y=y-relativeCenterY;
-	}
+	public void setCenterY(float y){this.y=y-relativeCenterY;}
 
-	public float getHp()
-	{
-		return HP;
-	}
+	public float getHp(){return HP;}
 
 	public GameManager getGameManager()
 	{
@@ -271,11 +266,9 @@ public abstract class Entity {
 		return collisionObject;
 	}
 
-	private void setCollisionObject(PointF points[])
+	private void setCollisionObject()
 	{
-        transformMatrix.reset();
-        transformMatrix.postRotate(rotation);
-		collisionObject=new CustomCollisionObject(width,height,0,0);
+		collisionObject=new CustomCollisionObject(width,height,gameManager);
         calculateCollisionObject();
 	}
 
@@ -287,7 +280,7 @@ public abstract class Entity {
 
 	public void calculateCollisionObject()
 	{
-		collisionObject.calculateCollisionObject(x,y);
+		collisionObject.calculateCollisionObject(getCenterX(),getCenterY());
 	}
 
 	public void setWorldRotation(float rotation)
@@ -304,4 +297,9 @@ public abstract class Entity {
     {
         return renderBox;
     }
+	
+	public int getTeam()
+	{
+		return TEAM;
+	}
 }

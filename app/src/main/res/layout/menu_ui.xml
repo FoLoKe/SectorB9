@@ -52,7 +52,7 @@
 			/>
 		<Button
 			android:id="@+id/menu_uiOpenHelpButton"
-			android:layout_width="wrap_content"
+			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:text="Help"
 			android:textColor="#ffffff"
@@ -60,7 +60,7 @@
 			/>
 		<Button
 			android:id="@+id/menu_save"
-			android:layout_width="wrap_content"
+			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:text="Save"
 			android:textColor="#ffffff"
@@ -68,7 +68,7 @@
 			/>
 		<Button
 			android:id="@+id/menu_load"
-			android:layout_width="wrap_content"
+			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:text="Load"
 			android:textColor="#ffffff"
@@ -76,9 +76,17 @@
 		/>
 		<Button
 			android:id="@+id/menu_openMapButton"
-			android:layout_width="wrap_content"
+			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:text="Galaxy Map"
+			android:textColor="#ffffff"
+			android:layout_gravity="center"
+		/>
+		<Button
+			android:id="@+id/menu_ToMainMenu"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="Exit To Main Menu"
 			android:textColor="#ffffff"
 			android:layout_gravity="center"
 		/>

@@ -16,7 +16,7 @@ public class Ship
 	protected DynamicEntity holder;
 
 	private CustomCollisionObject collisonObject;
-	protected PointF collisionInitPoints[];
+	
 
 	protected TurretSystem turrets[];
 	public ParticleSystem engineSmoke;
@@ -33,10 +33,13 @@ public class Ship
 		engineSmoke.setAccuracy(new Point(16,1));
 		pointOfEngineSmoke=new PointF(0,shipImage.getHeight()/2);
 	}
-	public void setPoints(PointF points[])
+	public void init(DynamicEntity e)
+	{}
+
+	public void setCollisionObject()
 	{
-		this.collisionInitPoints=points;
-		collisonObject=new CustomCollisionObject(shipImage.getWidth(),shipImage.getHeight(),0,0);
+		
+		collisonObject=new CustomCollisionObject(shipImage.getWidth(),shipImage.getHeight(),holder.getGameManager());
 	}
 	public void render(Canvas canvas)
 	{
@@ -89,7 +92,7 @@ public class Ship
 	}
 	public void calculateCollisionObject(Matrix matrix)
 	{
-		collisonObject.calculateCollisionObject(holder.getX(),holder.getY());
+		collisonObject.calculateCollisionObject(holder.getCenterX(),holder.getCenterY());
 	}
 	
 	public void shoot()

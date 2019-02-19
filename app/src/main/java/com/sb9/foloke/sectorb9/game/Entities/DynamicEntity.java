@@ -23,10 +23,9 @@ public abstract class DynamicEntity extends Entity {
 	float frontAcceleration=0.01f;
 	float frontDeceleration=0.01f;
 	
-    DynamicEntity(float x, float y, float rotation, Bitmap image, String name, GameManager gameManager, int ID)
+    DynamicEntity(float x, float y, float rotation,  GameManager gameManager, int ID)
     {
-        super(x,y,rotation,image,name, gameManager,ID);
-        this.rotation=rotation;
+        super(x,y,rotation,gameManager,ID);
 		dx=dy=0;
     }
 
@@ -41,23 +40,7 @@ public abstract class DynamicEntity extends Entity {
 		canvas.drawLine(getCenterX(),getCenterY(),getCenterX()+frontPoint.x*acceleration*20,getCenterY()+frontPoint.y*acceleration*20,tPaint);
 	}
 
-	public void impulse(PointF pointOfimpulse,float dx,float dy)
-	{
-		
-		float tdx=this.dx+dx;  //1000-100
-		float tdy=this.dy+dy;  //500-100
-        float accel=0;
-        if(tdx!=0||tdy!=0)
-		accel=speed/(float)Math.sqrt(tdx*tdx+tdy*tdy); //1 of speed% 3/1300
 	
-		
-		this.dx=tdx*accel;
-		if(this.dx>speed)
-			this.dx=speed;
-		this.dy=tdy*accel;
-		if(this.dy>speed)
-			this.dy=speed;
-	}
 
 	private void calculateMovement()
 	{
@@ -87,7 +70,8 @@ public abstract class DynamicEntity extends Entity {
         super.tick();
 		
 		
-        calculateCollisionObject();
+        transformMatrix.reset();
+        transformMatrix.postRotate(rotation);
 		
 		calculateMovement();
 		
@@ -100,7 +84,20 @@ public abstract class DynamicEntity extends Entity {
         float[] vector =new float[]{0,-1};
         transformMatrix.mapVectors(vector);
 
-        
+
+        x += dx;
+        y += dy;
+		calculateCollisionObject();
+		//gameManager.getMainActivity().makeToast(""+dx);
+        dx = dy = 0;
+		if(x<0)
+			x=0;
+		if(y<0)
+			y=0;
+		if(x>10000)
+			x=10000;
+		if(y>10000)
+			y=10000;
         frontPoint.set(vector[0],vector[1]);
 		
         for (Entity e : getGameManager().getEntities())
@@ -131,17 +128,35 @@ public abstract class DynamicEntity extends Entity {
         }
         timerTick();
 
-        x += dx;
-        y += dy;
-        dx = dy = 0;
-		if(x<0)
-			x=0;
-		if(y<0)
-			y=0;
     }
 
-    public abstract void onCollide(Entity e);
+    public void onCollide(Entity e)
+	{
+		impulse(e);
+	}
+	
+	private void impulse(Entity e)
+	{
+		//float trotation=360-(float)Math.toDegrees(Math.PI+Math.atan2(-e.getCenterX()+x,-e.getCenterY()+y)); 
+		//float mathRotation=(float)(PI/180*trotation);
+		//this.dy = -(float) (0.2*speed * cos(mathRotation));
+		//this.dx = (float) (0.2*speed * sin(mathRotation));
+		float midpointx = (e.getCollisionObject().getCenterX() +getCollisionObject().getCenterX()) / 2; 
+		float midpointy = (e.getCollisionObject().getCenterY() +getCollisionObject().getCenterY()) / 2;
 
+		gameManager.getGamePanel().textDebug2.setString(""+midpointx);
+		gameManager.getGamePanel().textDebug3.setString(""+midpointy);
+		float dist=(float)Math.sqrt((e.getCenterX()-getCenterX())*(e.getCenterX()-getCenterX())+(e.getCenterY()-getCenterY())*(e.getCenterY()-getCenterY()));
+
+		dist=(float)Math.max(0.1,dist);
+		//dist=(float)Math.min(dist,100);
+		float newcenter=(midpointx + getCollisionObject().getRadius() * (getCollisionObject().getCenterX() - e.getCollisionObject().getCenterX()) / dist);
+		gameManager.getGamePanel().textDebug4.setString(""+dist);
+		this.setCenterX(newcenter);
+		this.setCenterY(midpointy + getCollisionObject().getRadius() * (getCollisionObject().getCenterY() - e.getCollisionObject().getCenterY())/ dist);
+
+	}
+	
     public boolean rotationToPoint(PointF point,float p)
 	{
         PointF B=new PointF(getCenterX()-point.x,getCenterY()-point.y);
@@ -190,8 +205,7 @@ public abstract class DynamicEntity extends Entity {
 
     @Override
     public void calculateCollisionObject() {
-        transformMatrix.reset();
-        transformMatrix.postRotate(rotation);
+        
         super.calculateCollisionObject();
     }
 

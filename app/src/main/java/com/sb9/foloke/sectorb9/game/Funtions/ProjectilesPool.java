@@ -15,7 +15,12 @@ public class ProjectilesPool
 		projectiles=new ArrayList<Projectile>();
 		for(int i=0;i<maxSize;i++)
 		{
-			projectiles.add(new Projectile(0,0,image,"p"+i,(int)4,speed,0,damage,parent, gameManager));
+			Projectile p=new Projectile(0,0,(int)4,speed,0,damage,parent, gameManager);
+			p.setImage(image);
+			p.recreateCollision();
+			
+			projectiles.add(p);
+			
 		}
 	}
 	

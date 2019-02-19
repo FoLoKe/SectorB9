@@ -11,12 +11,7 @@ public class ShipMk2 extends Ship
 		pointOfengine.set(0,12);
 		pointOfShooting.set(shipImage.getWidth()/2,0);
 		
-		collisionInitPoints=new PointF[4];
-		collisionInitPoints[0]=new PointF(shipImage.getWidth()/2,-shipImage.getHeight()/2);
-		collisionInitPoints[1]=new PointF(-shipImage.getWidth()/2,-shipImage.getHeight()/2);
-		collisionInitPoints[2]=new PointF(-shipImage.getWidth()/2,shipImage.getHeight()/2);
-		collisionInitPoints[3]=new PointF(shipImage.getWidth()/2,shipImage.getHeight()/2);
-		setPoints(collisionInitPoints);
+		setCollisionObject();
 		turrets=new TurretSystem[2];
 		turrets[0]=new TurretSystem(pointOfShooting,2,holder.getGameManager(),this);
 		turrets[1]=new TurretSystem(new PointF(-shipImage.getWidth()/2,0),3,holder.getGameManager(),this);

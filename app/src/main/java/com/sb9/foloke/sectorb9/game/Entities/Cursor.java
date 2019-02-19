@@ -7,6 +7,7 @@ package com.sb9.foloke.sectorb9.game.Entities;
 	import com.sb9.foloke.sectorb9.game.Assets.ShipAsset;
 
 	import com.sb9.foloke.sectorb9.game.Managers.GameManager;
+import android.graphics.*;
 
 public class Cursor extends DynamicEntity {
 		
@@ -15,8 +16,8 @@ public class Cursor extends DynamicEntity {
 
 		public Cursor(float x, float y, String name, GameManager gameManager)
 		{
-			super(x,y,0,ShipAsset.cursor,name, gameManager,0);
-			
+			super(x,y,0, gameManager,0);
+			this.image=ShipAsset.cursor;
 			this.dx=this.dy=0;
 			this.drawable=false;
 
@@ -58,6 +59,9 @@ public class Cursor extends DynamicEntity {
 	public void setDrawable(boolean drawable) {
 			this.drawable = drawable;
 		}
-
+	public void setImage(Bitmap img)
+	{
+		this.image=img;
+	}
 }
 

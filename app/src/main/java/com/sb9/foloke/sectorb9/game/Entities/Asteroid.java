@@ -16,7 +16,7 @@ public class Asteroid extends StaticEntity {
 		
 	public Asteroid(float x, float y, float rotation, GameManager gameManager,int resID)
 	{
-		super(x,y,rotation, BuildingsDataSheet.findById(ID).image, BuildingsDataSheet.findById(ID).name, gameManager,ID);
+		super(x,y,rotation, gameManager,ID);
 		inventory.addNewItem(resID,5);	
 	}
 	

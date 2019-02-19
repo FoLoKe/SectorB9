@@ -35,6 +35,9 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 	private Text textScreenWH;
 	public Text textFPS;
 	public Text textDebug2;
+	public Text textDebug3;
+	public Text textDebug4;
+	public Text textDebug5;
 	public Text textInQueue;
 	public Text debugText;
 	public Text errorText;
@@ -73,7 +76,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 		errorText=new Text("",500,450);
 		textFPS=new Text("",0,30);
 		textDebug2=new Text("",500,550);
-		textInQueue=new Text("",500,600);
+		textDebug3=new Text("",500,600);
+		textDebug4=new Text("",500,650);
+		textDebug5=new Text("",500,700);
+		textInQueue=new Text("",500,750);
 		textScreenWH.setString(canvasW+"x"+canvasH);
 
         gameManager= new GameManager(this, MA);
@@ -89,6 +95,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
         setFocusable(false);
 		
 		cursor.setDrawable(true);
+		//buildDrawingCache();
 		
     }
 
@@ -181,6 +188,9 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 			errorText.render(canvas);
 
 			textDebug2.render(canvas);
+			textDebug3.render(canvas);
+			textDebug4.render(canvas);
+			textDebug5.render(canvas);
 			textInQueue.render(canvas);
 		}
 		
@@ -224,9 +234,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
 					
-                    //pointOfTouch.set((x-canvasW/2)/camera.getScale()+player.getCenterX(),(y-canvasH/2)/camera.getScale()+player.getCenterY());
-					//cursor.setDrawable(true);
-					
 					switch (gameManager.command)
 					{
 						case commandMoving:
@@ -239,14 +246,12 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                     break;
 					
                 case MotionEvent.ACTION_MOVE:
-                   // pointOfTouch.set((x-canvasW/2)/camera.getScale()+player.getCenterX(),(y-canvasH/2)/camera.getScale()+player.getCenterY()); 
                     break;
 					
                 case MotionEvent.ACTION_UP:	
 					switch (gameManager.command)
 					{
 						case commandMoving:
-							//cursor.setDrawable(false);
                        		player.setMovable(false);
 							break;
 						case commandInteraction:
@@ -291,4 +296,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
     {
         return MA;
     }
+	public Cursor getCursor()
+	{
+		return cursor;
+	}
 }

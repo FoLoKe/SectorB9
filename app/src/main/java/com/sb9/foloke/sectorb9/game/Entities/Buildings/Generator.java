@@ -15,9 +15,9 @@ import java.util.*;
 	Paint consumersPaintOff=new Paint();
 	
 		private ArrayList<StaticEntity> consumers;
-		public Generator(float x, float y, float rotation, Bitmap image, String name, GameManager gameManager, int ID)
+		public Generator(float x, float y, float rotation,  GameManager gameManager, int ID)
 		{
-			super(x,y,rotation,image,name, gameManager,ID);
+			super(x,y,rotation,gameManager,ID);
 
 			consumers=new ArrayList<StaticEntity>();
 			

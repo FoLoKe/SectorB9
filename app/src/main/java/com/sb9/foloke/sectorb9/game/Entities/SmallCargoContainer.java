@@ -11,14 +11,8 @@ public class SmallCargoContainer extends CargoContainer
 	public SmallCargoContainer(float x, float y, float rotation, GameManager gameManager)
 	{
 		
-		super(x,y,rotation, BuildingsDataSheet.findById(ID).image, BuildingsDataSheet.findById(ID).name, BuildingsDataSheet.findById(ID).inventoryCapacity, gameManager,ID);
-	
-		
-		enabled					= BuildingsDataSheet.findById(ID).enabledByDefault;
-		inventoryMaxCapacity	= BuildingsDataSheet.findById(ID).inventoryCapacity;
-		isInteractable			= BuildingsDataSheet.findById(ID).interactableByDefault;
-		opened					= BuildingsDataSheet.findById(ID).openByDefault;
-		energy=true;
+		super(x,y,rotation, gameManager,ID);
+
 	}
 	
 	@Override

@@ -25,39 +25,40 @@ public class Player extends DynamicEntity
 	
     public Player(float x, float y, float rotation, GameManager gameManager, String name)
     {
-        super(x,y,rotation,ShipAsset.player_mk1,name, gameManager,1);
+		
+        super(x,y,rotation,gameManager,1);
+		TEAM=1;
 		this.ship=new ShipMk1(this);
         this.dx=this.dy=0;
         this.movable=false;
 		this.renderable=true;
 		speed=1;
 		this.inventoryMaxCapacity=10;
-		for (int i=0;i<inventory.getHeight();i++)
-		for(int j=0;j<inventory.getWidth();j++)
+		for(int i=0;i<inventory.getHeight();i++)
+			for(int j=0;j<inventory.getWidth();j++)
 				inventory.addNewItem(i*inventory.getWidth()+j,i*inventory.getWidth()+j);
 
 		gameManager.getMainActivity().shipUI=new ShipUI(this, gameManager.getMainActivity());
+		initShip();
     }
 
     @Override
     public void tick() 
 	{
+		if(!active)
+			return;
 	    super.tick();
 		Shoot();
 		ship.tick();	
     }
 	
-	private void impulse(Entity e)
-	{
-		float trotation=360-(float)Math.toDegrees(Math.PI+Math.atan2(-e.getCenterX()+x,-e.getCenterY()+y)); 
-		float mathRotation=(float)(PI/180*trotation);
-		this.dy = -(float) (0.2*speed * cos(mathRotation));
-		this.dx = (float) (0.2*speed * sin(mathRotation));
-	}
+	
 
     @Override
     public void render(Canvas canvas) 
 	{
+		if(!active)
+			return;
 		super.render(canvas);
 		if(!renderable)
 			return;
@@ -68,10 +69,7 @@ public class Player extends DynamicEntity
 			drawInteractionCircle(canvas);
 	}
 
-    @Override
-    public void onCollide(Entity e) {
-        impulse(e);
-    }
+    
 
 
     @Override
@@ -80,14 +78,12 @@ public class Player extends DynamicEntity
         super.calculateCollisionObject();
 
         if(ship!=null)
-       ship.calculateCollisionObject(transformMatrix);
+       	ship.calculateCollisionObject(transformMatrix);
     }
 
     @Override
     public CustomCollisionObject getCollisionObject()
-    {
-        return ship.getCollisonObject();
-    }
+    {return ship.getCollisonObject();}
 
     public void addMovement(PointF screenPoint,float screenW, float screenH) 
 	{
@@ -96,7 +92,7 @@ public class Player extends DynamicEntity
 			float minAcceleration=screenH/8; //0%
 			float maxAcceleration=screenH/2; //100%
 			PointF relativePoint=new PointF(screenPoint.x-screenW/2,screenPoint.y-screenH/2);
-			 targetAcceleration=(float)Math.sqrt(relativePoint.x*relativePoint.x+relativePoint.y*relativePoint.y);
+			targetAcceleration=(float)Math.sqrt(relativePoint.x*relativePoint.x+relativePoint.y*relativePoint.y);
 			targetAcceleration=(targetAcceleration-minAcceleration)/(maxAcceleration-minAcceleration);
         }
     }
@@ -132,8 +128,10 @@ public class Player extends DynamicEntity
 			ship=new ShipMk1(this);
 	}
 	
-	public int getRadius()
+	public int getRadius(){return interactionRadius;}
+	
+	public void initShip()
 	{
-		return interactionRadius;
+		ship.init(this);
 	}
 }

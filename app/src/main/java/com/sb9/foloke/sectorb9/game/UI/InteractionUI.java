@@ -9,7 +9,7 @@ import com.sb9.foloke.sectorb9.game.Entities.Buildings.*;
 
 public class InteractionUI
 {
-	public void init(final MainActivity MA,final ViewFlipper VF,final StaticEntity target)
+	public static void init(final MainActivity MA,final ViewFlipper VF,final StaticEntity target)
 	{
 		final ViewFlipper IVF=MA.findViewById(R.id.interaction_uiViewFlipper);
 		IVF.setDisplayedChild(0);
@@ -35,7 +35,7 @@ public class InteractionUI
 						@Override
 						public void onClick(View v) 
 						{
-							MA.assemblerUIi.setOpened(false);
+							AssemblerUI.setOpened(false);
 							openInteraction.setBackgroundColor(Color.parseColor("#22ffffff"));
 							openProduction.setBackgroundColor(Color.parseColor("#22ffffff"));
 							v.setBackgroundColor(Color.parseColor("#55ffffff"));
@@ -55,7 +55,7 @@ public class InteractionUI
 					@Override
 					public void onClick(View v)
 					{
-						MA.assemblerUIi.setOpened(false);
+						AssemblerUI.setOpened(false);
 						openProduction.setBackgroundColor(Color.parseColor("#22ffffff"));
 						openInventoryButton.setBackgroundColor(Color.parseColor("#22ffffff"));
 						v.setBackgroundColor(Color.parseColor("#55ffffff"));
@@ -72,14 +72,14 @@ public class InteractionUI
 			if (target instanceof Assembler)
 			{
 				
-				MA.assemblerUIi.init(MA,(Assembler)target);
+				AssemblerUI.init(MA,(Assembler)target);
 				openProduction.setVisibility(View.VISIBLE);
       			openProduction.setOnClickListener(new OnClickListener() 
 					{
 						@Override
 						public void onClick(View v) 
 						{
-							MA.assemblerUIi.setOpened(true);
+							AssemblerUI.setOpened(true);
 							MA.getGameManager().initAssemblerUI((Assembler)target);
 							openInventoryButton.setBackgroundColor(Color.parseColor("#22ffffff"));
 							openInteraction.setBackgroundColor(Color.parseColor("#22ffffff"));
@@ -100,7 +100,7 @@ public class InteractionUI
 				@Override
 				public void onClick(View v) 
 				{
-					MA.assemblerUIi.setOpened(false);				
+					AssemblerUI.setOpened(false);				
 					MA.getGameManager().nullPressedObject();
 					MA.getGameManager().command=MA.getGameManager().commandMoving;
 					VF.setDisplayedChild(VF.indexOfChild(MA.findViewById(R.id.actionUI)));
@@ -115,7 +115,7 @@ public class InteractionUI
 				public void onClick(View v) 
 				{
 					MA.getGameManager().nullPressedObject();
-					MA.assemblerUIi.setOpened(false);
+					AssemblerUI.setOpened(false);
 					VF.setDisplayedChild(VF.indexOfChild(MA.findViewById(R.id.buildUI)));
 				}
 			});

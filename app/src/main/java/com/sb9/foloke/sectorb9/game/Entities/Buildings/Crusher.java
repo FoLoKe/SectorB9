@@ -19,7 +19,7 @@ public class Crusher extends StaticEntity
 	private Inventory.InventoryItem inProduction;
 	private int count;
 	private Timer prodTimer;
-	private PointF collisionInitPoints[];
+	
 	private Animation crusherAnim;
 	
 	private boolean noInventorySpaceBlock=false;
@@ -28,7 +28,7 @@ public class Crusher extends StaticEntity
 	
 	public Crusher(float x, float y, float rotation, GameManager gameManager)
 	{
-		super(x,y,rotation, BuildingsDataSheet.findById(ID).image, BuildingsDataSheet.findById(ID).name,gameManager,ID);
+		super(x,y,rotation, gameManager,ID);
 		crusherAnim=new Animation(BuildingsDataSheet.findById(ID).animation,15);
 		this.inventoryMaxCapacity=3;
 		this.opened=true;
@@ -58,9 +58,9 @@ public class Crusher extends StaticEntity
 		canvas.restore();
 		
 		if(energy==false)
-		statusImage.render(canvas,new PointF(x,y));
+			statusImage.render(canvas,new PointF(x,y));
 		if(gameManager.drawDebugInfo)
-		drawDebugCollision(canvas);
+			drawDebugCollision(canvas);
 		// TODO: Implement this method
 	}
 

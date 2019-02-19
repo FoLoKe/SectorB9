@@ -26,7 +26,7 @@ public class BigSmelter extends StaticEntity
 
 	public BigSmelter(float x, float y, float rotation, GameManager gameManager)
 	{
-		super(x,y,rotation, BuildingsDataSheet.findById(ID).image, BuildingsDataSheet.findById(ID).name, gameManager,ID);
+		super(x,y,rotation, gameManager,ID);
 		smelterInWorkBitmap= BuildingsDataSheet.findById(ID).animation[0];
 		this.inventoryMaxCapacity=3;
 		this.opened=true;

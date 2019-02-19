@@ -10,6 +10,7 @@ import android.graphics.*;
 
 import java.io.*;
 import com.sb9.foloke.sectorb9.game.Entities.Buildings.*;
+import com.sb9.foloke.sectorb9.game.Entities.*;
 
 
 public class EntityManager
@@ -63,6 +64,7 @@ public class EntityManager
 	{
 		for(Entity e:entityArray)
 		{
+			if(!(e instanceof Player))
 			e.save(writer);
 		}
 	}

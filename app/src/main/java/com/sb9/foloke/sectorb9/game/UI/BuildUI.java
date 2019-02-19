@@ -10,6 +10,7 @@ import com.sb9.foloke.sectorb9.game.Assets.UIAsset;
 import com.sb9.foloke.sectorb9.game.DataSheets.BuildingsDataSheet;
 import com.sb9.foloke.sectorb9.game.Entities.*;
 import com.sb9.foloke.sectorb9.game.Entities.Buildings.*;
+import com.sb9.foloke.sectorb9.game.Managers.*;
 
 
 public class BuildUI
@@ -58,8 +59,11 @@ public class BuildUI
 							
 							v.setBackgroundColor(Color.RED);
 							if(prevPressed!=null)
-							prevPressed.setBackgroundColor(Color.parseColor("#00000000"));
+							{
+								prevPressed.setBackgroundColor(Color.parseColor("#00000000"));
+							}
 							prevPressed=v;
+							MA.getGameManager().getGamePanel().getCursor().setImage(BuildingsDataSheet.findById(ObjectID).image);
 						}
 					});
 				row.setId(ObjectID);

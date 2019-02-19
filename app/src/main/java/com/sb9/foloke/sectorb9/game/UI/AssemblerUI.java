@@ -12,14 +12,14 @@ import com.sb9.foloke.sectorb9.game.Entities.Buildings.*;
 
 public class AssemblerUI
 {
-	private Integer[] itemsIDs;
-	private MainActivity MA;
-	private ArrayList<Integer> inQueue;
-	private int inProduction=0;
-	private int newQueue=0;
-	private boolean opened;
+	private static Integer[] itemsIDs;
+	private static MainActivity MA;
+	private static ArrayList<Integer> inQueue;
+	private static int inProduction=0;
+	private static int newQueue=0;
+	private static boolean opened;
 
-	public void init(final MainActivity MA,final Assembler target)
+	public  static void init(final MainActivity mainActivity,final Assembler target)
 	{
 		try
 		{
@@ -27,7 +27,7 @@ public class AssemblerUI
 		inQueue=target.getQueue();
 		
 		inProduction=target.getInProduction();
-		this.MA=MA;
+		MA=mainActivity;
 			
 		//table 
 		TableLayout TL=MA.findViewById(R.id.assembler_ui_TL_toProduceList);
@@ -150,7 +150,7 @@ public class AssemblerUI
 		}
 	}
 
-	private void initHelp(int pressedID)
+	private static void initHelp(int pressedID)
 			{
 				LinearLayout LR=MA.findViewById(R.id.AssemblerUIHelpLayoutOfInfo);
 				LR.removeAllViews();
@@ -206,11 +206,11 @@ public class AssemblerUI
 				}
 			}
 			
-			public void setOpened(boolean state)
+			public static void setOpened(boolean state)
 			{
 				opened=state;
 			}
-			public boolean getOpened()
+			public static boolean getOpened()
 			{
 				return opened;
 			}

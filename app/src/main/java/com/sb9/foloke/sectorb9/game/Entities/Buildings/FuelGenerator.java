@@ -18,15 +18,11 @@ public class FuelGenerator extends Generator
 	
 	public FuelGenerator(float x, float y, float rotation, GameManager gameManager)
 	{
-		super(x,y,rotation, BuildingsDataSheet.findById(ID).image, BuildingsDataSheet.findById(ID).name, gameManager,ID);
+		super(x,y,rotation, gameManager,ID);
 		
 		
 		
 		///critical enabled=true
-		enabled					= BuildingsDataSheet.findById(ID).enabledByDefault;
-		inventoryMaxCapacity	= BuildingsDataSheet.findById(ID).inventoryCapacity;
-		isInteractable			= BuildingsDataSheet.findById(ID).interactableByDefault;
-		opened					= BuildingsDataSheet.findById(ID).openByDefault;
 		
 		prodTimer=new Timer(0);
 		prgBar=new ProgressBarUI(this,50,8,-25,-20,UIAsset.stunBackground,UIAsset.stunLine,UIAsset.progressBarBorder,prodTimer.getTick());

@@ -19,9 +19,10 @@ public class Projectile extends DynamicEntity
 	private Entity parent;
 	private float addedAcceleration;
 	
-	public Projectile(float x, float y, Bitmap image, String name, int lifetime, float speed, float rotation, int damage,Entity parent, GameManager gameManager)
+	public Projectile(float x, float y, int lifetime, float speed, float rotation, int damage,Entity parent, GameManager gameManager)
 	{
-		super(x,y,0,image,name, gameManager,0);
+		super(x,y,0, gameManager,0);
+		
 		this.parent=parent;
 		this.rotation=rotation;
 		this.speed=speed;
@@ -31,7 +32,16 @@ public class Projectile extends DynamicEntity
 		//this.dustDelay=new Timer(0);
 		//this.dustPuff=new SmallDustPuff(gameManager);
 		//this.effectDelay=1f;
-
+		
+	}
+	
+	public void recreateCollision()
+	{
+		this.relativeCenterY=image.getHeight()/2;
+		this.relativeCentreX=image.getWidth()/2;
+		this.width=image.getWidth();
+		this.height=image.getHeight();
+		createCollision();
 	}
 	@Override
 	public void render(Canvas canvas)
@@ -67,7 +77,7 @@ public class Projectile extends DynamicEntity
             if (lifeTimer.tick())
 			{
 				//if(!collided)
-               	 	active = false;
+               	active = false;
 				return;
 			}
 			
@@ -76,10 +86,10 @@ public class Projectile extends DynamicEntity
 			if(collided)
 			{
 		    //if (dustDelay.tick())
-		    {
-			    collided=false;
-			    active=false;
-		    }
+		    	{
+			    	collided=false;
+			    	active=false;
+		    	}
 		    return;
 			}	
         }
@@ -89,10 +99,13 @@ public class Projectile extends DynamicEntity
 
     @Override
     public void onCollide(Entity e){
-       	e.applyDamage((damage));
+		if(e.getTeam()!=parent.getTeam())
+		{
+       		e.applyDamage((damage));
         //dustDelay.setTimer(effectDelay);
-        collided=true;
-        this.lifeTimer.setTimer(0);
+        	collided=true;
+       	 	this.lifeTimer.setTimer(0);
+		}
     }
 
     public void setActive(boolean condition)

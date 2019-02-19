@@ -9,11 +9,7 @@ public class SolarPanel extends Generator
 
 	public SolarPanel(float x, float y, float rotation, GameManager gameManager)
 	{
-		super(x,y,rotation, BuildingsDataSheet.findById(ID).image, BuildingsDataSheet.findById(ID).name, gameManager,ID);
-	enabled					= BuildingsDataSheet.findById(ID).enabledByDefault;
-	inventoryMaxCapacity	= BuildingsDataSheet.findById(ID).inventoryCapacity;
-	isInteractable			= BuildingsDataSheet.findById(ID).interactableByDefault;
-	opened					= BuildingsDataSheet.findById(ID).openByDefault;
+		super(x,y,rotation, gameManager,ID);
 	
 	
 	}
