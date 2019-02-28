@@ -34,7 +34,7 @@ public class MenuUI
 				@Override
 				public void onClick(View v) 
 				{
-					MA.helpui.init(MA,VF,view);
+					HelpUI.init(MA,VF,view);
 					VF.setDisplayedChild(VF.indexOfChild(MA.findViewById(R.id.help_sectionUI)));
 				}
 			});
@@ -43,7 +43,7 @@ public class MenuUI
 			@Override
 			public void onClick(View v)
 			{
-				MA.mapUI.init(MA,VF);
+				MapUI.init(MA,VF);
 				VF.setDisplayedChild(VF.indexOfChild(MA.findViewById(R.id.map_ui)));
 			}
 		});

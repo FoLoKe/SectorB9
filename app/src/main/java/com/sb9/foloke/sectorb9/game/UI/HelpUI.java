@@ -17,11 +17,11 @@ import android.util.*;
 
 public class HelpUI
 {
-	private View prevPressed;
+	private static View prevPressed;
 	private static int pressedID;
 	
 	
-	public void init(final MainActivity MA,final ViewFlipper VF,final int view)
+	public static void init(final MainActivity MA,final ViewFlipper VF,final int view)
 	{
 		///list init
 		BitmapFactory.Options options=new BitmapFactory.Options();
@@ -74,7 +74,7 @@ public class HelpUI
 	}
 	
 	//on row click - display info:
-	public void setInfo(final MainActivity MA)
+	public static void setInfo(final MainActivity MA)
 	{
 		//standart text color
 		int textC=Color.WHITE;
@@ -326,7 +326,7 @@ public class HelpUI
 			}
 	}
 
-	public void onSearch(View v,final MainActivity MA)
+	public static void onSearch(View v,final MainActivity MA)
 	{
 		//lister for image
 		v.setOnClickListener(new OnClickListener()
@@ -341,5 +341,28 @@ public class HelpUI
 				setInfo(MA);
 			}
 		});
+	}
+	public static void deinit(MainActivity MA)
+	{
+		//
+		TableLayout table=MA.findViewById(R.id.HelpSectionTableView);
+		if(table==null)
+			return;
+
+		
+		int count = table.getChildCount();
+	
+		for (int i = 0; i < count; i++) {
+
+			TableRow child = (TableRow)table.getChildAt(i);
+			
+			child.removeAllViews();
+			child.removeAllViewsInLayout();
+
+			
+		}
+		table.removeAllViews();
+		table.removeAllViewsInLayout();
+		
 	}
 }

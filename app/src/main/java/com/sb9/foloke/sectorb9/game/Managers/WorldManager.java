@@ -39,10 +39,10 @@ public class WorldManager
 		bitmapOptions.inScaled=false;
 		background=Bitmap.createBitmap(BitmapFactory.decodeResource(MA.getResources(),R.drawable.galactic_outflow,bitmapOptions));
 		entityManager.addObject(new EnemyShip(910,2000,0,gameManager));
-		//entityManager.addObject(new EnemyShip(2000,900,0,"",gameManager));
-		//entityManager.addObject(new EnemyShip(200,200,45,"",gameManager));
-		//entityManager.addObject(new EnemyShip(400,400,90, "debug enemy",gameManager));
-		//entityManager.addObject(new EnemyShip(3000,3000,315, "debug enemy",gameManager));
+		//entityManager.addObject(new EnemyShip(2000,900,0,gameManager));
+		//entityManager.addObject(new EnemyShip(200,200,45,gameManager));
+		//entityManager.addObject(new EnemyShip(400,400,90,gameManager));
+		//entityManager.addObject(new EnemyShip(3000,3000,315,gameManager));
 		entityManager.addObject(gameManager.getPlayer());
 		
 		Random rand=new Random();
@@ -102,7 +102,8 @@ public class WorldManager
 	public void renderWorld(Canvas canvas)
 	{
 		//if(background!=null)
-		canvas.drawBitmap(background,0,0,null);
+		//canvas.drawBitmap(background,0,0,null);
+		canvas.drawColor(Color.BLACK);
 		entityManager.render(canvas);
 	}
 	
@@ -158,14 +159,18 @@ public class WorldManager
 		return new Point(sectorX,sectorY);
 	}
 
+	public void setSector(int x,int y)
+	{
+		sectorX=x;
+		sectorY=y;
+	}
 	
-
     public void warpToSector(int x,int y)
     {
 		MA.saveFile("sector-"+sectorX+"-"+sectorY,gameManager.getSaveName());
 		sectorX=x;
 		sectorY=y;
-        if(MA.loadFile("sector-"+x+"-"+y,gameManager.getSaveName())==1)
+        if(MA.loadFile("save"+"sector-"+x+"-"+y+".txt",gameManager.getSaveName())==1)
         {
            WorldGenerator.makeRandomSector(this);
 			MA.saveFile("sector-"+x+"-"+y,gameManager.getSaveName());
@@ -175,6 +180,6 @@ public class WorldManager
 	public void spawnDestroyed(Entity e)
 	{
 		entityManager.addObject(new DroppedItems(e));
-		entityManager.deleteObject(e);
+		//entityManager.deleteObject(e);
 	}
 }

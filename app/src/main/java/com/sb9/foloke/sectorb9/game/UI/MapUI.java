@@ -15,21 +15,17 @@ import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
 
 public class MapUI
 {
-	private MapTile pastClickedView;
-	private MapTile playerMapPositionView;
+	private static MapTile pastClickedView;
+	private static MapTile playerMapPositionView;
 	private static LineView line;
-	private MainActivity MA;
-	private Point currentSector;
-	private final int mapWidth=32;
-	private final int mapHeight=32;
-	private ArrayList<MapTile> mapTiles=new ArrayList<MapTile>();
+	private	static MainActivity MA;
+	private static Point currentSector;
+	private static final int mapWidth=32;
+	private static final int mapHeight=32;
+	private static ArrayList<MapTile> mapTiles=new ArrayList<MapTile>();
 
-	public MapUI(final MainActivity MA)
-	{
-		//line=new LineView(MA);
-		this.MA=MA;
-	}
-	private class MapTile extends ImageView
+	
+	private static class MapTile extends ImageView
 	{
 		int x,y;
 		TableRow row;
@@ -50,10 +46,11 @@ public class MapUI
 		}
 	}
 
-	public void init(final MainActivity MA ,final ViewFlipper VF)
+	public static void init(final MainActivity mainActivity ,final ViewFlipper VF)
 	{
+		MA=mainActivity;
 		currentSector=MA.getGameManager().getCurrentSector();
-
+		
 		MA.findViewById(R.id.map_closeButton).setOnClickListener(
 		new OnClickListener(){
 			@Override
@@ -149,19 +146,19 @@ public class MapUI
 				}
 			}
 	}
-	private Line2D getMapLine()
+	private static Line2D getMapLine()
 	{
 		int a[]=new int[2];
 		playerMapPositionView.getLocationOnScreen(a);
 		return new Line2D(playerMapPositionView.getX()+playerMapPositionView.getWidth()/2,playerMapPositionView.getRow().getY()+playerMapPositionView.getHeight()/2,pastClickedView.getX()+pastClickedView.getWidth()/2,pastClickedView.getRow().getY()+pastClickedView.getHeight()/2);
 	}
 
-	private void update()
+	private static void update()
 	{
 
 	}
 
-	private void warpToSector(MapTile tile)
+	private static void warpToSector(MapTile tile)
     {
 		MA.getGameManager().warpToLocation(tile.x,tile.y);
     };

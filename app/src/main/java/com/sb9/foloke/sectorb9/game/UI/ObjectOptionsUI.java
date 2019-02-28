@@ -12,13 +12,13 @@ public class ObjectOptionsUI
 {
 	//StaticEntity target=null;
 	
-	public void init(final StaticEntity target,final ViewFlipper VF,MainActivity MA)
+	public static void init(final StaticEntity target,final ViewFlipper VF,MainActivity MA)
 	{
 		LinearLayout LL=(MA.findViewById(R.id.object_options_uiLinearLayout));
 		if(LL.getChildCount()>0)
 		LL.removeAllViews();
 		
-		//this.target=target;
+		
 		LinearLayout LR=VF.findViewById(R.id.object_options_uiLinearLayout);
 		//LR.setBackground(new BitmapDrawable(MA.getResources(),target.getGame().uiAsset.uiBgBlur));
 		LR.setBackgroundColor(Color.parseColor("#55ffffff"));

@@ -305,4 +305,19 @@ public class Inventory
 		}
 		return addNewItem(item.ID,item.count);
 	}
+	
+	public float count()
+	{
+		float c=0;
+		for(InventoryItem i: items)
+		{
+			if(i.ID!=0&&i.count!=0)
+			{
+				c++;
+			}
+
+		}
+		return c;
+	}
+	
 }

@@ -8,6 +8,7 @@ abstract public class Weapon
 {
 	protected TurretSystem turret;
 	protected GameManager gameManager;
+	protected float damage=0;
 	public Weapon(TurretSystem turret, GameManager gameManager)
 	{
 		this.turret=turret;

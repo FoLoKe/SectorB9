@@ -31,11 +31,7 @@ public class SmallCargoContainer extends CargoContainer
 	public void tick()
 	{
 		super.tick();
-		if(getHp()<=0)
-		{
-			active=false;
-			return;
-		}
+		
 
 
 	}

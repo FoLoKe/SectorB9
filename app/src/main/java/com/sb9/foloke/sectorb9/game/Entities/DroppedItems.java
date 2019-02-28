@@ -5,10 +5,10 @@ import com.sb9.foloke.sectorb9.game.DataSheets.BuildingsDataSheet;
 import java.util.*;
 import android.graphics.*;
 
-public class DroppedItems extends Entity
+public class DroppedItems extends StaticEntity
 {
 	private final static int ID=9;
-	float x,y;
+	
 	//Game game;
 	//protected HashMap<Integer,Integer> inventory;
 	public DroppedItems(Entity e)
@@ -16,7 +16,8 @@ public class DroppedItems extends Entity
 		
 		super(e.getX(),e.getY(),e.getWorldRotation(), e.getGameManager(),ID);
 		inventory=e.getInventory();
-		
+		renderable=true;
+		active=true;
 	}
 	public void render(Canvas canvas)
 	{
@@ -27,30 +28,36 @@ public class DroppedItems extends Entity
 		canvas.rotate(rotation,getCenterX(),getCenterY());
 		canvas.drawBitmap(image,x,y,null);
 		canvas.restore();
+		if(gameManager.drawDebugInfo)
+			drawDebugCollision(canvas);
 	}
 
 	@Override
 	public void tick()
 	{
 		super.tick();
-		/*if(!renderable||!active)
+		if(!renderable||!active)
 			return;
 		this.calculateCollisionObject();
 		
-		if(inventory.size()==0)
+		if(inventory.count()==0)
 		{
 			active=false;
 			renderable=false;
 			opened=false;
 		inventoryMaxCapacity=0;
-		getGame().getObjectUIInventory().setTarget(null);
-		//Context tcontext=getGame().mAcontext;
-		//((MainActivity)tcontext).closeObjectInventory();
-		active=false;
-		renderable=false;
-		opened=false;
-		}*/
+		gameManager.getWorldManager().getEntityManager().deleteObject(this);
+		}
+		
+		
 		// TODO: Implement this method
+	}
+
+	@Override
+	public void applyDamage(float damage)
+	{
+		// TODO: Implement this method
+		//super.applyDamage(damage);
 	}
 
 	

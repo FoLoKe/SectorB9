@@ -76,13 +76,14 @@ public class EntityManager
 			entityArray.clear();
 			String s;
 			reader.readLine();
+			
 			while((s=reader.readLine())!=null)
 			{
-			String[] words = s.split("\\s"); 
-			int tID=Integer.parseInt(words[0]);
-			Entity e=createObject(tID);
-			e.load(words);
-			addObject(e);
+				String[] words = s.split("\\s"); 
+				int tID=Integer.parseInt(words[0]);
+				Entity e=createObject(tID);
+				e.load(words);
+				addObject(e);
 			}
 		}
 		catch(Throwable t)
@@ -96,6 +97,11 @@ public class EntityManager
 		Entity e;
 		switch(tID)
 		{
+			case 1:
+				{
+					e=new SmallCargoContainer(0,0,0, gameManager);
+					break;
+				}
 			case 2:
 			{
 				e=new Crusher(0,0,0, gameManager);
@@ -131,16 +137,25 @@ public class EntityManager
 				e=new Asteroid(0,0,0, gameManager,0);
 				break;
 			}
+			case 10:
+			{
+				e=new EnemyShip(0,0,0,gameManager);
+				break;
+			}
 			default:
 				{
-					e=new SmallCargoContainer(0,0,0, gameManager);
+					e=new NullObject( gameManager);
 					break;
 				}
 		}
 		
 		return e;
 	}
-
+	public Entity createBuildable(int ID,Entity initiator)
+	{
+		return new Buildable(ID,initiator.getTeam(),gameManager);
+	}
+	
 	public void reload()
     {
         entityArray.clear();

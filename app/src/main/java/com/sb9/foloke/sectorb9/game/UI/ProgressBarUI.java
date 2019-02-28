@@ -8,7 +8,7 @@ public class ProgressBarUI
 {
 	private Bitmap background,fill,border;
 	private Object target;
-	private float sizeX,sizeY,percent,offsetX,offsetY;
+	private float sizeX,sizeY,percent,offsetX,offsetY,x,y;
 	private boolean active=true;
 
 	public ProgressBarUI(Object target, float sizeX, float sizeY, float offsetX , float offsetY, Bitmap background, Bitmap fill, Bitmap border, float percent)
@@ -46,13 +46,23 @@ public class ProgressBarUI
 		}
 		else
 		{
+			if(target instanceof Entity)
+			{
+				x=((Entity)target).getCenterX();
+				y=((Entity)target).getCenterY();
+			}
 		int tSizeX=(int)(sizeX*percent/100);
 		if (tSizeX<=0)
 			return;
-		canvas.drawBitmap(background,((Entity)target).getCenterX()+offsetX,((Entity)target).getY()+offsetY,null);
-        canvas.drawBitmap(fill,((Entity)target).getCenterX()+offsetX,((Entity)target).getY()+offsetY,null);
+		canvas.drawBitmap(background,x+offsetX,y+offsetY,null);
+        canvas.drawBitmap(fill,x+offsetX,y+offsetY,null);
 		}
 		}
+	}
+	public void setWorldLocation(float x,float y)
+	{
+		this.x=x;
+		this.y=y;
 	}
 	public void set(float percent)
 	{

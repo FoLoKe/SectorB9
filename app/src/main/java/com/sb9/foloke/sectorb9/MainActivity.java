@@ -45,13 +45,7 @@ public class MainActivity extends Activity {
 	
 
 	private ViewFlipper VF;
-	private BuildUI buildUI=new BuildUI();
 	
-	public MenuUI menuUI=new MenuUI();
-	
-	public HelpUI helpui=new HelpUI();
-	public ShipUI shipUI;
-	public MapUI mapUI;
 	private static final int PERMISSION_REQUEST_CODE = 123;
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -65,6 +59,7 @@ public class MainActivity extends Activity {
 	
 	public void prepareMenu()
 	{
+		BuildUI.deinit(this);
 		setContentView(R.layout.main_menu);
 		
 		Button startNewGameButton= findViewById(R.id.new_game_button);
@@ -142,7 +137,7 @@ public class MainActivity extends Activity {
         BitmapFactory.Options options=new BitmapFactory.Options();
 		
         options.inScaled=false;
-		helpui.init(this,VF,1);
+		
 		
 		TableLayout playerTable=findViewById(R.id.PlayerTableLayout);
 		TableLayout objectTable=findViewById(R.id.ObjectTableLayout);
@@ -152,17 +147,18 @@ public class MainActivity extends Activity {
 		VF = findViewById(R.id.UIFlipper);
 		VF.setDisplayedChild(VF.indexOfChild(findViewById(R.id.actionUI)));
 		
-		buildUI.init(this,VF);
+		BuildUI.init(this,VF);
 		ActionUI.init(this,VF);
 		InteractionUI.init(this,VF,null);
-			
+		HelpUI.init(this,VF,1);
+		MapUI.init(this,VF);
 		findViewById(R.id.menuUILinearLayout).setBackground(new BitmapDrawable(this.getResources(),UIAsset.uiBgBlur));
 		
 		final FrameLayout menuUIFrame=findViewById(R.id.menuUI);
 		final MainActivity MA=this;
 		
-		mapUI=new MapUI(this);
-		mapUI.init(this,VF);
+		
+		
 		Button menuButton=findViewById(R.id.Menu);
 		menuButton.setOnClickListener(new OnClickListener() 
 		{
@@ -170,7 +166,7 @@ public class MainActivity extends Activity {
 			public void onClick(View v) 
 			{
 				final int a=VF.getDisplayedChild();
-				menuUI.init(MA,VF,a);
+				MenuUI.init(MA,VF,a);
 				VF.setDisplayedChild(VF.indexOfChild(menuUIFrame));
 				gamePanel.getGameManager().setPause(true);
 				v.setVisibility(View.GONE);
@@ -182,6 +178,7 @@ public class MainActivity extends Activity {
 	{
 		prepareNewGame(s);
 		String fileName="";
+		String playerSave="";
 		String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString()+File.separator+"sb9"+File.separator+s;
 		File myDir = new File(root);
 		if (!myDir.exists()) {
@@ -203,6 +200,11 @@ public class MainActivity extends Activity {
 					InputStreamReader isr = new InputStreamReader(inputStream);
 					BufferedReader reader = new BufferedReader(isr);
 					fileName=reader.readLine();
+					gamePanel.getGameManager().getWorldManager().setSector(Integer.parseInt(reader.readLine()),Integer.parseInt(reader.readLine()));
+					playerSave=reader.readLine();
+					String[] words = playerSave.split("\\s"); 
+					gamePanel.getGameManager().getPlayer().load(words);
+					gamePanel.pointOfTouch=gamePanel.getGameManager().getPlayer().getWorldLocation();
 					inputStream.close();
 					reader.close();
 					isr.close();
@@ -249,7 +251,12 @@ public class MainActivity extends Activity {
 
             mwriter.write(fname);
 			mwriter.newLine();
-            
+			Point p=gamePanel.getGameManager().getWorldManager().getSector();
+			mwriter.write(p.x+"");
+			mwriter.newLine();
+			mwriter.write(p.y+"");
+			mwriter.newLine();
+            gamePanel.getGameManager().getPlayer().save(mwriter);
 
             mwriter.close();
             mosw.close();
@@ -367,7 +374,7 @@ public class MainActivity extends Activity {
 	public void makeToast(String toastText)
 	{
 		Context context = getApplicationContext();
-		int duration = Toast.LENGTH_SHORT;
+		int duration = Toast.LENGTH_LONG;
 		Toast toast = Toast.makeText(context, toastText, duration);
 		toast.show();
 	}

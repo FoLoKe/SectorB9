@@ -10,7 +10,7 @@ public class ProjectilesPool
 	static Bitmap image;
 	ArrayList<Projectile> projectiles;
 	Entity parent;
-	public ProjectilesPool(Bitmap image, float speed, int maxSize, int damage,Entity parent, GameManager gameManager) {
+	public ProjectilesPool(Bitmap image, float speed, int maxSize,float damage,Entity parent, GameManager gameManager) {
 		this.parent=parent;
 		projectiles=new ArrayList<Projectile>();
 		for(int i=0;i<maxSize;i++)

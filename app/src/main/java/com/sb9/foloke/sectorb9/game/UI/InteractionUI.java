@@ -27,7 +27,7 @@ public class InteractionUI
 		{
 			if (target.getOpened())
 			{
-				target.getGameManager().getInventoryUi().setObjectTarget(target);
+				InventoryUI.setObjectTarget(target);
 				MA.getGameManager().updateInventory(null);
 				openInventoryButton.setVisibility(View.VISIBLE);
       			openInventoryButton.setOnClickListener(new OnClickListener() 
@@ -59,7 +59,7 @@ public class InteractionUI
 						openProduction.setBackgroundColor(Color.parseColor("#22ffffff"));
 						openInventoryButton.setBackgroundColor(Color.parseColor("#22ffffff"));
 						v.setBackgroundColor(Color.parseColor("#55ffffff"));
-						target.getGameManager().getObjOptions().init(target,IVF,MA);
+						ObjectOptionsUI.init(target,IVF,MA);
 						IVF.setDisplayedChild(IVF.indexOfChild(MA.findViewById(R.id.obj_optionsUI)));
 					}
 				});
@@ -114,6 +114,7 @@ public class InteractionUI
 				@Override
 				public void onClick(View v) 
 				{
+					BuildUI.init(MA,VF);
 					MA.getGameManager().nullPressedObject();
 					AssemblerUI.setOpened(false);
 					VF.setDisplayedChild(VF.indexOfChild(MA.findViewById(R.id.buildUI)));
@@ -124,7 +125,7 @@ public class InteractionUI
 			@Override
 			public void onClick(View v)
 			{
-				MA.shipUI.init();
+				ShipUI.init();
 				VF.setDisplayedChild(VF.indexOfChild(MA.findViewById(R.id.shipui)));
 			}
 		});

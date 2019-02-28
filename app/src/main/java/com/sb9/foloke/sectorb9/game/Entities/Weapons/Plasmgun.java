@@ -13,10 +13,11 @@ public class Plasmgun extends Weapon
 	private Timer fireDelay=new Timer(0);
 	private int fireRate= 60;
 	public  ProjectilesPool projectiles;
-	private int damage=20;
+	
 	public Plasmgun(TurretSystem turret, GameManager gameManager)
 	{
 		super(turret, gameManager);
+		damage=20;
 		this.projectiles=new ProjectilesPool(WeaponsAsset.plasm,5,60,damage,turret.getParent().getHolder(), gameManager);
 	}
 	public void shoot()

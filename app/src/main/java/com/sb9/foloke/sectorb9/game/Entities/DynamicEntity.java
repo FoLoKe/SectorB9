@@ -87,17 +87,17 @@ public abstract class DynamicEntity extends Entity {
 
         x += dx;
         y += dy;
+		dx = dy = 0;
 		calculateCollisionObject();
-		//gameManager.getMainActivity().makeToast(""+dx);
-        dx = dy = 0;
+		
 		if(x<0)
 			x=0;
 		if(y<0)
 			y=0;
-		if(x>10000)
-			x=10000;
-		if(y>10000)
-			y=10000;
+		if(x>gameManager.getGamePanel().getWorldSize())
+			x=gameManager.getGamePanel().getWorldSize();
+		if(y>gameManager.getGamePanel().getWorldSize())
+			y=gameManager.getGamePanel().getWorldSize();
         frontPoint.set(vector[0],vector[1]);
 		
         for (Entity e : getGameManager().getEntities())
@@ -126,6 +126,11 @@ public abstract class DynamicEntity extends Entity {
             	}
 			}
         }
+		
+		x += dx;
+        y += dy;
+		//gameManager.getMainActivity().makeToast(""+dx);
+        dx = dy = 0;
         timerTick();
 
     }
@@ -150,14 +155,20 @@ public abstract class DynamicEntity extends Entity {
 
 		dist=(float)Math.max(0.1,dist);
 		//dist=(float)Math.min(dist,100);
-		float newcenter=(midpointx + getCollisionObject().getRadius() * (getCollisionObject().getCenterX() - e.getCollisionObject().getCenterX()) / dist);
-		gameManager.getGamePanel().textDebug4.setString(""+dist);
-		this.setCenterX(newcenter);
-		this.setCenterY(midpointy + getCollisionObject().getRadius() * (getCollisionObject().getCenterY() - e.getCollisionObject().getCenterY())/ dist);
-
+		
+		float rad=(getCollisionObject().getRadius()+ e.getCollisionObject().getRadius())/2;
+		float newcenterX=(midpointx +rad * (getCollisionObject().getCenterX() - e.getCollisionObject().getCenterX()) / dist);
+		
+		float newcenterY=(midpointy + rad * (getCollisionObject().getCenterY() - e.getCollisionObject().getCenterY())/ dist);
+		
+		//this.setCenterX(newcenter);
+		//this.setCenterY(midpointy + rad * (getCollisionObject().getCenterY() - e.getCollisionObject().getCenterY())/ dist);
+		dx=-getCenterX()+newcenterX;
+		dy=-getCenterY()+newcenterY;
+		
 	}
 	
-    public boolean rotationToPoint(PointF point,float p)
+    public boolean rotationToPoint(PointF point)
 	{
         PointF B=new PointF(getCenterX()-point.x,getCenterY()-point.y);
 		float BLength=(float)Math.sqrt(B.x*B.x+B.y*B.y);
@@ -182,15 +193,10 @@ public abstract class DynamicEntity extends Entity {
         return false;
 	}
 
-	public void addMovement()
+	public void addMovement(float accel)
 	{
-		targetAcceleration=1;
-	    //acceleration=0;
-		//float mathRotation=(float)(PI/180*rotation);
-			 //screen relative rotation
-		//this.dy = -(float) (acceleration*speed * cos(mathRotation));
-		//this.dx = (float) (acceleration*speed * sin(mathRotation));
-
+		if(movable)
+		targetAcceleration=accel;
 	}
 	
 	public float getAcceleration()

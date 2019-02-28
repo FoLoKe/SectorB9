@@ -24,7 +24,7 @@ public abstract class Entity {
 	protected float maxHp=100;
 	protected float HP;
 	protected float rotation;
-	public int TEAM=0;
+	protected int TEAM=0;
 	private int ID=0;
 	private int frameTimer;
 	protected int inventoryMaxCapacity=0;
@@ -38,7 +38,7 @@ public abstract class Entity {
 	protected boolean isInteractable=true;
 	
 	private Paint debugPaint=new Paint();
-	private CustomCollisionObject collisionObject;
+	protected CustomCollisionObject collisionObject;
 	protected ProgressBarUI uIhp;
 	protected String name;
 	protected GameManager gameManager;
@@ -62,13 +62,14 @@ public abstract class Entity {
         
 		this.relativeCenterY=image.getHeight()/2;
 		this.relativeCentreX=image.getWidth()/2;
-		;
+		
 		this.inventory=new Inventory(this, inventoryMaxCapacity,4);
 		this.rotation=rotation;
 		this.uIhp=new ProgressBarUI(this,50,8,-25,-20,UIAsset.hpBackground,UIAsset.hpLine,UIAsset.progressBarBorder,getHp());
 		
 		createCollision();
     }
+	
 	private void applyStandartOptions()
 	{
 		enabled					= BuildingsDataSheet.findById(ID).enabledByDefault;
@@ -77,7 +78,7 @@ public abstract class Entity {
 		opened					= BuildingsDataSheet.findById(ID).openByDefault;
 		image					= BuildingsDataSheet.findById(ID).image;
 		name					= BuildingsDataSheet.findById(ID).name;
-		
+		collidable				= BuildingsDataSheet.findById(ID).collidable;
 	}
 
     protected void createCollision()
@@ -229,7 +230,7 @@ public abstract class Entity {
 
 	public float getWorldRotation(){return rotation;}
 
-	public void applyDamage(int damage)
+	public void applyDamage(float damage)
 	{
 		HP-=damage;
 		uIhp.set(HP);
@@ -237,8 +238,10 @@ public abstract class Entity {
 			onDestroy();			
 	}
 	
-	private void onDestroy(){active=false;
-	gameManager.spawnDestroyed(this);}
+	protected void onDestroy(){
+		active=false;
+		gameManager.spawnDestroyed(this);
+	}
 	
 	public void setCenterX(float x){this.x=x-relativeCentreX;}
 
@@ -301,5 +304,15 @@ public abstract class Entity {
 	public int getTeam()
 	{
 		return TEAM;
+	}
+	
+	public boolean getCollidable()
+	{
+		return collidable;
+	}
+	
+	public void setTeam(int team)
+	{
+		TEAM=team;
 	}
 }

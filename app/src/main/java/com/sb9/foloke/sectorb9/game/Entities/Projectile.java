@@ -9,7 +9,7 @@ public class Projectile extends DynamicEntity
 {
 	private int lifetime;
 	private Timer lifeTimer;
-	private int damage;
+	private float damage;
 	//private float effectDelay;
 	
 	private boolean active=false;
@@ -19,7 +19,7 @@ public class Projectile extends DynamicEntity
 	private Entity parent;
 	private float addedAcceleration;
 	
-	public Projectile(float x, float y, int lifetime, float speed, float rotation, int damage,Entity parent, GameManager gameManager)
+	public Projectile(float x, float y, int lifetime, float speed, float rotation, float damage,Entity parent, GameManager gameManager)
 	{
 		super(x,y,0, gameManager,0);
 		

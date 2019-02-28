@@ -33,6 +33,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.util.ArrayList;
 import com.sb9.foloke.sectorb9.game.UI.*;
+import org.apache.http.util.*;
 
 public class GameManager {
 
@@ -40,10 +41,10 @@ public class GameManager {
     GamePanel gamePanel;
 	String saveName="0";
     //UIs
-    private InventoryUI inventoryUi;
+    
     private InventoryExchangeInterface excInterface;
     public ProgressBarUI uIhp;
-    private ObjectOptionsUI objOptionsUI=new ObjectOptionsUI();
+    
     private BuildingsDataSheet buildingsData;
     private ItemsDataSheet itemsData;
     private CustomImageUI destroyedImage;
@@ -66,7 +67,7 @@ public class GameManager {
     {
         this.MA=MA;
         this.gamePanel=gamePanel;
-
+		destroyedTimer=new Timer(0);
         BitmapFactory.Options bitmapOptions=new BitmapFactory.Options();
         bitmapOptions.inScaled=false;
 
@@ -82,7 +83,7 @@ public class GameManager {
         uIhp=new ProgressBarUI(this,gamePanel.canvasW/3,gamePanel.canvasH/20,50,50,UIAsset.hpBackground,UIAsset.hpLine,UIAsset.progressBarBorder,100);
         destroyedImage=new CustomImageUI(UIAsset.destroyedText);
 
-        player=new Player(900,900,0,this,"player");
+        player=new Player(900,900,0,this);
 
         worldManager=new WorldManager(MA,this);
 		worldManager.lodEmptyWorld();
@@ -102,15 +103,23 @@ public class GameManager {
             }
             return;
         }
-
-		player.rotationToPoint(gamePanel.pointOfTouch,5);
+		if(player!=null)
+		{
+		player.rotationToPoint(gamePanel.pointOfTouch);
 		
-        player.addMovement(gamePanel.screenPointOfTouch,gamePanel.canvasW,gamePanel.canvasH);
-        //player.RotationToPoint(gamePanel.pointOfTouch);
-       // player.tick();
+			float minAcceleration=gamePanel.getHeight()/8/gamePanel.getCamera().getScale(); //0%
+			float maxAcceleration=gamePanel.getHeight()/2/gamePanel.getCamera().getScale(); //100%
+			
+			PointF relativePoint=new PointF(player.getCenterX()-gamePanel.pointOfTouch.x,player.getCenterY()-gamePanel.pointOfTouch.y);
+			float vectorLenght=(float)Math.sqrt(relativePoint.x*relativePoint.x+relativePoint.y*relativePoint.y);
+			float targetAcceleration=(vectorLenght-minAcceleration)/(maxAcceleration-minAcceleration);
+			if(targetAcceleration>1)
+				targetAcceleration=1;
+        player.addMovement(targetAcceleration);
+       
 
         uIhp.set(player.getHp());
-
+		}
         worldManager.updateWorld();
     }
 
@@ -145,7 +154,7 @@ public class GameManager {
     {
         player=null;
         gamePanel.getCamera().setPointOfLook(null);
-        player=new Player(900,900,0,this,"player");
+        player=new Player(900,900,0,this);
         playerDestroyed=false;
         getCamera().setPointOfLook(player);
         gamePause=false;
@@ -161,15 +170,11 @@ public class GameManager {
         return player;
     }
 
-    public InventoryUI getInventoryUi()
-    {
-        return inventoryUi;
-    }
-
+    
     public void makeInventoryUI(TableLayout playerTable, TableLayout objectTable, MainActivity context)
     {
 
-        inventoryUi=new InventoryUI(playerTable,player,objectTable,null,excInterface,context);
+        InventoryUI.set(playerTable,player,objectTable,null,excInterface,context);
     }
 
     public void updateInventory(final Entity caller)
@@ -177,7 +182,7 @@ public class GameManager {
         MA.runOnUiThread(new Runnable(){
             public void run()
             {
-                inventoryUi.update(caller);
+                InventoryUI.update(caller);
             }
         });
     }
@@ -187,10 +192,7 @@ public class GameManager {
         gamePause=state;
     }
 
-    public ObjectOptionsUI getObjOptions()
-    {
-        return objOptionsUI;
-    }
+    
 
     public void save(BufferedWriter w)
     {
@@ -263,5 +265,21 @@ public class GameManager {
 	{
 		saveName=s;
 	}
+	public WorldManager getWorldManager()
+	{
+		return worldManager;
+	}
 	
+	public Entity createBuildable(int id,Entity initiator)
+	{
+		return worldManager.getEntityManager().createBuildable(id,initiator);
+	}
+	
+	public void onPlayerDestroyed()
+	{
+		destroyedTimer.setTimer(5);
+		player.respawn();
+		gamePanel.getCamera().setPointOfLook(player);
+		
+	}
 }

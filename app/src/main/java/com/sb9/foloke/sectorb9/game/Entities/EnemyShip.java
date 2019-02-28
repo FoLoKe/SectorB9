@@ -21,25 +21,31 @@ public class EnemyShip extends DynamicEntity {
 
     private EnemyAI AI;
     private Ship ship;
-
+	private static final int ID=10;
     public EnemyShip(int x, int y, int rotation, GameManager gameManager)
     {
-        super(x,y,rotation,gameManager,-1);
+        super(x,y,rotation,gameManager,ID);
         this.ship=new ShipMk1(this);
         AI=new EnemyAI(this);
+		movable=true;
 	
 		TEAM=2;
     }
 
     @Override
     public void render(Canvas canvas) {
+		if(!active||!renderable)
+			return;
 		super.render(canvas);
         ship.render(canvas);
+		AI.render(canvas);
 
     }
 
     @Override
     public void tick() {
+		if(!active)
+			return;
         super.tick();
         AI.tick();
 

@@ -23,10 +23,11 @@ public class Player extends DynamicEntity
 	private Ship ship;
 	private int interactionRadius=150;
 	
-    public Player(float x, float y, float rotation, GameManager gameManager, String name)
+    public Player(float x, float y, float rotation, GameManager gameManager)
     {
 		
         super(x,y,rotation,gameManager,1);
+		gameManager.getGamePanel().pointOfTouch=getWorldLocation();
 		TEAM=1;
 		this.ship=new ShipMk1(this);
         this.dx=this.dy=0;
@@ -38,7 +39,7 @@ public class Player extends DynamicEntity
 			for(int j=0;j<inventory.getWidth();j++)
 				inventory.addNewItem(i*inventory.getWidth()+j,i*inventory.getWidth()+j);
 
-		gameManager.getMainActivity().shipUI=new ShipUI(this, gameManager.getMainActivity());
+		ShipUI.setUI(this, gameManager.getMainActivity());
 		initShip();
     }
 
@@ -84,18 +85,6 @@ public class Player extends DynamicEntity
     @Override
     public CustomCollisionObject getCollisionObject()
     {return ship.getCollisonObject();}
-
-    public void addMovement(PointF screenPoint,float screenW, float screenH) 
-	{
-        if (movable&&(getTimer()==0)) 
-		{
-			float minAcceleration=screenH/8; //0%
-			float maxAcceleration=screenH/2; //100%
-			PointF relativePoint=new PointF(screenPoint.x-screenW/2,screenPoint.y-screenH/2);
-			targetAcceleration=(float)Math.sqrt(relativePoint.x*relativePoint.x+relativePoint.y*relativePoint.y);
-			targetAcceleration=(targetAcceleration-minAcceleration)/(maxAcceleration-minAcceleration);
-        }
-    }
 	
     public void setMovable(boolean movable) 
 	{
@@ -127,11 +116,35 @@ public class Player extends DynamicEntity
 		else
 			ship=new ShipMk1(this);
 	}
-	
+	protected void onDestroy()
+	{
+		super.onDestroy();
+		gameManager.onPlayerDestroyed();
+	}
 	public int getRadius(){return interactionRadius;}
 	
 	public void initShip()
 	{
 		ship.init(this);
+	}
+	public void respawn()
+	{
+		x=90;y=90;
+		gameManager.getGamePanel().pointOfTouch=getWorldLocation();
+		TEAM=1;
+		this.ship=new ShipMk2(this);
+        this.dx=this.dy=0;
+        this.movable=false;
+		this.renderable=true;
+		active=true;
+		speed=1;
+		this.inventoryMaxCapacity=10;
+		for(int i=0;i<inventory.getHeight();i++)
+			for(int j=0;j<inventory.getWidth();j++)
+				inventory.addNewItem(i*inventory.getWidth()+j,i*inventory.getWidth()+j);
+
+		ShipUI.setUI(this, gameManager.getMainActivity());
+		initShip();
+		HP=100;
 	}
 }

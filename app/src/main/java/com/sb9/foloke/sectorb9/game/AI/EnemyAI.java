@@ -6,46 +6,124 @@ import com.sb9.foloke.sectorb9.game.Entities.DynamicEntity;
 import com.sb9.foloke.sectorb9.game.Entities.EnemyShip;
 import com.sb9.foloke.sectorb9.game.Entities.Entity;
 import java.util.*;
+import android.graphics.*;
+import com.sb9.foloke.sectorb9.game.Managers.*;
+import com.sb9.foloke.sectorb9.game.Entities.*;
 
 public class EnemyAI {
 
-    private final float distanceToTarget=200;
+    private final float acceptableDistance=200;
     private EnemyShip child;
 	private final float sightRadius=500;
-	private PointF pickedRandomPoint;
+	//private PointF pickedRandomPoint;
+	private PointF wayPoint=new PointF(0,0);
+	private Entity enemy;
+	
     public EnemyAI(EnemyShip child)
     {
         this.child=child;
-		pickedRandomPoint=pickRandomPoint(2000,2000);
+		wayPoint=pickRandomPoint((int)child.getGameManager().getGamePanel().getWorldSize(),(int)child.getGameManager().getGamePanel().getWorldSize());
     }
+	
     public void tick()
     {
-        float distance=distanceTo(child.getGameManager().getPlayer().getCenterWorldLocation());
-		if(distance<sightRadius)
+        if(child.getTeam()!=child.getGameManager().getPlayer().getTeam())
 		{
-       	 	if(distance>distanceToTarget)
-        		child.addMovement();
+			if(isInSightRadius(child.getGameManager().getPlayer())&&child.getGameManager().getPlayer().getActive())
+			{
+				wayPoint=child.getGameManager().getPlayer().getCenterWorldLocation();
+       	 		if(!isInAcceptableRadius(wayPoint))
+        			taskAddMovement(0.9f);
         	
-        	if(child.rotationToPoint(child.getGameManager().getPlayer().getCenterWorldLocation(),distance/distanceToTarget)) 
-            	if (distance < 200)
-                	child.shoot();
+        		if(taskRotateToPoint(wayPoint)) 
+            		if (isInAcceptableRadius(wayPoint))
+                		child.shoot();
+			}
+			else
+			{
+        		if(taskRotateToPoint(wayPoint) )
+				{
+					if(!isInAcceptableRadius(wayPoint))
+						taskAddMovement(0.5f);
+            		else
+                		wayPoint=pickRandomPoint((int)child.getGameManager().getGamePanel().getWorldSize(),(int)child.getGameManager().getGamePanel().getWorldSize());
+				}
+			}
 		}
 		else
 		{
-			//child.getGameManager().getGamePanel().debugText.setString(""+pickedRandomPoint);
-			float rnddistance=distanceTo(pickedRandomPoint);
-			if(rnddistance>distanceToTarget)
-        		child.addMovement();
-        	
-        	if(child.rotationToPoint(pickedRandomPoint,rnddistance/distanceToTarget)) 
-            	if (rnddistance < 200)
-                	pickedRandomPoint=pickRandomPoint(2000,2000);
+			if(findEnemy()!=null)
+			{
+				wayPoint=enemy.getCenterWorldLocation();
+				if(!isInAcceptableRadius(wayPoint))
+					taskAddMovement(0.9f);
+
+				if(taskRotateToPoint(wayPoint)) 
+					if (isInAcceptableRadius(wayPoint))
+						child.shoot();
+			}
+			else
+			{
+				wayPoint=child.getGameManager().getPlayer().getCenterWorldLocation();
+				if(!isInAcceptableRadius(wayPoint))
+					taskAddMovement(0.9f);
+					taskRotateToPoint(wayPoint);
+			}
 		}
     }
-
-    private float distanceTo(PointF point)
+	private Entity findEnemy()
+	{
+		for(Entity e:child.getGameManager().getWorldManager().getEntityManager().getArray())
+		{
+			if(e.getTeam()!=child.getTeam()&&e.getTeam()!=0)
+			if(isInSightRadius(e)&&e.getActive())
+			{
+				enemy=e;
+				return e;
+			}
+		}
+		return null;
+	}
+	private boolean taskRotateToPoint(PointF p)
+	{
+		return child.rotationToPoint(p);
+	}
+	
+	public void taskAddMovement(float acceleration)
+	{
+		child.addMovement(acceleration);
+	}
+	
+	public boolean isInAcceptableRadius(PointF p)
+	{
+		return distanceTo(p)<acceptableDistance;
+	}
+	
+	public boolean isInSightRadius(PointF p)
+	{
+		return distanceTo(p)<sightRadius;
+	}
+	
+	public boolean isInSightRadius(Entity e)
+	{
+		return distanceTo(e.getCenterWorldLocation())<sightRadius;
+	}
+	
+	public void render(Canvas c)
+	{
+		if(!child.getGameManager().drawDebugInfo)
+			return;
+		Paint p=new Paint();
+		
+		if(!isInAcceptableRadius(wayPoint))
+			p.setColor(Color.GREEN);
+			else
+				p.setColor(Color.RED);
+		c.drawLine(child.getCenterX(),child.getCenterY(),wayPoint.x,wayPoint.y,p);
+	}
+    private float distanceTo(PointF p)
     {
-        point.set(child.getCenterX()-point.x,child.getCenterY()-point.y);
+        PointF point=new PointF(child.getCenterX()-p.x,child.getCenterY()-p.y);
         return (float)Math.sqrt((point.x)*(point.x)+(point.y)*(point.y));
     }
 	

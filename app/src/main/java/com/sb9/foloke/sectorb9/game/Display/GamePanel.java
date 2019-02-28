@@ -18,6 +18,7 @@ import android.view.*;
 import java.io.*;
 import static com.sb9.foloke.sectorb9.game.Managers.GameManager.commandInteraction;
 import static com.sb9.foloke.sectorb9.game.Managers.GameManager.commandMoving;
+import android.graphics.*;
 
 public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 {
@@ -48,11 +49,13 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
     public float canvasH,canvasW;
     public PointF pointOfTouch;
     public PointF screenPointOfTouch;
-
+	private float worldSize=3000;
 	private MainActivity MA;
 	public StaticEntity pressedObject;
 	private GameManager gameManager;
 	private MainThread MT;
+	private boolean gestureInProgress=false;
+	private Paint borderPaint = new Paint();
 
     public GamePanel(Context context, AttributeSet attributeSet)
     {
@@ -96,6 +99,12 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 		
 		cursor.setDrawable(true);
 		//buildDrawingCache();
+		
+		
+		borderPaint.setColor(Color.RED);
+		borderPaint.setStyle(Paint.Style.STROKE);
+		borderPaint.setStrokeWidth(20/camera.getScale());
+		borderPaint.setPathEffect(new DashPathEffect(new float[] { 200/camera.getScale(), 200/camera.getScale()}, 0));
 		
     }
 
@@ -144,7 +153,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
     {
 
        		super.draw(canvas);
-			
+		
 			camera.setScreenRect(canvasW,canvasH);
         	canvas.save();
 		
@@ -170,6 +179,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 			{
 				pressedObject.drawDebugCollision(canvas);
 			}
+			
+		
+		canvas.drawRect(0,0,worldSize,worldSize,borderPaint);
+		
         	canvas.restore();
 			//UI
 			
@@ -194,6 +207,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 			textInQueue.render(canvas);
 		}
 		
+		
     }
 
     private SimpleOnScaleGestureListener gestureListener = new SimpleOnScaleGestureListener()
@@ -210,8 +224,18 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 			scale *= detector.getScaleFactor();
 			// Don't let the object get too small or too large.
 			scale = Math.max(1f, Math.min(scale, 5.0f));
+			gestureInProgress=true;
 			return true;
 		}
+
+		@Override
+		public void onScaleEnd(ScaleGestureDetector detector)
+		{
+			// TODO: Implement this method
+			super.onScaleEnd(detector);
+			gestureInProgress=false;
+		}
+		
 			
 			
 	};
@@ -225,7 +249,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 		{
 			gestureDetector.onTouchEvent(event);
 			//TODO: if gesture in progress ignore input
-			if(true)
+			if(!gestureInProgress)
 			{
       		  float x=event.getX(),y=event.getY();
       		  screenPointOfTouch.set(x,y);
@@ -299,5 +323,9 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 	public Cursor getCursor()
 	{
 		return cursor;
+	}
+	public float getWorldSize()
+	{
+		return worldSize;
 	}
 }

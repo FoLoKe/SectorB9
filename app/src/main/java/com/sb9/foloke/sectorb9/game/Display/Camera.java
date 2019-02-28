@@ -26,12 +26,12 @@ public class Camera {
     {
         this.scale=scale;
         this.location.x= ((Player) pointOfLook).getCenterX();
-		if((this.location.x-screenW/(2*scale))<0)
-			this.location.x=screenW/(2*scale);
-			
+//		if((this.location.x-screenW/(2*scale))<0)
+//			this.location.x=screenW/(2*scale);
+//			
         this.location.y= ((Player) pointOfLook).getCenterY();
-		if((this.location.y-screenH/(2*scale))<0)
-			this.location.y=screenH/(2*scale);
+//		if((this.location.y-screenH/(2*scale))<0)
+//			this.location.y=screenH/(2*scale);
 			
 		
     }

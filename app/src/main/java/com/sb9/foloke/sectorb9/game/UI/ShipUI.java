@@ -28,27 +28,27 @@ public class ShipUI
 {
 	int selectedItemID;
 	
-	private TableLayout table;
-	final private MainActivity context;
-	private Entity target;
-	InventoryExchangeInterface excInterface;
-	ShipArrangement shipArrangement;
+	private static TableLayout table;
+	private	static MainActivity context;
+	private static Entity target;
+	private static InventoryExchangeInterface excInterface;
+	private static ShipArrangement shipArrangement;
 	
 
-	public ShipUI(Entity player,final MainActivity context)
+	public static void setUI(Entity player,final MainActivity con)
 	{
-		this.target=player;
-		this.context=context;
+		target=player;
+		context=con;
 		//this.excInterface=excInterface;
-		this.table=this.context.findViewById(R.id.shipUI_InvTable);
-		shipArrangement=new ShipArrangement(context,this);
+		table=context.findViewById(R.id.shipUI_InvTable);
+		shipArrangement=new ShipArrangement(context);
 		if(target!=null&&table!=null)
 			init();
 		
 	}
 
 	///UNDER REFACTORING
-	public void init()
+	public static void init()
 	{
 		try
 		{
@@ -60,7 +60,7 @@ public class ShipUI
 						context.getViewFlipper().setDisplayedChild(context.getViewFlipper().indexOfChild(context.findViewById(R.id.interactionUI)));
 					}});
 			
-			this.table=this.context.findViewById(R.id.shipUI_InvTable);
+			table=context.findViewById(R.id.shipUI_InvTable);
 			if(target==null||table==null)
 				return;
 			
@@ -171,19 +171,19 @@ public class ShipUI
 		{ System.out.println(e); }
 	}
 	
-	public TableLayout getTable()
+	public static TableLayout getTable()
 	{
 		return table;
 	}
-	public void setTarget(Entity target)
+	public static void setTarget(Entity t)
 	{
-		this.target=target;
+		target=t;
 	}
-	public Entity getTarget()
+	public static Entity getTarget()
 	{
 		return target;
 	}
-	public void setDragAndDrop(View img,final int ID,final boolean right)
+	public static void setDragAndDrop(View img,final int ID,final boolean right)
 	{
 		img.setOnDragListener(new View.OnDragListener() {
 				@Override
