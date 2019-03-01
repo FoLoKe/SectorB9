@@ -5,7 +5,7 @@ import android.graphics.Bitmap;
         import com.sb9.foloke.sectorb9.game.Assets.SpriteSheet;
 
 public class ShipAsset {
-    public static Bitmap player_mk1,engine_mk1,cursor,asteroid_1,player_mk2,engine_mk2,player_mk2_engine_shield,ship_mk3,engine_mk3;
+    public static Bitmap player_mk1,engine_mk1,cursor,asteroid_1,player_mk2,engine_mk2,player_mk2_engine_shield,ship_mk3,engine_mk3,shield,largeShield;
 
     public static void init(Bitmap sheet)
     {
@@ -20,6 +20,8 @@ public class ShipAsset {
 		ship_mk3=Bitmap.createBitmap(sheet,0,96,64,64);
 		engine_mk3=Bitmap.createBitmap(sheet,64,96,64,64);
 		engine_mk2=tsheet.crop(1,2);
+		shield=tsheet.crop(6,1);
+		largeShield=Bitmap.createScaledBitmap(shield, 64, 64, true);
 		player_mk2_engine_shield=tsheet.crop(2,2);
     }
 }

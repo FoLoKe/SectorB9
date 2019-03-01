@@ -22,7 +22,7 @@ public class Projectile extends DynamicEntity
 	public Projectile(float x, float y, int lifetime, float speed, float rotation, float damage,Entity parent, GameManager gameManager)
 	{
 		super(x,y,0, gameManager,0);
-		
+		this.inBounds=false;
 		this.parent=parent;
 		this.rotation=rotation;
 		this.speed=speed;

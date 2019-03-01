@@ -42,7 +42,15 @@ public class Inventory
 		public int getCount(){return count;}
 		public void setID(int ID){this.ID=ID;}
 	}
-	
+
+	public Inventory copy(Entity caller)
+    {
+        Inventory inv=new Inventory(caller,this.height,this.width);
+        for(InventoryItem invI:inv.items)
+                invI.set(this.getItemIdOnPos(invI.pos,invI.row),this.getItemCountOnPos(invI.pos,invI.row));
+        return inv;
+    }
+
 	public Inventory(Entity parent,int height,int width)
 	{
 		this.parent=parent;

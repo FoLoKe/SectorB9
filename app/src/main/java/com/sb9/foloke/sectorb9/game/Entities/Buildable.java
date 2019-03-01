@@ -1,5 +1,8 @@
 package com.sb9.foloke.sectorb9.game.Entities;
 import android.graphics.*;
+
+import com.sb9.foloke.sectorb9.game.DataSheets.BuildingsDataSheet;
+import com.sb9.foloke.sectorb9.game.Funtions.CustomCollisionObject;
 import com.sb9.foloke.sectorb9.game.Managers.*;
 
 public class Buildable extends StaticEntity
@@ -16,12 +19,12 @@ public class Buildable extends StaticEntity
 		idOfObject=id;
 		uIhp.set(progress);
 		tteam=team;
+        collisionObject=new CustomCollisionObject(BuildingsDataSheet.findById(idOfObject).image.getWidth(),BuildingsDataSheet.findById(idOfObject).image.getHeight(),gameManager);
+        calculateCollisionObject();
 	}
 	@Override
 	public void render(Canvas canvas)
 	{
-		// TODO: Implement this method
-		//super.render(canvas);
 		if(active)
 		{
 			if(!renderable)
@@ -44,15 +47,12 @@ public class Buildable extends StaticEntity
 	@Override
 	public void tick()
 	{
-		// TODO: Implement this method
 		super.tick();
 	}
 
 	@Override
 	public void applyDamage(float damage)
 	{
-		// TODO: Implement this method
-		//super.applyDamage(damage);
 		progress+=damage;
 		uIhp.set(progress);
 		if(progress>=maxProgress)
@@ -61,13 +61,14 @@ public class Buildable extends StaticEntity
 			gameManager.getWorldManager().getEntityManager().addObject(e);
 			e.setCenterX(getCenterX());
 			e.setCenterY(getCenterY());
+			e.setWorldRotation(rotation);
 			e.calculateCollisionObject();
 			e.setTeam(tteam);
 			active=false;
 			renderable=false;
 			opened=false;
 			inventoryMaxCapacity=0;
-			gameManager.getWorldManager().getEntityManager().deleteObject(this);
+			toRemove=true;
 		}
 	}
 	

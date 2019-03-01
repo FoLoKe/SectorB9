@@ -31,25 +31,17 @@ public class WorldManager
 		
 	}
 	
-	public void lodEmptyWorld()
+	public void loadEmptyWorld()
 	{
 		sectorX=1;
 		sectorY=1;
 		BitmapFactory.Options bitmapOptions=new BitmapFactory.Options();
 		bitmapOptions.inScaled=false;
 		background=Bitmap.createBitmap(BitmapFactory.decodeResource(MA.getResources(),R.drawable.galactic_outflow,bitmapOptions));
-		entityManager.addObject(new EnemyShip(910,2000,0,gameManager));
-		//entityManager.addObject(new EnemyShip(2000,900,0,gameManager));
-		//entityManager.addObject(new EnemyShip(200,200,45,gameManager));
-		//entityManager.addObject(new EnemyShip(400,400,90,gameManager));
-		//entityManager.addObject(new EnemyShip(3000,3000,315,gameManager));
+
 		entityManager.addObject(gameManager.getPlayer());
 		
-		Random rand=new Random();
-		
-		for (int i=0;i<50;i++)
-			entityManager.addObject(new Asteroid(50*rand.nextInt(50)+25*rand.nextInt(20),100*rand.nextInt(20)+20*rand.nextInt(50),rand.nextInt(180), gameManager,rand.nextInt(10)));
-	}
+		}
 	
 	public void loadDebugWorld()
 	{
@@ -139,10 +131,12 @@ public class WorldManager
 	{
 		return entityManager;
 	}
+
 	public GameManager getGameManager()
 	{
 		return gameManager;
 	}
+
 	public void save(BufferedWriter w)
 	{
 		entityManager.save(w);
@@ -179,7 +173,10 @@ public class WorldManager
 	
 	public void spawnDestroyed(Entity e)
 	{
+        double a =System.nanoTime();
 		entityManager.addObject(new DroppedItems(e));
 		//entityManager.deleteObject(e);
+        double b =System.nanoTime();
+        gameManager.getGamePanel().textDebug3.setString(""+(b-a));
 	}
 }

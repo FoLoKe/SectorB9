@@ -27,6 +27,7 @@ public class Player extends DynamicEntity
     {
 		
         super(x,y,rotation,gameManager,1);
+        drawHp=false;
 		gameManager.getGamePanel().pointOfTouch=getWorldLocation();
 		TEAM=1;
 		this.ship=new ShipMk3(this);
@@ -52,26 +53,21 @@ public class Player extends DynamicEntity
 		Shoot();
 		ship.tick();	
     }
-	
-	
 
     @Override
     public void render(Canvas canvas) 
 	{
 		if(!active)
 			return;
-		super.render(canvas);
+
 		if(!renderable)
 			return;
 			
 		ship.render(canvas);
-		
+        super.render(canvas);
 		if(getGameManager().command== GameManager.commandInteraction)
 			drawInteractionCircle(canvas);
 	}
-
-    
-
 
     @Override
     public void calculateCollisionObject()
@@ -79,7 +75,7 @@ public class Player extends DynamicEntity
         super.calculateCollisionObject();
 
         if(ship!=null)
-       	ship.calculateCollisionObject(transformMatrix);
+       	ship.calculateCollisionObject();
     }
 
     @Override
@@ -109,30 +105,47 @@ public class Player extends DynamicEntity
 		canvas.drawCircle(getCenterX(),getCenterY(),interactionRadius,tPaint);
 	}
 	
-	public void setShip()
+	public void setShip(int i)
 	{
-		if (ship.getClass()==ShipMk1.class)
-			ship=new ShipMk2(this);
-		else
-			ship=new ShipMk1(this);
+
+	    switch(i) {
+            case 1:
+                ship = new ShipMk1(this);
+                break;
+            case 2:
+                ship = new ShipMk2(this);
+                break;
+            case 3:
+                ship = new ShipMk3(this);
+                break;
+        }
 	}
+
 	protected void onDestroy()
 	{
 		super.onDestroy();
 		gameManager.onPlayerDestroyed();
 	}
+
 	public int getRadius(){return interactionRadius;}
 	
 	public void initShip()
 	{
 		ship.init(this);
 	}
-	public void respawn()
+
+    @Override
+    public void applyDamage(float damage) {
+        super.applyDamage(damage);
+
+    }
+
+    public void respawn()
 	{
 		x=90;y=90;
 		gameManager.getGamePanel().pointOfTouch=getWorldLocation();
 		TEAM=1;
-		this.ship=new ShipMk2(this);
+		this.ship=new ShipMk3(this);
         this.dx=this.dy=0;
         this.movable=false;
 		this.renderable=true;

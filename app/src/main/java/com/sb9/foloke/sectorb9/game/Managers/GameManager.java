@@ -18,7 +18,6 @@ import com.sb9.foloke.sectorb9.game.UI.Inventory.InventoryExchangeInterface;
 import com.sb9.foloke.sectorb9.game.UI.ProgressBarUI;
 import com.sb9.foloke.sectorb9.game.UI.CustomImageUI;
 import com.sb9.foloke.sectorb9.game.UI.InventoryUI;
-import com.sb9.foloke.sectorb9.game.UI.ObjectOptionsUI;
 import com.sb9.foloke.sectorb9.game.DataSheets.BuildingsDataSheet;
 import com.sb9.foloke.sectorb9.game.DataSheets.ItemsDataSheet;
 import com.sb9.foloke.sectorb9.game.Display.Camera;
@@ -33,7 +32,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.util.ArrayList;
 import com.sb9.foloke.sectorb9.game.UI.*;
-import org.apache.http.util.*;
+
 
 public class GameManager {
 
@@ -44,6 +43,7 @@ public class GameManager {
     
     private InventoryExchangeInterface excInterface;
     public ProgressBarUI uIhp;
+    public ProgressBarUI uIsh;
     
     private BuildingsDataSheet buildingsData;
     private ItemsDataSheet itemsData;
@@ -60,11 +60,12 @@ public class GameManager {
     private Player player;
 
 
-    public int command=0;
-    public static final int commandInteraction=1,commandMoving=0;
+    public int command;
+    public static final int commandInteraction=1,commandMoving=0,commandBuild=2;
 
     public GameManager(GamePanel gamePanel, MainActivity MA)
     {
+        command=0;
         this.MA=MA;
         this.gamePanel=gamePanel;
 		destroyedTimer=new Timer(0);
@@ -81,12 +82,13 @@ public class GameManager {
         itemsData=new ItemsDataSheet(MA);
         excInterface=new InventoryExchangeInterface(this);
         uIhp=new ProgressBarUI(this,gamePanel.canvasW/3,gamePanel.canvasH/20,50,50,UIAsset.hpBackground,UIAsset.hpLine,UIAsset.progressBarBorder,100);
+        uIsh=new ProgressBarUI(this,gamePanel.canvasW/3,gamePanel.canvasH/40,50,50+gamePanel.canvasH/20,UIAsset.stunBackground,UIAsset.stunLine,UIAsset.progressBarBorder,100);
         destroyedImage=new CustomImageUI(UIAsset.destroyedText);
 
         player=new Player(900,900,0,this);
 
         worldManager=new WorldManager(MA,this);
-		worldManager.lodEmptyWorld();
+		worldManager.loadEmptyWorld();
      	//worldManager.loadDebugWorld();
     }
 
@@ -118,7 +120,8 @@ public class GameManager {
         player.addMovement(targetAcceleration);
        
 
-        uIhp.set(player.getHp());
+        uIhp.set(player.getHp()/player.getMaxHP()*100);
+        uIsh.set(player.getSH()/player.getMaxSH()*100);
 		}
         worldManager.updateWorld();
     }
@@ -130,10 +133,12 @@ public class GameManager {
         if(drawDebugInfo)
         player.drawVelocity(canvas);
     }
+
 	public void spawnDestroyed(Entity e)
 	{
 		worldManager.spawnDestroyed(e);
 	}
+
     public GamePanel getGamePanel() {
         return gamePanel;
     }
@@ -141,13 +146,6 @@ public class GameManager {
     public void interactionCheck(float x, float y)
     {
         worldManager.interactionCheck(x,y);
-    }
-
-    public void setPlayerDestroyed(boolean condition)
-    {
-        playerDestroyed=condition;
-        destroyedTimer=new Timer(2);
-        gamePause=condition;
     }
 
     public void createNewPlayer()
@@ -170,7 +168,6 @@ public class GameManager {
         return player;
     }
 
-    
     public void makeInventoryUI(TableLayout playerTable, TableLayout objectTable, MainActivity context)
     {
 
@@ -191,8 +188,6 @@ public class GameManager {
     {
         gamePause=state;
     }
-
-    
 
     public void save(BufferedWriter w)
     {
@@ -265,6 +260,7 @@ public class GameManager {
 	{
 		saveName=s;
 	}
+
 	public WorldManager getWorldManager()
 	{
 		return worldManager;

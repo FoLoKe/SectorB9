@@ -2,8 +2,8 @@ package com.sb9.foloke.sectorb9.game.Entities.Ships;
 import android.graphics.*;
 
 import com.sb9.foloke.sectorb9.game.Assets.EffectsAsset;
+import com.sb9.foloke.sectorb9.game.Assets.ShipAsset;
 import com.sb9.foloke.sectorb9.game.Entities.DynamicEntity;
-import com.sb9.foloke.sectorb9.game.Entities.Entity;
 import com.sb9.foloke.sectorb9.game.Funtions.*;
 import com.sb9.foloke.sectorb9.game.ParticleSystem.*;
 
@@ -11,15 +11,22 @@ public class Ship
 {
 	protected Bitmap shipImage,engineImage,engineShieldImage=null;
 	protected PointF pointOfengine;
-	protected PointF pointOfShooting;
+	protected PointF[] pointOfShooting;
 	protected PointF pointOfEngineSmoke;
 	protected DynamicEntity holder;
-
+	protected float speed;
+	protected float rotSpeed;
+    protected float maxHP;
+    protected float maxSH;
+    protected int shieldSize=1;
+    protected float decel=1;
+    protected float accel=1;
 	private CustomCollisionObject collisonObject;
+
 	
 
 	protected TurretSystem turrets[];
-	public ParticleSystem engineSmoke;
+	private ParticleSystem engineSmoke;
 	
 	public Ship(Bitmap shipImage,Bitmap engineImage,Bitmap engineShieldImage,DynamicEntity holder)
 	{
@@ -28,7 +35,6 @@ public class Ship
 		this.engineShieldImage=engineShieldImage;
 		this.holder=holder;
 		this.pointOfengine=new PointF(0,0);
-		this.pointOfShooting=new PointF(0,shipImage.getHeight()/2);
 		this.engineSmoke=new ParticleSystem(EffectsAsset.yellow_pixel,holder.getWorldLocation().x,holder.getWorldLocation().y,1f,new PointF(0.2f,0),true,120,holder.getGameManager());
 		engineSmoke.setAccuracy(new Point(16,1));
 		pointOfEngineSmoke=new PointF(0,shipImage.getHeight()/2);
@@ -36,9 +42,19 @@ public class Ship
 	public void init(DynamicEntity e)
 	{}
 
-	public void setCollisionObject()
+	protected void setOptionToDynamic()
+    {
+        holder.setSpeed(speed);
+        holder.setRotationSpeed(rotSpeed);
+        holder.setMaxHP(maxHP);
+        holder.setMaxSH(maxSH);
+        holder.setShieldSize(shieldSize);
+        holder.setFrontDeceleration(decel);
+        holder.setFrontAcceleration(accel);
+    }
+
+	protected void setCollisionObject()
 	{
-		
 		collisonObject=new CustomCollisionObject(shipImage.getWidth(),shipImage.getHeight(),holder.getGameManager());
 	}
 	public void render(Canvas canvas)
@@ -48,10 +64,9 @@ public class Ship
 		if(holder.getMoveable())
 		canvas.drawBitmap(engineImage,holder.getCenterX()-engineImage.getWidth()/2+pointOfengine.x,holder.getCenterY()-engineImage.getHeight()/2+pointOfengine.y-5+(holder.getAcceleration())*5,null);
 		canvas.drawBitmap(shipImage,holder.getCenterX()-shipImage.getWidth()/2,holder.getCenterY()-shipImage.getHeight()/2,null);
+
 		canvas.restore();
-		Paint tpaint=new Paint();
-		tpaint.setColor(Color.RED);
-		//canvas.drawCircle(holder.getWorldLocation().x+pointOfEngineSmoke.x,holder.getWorldLocation().y+pointOfEngineSmoke.y,1,tpaint);
+
 		for(TurretSystem t:turrets)
 		t.render(canvas);
 		
@@ -62,7 +77,7 @@ public class Ship
 												,(float)(pointOfEngineSmoke.x * Math.sin(mathRotation) + pointOfEngineSmoke.y * Math.cos(mathRotation)));
 
 			engineSmoke.draw(holder.getCenterX()+tpointOfEngineSmoke.x,holder.getCenterY()+tpointOfEngineSmoke.y,holder.getWorldRotation(), (pointOfEngineSmoke));
-			}
+		}
 		engineSmoke.render(canvas);
 		
 		if(holder.getGameManager().drawDebugInfo)
@@ -77,20 +92,11 @@ public class Ship
 		engineSmoke.tick();
 	}
 
-
 	public CustomCollisionObject getCollisonObject() {
 		return collisonObject;
 	}
 
-	public void setPointOfEngine(PointF point)
-	{
-		pointOfengine=point;
-	}
-	public void setPointOfShooting(PointF point)
-	{
-		pointOfShooting=point;
-	}
-	public void calculateCollisionObject(Matrix matrix)
+	public void calculateCollisionObject()
 	{
 		collisonObject.calculateCollisionObject(holder.getCenterX(),holder.getCenterY());
 	}
@@ -106,5 +112,6 @@ public class Ship
 	{
 		return holder;
 	}
-	
+
+
 }

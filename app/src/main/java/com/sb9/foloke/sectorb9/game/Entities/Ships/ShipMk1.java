@@ -5,23 +5,31 @@ import android.graphics.*;
 
 public class ShipMk1 extends Ship
 {
+
 	public ShipMk1(DynamicEntity holder)
 	{
 		super(ShipAsset.player_mk1,ShipAsset.engine_mk1,null,holder);
-		
+        speed=5;
+        rotSpeed=0.01f;
+        maxHP=50;
+        maxSH=25;
+        shieldSize=1;
+        accel=0.005f;
+        decel=0.004f;
 		init(holder);
+
 	}
 	
 	public void init(DynamicEntity holder)
 	{
 		
 		pointOfengine.set(0,0);
-		pointOfShooting.set(0,-4);
+		pointOfShooting=new PointF[1];
+		pointOfShooting[0]=new PointF(0,-4);
 		setCollisionObject();
 		
 		turrets=new TurretSystem[1];
-		holder.setSpeed(3);
-		holder.setRotationSpeed(5);
-		turrets[0]=new TurretSystem(pointOfShooting,3,holder.getGameManager(),this);
+        turrets[0]=new TurretSystem(pointOfShooting[0],3,holder.getGameManager(),this);
+        setOptionToDynamic();
 	}
 }

@@ -11,14 +11,27 @@ public class DroppedItems extends StaticEntity
 	
 	//Game game;
 	//protected HashMap<Integer,Integer> inventory;
-	public DroppedItems(Entity e)
-	{
-		
-		super(e.getX(),e.getY(),e.getWorldRotation(), e.getGameManager(),ID);
-		inventory=e.getInventory();
-		renderable=true;
-		active=true;
-	}
+	public DroppedItems(Entity e) {
+
+        super(e.getX(), e.getY(), e.getWorldRotation(), e.getGameManager(), ID);
+
+        inventory = e.getInventory().copy(this);
+        renderable = true;
+        active = true;
+
+
+    }
+
+    public DroppedItems(float x,float y,float r,GameManager gm)
+    {
+
+        super(x,y,r,gm,ID);
+        renderable=true;
+        active=true;
+
+
+    }
+
 	public void render(Canvas canvas)
 	{
 		if(!renderable||!active)
@@ -42,21 +55,21 @@ public class DroppedItems extends StaticEntity
 		
 		if(inventory.count()==0)
 		{
-			active=false;
-			renderable=false;
-			opened=false;
+			//active=false;
+			//renderable=false;
+			//opened=false;
 		inventoryMaxCapacity=0;
-		gameManager.getWorldManager().getEntityManager().deleteObject(this);
+		toRemove=true;
 		}
 		
 		
-		// TODO: Implement this method
+
 	}
 
 	@Override
 	public void applyDamage(float damage)
 	{
-		// TODO: Implement this method
+
 		//super.applyDamage(damage);
 	}
 

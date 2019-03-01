@@ -25,6 +25,7 @@ import android.widget.*;
 import android.view.*;
 
 
+import com.sb9.foloke.sectorb9.game.Funtions.WorldGenerator;
 import com.sb9.foloke.sectorb9.game.Managers.GameManager;
 import com.sb9.foloke.sectorb9.game.UI.*;
 import com.sb9.foloke.sectorb9.game.Assets.*;
@@ -105,6 +106,7 @@ public class MainActivity extends Activity {
 				public void onClick(DialogInterface dialog, int id) {
 					
 					prepareNewGame(input.getText().toString());
+                    WorldGenerator.makeRandomSector(gamePanel.getGameManager().getWorldManager());
 				}
 			});
 		builder.setNegativeButton("cancel", new DialogInterface.OnClickListener() {

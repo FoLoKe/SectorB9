@@ -6,32 +6,47 @@ package com.sb9.foloke.sectorb9.game.Entities;
 
 	import com.sb9.foloke.sectorb9.game.Assets.ShipAsset;
 
-	import com.sb9.foloke.sectorb9.game.Managers.GameManager;
+    import com.sb9.foloke.sectorb9.game.Funtions.CustomCollisionObject;
+    import com.sb9.foloke.sectorb9.game.Managers.GameManager;
 import android.graphics.*;
 
 public class Cursor extends DynamicEntity {
 		
 
 		private boolean drawable;
-
+        private boolean collided=false;
+        private Paint buildPaint=new Paint();
 		public Cursor(float x, float y, String name, GameManager gameManager)
 		{
 			super(x,y,0, gameManager,0);
 			this.image=ShipAsset.cursor;
 			this.dx=this.dy=0;
 			this.drawable=false;
-
+            buildPaint.setColor(Color.RED);
+            buildPaint.setStrokeWidth(5);
+            buildPaint.setStyle(Paint.Style.STROKE);
 		}
-
+    public void calculateCollisionObject()
+    {
+        collisionObject.calculateCollisionObject(x,y);
+    }
 		@Override
 		public void tick() {
-			super.tick();
+            collided=false;
+            calculateCollisionObject();
+            super.tick();
+
+
 		}
 
 		@Override
 		public void render(Canvas canvas) {
 			if(drawable)
 			canvas.drawBitmap(image,x-image.getWidth()/2,y-image.getHeight()/2,new Paint());
+
+
+			if(collided)
+			    canvas.drawCircle(x,y,collisionObject.getRadius(),buildPaint);
 		}
 
 
@@ -53,7 +68,7 @@ public class Cursor extends DynamicEntity {
 
 	@Override
 	public void onCollide(Entity e) {
-
+        collided=true;
 	}
 
 	public void setDrawable(boolean drawable) {
@@ -61,7 +76,30 @@ public class Cursor extends DynamicEntity {
 		}
 	public void setImage(Bitmap img)
 	{
-		this.image=img;
+	    this.image=img;
+        collisionObject=new CustomCollisionObject(img.getWidth(),img.getHeight(),gameManager);
+        calculateCollisionObject();
 	}
+
+	public boolean onBuild()
+    {
+        for (Entity e : getGameManager().getEntities())
+        {
+            if(e!=this)
+            {
+                if(e.active)
+                {
+                    if(e.collidable)
+                    {
+                        if ((e.getCollisionObject().intersects(getCollisionObject())))
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        return true;
+    }
 }
 

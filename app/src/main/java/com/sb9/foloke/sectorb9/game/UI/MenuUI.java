@@ -87,6 +87,34 @@ public class MenuUI
 				{
 					makeSaveQuestionDilaog(MA,"menu");
 				}});
+
+
+
+
+
+        Button sh1=MA.findViewById(R.id.menu_ui_set_first_ship);
+        sh1.setOnClickListener(new OnClickListener(){
+            @Override
+            public void onClick(View v)
+            {
+                MA.getGameManager().getPlayer().setShip(1);
+            }});
+
+        Button sh2=MA.findViewById(R.id.menu_ui_set_second_ship);
+        sh2.setOnClickListener(new OnClickListener(){
+            @Override
+            public void onClick(View v)
+            {
+                MA.getGameManager().getPlayer().setShip(2);
+            }});
+
+        Button sh3=MA.findViewById(R.id.menu_ui_set_third_ship);
+       sh3.setOnClickListener(new OnClickListener(){
+            @Override
+            public void onClick(View v)
+            {
+                MA.getGameManager().getPlayer().setShip(3);
+            }});
 	}
 	
 	public int getPrevViewID(){return prevViewID;}

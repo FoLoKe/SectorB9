@@ -41,8 +41,9 @@ public abstract class StaticEntity extends Entity {
 	@Override
 	public void render(Canvas canvas)
 	{
-		if(HP<maxHp)
-		{
+        if((SH<maxSH||HP<maxHP)&&drawHp)
+        {
+            uIsh.render(canvas);
 			uIhp.render(canvas);
 		}
 	}

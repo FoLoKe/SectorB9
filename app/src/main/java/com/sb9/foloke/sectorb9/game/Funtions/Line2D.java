@@ -131,5 +131,8 @@ public class Line2D
 	{
 		paint.setStrokeWidth(thikness);
 	}
-	
+	public void setColor(int a)
+    {
+        paint.setColor(a);
+    }
 }

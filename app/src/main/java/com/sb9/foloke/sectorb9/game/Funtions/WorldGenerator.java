@@ -29,7 +29,7 @@ public class WorldGenerator
        
        
         for (int i=0;i<50;i++)
-			entityManager.addObject(new Asteroid(50*rand.nextInt(50)+25*rand.nextInt(20),100*rand.nextInt(20)+20*rand.nextInt(50),rand.nextInt(180), gameManager,rand.nextInt(10)));
+			entityManager.addObject(new Asteroid(50*rand.nextInt(50)+25*rand.nextInt(20),100*rand.nextInt(20)+20*rand.nextInt(50),rand.nextInt(180), gameManager,rand.nextInt(3)));
     }
 	
 	public static void randomSectorHostile(EntityManager entityManager,GameManager gameManager)
@@ -40,7 +40,7 @@ public class WorldGenerator
 		for(int i=0;i<3;i++)
 			entityManager.addObject(new EnemyShip(50*rand.nextInt(50)+25*rand.nextInt(20),1000,0,gameManager));
 		for(int i=0;i<10;i++)
-			entityManager.addObject(new Asteroid(50*rand.nextInt(50)+25*rand.nextInt(20),100*rand.nextInt(20)+20*rand.nextInt(50),rand.nextInt(180), gameManager,rand.nextInt(10)));
+			entityManager.addObject(new Asteroid(50*rand.nextInt(50)+25*rand.nextInt(20),100*rand.nextInt(20)+20*rand.nextInt(50),rand.nextInt(180), gameManager,rand.nextInt(3)));
     }
 	
 }

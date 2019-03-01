@@ -30,6 +30,38 @@
 			android:textColor="#ffffff"
 
 		/>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:layout_margin="5dp"
+        android:layout_marginTop="100dp">
+        <Button
+            android:id="@+id/menu_ui_set_first_ship"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="select ship 1"
+            android:textColor="#ffffff"
+            android:layout_gravity="center"
+            />
+        <Button
+            android:id="@+id/menu_ui_set_second_ship"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ship 2"
+            android:textColor="#ffffff"
+            android:layout_gravity="center"
+            />
+        <Button
+            android:id="@+id/menu_ui_set_third_ship"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ship 3"
+            android:textColor="#ffffff"
+            android:layout_gravity="center"
+            />
+    </LinearLayout>
 		<Switch
 			android:id="@+id/debug_switch"
             android:layout_width="wrap_content"

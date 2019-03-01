@@ -16,7 +16,7 @@ public class Laser extends Weapon
 {
 	private ParticleSystem laserDamageEffect;
 	private boolean active=false;
-	//private Bitmap image;
+
 	private PointF hitPoint;
 	private Line2D line;
 	private float lenght=200;
@@ -24,13 +24,8 @@ public class Laser extends Weapon
 	private float[] initShootVector;
 	private float[] tempShootVector=new float[4];
 	private Entity hitedEntity;
-	
-	
-	
-	private float maxHeat=10; //
-	private float cooling=0.2f; //seconds
-	
-	
+	private float maxHeat=10;
+	private float cooling=0.2f;
 	private boolean overheated=false;
 	private float heat=0;
 	private float heatGain=0.1f;
@@ -66,6 +61,7 @@ public class Laser extends Weapon
 		heatBar.setWorldLocation(line.getFirstPoint().x,line.getFirstPoint().y);
 		calculateHeat();
 	}
+
 	private void calculateHeat()
 	{
 		heatBar.set(heat/maxHeat*100);
@@ -118,7 +114,6 @@ public class Laser extends Weapon
 						if(line.intersect(e.getCollisionObject()))
 						{
                         	tDistance = distanceTo(line.getPoint());
-							turret.getParent().getHolder().getGameManager().getGamePanel().textDebug2.setString(""+hitPoint);
                             if (tDistance < distance) 
 							{
                                 distance = tDistance;
@@ -128,7 +123,6 @@ public class Laser extends Weapon
 						}
             if (hitedEntity!=null) 
 			{
-				turret.getParent().getHolder().getGameManager().getGamePanel().textDebug3.setString(""+hitedEntity);
                 hitedEntity.applyDamage(damage);
                 laserDamageEffect.draw(hitPoint.x, hitPoint.y, rnd.nextInt(360), new PointF(0, 0));
                 line.set(tempShootVector[0] + turret.getParent().getHolder().getCenterX(),

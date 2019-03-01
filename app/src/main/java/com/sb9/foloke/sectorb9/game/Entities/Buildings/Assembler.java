@@ -34,7 +34,7 @@ public class Assembler extends StaticEntity
 	public Assembler(float x, float y, float rotation, GameManager gameManager)
 	{
 		super(x,y,rotation, gameManager,ID);
-		assemblerAnim=new Animation( BuildingsDataSheet.findById(ID).animation,30);
+		assemblerAnim=new Animation( BuildingsDataSheet.findById(ID).animation,5);
 		
 		inProduction=0;
 		prodTimer=new Timer(0);

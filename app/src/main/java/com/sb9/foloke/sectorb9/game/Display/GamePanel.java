@@ -56,7 +56,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 	private MainThread MT;
 	private boolean gestureInProgress=false;
 	private Paint borderPaint = new Paint();
-
+    private boolean touched=false;
     public GamePanel(Context context, AttributeSet attributeSet)
     {
         super(context, attributeSet);
@@ -143,7 +143,9 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 
     public void tick()
     {
+            pointOfTouch.set((screenPointOfTouch.x-canvasW/2)/camera.getScale()+getPalyer().getCenterX(),(screenPointOfTouch.y-canvasH/2)/camera.getScale()+getPalyer().getCenterY());
             cursor.setWorldLocation(pointOfTouch);
+            cursor.tick();
         	camera.tick(scale,canvasW,canvasH);
         	gameManager.tick();
 			
@@ -152,48 +154,39 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
     public void render(Canvas canvas)
     {
 
-       		super.draw(canvas);
-		
-			camera.setScreenRect(canvasW,canvasH);
-        	canvas.save();
-		
-        	canvas.translate(-camera.getWorldLocation().x+canvas.getWidth()/2,-camera.getWorldLocation().y+canvas.getHeight()/2);
-        	canvas.scale(camera.getScale(),camera.getScale(),camera.getWorldLocation().x,camera.getWorldLocation().y);
+        super.draw(canvas);
+        camera.setScreenRect(canvasW,canvasH);
+        canvas.save();
+        canvas.translate(-camera.getWorldLocation().x+canvas.getWidth()/2,-camera.getWorldLocation().y+canvas.getHeight()/2);
+        canvas.scale(camera.getScale(),camera.getScale(),camera.getWorldLocation().x,camera.getWorldLocation().y);
+			
+        //objects
+        gameManager.render(canvas);
+        cursor.render(canvas);
 
 			
-        	//objects
-			gameManager.render(canvas);
+        if (gameManager.drawDebugInfo)
+        {
+            camera.render(canvas);
+        }
 
-			cursor.render(canvas);
+        if(pressedObject!=null)
+        {
+            pressedObject.drawDebugCollision(canvas);
+        }
 
-			//render
-			
-			
-        	if (gameManager.drawDebugInfo)
-			{
-            	camera.render(canvas);
-        	}
-
-
-			if(pressedObject!=null)
-			{
-				pressedObject.drawDebugCollision(canvas);
-			}
-			
-		
 		canvas.drawRect(0,0,worldSize,worldSize,borderPaint);
-		
-        	canvas.restore();
-			//UI
-			
-			if(gameManager.command==commandMoving)
-			gameManager.uIhp.render(canvas);
+        canvas.restore();
 
-
+        //UI
+        if(gameManager.command==commandMoving) {
+            gameManager.uIhp.render(canvas);
+            gameManager.uIsh.render(canvas);
+        }
         textFPS.render(canvas);
+
 		if(gameManager.drawDebugInfo)
 		{
-			//canvas.drawColor(Color.BLACK);
 			textScreenWH.render(canvas);	
 			textPointOfTouch.render(canvas);
 			debugExchange.render(canvas);
@@ -231,7 +224,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 		@Override
 		public void onScaleEnd(ScaleGestureDetector detector)
 		{
-			// TODO: Implement this method
+
 			super.onScaleEnd(detector);
 			gestureInProgress=false;
 		}
@@ -253,48 +246,48 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 		if(!gameManager.gamePause)
 		{
 			gestureDetector.onTouchEvent(event);
-			//TODO: if gesture in progress ignore input
 			if(!gestureInProgress)
 			{
-      		  float x=event.getX(),y=event.getY();
-      		  screenPointOfTouch.set(x,y);
-      		  Player player=getPalyer();
-   		      pointOfTouch.set((x-canvasW/2)/camera.getScale()+player.getCenterX(),(y-canvasH/2)/camera.getScale()+player.getCenterY());
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-					
-					switch (gameManager.command)
-					{
-						case commandMoving:
-         		           	player.setMovable(true);
-							break;
-							
-						case commandInteraction: 
-							break;
-					}
-                    break;
-					
-                case MotionEvent.ACTION_MOVE:
-                    break;
-					
-                case MotionEvent.ACTION_UP:	
-					switch (gameManager.command)
-					{
-						case commandMoving:
-                       		player.setMovable(false);
-							break;
-						case commandInteraction:
-							gameManager.interactionCheck(pointOfTouch.x,pointOfTouch.y);
-							
-							break;
+      		  	float x=event.getX(),y=event.getY();
+      		  	screenPointOfTouch.set(x,y);
+      		  	Player player=getPalyer();
+
+            	switch (event.getAction())
+                {
+                	case MotionEvent.ACTION_DOWN:
+                	    touched=true;
+						switch (gameManager.command)
+						{
+							case commandMoving:
+         		           		player.setMovable(true);
+								break;
+							case commandInteraction:
+								break;
 						}
                     break;
-                default:
-                    break;
-       			 }
+					
+                	case MotionEvent.ACTION_MOVE:
+                    	break;
+
+                	case MotionEvent.ACTION_UP:
+                	    touched=false;
+						switch (gameManager.command)
+						{
+							case commandMoving:
+                       			player.setMovable(false);
+								break;
+							case commandInteraction:
+								gameManager.interactionCheck(pointOfTouch.x,pointOfTouch.y);
+								break;
+						}
+                        break;
+
+                	default:
+                        break;
+                }
 			}
 		}
-                return true;
+		return true;
     }
 
 	public void save(BufferedWriter w)
@@ -321,14 +314,11 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
         return gameManager;
     }
 
-    public MainActivity getMainActivity()
-    {
-        return MA;
-    }
 	public Cursor getCursor()
 	{
 		return cursor;
 	}
+
 	public float getWorldSize()
 	{
 		return worldSize;

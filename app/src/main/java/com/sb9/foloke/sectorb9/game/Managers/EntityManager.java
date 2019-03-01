@@ -16,17 +16,21 @@ import com.sb9.foloke.sectorb9.game.Entities.*;
 public class EntityManager
 {
 	private ArrayList<Entity> entityArray;
+    private ArrayList<Entity> entityToAdd;
 	private GameManager gameManager;
 	public EntityManager(GameManager gameManager)
 	{
 		this.gameManager = gameManager;
 
 		entityArray=new ArrayList<Entity>();
+        entityToAdd=new ArrayList<Entity>();
 	}
 
 	public void addObject(Entity entity)
 	{
-		entityArray.add(entity);
+
+		entityToAdd.add(entity);
+
 	}
 
 	public void render(Canvas canvas)
@@ -39,9 +43,18 @@ public class EntityManager
 
 	public void tick()
 	{
-		for(Entity e: entityArray)
+	    if(entityToAdd.size()>0)
+	    entityArray.addAll(entityToAdd);
+	    entityToAdd.clear();
+	   Iterator<Entity> it=entityArray.iterator();
+
+
+		while(it.hasNext())
 		{
+			Entity e = (Entity) it.next();
 			e.tick();
+			if(e.toRemove)
+			    it.remove();
 		}
 	}
 
@@ -137,6 +150,11 @@ public class EntityManager
 				e=new Asteroid(0,0,0, gameManager,0);
 				break;
 			}
+            case 9:
+            {
+                e=new DroppedItems(0,0,0,gameManager);
+                break;
+            }
 			case 10:
 			{
 				e=new EnemyShip(0,0,0,gameManager);

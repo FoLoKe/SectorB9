@@ -27,7 +27,7 @@ public class LoadGameUI
 			myDir.mkdir();
 		}
 
-		MA.findViewById(R.id.back_from_load).setOnClickListener(new OnClickListener()
+		MA.findViewById(R.id.back_from_load).setOnClickListener(new View.OnClickListener()
 		{
 			public void onClick(View v)
 			{
@@ -35,7 +35,7 @@ public class LoadGameUI
 			}
 		});
 		
-		MA.findViewById(R.id.load_menu_load_game).setOnClickListener(new OnClickListener()
+		MA.findViewById(R.id.load_menu_load_game).setOnClickListener(new View.OnClickListener()
 			{
 				public void onClick(View v)
 				{
@@ -43,7 +43,7 @@ public class LoadGameUI
 				}
 			});
 			
-		MA.findViewById(R.id.load_menu_delete_game).setOnClickListener(new OnClickListener()
+		MA.findViewById(R.id.load_menu_delete_game).setOnClickListener(new View.OnClickListener()
 			{
 				public void onClick(View v)
 				{
@@ -107,7 +107,7 @@ public class LoadGameUI
 				
 					TR.setLayoutParams(TLLP);
 					TR.setGravity(Gravity.CENTER);
-					TR.setOnClickListener(new OnClickListener()
+					TR.setOnClickListener(new View.OnClickListener()
 					{
 						@Override
 						public void onClick(View v)

@@ -13,11 +13,14 @@ import com.sb9.foloke.sectorb9.game.Entities.Buildings.*;
 import com.sb9.foloke.sectorb9.game.Managers.*;
 import com.sb9.foloke.sectorb9.game.Assets.*;
 
+import java.util.Random;
+
 
 public class BuildUI
 {
 	private static int ObjectID;
 	private static View prevPressed;
+
 	public static void init(final MainActivity MA,final ViewFlipper VF)
 	{
 		
@@ -48,7 +51,6 @@ public class BuildUI
 				
 			testText.setLayoutParams(trp);
 			ObjectID=i;
-			testText.setText(ObjectID+"");
 				
 			BitmapDrawable bdrawable;
 			bdrawable = new BitmapDrawable(MA.getResources(),BuildingsDataSheet.findById(ObjectID).image);
@@ -70,6 +72,7 @@ public class BuildUI
 					MA.getGameManager().getGamePanel().getCursor().setImage(BuildingsDataSheet.findById(ObjectID).image);
 				}
 			});
+
 			row.setId(ObjectID);
 			
 			row.addView(sprite);
@@ -96,37 +99,36 @@ public class BuildUI
 			@Override
 			public void onClick(View v) 
 			{
-				Entity e=MA.getGameManager().createBuildable(ObjectID,MA.getGameManager().getPlayer());
-				
-				MA.getGameManager().getWorldManager().getEntityManager().addObject(e);
-				e.setCenterX(MA.getGameManager().getGamePanel().pointOfTouch.x);
-				e.setCenterY(MA.getGameManager().getGamePanel().pointOfTouch.y);
-				e.calculateCollisionObject();
+			    if(MA.getGameManager().getGamePanel().getCursor().onBuild())
+			    {
+                    Entity e = MA.getGameManager().createBuildable(ObjectID, MA.getGameManager().getPlayer());
+                    MA.getGameManager().getWorldManager().getEntityManager().addObject(e);
+                    e.setCenterX(MA.getGameManager().getGamePanel().pointOfTouch.x);
+                    e.setCenterY(MA.getGameManager().getGamePanel().pointOfTouch.y);
+                    e.setWorldRotation(new Random().nextInt(360));
+                    e.calculateCollisionObject();
+                }
 			}
 		});
 	}
 	public static void deinit(MainActivity MA)
 	{
-		//
 		TableLayout table=MA.findViewById(R.id.buildTableLayout);
 		if(table==null)
 			return;
 			
 		MA.getGameManager().getGamePanel().getCursor().setImage(ShipAsset.cursor);
 		int count = table.getChildCount();
-		int countt = table.getChildCount();
+
 		for (int i = 0; i < count; i++) {
 			
 			TableRow child = (TableRow)table.getChildAt(i);
-			countt = child.getChildCount();
+
 			child.removeAllViews();
 			child.removeAllViewsInLayout();
-			
-			countt = child.getChildCount();
 		}
 		table.removeAllViews();
 		table.removeAllViewsInLayout();
-		countt = table.getChildCount();
-		countt = table.getChildCount();
+
 	}
 }

@@ -36,8 +36,8 @@ public class EnemyShip extends DynamicEntity {
     public void render(Canvas canvas) {
 		if(!active||!renderable)
 			return;
-		super.render(canvas);
         ship.render(canvas);
+        super.render(canvas);
 		AI.render(canvas);
 
     }
@@ -58,7 +58,7 @@ public class EnemyShip extends DynamicEntity {
         super.calculateCollisionObject();
 
         if(ship!=null)
-			ship.calculateCollisionObject(transformMatrix);
+			ship.calculateCollisionObject();
     }
 
     
