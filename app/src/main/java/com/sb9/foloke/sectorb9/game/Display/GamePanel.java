@@ -242,6 +242,11 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 
     private ScaleGestureDetector gestureDetector = new ScaleGestureDetector(getContext(), gestureListener);
 
+	
+
+	
+	
+	
     @Override
 	public boolean onTouchEvent(MotionEvent event)
 	{
