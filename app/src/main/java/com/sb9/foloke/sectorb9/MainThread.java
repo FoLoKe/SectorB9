@@ -30,10 +30,11 @@ public class MainThread extends Thread
         long waitTime;
         long totalTime =0;
         int frameCount =0;
-        long targetTime =1000/FPS;
+
 
         while(running)
         {
+            long targetTime =1000/FPS;
             startTime=System.nanoTime();
             canvas = null;
 
@@ -85,5 +86,7 @@ public class MainThread extends Thread
 			FPS=30;
 		else
 			FPS=60;
+
+
 	}
 }

@@ -10,7 +10,7 @@ public class ShipMk1 extends Ship
 	{
 		super(ShipAsset.player_mk1,ShipAsset.engine_mk1,null,holder);
         speed=5;
-        rotSpeed=0.01f;
+        rotSpeed=1f;
         maxHP=50;
         maxSH=25;
         shieldSize=1;
