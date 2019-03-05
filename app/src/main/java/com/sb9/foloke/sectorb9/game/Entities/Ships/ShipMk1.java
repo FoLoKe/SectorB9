@@ -10,12 +10,12 @@ public class ShipMk1 extends Ship
 	{
 		super(ShipAsset.player_mk1,ShipAsset.engine_mk1,null,holder);
         speed=5;
-        rotSpeed=1f;
+        rotSpeed=5f;
         maxHP=50;
         maxSH=25;
         shieldSize=1;
-        accel=0.005f;
-        decel=0.004f;
+        accel=0.009f;
+        decel=0.009f;
 		init(holder);
 
 	}
@@ -31,5 +31,6 @@ public class ShipMk1 extends Ship
 		turrets=new TurretSystem[1];
         turrets[0]=new TurretSystem(pointOfShooting[0],3,holder.getGameManager(),this);
         setOptionToDynamic();
+		super.init(holder);
 	}
 }

@@ -6,6 +6,8 @@ import com.sb9.foloke.sectorb9.game.Assets.ShipAsset;
 import com.sb9.foloke.sectorb9.game.Entities.DynamicEntity;
 import com.sb9.foloke.sectorb9.game.Funtions.*;
 import com.sb9.foloke.sectorb9.game.ParticleSystem.*;
+import com.sb9.foloke.sectorb9.game.Entities.Weapons.*;
+import com.sb9.foloke.sectorb9.game.Assets.*;
 
 public class Ship
 {
@@ -113,5 +115,13 @@ public class Ship
 		return holder;
 	}
 
-
+	public Weapon[] getWeapons()
+	{
+		Weapon[] w=new Weapon[turrets.length];
+		for(int i=0;i<turrets.length;i++)
+		{
+			w[i]=turrets[i].getWeapon();
+		}
+		return w;
+	}
 }

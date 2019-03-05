@@ -63,5 +63,10 @@ public class TurretSystem
 	{
 		return parent;
 	}
+	
+	public Weapon getWeapon()
+	{
+		return weapon;
+	}
 
 }

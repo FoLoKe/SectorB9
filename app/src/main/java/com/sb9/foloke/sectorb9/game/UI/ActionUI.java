@@ -7,14 +7,29 @@ import android.widget.*;
 import android.view.View.*;
 import android.view.*;
 import android.graphics.drawable.*;
+import com.sb9.foloke.sectorb9.game.Entities.Weapons.*;
+import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
+import android.graphics.*;
 
 public class ActionUI
 {
-	
+	//TODO: BUTTONS SIZE FROM SCREEN SIZE
+	private static boolean weaponsOpened=false;
+	private static Button collectAllButton;
+	public static float scaleX=1;
+	public static float scaleY=1;
 	public static void init(final MainActivity MA,final ViewFlipper VF)
 	{
 		
-			
+		//to prevent texture overblurring scale by one axis scaleX=MA.getGameManager().getGamePanel().canvasW/2500;
+		scaleY=MA.getGameManager().getGamePanel().canvasH/1600;
+		if(scaleX>2)
+			scaleX=2;
+			if(scaleX<0.5f)
+				scaleX=0.5f;
+		scaleX=scaleY;
+		
+		
 		Button interactionButton = MA.findViewById(R.id.Interaction);
       
         interactionButton.setOnClickListener
@@ -29,9 +44,9 @@ public class ActionUI
 				}
 			});
 		ImageButton shootButton = MA.findViewById(R.id.shootButton);
-		shootButton.setBackground(new BitmapDrawable(MA.getResources(),UIAsset.shootButton));
-		shootButton.getLayoutParams().width=200;
-		shootButton.getLayoutParams().height=200;
+		shootButton.setBackground(null);
+		shootButton.setImageBitmap(Bitmap.createScaledBitmap(UIAsset.shootButton,100,100,false));
+		
 		
 		shootButton.setOnTouchListener
 		(new OnTouchListener(){
@@ -51,9 +66,85 @@ public class ActionUI
 					return false;
 				}
 			});
+			
+		Button weaponsButton = MA.findViewById(R.id.action_ui_weapons_button);
+		BitmapFactory.Options bitmapOptions=new BitmapFactory.Options();
+        bitmapOptions.inScaled=false;
+		///2500 screenW
+		///100 normal size for 32 px
+		//so button size is scaled 3.125 for 2500 it is 100%
 		
+		//for 1800 scale =(int) 3.125*1800/2500
+		
+		
+		weaponsButton.setBackgroundDrawable(new BitmapDrawable(MA.getResources(),Bitmap.createScaledBitmap(BitmapFactory.decodeResource(MA.getResources(),R.drawable.ui_weaponsbutton,bitmapOptions),(int)(30*scaleX),(int)(100*scaleY),false)));
+		weaponsButton.getLayoutParams().width=(int)(150*scaleX);
+		weaponsButton.setOnClickListener(new OnClickListener()
+		{
+			public void onClick(View p)
+			{
+				initWeapons(MA);
+			}
+		});
 
+		collectAllButton=MA.findViewById(R.id.action_u_collectAllButton);
+		collectAllButton.setOnClickListener(new OnClickListener()
+		{
+			public void onClick(View v)
+			{
+				MA.getGameManager().collectDebris();
+			}
+		});
 			
+	}
+	
+	public static void initWeapons(final MainActivity MA)
+	{
+		LinearLayout LL=MA.findViewById(R.id.action_ui_WeaponsList);
+		
+		//LL.scal
+		if(weaponsOpened)
+		{
+			weaponsOpened=false;
+			LL.removeAllViews();
+			LL.setVisibility(View.GONE);
 			
+		}
+		else
+		{
+			LL.setVisibility(View.VISIBLE);
+			weaponsOpened=true;
+			Weapon[] weapons= MA.getGameManager().getPlayer().getShip().getWeapons();
+			for(Weapon w:weapons)
+			{
+				WeaponButton wb=new WeaponButton(MA);
+				wb.setWeapon(w);
+				wb.setText(w.getName());
+				wb.setTextColor(Color.WHITE);
+				setWeaponButtonState(wb,MA);
+				
+				wb.setOnClickListener(new OnClickListener()
+				{
+					public void onClick(View v)
+					{
+						((WeaponButton)v).getWeapon().setEnabled(!((WeaponButton)v).getWeapon().getEnabled());
+						setWeaponButtonState((WeaponButton)v,MA);
+					}
+				});
+				LL.addView(wb);
+			}
+		}
+	}
+	
+	private static void setWeaponButtonState(WeaponButton wb,MainActivity MA)
+	{
+		BitmapFactory.Options bitmapOptions=new BitmapFactory.Options();
+        bitmapOptions.inScaled=false;
+		if(!wb.getWeapon().getEnabled())
+		{
+			wb.setBackgroundDrawable(new BitmapDrawable(MA.getResources(),Bitmap.createScaledBitmap(BitmapFactory.decodeResource(MA.getResources(),R.drawable.ui_weapon_enabled,bitmapOptions),(int)(100*scaleX),(int)(50*scaleY),false)));
+		}
+		else
+			wb.setBackgroundDrawable(new BitmapDrawable(MA.getResources(),Bitmap.createScaledBitmap(BitmapFactory.decodeResource(MA.getResources(),R.drawable.ui_weapon_disabled,bitmapOptions),(int)(100*scaleX),(int)(50*scaleY),false)));
 	}
 }

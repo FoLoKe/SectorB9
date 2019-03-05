@@ -17,11 +17,13 @@ public class Plasmgun extends Weapon
 	public Plasmgun(TurretSystem turret, GameManager gameManager)
 	{
 		super(turret, gameManager);
+		name="plasmgun";
 		damage=20;
 		this.projectiles=new ProjectilesPool(WeaponsAsset.plasm,5,60,damage,turret.getParent().getHolder(), gameManager);
 	}
 	public void shoot()
 	{
+		if(enabled)
 		if(fireDelay.getTick()<=1)
 		{
 			float mathRotation=(float)(Math.PI/180*turret.getParent().getHolder().getWorldRotation());

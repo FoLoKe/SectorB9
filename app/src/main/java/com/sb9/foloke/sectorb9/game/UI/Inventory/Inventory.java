@@ -168,10 +168,12 @@ public class Inventory
 		}
 		return false;
 	}
+	
 	public ArrayList<InventoryItem> getArray()
 	{
 		return items;
 	}
+	
 	public Point getItemOnPos(int x,int y)
 	{
 		for(InventoryItem i: items)
@@ -181,6 +183,7 @@ public class Inventory
 		}
 		return new Point(0,0);
 	}
+	
 	public boolean equalOnPosByID(int x,int y,int ID)
 	{
 		if(ID!=0)
@@ -191,6 +194,7 @@ public class Inventory
 		}
 		return false;
 	}
+	
 	public boolean equaOrNullOnPosByID(int x,int y,int ID)
 	{
 		if(ID!=0)
@@ -212,6 +216,7 @@ public class Inventory
 		return 0;
 	
 	}
+	
 	public int getItemCountOnPos(int x,int y)
 	{
 		for(InventoryItem i: items)
@@ -222,6 +227,7 @@ public class Inventory
 		return 0;
 
 	}
+	
 	public boolean containsOneItemInAllInventory(int ID,int count)
 	{
 		if (ID==0||count==0)
@@ -237,6 +243,7 @@ public class Inventory
 			return true;
 		return false;
 	}
+	
 	public boolean takeOneItemFromAllInventory(int ID,int count)
 	{
 		if(ID!=0&&count!=0)
@@ -283,6 +290,7 @@ public class Inventory
 		}
 		return true;
 	}
+	
 	public boolean addToExistingOrNull(int ID,int count)
 	{
 		if(ID!=0&&count!=0)
@@ -298,9 +306,11 @@ public class Inventory
 		}
 		return addNewItem(ID,count);
 	}
+	
 	public boolean addToExistingOrNull(InventoryItem item)
 	{
 		if(item.ID!=0&&item.count!=0)
+		{
 		for(InventoryItem i: items)
 		{
 			if(i.ID==item.ID)
@@ -312,6 +322,8 @@ public class Inventory
 
 		}
 		return addNewItem(item.ID,item.count);
+		}
+		return false;
 	}
 	
 	public float count()
@@ -328,4 +340,29 @@ public class Inventory
 		return c;
 	}
 	
+	public boolean collectFromInventory(Entity scr)
+    {
+		if(scr==null)
+			return false;
+		boolean overCapacity=false;
+        Inventory inv=scr.getInventory();
+        for(InventoryItem invI:inv.items)
+			{
+				if(invI!=null)
+					if(invI.ID!=0&&invI.count!=0)
+				{
+					if((this.addToExistingOrNull(invI)))
+					{
+						invI.ID=0;
+						invI.count=0;
+					}
+					else
+					{
+						overCapacity=true;
+					}
+				}
+			}
+		return !overCapacity;
+    }
+		
 }

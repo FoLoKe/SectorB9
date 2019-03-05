@@ -32,5 +32,6 @@ public class ShipMk2 extends Ship
 
 		
 		setOptionToDynamic();
+		super.init(holder);
 	}
 }

@@ -160,4 +160,9 @@ public class Player extends DynamicEntity
 		initShip();
 		HP=100;
 	}
+	
+	public Ship getShip()
+	{
+		return ship;
+	}
 }

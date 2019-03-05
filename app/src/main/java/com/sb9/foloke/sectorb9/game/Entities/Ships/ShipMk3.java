@@ -35,6 +35,7 @@ public class ShipMk3 extends Ship
 		turrets[3]=new TurretSystem(pointOfShooting[3],4,holder.getGameManager(),this);
 
         setOptionToDynamic();
+		super.init(holder);
 	}
 }
 

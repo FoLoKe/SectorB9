@@ -5,12 +5,45 @@
 	android:focusable="false"
 	android:id="@+id/action_uiFrameLayout"
     >
-    
+	<LinearLayout
+		android:layout_gravity="center|left"
+		android:orientation="vertical"
+
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content">
+		<Button
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:visible="false"
+			android:id="@+id/action_u_collectAllButton"
+			android:text="collect debris"
+			android:textColor="#ffffff"/>
+    <LinearLayout
+		android:layout_gravity="center|left"
+		android:orientation="horizontal"
+		
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content">
+		<LinearLayout
+			android:layout_gravity=""
+			android:orientation="vertical"
+			android:id="@+id/action_ui_WeaponsList"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:scaleType="fitXY"/>
+		
+		<Button
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			
+			android:id="@+id/action_ui_weapons_button"/>
+	</LinearLayout>
+	</LinearLayout>
 	
 	<LinearLayout
 		android:layout_gravity="center|top"
 		android:orientation="vertical"
-		android:gravity="top"
+		android:gravity="top|center"
 		android:layout_width="wrap_content"
 		android:layout_height="match_parent">
 

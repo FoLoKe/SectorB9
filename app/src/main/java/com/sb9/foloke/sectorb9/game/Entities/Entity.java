@@ -131,7 +131,7 @@ public abstract class Entity {
 		try
         {
 			String s=invSave();
-		    writer.write(ID+" "+name+" "+x+" "+y+" "+rotation+" "+HP+" "+s);
+		    writer.write(ID+" "+name+" "+x+" "+y+" "+rotation+" "+HP+" "+TEAM+" "+s);
 		    writer.newLine();
 		}
 		catch(Throwable t)
@@ -149,8 +149,9 @@ public abstract class Entity {
 			y=Float.parseFloat(words[3]);
 			rotation= Float.parseFloat(words[4]);
 			HP=Float.parseFloat(words[5]);
+			TEAM=Integer.parseInt(words[6]);
 			String[] invWords;
-			if((invWords = words[6].split(":")).length>0)
+			if((invWords = words[7].split(":")).length>0)
 			{
 				for(String s: invWords)
 				{
@@ -280,6 +281,7 @@ public abstract class Entity {
 	    float sum=HP+SH-damage;
 
         shieldShow.setTimer(shildShowTime);
+		
 	    if(sum-maxHP>0)
 	    {
             SH = sum - maxHP;
@@ -289,6 +291,7 @@ public abstract class Entity {
             SH = 0;
             HP = sum;
         }
+		
 		uIhp.set(HP/maxHP*100);
         uIsh.set(SH/maxSH*100);
 		if(HP<=0)

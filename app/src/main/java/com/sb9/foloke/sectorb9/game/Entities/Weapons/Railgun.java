@@ -37,6 +37,7 @@ public class Railgun extends Weapon
     public Railgun(TurretSystem turret, GameManager gameManager)
     {
         super(turret, gameManager);
+		name="railgun";
         this.heatBar=new ProgressBarUI(this,20,2,-10,-2, UIAsset.hpBackground,UIAsset.hpLine,UIAsset.progressBarBorder,load/maxLoad*100);
         initShootVector=new float[]{turret.getPointOfShooting().x,
                 turret.getPointOfShooting().y,
@@ -141,6 +142,7 @@ public class Railgun extends Weapon
     @Override
     public void shoot()
     {
+		if(enabled)
         active=true;
     }
 

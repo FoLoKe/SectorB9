@@ -32,6 +32,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.util.ArrayList;
 import com.sb9.foloke.sectorb9.game.UI.*;
+import com.sb9.foloke.sectorb9.game.Entities.*;
 
 
 public class GameManager {
@@ -107,22 +108,20 @@ public class GameManager {
         }
 		if(player!=null)
 		{
-		player.rotationToPoint(gamePanel.pointOfTouch);
-		
-			float minAcceleration=gamePanel.getHeight()/8/gamePanel.getCamera().getScale(); //0%
-			float maxAcceleration=gamePanel.getHeight()/2/gamePanel.getCamera().getScale(); //100%
+			uIhp.set(player.getHp()/player.getMaxHP()*100);
+			uIsh.set(player.getSH()/player.getMaxSH()*100);
+			if(gamePanel.getTouched())
+			{
+			player.rotationToPoint(getGamePanel().getMovementPoint());
 			
-			PointF relativePoint=new PointF(player.getCenterX()-gamePanel.pointOfTouch.x,player.getCenterY()-gamePanel.pointOfTouch.y);
-			float vectorLenght=(float)Math.sqrt(relativePoint.x*relativePoint.x+relativePoint.y*relativePoint.y);
-			float targetAcceleration=(vectorLenght-minAcceleration)/(maxAcceleration-minAcceleration);
+			float targetAcceleration=gamePanel.getMovementSpeed();//(vectorLenght-minAcceleration)/(maxAcceleration-minAcceleration);
 			if(targetAcceleration>1)
 				targetAcceleration=1;
-        player.addMovement(targetAcceleration);
-       
-
-        uIhp.set(player.getHp()/player.getMaxHP()*100);
-        uIsh.set(player.getSH()/player.getMaxSH()*100);
+     		player.addMovement(targetAcceleration);
+       		}
+        	
 		}
+		
         worldManager.updateWorld();
     }
 
@@ -277,5 +276,27 @@ public class GameManager {
 		player.respawn();
 		gamePanel.getCamera().setPointOfLook(player);
 		
+	}
+	
+	public void collectDebris()
+	{
+		
+		for(Entity e:getEntities())
+		if(e instanceof DroppedItems)
+		if(distanceTo(player.getWorldLocation(),e.getWorldLocation())<200)
+		{
+			boolean b =player.getInventory().collectFromInventory(e);
+			if(b)
+			{
+				MA.makeToast("items collected");
+			}
+			else
+				MA.makeToast("inventory full");
+		}
+	}
+	
+	public float distanceTo(PointF a,PointF b)
+	{
+		return (float)Math.sqrt((b.x-a.x)*(b.x-a.x)+(b.y-a.y)*(b.y-a.y));
 	}
 }

@@ -35,6 +35,7 @@ public class Laser extends Weapon
 	public Laser(TurretSystem turret, GameManager gameManager)
 	{
 		super(turret, gameManager);
+		name="laser";
 		this.heatBar=new ProgressBarUI(this,20,2,-10,-2,UIAsset.hpBackground,UIAsset.hpLine,UIAsset.progressBarBorder,heat/maxHeat*100);
 		initShootVector=new float[]{turret.getPointOfShooting().x,
                 turret.getPointOfShooting().y,
@@ -140,6 +141,7 @@ public class Laser extends Weapon
 	@Override
 	public void shoot()
 	{
+		if(enabled)
 		active=true;
 	}
 

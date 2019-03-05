@@ -40,6 +40,8 @@ public abstract class DynamicEntity extends Entity {
 
 	private void calculateMovement()
 	{
+		if(this instanceof Player)
+			gameManager.getGamePanel().textDebug4.setString(""+targetAcceleration);
 		if(acceleration<targetAcceleration)
 			acceleration+=frontAcceleration;
 		else
@@ -196,7 +198,7 @@ public abstract class DynamicEntity extends Entity {
 	
 	public float getAcceleration()
 	{
-		return targetAcceleration;
+		return acceleration;
 	}
 
 	public boolean getMoveable()

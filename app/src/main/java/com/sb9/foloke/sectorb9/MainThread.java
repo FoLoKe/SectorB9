@@ -49,6 +49,7 @@ public class MainThread extends Thread
             }
             catch(Exception e){
                 System.out.print(e);
+				mapPanel.getGameManager().getMainActivity().makeToast(""+e);
             }
 
             finally{if(canvas!=null)
