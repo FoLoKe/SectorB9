@@ -31,6 +31,8 @@ import com.sb9.foloke.sectorb9.game.Funtions.Timer;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.util.ArrayList;
+import java.util.Iterator;
+
 import com.sb9.foloke.sectorb9.game.UI.*;
 import com.sb9.foloke.sectorb9.game.Entities.*;
 
@@ -59,7 +61,7 @@ public class GameManager {
     public boolean drawDebugInfo=false;
     private Timer destroyedTimer;
     private Player player;
-
+    private boolean collect=false;
 
     public int command;
     public static final int commandInteraction=1,commandMoving=0,commandBuild=2;
@@ -113,15 +115,49 @@ public class GameManager {
 			if(gamePanel.getTouched())
 			{
 			player.rotationToPoint(getGamePanel().getMovementPoint());
-			
+
 			float targetAcceleration=gamePanel.getMovementSpeed();//(vectorLenght-minAcceleration)/(maxAcceleration-minAcceleration);
 			if(targetAcceleration>1)
 				targetAcceleration=1;
      		player.addMovement(targetAcceleration);
        		}
-        	
+
 		}
-		
+		if(collect)
+        {
+            boolean collected=true;
+            Iterator<Entity> iter = getEntities().iterator();
+            while (iter.hasNext()) {
+                Entity e = (Entity) iter.next();
+                if (e instanceof DroppedItems)
+                    if (distanceTo(player.getWorldLocation(), e.getWorldLocation()) < 200) {
+                        boolean b = player.getInventory().collectFromInventory(e);
+                        if(!b)
+                            collected=false;
+                    }
+            }
+            if (collected)
+            {
+            MA.runOnUiThread(new Runnable()
+            {
+                public void run()
+                {
+
+                        MA.makeToast("items collected" );
+
+                }
+            });
+            }
+            else
+                MA.runOnUiThread(new Runnable()
+                {
+                    public void run()
+                    {
+                MA.makeToast("inventory full" );
+                    }
+                });
+    }
+        collect=false;
         worldManager.updateWorld();
     }
 
@@ -280,19 +316,7 @@ public class GameManager {
 	
 	public void collectDebris()
 	{
-		
-		for(Entity e:getEntities())
-		if(e instanceof DroppedItems)
-		if(distanceTo(player.getWorldLocation(),e.getWorldLocation())<200)
-		{
-			boolean b =player.getInventory().collectFromInventory(e);
-			if(b)
-			{
-				MA.makeToast("items collected");
-			}
-			else
-				MA.makeToast("inventory full");
-		}
+	    collect=true;
 	}
 	
 	public float distanceTo(PointF a,PointF b)

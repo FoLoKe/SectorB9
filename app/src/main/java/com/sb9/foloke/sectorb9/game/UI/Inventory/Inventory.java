@@ -345,9 +345,10 @@ public class Inventory
 		if(scr==null)
 			return false;
 		boolean overCapacity=false;
-        Inventory inv=scr.getInventory();
-        for(InventoryItem invI:inv.items)
+        Iterator<InventoryItem> iter=scr.getInventory().items.iterator();
+        while(iter.hasNext())
 			{
+                InventoryItem invI=iter.next();
 				if(invI!=null)
 					if(invI.ID!=0&&invI.count!=0)
 				{
