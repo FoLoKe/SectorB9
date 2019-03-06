@@ -37,11 +37,11 @@
 			android:id="@+id/openProduction"
 			android:layout_gravity="bottom|center"
 		/>
-		<Button
+		<ImageButton
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:textColor="#ffffff"
-			android:text="Close"
+			
 			android:id="@+id/closeInteraction"
 
 			android:layout_gravity="bottom|center"
@@ -79,12 +79,21 @@
 	<LinearLayout
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_gravity="bottom|center_horizontal">
-	<Button
+		android:orientation="vertical"
+		android:layout_gravity="bottom|center_horizontal"
+		>
+		<ImageView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:id="@+id/interaction_uiImageSign"/>
+	<LinearLayout
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:textColor="#ffffff"
-		android:text="BuildMode"
+		android:layout_gravity="bottom|center_horizontal">
+	<ImageButton
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		
 		android:id="@+id/openBuildUI"
 
 		android:layout_gravity="bottom|center"
@@ -98,5 +107,6 @@
 
 		android:layout_gravity="bottom|center"
 	/>
+	</LinearLayout>
 	</LinearLayout>
 </FrameLayout>

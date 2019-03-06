@@ -340,6 +340,20 @@ public class Inventory
 		return c;
 	}
 	
+	public int countItem(int ID)
+	{
+		int c=0;
+		for(InventoryItem i: items)
+		{
+			if(i.ID==ID&&i.count!=0)
+			{
+				c+=i.count;
+			}
+
+		}
+		return c;
+	}
+	
 	public boolean collectFromInventory(Entity scr)
     {
 		if(scr==null)

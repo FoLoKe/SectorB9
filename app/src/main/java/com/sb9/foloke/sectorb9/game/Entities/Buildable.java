@@ -4,6 +4,8 @@ import android.graphics.*;
 import com.sb9.foloke.sectorb9.game.DataSheets.BuildingsDataSheet;
 import com.sb9.foloke.sectorb9.game.Funtions.CustomCollisionObject;
 import com.sb9.foloke.sectorb9.game.Managers.*;
+import java.util.*;
+import com.sb9.foloke.sectorb9.game.UI.Inventory.*;
 
 public class Buildable extends StaticEntity
 {

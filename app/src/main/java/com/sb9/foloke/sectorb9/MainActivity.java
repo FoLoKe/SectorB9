@@ -373,11 +373,17 @@ public class MainActivity extends Activity {
 		
 	}
 	
-	public void makeToast(String toastText)
+	public void makeToast(final String toastText)
 	{
-		Context context = getApplicationContext();
-		int duration = Toast.LENGTH_LONG;
-		Toast toast = Toast.makeText(context, toastText, duration);
-		toast.show();
+		runOnUiThread(new Runnable()
+		{
+			public void run()
+			{
+				Context context = getApplicationContext();
+				int duration = Toast.LENGTH_LONG;
+				Toast toast = Toast.makeText(context, toastText, duration);
+				toast.show();
+			}
+		});
 	}
 }

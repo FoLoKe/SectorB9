@@ -11,6 +11,7 @@ import android.graphics.*;
 import java.io.*;
 import com.sb9.foloke.sectorb9.game.Entities.Buildings.*;
 import com.sb9.foloke.sectorb9.game.Entities.*;
+import com.sb9.foloke.sectorb9.game.DataSheets.*;
 
 
 public class EntityManager
@@ -18,6 +19,7 @@ public class EntityManager
 	private ArrayList<Entity> entityArray;
     private ArrayList<Entity> entityToAdd;
 	private GameManager gameManager;
+	
 	public EntityManager(GameManager gameManager)
 	{
 		this.gameManager = gameManager;
@@ -169,9 +171,20 @@ public class EntityManager
 		
 		return e;
 	}
+	public void onAddItmesToNewBuilding(Entity e)
+	{
+		
+	}
 	public Entity createBuildable(int ID,Entity initiator)
 	{
-		return new Buildable(ID,initiator.getTeam(),gameManager);
+		if(BuildingsDataSheet.findById(ID).buildable)
+			if(initiator.getInventory().contains(BuildingsDataSheet.findById(ID).resToBuild[0],1))
+				if(initiator.getInventory().takeOneItemFromAllInventory(BuildingsDataSheet.findById(ID).resToBuild[0],1))
+					return new Buildable(ID,initiator.getTeam(),gameManager);
+				else
+					gameManager.getMainActivity().makeToast("no resources");
+				
+		return null;
 	}
 	
 	public void reload()

@@ -22,7 +22,7 @@
 		android:orientation="horizontal"
 
 		android:layout_width="wrap_content"
-		android:layout_height="wrap_content">
+		android:layout_height="match_parent">
 
 		<RelativeLayout 
 			android:layout_width="wrap_content"
@@ -75,5 +75,38 @@
 				</TableLayout>
 				,</ScrollView>
 		</RelativeLayout>
+		<FrameLayout
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			>
+		<TableLayout
+			android:id="@+id/buildInfoTableLayout"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textColor="#ffffff"
+			android:layout_margin="10dp">
+
+
+
+			<TableRow
+				
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content" 
+
+			>
+
+				<TextView
+					
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginRight="20dp"
+					android:text="Choose object to build" 
+					android:textColor="#ffffff"
+				/>
+
+				/>
+			</TableRow>
+		</TableLayout>
+		</FrameLayout>
 	</LinearLayout>
 </FrameLayout>

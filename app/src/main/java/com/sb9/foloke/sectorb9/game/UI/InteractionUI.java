@@ -6,14 +6,24 @@ import android.view.*;
 import com.sb9.foloke.sectorb9.game.Entities.*;
 import android.graphics.*;
 import com.sb9.foloke.sectorb9.game.Entities.Buildings.*;
+import com.sb9.foloke.sectorb9.game.Assets.*;
+import android.graphics.drawable.*;
 
 public class InteractionUI
 {
+	private static float scaleX=1,scaleY=1;
 	public static void init(final MainActivity MA,final ViewFlipper VF,final StaticEntity target)
 	{
+		scaleY=MA.getGameManager().getGamePanel().canvasH/1600;
+		if(scaleX>2)
+			scaleX=2;
+		if(scaleX<0.5f)
+			scaleX=0.5f;
+		scaleX=scaleY;
+		
 		final ViewFlipper IVF=MA.findViewById(R.id.interaction_uiViewFlipper);
 		IVF.setDisplayedChild(0);
-		Button closeButton = MA.findViewById(R.id.closeInteraction);
+		ImageButton closeButton = MA.findViewById(R.id.closeInteraction);
 		final Button openInventoryButton = MA.findViewById(R.id.openInventory);
 		final Button openInteraction=MA.findViewById(R.id.openInteraction);
 		final Button openProduction=MA.findViewById(R.id.openProduction);
@@ -93,7 +103,9 @@ public class InteractionUI
 				openProduction.setVisibility(View.GONE);
 			}
 		}
-		
+		//32x32==160x160 1:5
+		closeButton.setBackgroundDrawable(new BitmapDrawable(Bitmap.createScaledBitmap(UIAsset.cancelButton,(int)(160*scaleX),(int)(160*scaleY),false)));
+		//closeButton.getLayoutParams().width=(int)(1000*scaleX);
 		closeButton.setOnClickListener
 		(new OnClickListener() 
 			{
@@ -107,7 +119,9 @@ public class InteractionUI
 				}
 			});
 			
-		Button buildButton = MA.findViewById(R.id.openBuildUI);
+		ImageButton buildButton = MA.findViewById(R.id.openBuildUI);
+		buildButton.setBackgroundDrawable(new BitmapDrawable(Bitmap.createScaledBitmap(UIAsset.buildModeButton,(int)(320*scaleX),(int)(160*scaleY),false)));
+		
 		buildButton.setOnClickListener
 		(new OnClickListener() 
 			{
@@ -129,5 +143,19 @@ public class InteractionUI
 				VF.setDisplayedChild(VF.indexOfChild(MA.findViewById(R.id.shipui)));
 			}
 		});
+		
+		ImageView img=MA.findViewById(R.id.interaction_uiImageSign);
+		BitmapFactory.Options bitmapOptions=new BitmapFactory.Options();
+        bitmapOptions.inScaled=false;
+		///2500 screenW
+		///100 normal size for 32 px
+		//so button size is scaled 3.125 for 2500 it is 100%
+
+		//for 1800 scale =(int) 3.125*1800/2500
+
+
+		img.setImageBitmap(Bitmap.createScaledBitmap(BitmapFactory.decodeResource(MA.getResources(),R.drawable.ui_interaction_sign,bitmapOptions),(int)(200*scaleX),(int)(50*scaleY),false));
+		//weaponsButton.getLayoutParams().width=(int)(150*scaleX);
 	}
+	
 }
