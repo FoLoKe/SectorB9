@@ -19,6 +19,7 @@ import java.io.*;
 import static com.sb9.foloke.sectorb9.game.Managers.GameManager.commandInteraction;
 import static com.sb9.foloke.sectorb9.game.Managers.GameManager.commandMoving;
 import android.graphics.*;
+import org.apache.commons.codec.language.*;
 
 
 public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
@@ -61,15 +62,17 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 	private RectF joystickBox=new RectF();
 	private PointF joystickInitPoint=new PointF();
 	private PointF joystickCurrentPoint=new PointF();
-	
-	
+	private float joystickSafeZone=100;
+	private float joysticSize=200;
 	private PointF relatedPoint=new PointF();
 	private float joysticAcceleration=0;
 	private Paint debugPaint=new Paint();
 	private Paint joystickPaint=new Paint();
+	private Paint joystickBorderPaint=new Paint();
 	private Paint joystickBgPaint=new Paint();
 	private PointF stickPoint=new PointF();
 	private Paint speedPaint=new Paint();
+	
     public GamePanel(Context context, AttributeSet attributeSet)
     {
         super(context, attributeSet);
@@ -114,7 +117,15 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 		cursor.setDrawable(true);
 		//buildDrawingCache();
 		joystickBgPaint.setColor(Color.GRAY);
+		joystickBgPaint.setAlpha(200);
 		joystickPaint.setColor(Color.DKGRAY);
+		joystickPaint.setAlpha(200);
+		joystickBorderPaint.setColor(Color.DKGRAY);
+		joystickBorderPaint.setAlpha(200);
+		joystickBorderPaint.setStyle(Paint.Style.STROKE);
+		joystickBorderPaint.setStrokeWidth(5);
+		
+		
 		debugPaint.setColor(Color.RED);
 		debugPaint.setStyle(Paint.Style.STROKE);
 		borderPaint.setColor(Color.RED);
@@ -187,8 +198,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 			size=200;
 		}
 		
-		float minAcceleration=80; //0%
-		float maxAcceleration=200; //100%
+		float minAcceleration=joystickSafeZone; //0%
+		float maxAcceleration=joysticSize; //100%
 		
 		size=(size-minAcceleration)/(maxAcceleration-minAcceleration);
 		joysticAcceleration=size;//200;
@@ -233,7 +244,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
             gameManager.uIsh.render(canvas);
 			if(touched)
 			{
-				canvas.drawCircle(joystickInitPoint.x,joystickInitPoint.y,200,joystickBgPaint);
+				canvas.drawCircle(joystickInitPoint.x,joystickInitPoint.y,joysticSize,joystickBgPaint);
+				canvas.drawCircle(joystickInitPoint.x,joystickInitPoint.y,joystickSafeZone,joystickBorderPaint);
 				canvas.drawCircle(stickPoint.x,stickPoint.y,75,joystickPaint);
 			}
 			

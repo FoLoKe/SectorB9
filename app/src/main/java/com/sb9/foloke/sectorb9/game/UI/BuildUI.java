@@ -14,11 +14,12 @@ import com.sb9.foloke.sectorb9.game.Managers.*;
 import com.sb9.foloke.sectorb9.game.Assets.*;
 
 import java.util.Random;
+import com.sb9.foloke.sectorb9.game.DataSheets.*;
 
 
 public class BuildUI
 {
-	private static int ObjectID;
+	private static int ObjectID=0;
 	private static View prevPressed;
 
 	public static void init(final MainActivity MA,final ViewFlipper VF)
@@ -40,6 +41,8 @@ public class BuildUI
 		table.setBackground(new BitmapDrawable(MA.getResources(),UIAsset.uiBgBlur));
 		for(int i = 1; i< BuildingsDataSheet.getLenght(); i++)
 		{
+			if(!BuildingsDataSheet.findById(i).buildable)
+				continue;
 			TableRow row=new TableRow(MA);
 			ImageView sprite=new ImageView(MA);
 			TextView testText=new TextView(MA);
@@ -64,10 +67,12 @@ public class BuildUI
 				{
 					ObjectID=(v).getId();
 					v.setBackgroundColor(Color.RED);
-					if(prevPressed!=null)
+					if(prevPressed!=null&&prevPressed!=v)
 					{
 						prevPressed.setBackgroundColor(Color.parseColor("#00000000"));
+						
 					}
+					initInfo(MA);
 					prevPressed=v;
 					MA.getGameManager().getGamePanel().getCursor().setImage(BuildingsDataSheet.findById(ObjectID).image);
 				}
@@ -102,11 +107,15 @@ public class BuildUI
 			    if(MA.getGameManager().getGamePanel().getCursor().onBuild())
 			    {
                     Entity e = MA.getGameManager().createBuildable(ObjectID, MA.getGameManager().getPlayer());
-                    MA.getGameManager().getWorldManager().getEntityManager().addObject(e);
-                    e.setCenterX(MA.getGameManager().getGamePanel().pointOfTouch.x);
-                    e.setCenterY(MA.getGameManager().getGamePanel().pointOfTouch.y);
-                    e.setWorldRotation(new Random().nextInt(360));
-                    e.calculateCollisionObject();
+					if(e!=null)
+					{
+						initInfo(MA);
+                    	MA.getGameManager().getWorldManager().getEntityManager().addObject(e);
+                    	e.setCenterX(MA.getGameManager().getGamePanel().pointOfTouch.x);
+                    	e.setCenterY(MA.getGameManager().getGamePanel().pointOfTouch.y);
+                    	e.setWorldRotation(new Random().nextInt(360));
+                    	e.calculateCollisionObject();
+					}
                 }
 			}
 		});
@@ -130,5 +139,40 @@ public class BuildUI
 		table.removeAllViews();
 		table.removeAllViewsInLayout();
 
+	}
+	
+	private static void initInfo(MainActivity MA)
+	{
+		
+		TableLayout TL=MA.findViewById(R.id.buildInfoTableLayout);
+		TL.setBackground(new BitmapDrawable(MA.getResources(),UIAsset.uiBgBlur));
+		TL.removeAllViews();
+		int i=0;
+		for(int id:BuildingsDataSheet.findById(ObjectID).resToBuild)
+		{
+			TableRow row=new TableRow(MA);
+			ImageView IV=new ImageView(MA);
+			TextView TV=new TextView(MA);
+
+			TableRow.LayoutParams trp=new TableRow.LayoutParams();
+			trp.setMargins(10,10,10,10);
+
+			TV.setTextColor(Color.parseColor("#ffffffff"));
+
+			TV.setLayoutParams(trp);
+			
+
+			BitmapDrawable bdrawable;
+			bdrawable = new BitmapDrawable(MA.getResources(),ItemsDataSheet.findById(id).image);
+
+			IV.setImageDrawable(bdrawable);
+			row.addView(IV);
+			
+			TV.setText(ItemsDataSheet.findById(id).name+" "+BuildingsDataSheet.findById(ObjectID).countToBuild[i]+"/"+MA.getGameManager().getPlayer().getInventory().countItem(BuildingsDataSheet.findById(ObjectID).resToBuild[i]));
+			row.addView(TV);
+			TL.addView(row);
+			i++;
+		}
+		
 	}
 }
