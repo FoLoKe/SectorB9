@@ -7,29 +7,31 @@ import com.sb9.foloke.sectorb9.game.UI.Text;
 import android.graphics.*;
 import com.sb9.foloke.sectorb9.game.Funtions.*;
 
-public abstract class StaticEntity extends Entity {
-	
-	
+public abstract class StaticEntity extends Entity 
+{
 	private String name;
-	
 	protected StaticEntity powerSupplier=null;
 	
     public StaticEntity(float x, float y, float rotation, GameManager gameManager, int ID)
     {
         super(x,y,rotation, gameManager,ID);	
     }
+	
 	public String getName()
 	{
 		return name;
 	}
+	
     public boolean getEnergy()
 	{
 		return energy;
 	}
+	
 	public void setEnergy(boolean energy)
 	{
 		this.energy=energy;
 	}
+	
 	public void onAndOff()
 	{
 		if(enabled)
@@ -38,7 +40,6 @@ public abstract class StaticEntity extends Entity {
 		    enabled=true;
 	}
 	
-
 	@Override
 	public void render(Canvas canvas)
 	{
@@ -51,20 +52,21 @@ public abstract class StaticEntity extends Entity {
 			drawDebugCollision(canvas);
 	}
 	
-
-
 	public boolean getEnabled()
     {
         return enabled;
     }
+	
     public boolean getInteractable()
     {
         return isInteractable;
     }
+	
     public void setPowerSupplier(StaticEntity entity)
     {
         powerSupplier=entity;
     }
+	
     @Override
     public void tick()
     {

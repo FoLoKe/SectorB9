@@ -35,6 +35,7 @@ import java.util.Iterator;
 
 import com.sb9.foloke.sectorb9.game.UI.*;
 import com.sb9.foloke.sectorb9.game.Entities.*;
+import android.graphics.*;
 
 
 public class GameManager {
@@ -65,7 +66,9 @@ public class GameManager {
 
     public int command;
     public static final int commandInteraction=1,commandMoving=0,commandBuild=2;
-
+	private Point sectorToWarp=new Point();
+	private PointF warpingLocation=new PointF();
+	private boolean warpReady=false;
     public GameManager(GamePanel gamePanel, MainActivity MA)
     {
         command=0;
@@ -172,13 +175,21 @@ public class GameManager {
     }
         collect=false;
         worldManager.updateWorld();
+		if(warpReady)
+			if(distanceTo(player.getWorldLocation(),warpingLocation)<200)
+				warp();
     }
 
     public void render(Canvas canvas)
     {
         worldManager.renderWorld(canvas);
         player.render(canvas);
-       
+		Paint debugPaint= new Paint();
+		debugPaint.setColor(Color.CYAN);
+		debugPaint.setStyle(Paint.Style.STROKE);
+		debugPaint.setStrokeWidth(10);
+		if(warpReady)
+       	canvas.drawCircle(warpingLocation.x,warpingLocation.y,200,debugPaint);
     }
 
 	public void spawnDestroyed(Entity e)
@@ -292,11 +303,25 @@ public class GameManager {
         return worldManager.getSector();
     }
 
-    public void warpToLocation(int x,int y)
+    public void warpToLocation(int xs,int ys)
     {
-
-        worldManager.warpToSector(x,y);
+		sectorToWarp.set(xs,ys);
+		Point offset=new Point(worldManager.getSector().x-xs,worldManager.getSector().y-ys);
+		/////CENTER BY X
+		float dist=(float)Math.sqrt(offset.x*offset.x+offset.y*offset.y);
+		PointF vector=new PointF(offset.x/dist,offset.y/dist);
+		PointF tvector=new PointF(-vector.x*3000,-vector.y*3000);
+		warpingLocation.set((tvector.x+3000)/2,(tvector.y+3000)/2);
+        //worldManager.warpToSector(x,y);
+		gamePanel.textDebug5.setString(""+warpingLocation);
+		warpReady=true;
     }
+	public void warp()
+	{
+		warpReady=false;
+		worldManager.warpToSector(sectorToWarp.x,sectorToWarp.y);
+		player.setWorldLocation(new PointF(3000-warpingLocation.x,3000-warpingLocation.y));
+	}
 	
 	public String getSaveName()
 	{
