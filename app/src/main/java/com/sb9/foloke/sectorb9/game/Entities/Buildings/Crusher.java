@@ -59,8 +59,7 @@ public class Crusher extends StaticEntity
 		
 		if(energy==false)
 			statusImage.render(canvas,new PointF(x,y));
-		if(gameManager.drawDebugInfo)
-			drawDebugCollision(canvas);
+		
 		// TODO: Implement this method
 	}
 

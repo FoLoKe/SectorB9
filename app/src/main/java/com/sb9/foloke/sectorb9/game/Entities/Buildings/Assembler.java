@@ -76,8 +76,7 @@ public class Assembler extends StaticEntity
 			statusImage.render(canvas,new PointF(x,y));
 		if(!enabled)
 			statusImage2.render(canvas,new PointF(x+16,y));
-		if(gameManager.drawDebugInfo)
-			drawDebugCollision(canvas);
+		
 		
 		for(EntitySocket arm:arms)
 		arm.render(canvas);

@@ -38,6 +38,17 @@ public class MenuUI
 					VF.setDisplayedChild(VF.indexOfChild(MA.findViewById(R.id.help_sectionUI)));
 				}
 			});
+		Button openOptionsButton=MA.findViewById(R.id.menu_ui_open_options);
+		openOptionsButton.setOnClickListener
+		(new OnClickListener() 
+			{
+				@Override
+				public void onClick(View v) 
+				{
+					OptionsUI.init(MA,VF);
+					VF.setDisplayedChild(VF.indexOfChild(MA.findViewById(R.id.options_ui)));
+				}
+			});
 		Button openMapButton=MA.findViewById(R.id.menu_openMapButton);
 		openMapButton.setOnClickListener(new OnClickListener(){
 			@Override
@@ -48,15 +59,7 @@ public class MenuUI
 			}
 		});
 		
-		Switch menuDebugSwitch = MA.findViewById(R.id.debug_switch);
-
-		menuDebugSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener()
-			{
-				@Override
-				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-					MA.getGameManager().drawDebugInfo=isChecked;
-				}
-			});
+		
 		Switch frameLimmiterSwitch=MA.findViewById(R.id.framelimiter_switch);
 		frameLimmiterSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener(){
 				@Override

@@ -9,6 +9,7 @@ import java.util.*;
 import android.graphics.*;
 import com.sb9.foloke.sectorb9.game.Managers.*;
 import com.sb9.foloke.sectorb9.game.Entities.*;
+import com.sb9.foloke.sectorb9.game.Funtions.*;
 
 public class EnemyAI {
 
@@ -111,7 +112,7 @@ public class EnemyAI {
 	
 	public void render(Canvas c)
 	{
-		if(!child.getGameManager().drawDebugInfo)
+		if(!Options.drawDebugInfo.drawDebugInfo.getBoolean())
 			return;
 		Paint p=new Paint();
 		

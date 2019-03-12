@@ -58,7 +58,7 @@ public class GameManager {
     //booleans
     public boolean gamePause=false;
     public boolean playerDestroyed=false;
-    public boolean drawDebugInfo=false;
+    //public boolean drawDebugInfo=false;
     private Timer destroyedTimer;
     private Player player;
     private boolean collect=false;
@@ -92,6 +92,8 @@ public class GameManager {
 
         worldManager=new WorldManager(MA,this);
 		worldManager.loadEmptyWorld();
+		
+		
      	//worldManager.loadDebugWorld();
     }
 
@@ -123,6 +125,17 @@ public class GameManager {
        		}
 
 		}
+		Iterator<Entity> iterUi = getEntities().iterator();
+		boolean exist=false;
+		while (iterUi.hasNext()) {
+			Entity e = (Entity) iterUi.next();
+			if (e instanceof DroppedItems)
+				if (distanceTo(player.getWorldLocation(), e.getWorldLocation()) < 200) {
+					exist=true;
+					break;
+				}
+			}
+			ActionUI.update(exist);
 		if(collect)
         {
             boolean collected=true;
@@ -165,8 +178,7 @@ public class GameManager {
     {
         worldManager.renderWorld(canvas);
         player.render(canvas);
-        if(drawDebugInfo)
-        player.drawVelocity(canvas);
+       
     }
 
 	public void spawnDestroyed(Entity e)

@@ -83,8 +83,7 @@ public class FuelGenerator extends Generator
 			return;
 		super.render(canvas);
 		prgBar.render(canvas);
-		if(gameManager.drawDebugInfo)
-			drawDebugCollision(canvas);
+		
 	}
 	
 	

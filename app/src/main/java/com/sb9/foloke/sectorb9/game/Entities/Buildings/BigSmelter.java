@@ -64,8 +64,7 @@ public class BigSmelter extends StaticEntity
 			statusImageNoEnergy.render(canvas,new PointF(x,y));
         if(!enabled)
         	statusImageEnebled.render(canvas,new PointF(x+16,y));
-		if(gameManager.drawDebugInfo)
-			drawDebugCollision(canvas);
+		
 	}
 
 	@Override

@@ -82,7 +82,7 @@ public class Ship
 		}
 		engineSmoke.render(canvas);
 		
-		if(holder.getGameManager().drawDebugInfo)
+		if(Options.drawDebugInfo.getBoolean())
 			collisonObject.render(canvas);
 		
 	}

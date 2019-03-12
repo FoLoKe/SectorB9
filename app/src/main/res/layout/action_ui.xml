@@ -11,7 +11,7 @@
 
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content">
-		<Button
+		<ImageButton
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:visible="false"
@@ -32,7 +32,7 @@
 			android:layout_height="wrap_content"
 			android:scaleType="fitXY"/>
 		
-		<Button
+		<ImageButton
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			

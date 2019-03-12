@@ -59,8 +59,7 @@ public class Projectile extends DynamicEntity
 				canvas.drawBitmap(image,x,y,null);
 				canvas.restore();
 
-   		        if(gameManager.drawDebugInfo)
-               		drawDebugCollision(canvas);
+   		        
 			}
 
 	}

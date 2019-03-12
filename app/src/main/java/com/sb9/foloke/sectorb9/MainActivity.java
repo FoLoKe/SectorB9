@@ -38,13 +38,11 @@ import android.graphics.*;
 import android.view.View.*;
 import android.app.*;
 import android.content.*;
+import com.sb9.foloke.sectorb9.game.Funtions.*;
 
 public class MainActivity extends Activity {
 
     private static GamePanel gamePanel;
-
-	
-
 	private ViewFlipper VF;
 	
 	private static final int PERMISSION_REQUEST_CODE = 123;
@@ -54,8 +52,179 @@ public class MainActivity extends Activity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 		if(!hasPermissions())
 			requestPerms();
+		startupOptions();
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		prepareMenu();
+	}
+	
+	public void startupOptions()
+	{
+		try
+		{
+			String documentsFolderPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString();
+			File documentsFolder  = new File(documentsFolderPath);
+			
+			if(!documentsFolder.exists())
+			{
+				documentsFolder.mkdir();
+			}
+			
+			if(!documentsFolder.exists())
+			{
+				documentsFolder.mkdir();
+				makeToast("no DOCUMENTS WRITE/READ PERMISSION");
+				return;
+			}
+			
+			String gameFolderPath=documentsFolderPath+File.separator+"sb9";
+			File gameFolder=new File(gameFolderPath);
+			
+			if(!gameFolder.exists())
+			{
+				gameFolder.mkdir();
+			}
+			if(!gameFolder.exists())
+			{
+				gameFolder.mkdir();
+				makeToast("no inside DOCUMENTS WRITE/READ PERMISSION");
+				return;
+			}
+			
+            File optionsFile = new File (gameFolder, "options.txt");
+            if (optionsFile.exists ())
+            {
+                loadOptions();
+			}
+			else
+			{
+				//saveAsNew
+				saveOptions();
+				makeToast("optioms created");
+			}
+			
+		}
+		catch(Exception e)
+		{
+			makeToast(e.toString());
+		}
+	}
+	
+	public void loadOptions()
+	{	
+		try
+		{
+			String documentsFolderPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString();
+			File documentsFolder  = new File(documentsFolderPath);
+			if(!documentsFolder.exists())
+			{
+				documentsFolder.mkdir();
+			}
+			if(!documentsFolder.exists())
+			{
+				documentsFolder.mkdir();
+				makeToast("no DOCUMENTS READ PERMISSION");
+			}
+			String gameFolderPath=documentsFolderPath+File.separator+"sb9";
+			File gameFolder=new File(gameFolderPath);
+			if(!gameFolder.exists())
+			{
+				gameFolder.mkdir();
+			}
+			if(!gameFolder.exists())
+			{
+				gameFolder.mkdir();
+				makeToast("no inside DOCUMENTS READ PERMISSION");
+			}
+			
+			File optionsFile = new File (gameFolder, "options.txt");
+			if (optionsFile.exists ())
+			{
+				FileInputStream inputStream = new FileInputStream(optionsFile);
+				if (inputStream != null)
+				{
+					InputStreamReader isr = new InputStreamReader(inputStream);
+					BufferedReader reader = new BufferedReader(isr);
+					////todo load
+					reader.readLine();
+					for(Options p:Options.values())
+					p.load(reader);
+					inputStream.close();
+					reader.close();
+					isr.close();
+					///options setup
+					//setOptions();
+					makeToast("Successfully loaded options");
+					return;
+				}
+				else
+				{
+					makeToast("inputStream error");
+					return;
+				}
+			}
+		}
+		catch(Exception e)
+		{ 
+			makeToast(e.toString());
+		}
+	}
+	
+	public void saveOptions()
+	{
+		try
+		{
+			String documentsFolderPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString();
+			File documentsFolder  = new File(documentsFolderPath);
+			
+			if(!documentsFolder.exists())
+			{
+				documentsFolder.mkdir();
+			}
+			if(!documentsFolder.exists())
+			{
+				documentsFolder.mkdir();
+				makeToast("no DOCUMENTS WRITE PERMISSION");
+				return;
+			}
+			
+			String gameFolderPath=documentsFolderPath+File.separator+"sb9";
+			File gameFolder=new File(gameFolderPath);
+			
+			if(!gameFolder.exists())
+			{
+				gameFolder.mkdir();
+			}
+			if(!gameFolder.exists())
+			{
+				gameFolder.mkdir();
+				makeToast("no inside DOCUMENTS WRITE PERMISSION");
+				return;
+			}
+
+			File optionsFile = new File (gameFolder, "options.txt");
+			if (optionsFile.exists ())
+			{
+				FileOutputStream out = new FileOutputStream(optionsFile);
+				OutputStreamWriter osw = new OutputStreamWriter(out);
+				BufferedWriter writer = new BufferedWriter(osw);
+
+
+				writer.write("game options SB9");
+				writer.newLine();
+				Options.save(writer);
+				writer.close();
+				osw.close();
+				out.close();
+				//setOptions();
+				makeToast("Successfully saved options");
+		
+	
+			}
+		}
+		catch(Exception e)
+		{
+			makeToast(e.toString());
+		}
 	}
 	
 	public void prepareMenu()
@@ -234,12 +403,15 @@ public class MainActivity extends Activity {
 		return VF;
 	}
 	
-	public void saveFile(String fileName,String saveName) {
-        try {
+	public void saveFile(String fileName,String saveName) 
+	{
+        try 
+		{
 			String fname = "save"+fileName+".txt";
             String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString()+File.separator+"sb9"+File.separator+saveName;
             File myDir = new File(root);
-            if (!myDir.exists()) {
+            if (!myDir.exists()) 
+			{
                 myDir.mkdir();
             }
 			
@@ -262,7 +434,7 @@ public class MainActivity extends Activity {
 
             mwriter.close();
             mosw.close();
-					
+			mout.close();		
             
             File file = new File (myDir, fname);
             if (file.exists ())
@@ -360,12 +532,13 @@ public class MainActivity extends Activity {
         }
     }
 	
-	public static Bitmap getBitmapFromView(View view) {
+	public Bitmap getBitmapFromView(View view) {
 		
 		view.setDrawingCacheEnabled(true);
 		view.buildDrawingCache(true);	
 		final Bitmap bitmap = Bitmap.createBitmap( view.getDrawingCache() );
 		Canvas c=new Canvas(bitmap);
+		gamePanel.tick();
 		gamePanel.render(c);
 		view.setDrawingCacheEnabled(false);
 		view.destroyDrawingCache();

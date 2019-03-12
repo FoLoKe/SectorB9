@@ -20,6 +20,7 @@ import static com.sb9.foloke.sectorb9.game.Managers.GameManager.commandInteracti
 import static com.sb9.foloke.sectorb9.game.Managers.GameManager.commandMoving;
 import android.graphics.*;
 import org.apache.commons.codec.language.*;
+import com.sb9.foloke.sectorb9.game.Funtions.*;
 
 
 public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
@@ -137,6 +138,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 		borderPaint.setStrokeWidth(20/camera.getScale());
 		borderPaint.setPathEffect(new DashPathEffect(new float[] { 200/camera.getScale(), 200/camera.getScale()}, 0));
 		
+		//MA.setOptions();
+		
     }
 
 	public void linkThread(MainThread MT)
@@ -222,7 +225,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
         cursor.render(canvas);
 
 			
-        if (gameManager.drawDebugInfo)
+        if (Options.drawDebugInfo.getBoolean())
         {
             camera.render(canvas);
 			canvas.drawCircle(relatedPoint.x,relatedPoint.y,5,debugPaint);
@@ -259,7 +262,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
         }
         textFPS.render(canvas);
 
-		if(gameManager.drawDebugInfo)
+		if(Options.drawDebugInfo.getBoolean())
 		{
 			textScreenWH.render(canvas);	
 			textPointOfTouch.render(canvas);

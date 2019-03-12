@@ -27,8 +27,7 @@ public class ModularLab extends StaticEntity
 		canvas.drawBitmap(image,x,y,null);
 		//floatingReader.render(canvas,getCenterX(),getCenterY(),rotation);
 
-        if(gameManager.drawDebugInfo)
-            drawDebugCollision(canvas);
+        
 	}
 
 	@Override

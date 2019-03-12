@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import com.sb9.foloke.sectorb9.game.Managers.GameManager;
 import com.sb9.foloke.sectorb9.game.UI.Text;
 import android.graphics.*;
+import com.sb9.foloke.sectorb9.game.Funtions.*;
 
 public abstract class StaticEntity extends Entity {
 	
@@ -46,6 +47,8 @@ public abstract class StaticEntity extends Entity {
             uIsh.render(canvas);
 			uIhp.render(canvas);
 		}
+		if(Options.drawDebugInfo.getBoolean())
+			drawDebugCollision(canvas);
 	}
 	
 

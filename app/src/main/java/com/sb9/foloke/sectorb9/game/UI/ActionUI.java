@@ -15,12 +15,13 @@ public class ActionUI
 {
 	//TODO: BUTTONS SIZE FROM SCREEN SIZE
 	private static boolean weaponsOpened=false;
-	private static Button collectAllButton;
+	private static ImageButton collectAllButton;
 	public static float scaleX=1;
 	public static float scaleY=1;
-	public static void init(final MainActivity MA,final ViewFlipper VF)
+	private static MainActivity MA;
+	public static void init(final MainActivity MA_in,final ViewFlipper VF)
 	{
-		
+	MA=MA_in;
 		//to prevent texture overblurring scale by one axis scaleX=MA.getGameManager().getGamePanel().canvasW/2500;
 		scaleY=MA.getGameManager().getGamePanel().canvasH/1600;
 		if(scaleX>2)
@@ -45,7 +46,7 @@ public class ActionUI
 			});
 		ImageButton shootButton = MA.findViewById(R.id.shootButton);
 		shootButton.setBackground(null);
-		shootButton.setImageBitmap(Bitmap.createScaledBitmap(UIAsset.shootButton,100,100,false));
+		shootButton.setImageBitmap(Bitmap.createScaledBitmap(UIAsset.shootButton,(int)(100*scaleX),(int)(100*scaleY),false));
 		
 		
 		shootButton.setOnTouchListener
@@ -67,7 +68,7 @@ public class ActionUI
 				}
 			});
 			
-		Button weaponsButton = MA.findViewById(R.id.action_ui_weapons_button);
+		ImageButton weaponsButton = MA.findViewById(R.id.action_ui_weapons_button);
 		BitmapFactory.Options bitmapOptions=new BitmapFactory.Options();
         bitmapOptions.inScaled=false;
 		///2500 screenW
@@ -77,8 +78,8 @@ public class ActionUI
 		//for 1800 scale =(int) 3.125*1800/2500
 		
 		
-		weaponsButton.setBackgroundDrawable(new BitmapDrawable(MA.getResources(),Bitmap.createScaledBitmap(BitmapFactory.decodeResource(MA.getResources(),R.drawable.ui_weaponsbutton,bitmapOptions),(int)(30*scaleX),(int)(100*scaleY),false)));
-		weaponsButton.getLayoutParams().width=(int)(150*scaleX);
+		weaponsButton.setBackgroundDrawable(new BitmapDrawable(MA.getResources(),Bitmap.createScaledBitmap(BitmapFactory.decodeResource(MA.getResources(),R.drawable.ui_weaponsbutton,bitmapOptions),(int)(50*scaleX),(int)(100*scaleY),false)));
+		//weaponsButton.getLayoutParams().width=(int)(150*scaleX);
 		weaponsButton.setOnClickListener(new OnClickListener()
 		{
 			public void onClick(View p)
@@ -88,6 +89,7 @@ public class ActionUI
 		});
 
 		collectAllButton=MA.findViewById(R.id.action_u_collectAllButton);
+		collectAllButton.setBackgroundDrawable(new BitmapDrawable(MA.getResources(),Bitmap.createScaledBitmap(UIAsset.collectDebrisButton,(int)(50*scaleX),(int)(50*scaleY),false)));
 		collectAllButton.setOnClickListener(new OnClickListener()
 		{
 			public void onClick(View v)
@@ -96,6 +98,21 @@ public class ActionUI
 			}
 		});
 			
+	}
+	
+	public static void update(final boolean collectButtonState)
+	{
+		
+		MA.runOnUiThread(new Runnable()
+		{
+			public void run()
+			{
+				if (collectButtonState)
+					collectAllButton.setVisibility(View.VISIBLE);
+				else
+					collectAllButton.setVisibility(View.GONE);
+			}
+		});
 	}
 	
 	public static void initWeapons(final MainActivity MA)

@@ -7,6 +7,7 @@ import android.graphics.*;
 
 import com.sb9.foloke.sectorb9.game.Assets.ShipAsset;
 import com.sb9.foloke.sectorb9.game.Managers.GameManager;
+import com.sb9.foloke.sectorb9.game.Funtions.*;
 
 
 public abstract class DynamicEntity extends Entity {
@@ -223,9 +224,12 @@ public abstract class DynamicEntity extends Entity {
             uIhp.render(canvas);
         }
         if(SH>0&&shieldShow.getTick()>0)
-        canvas.drawBitmap(shieldImg,getCenterX()-shieldImg.getWidth()/2,getCenterY()-shieldImg.getHeight()/2,shieldpaint);
-		if(gameManager.drawDebugInfo)
+        	canvas.drawBitmap(shieldImg,getCenterX()-shieldImg.getWidth()/2,getCenterY()-shieldImg.getHeight()/2,shieldpaint);
+		if(Options.drawDebugInfo.getBoolean())
+		{
 			drawVelocity(canvas);
+			drawDebugCollision(canvas);
+		}
 	}
 	
 	public void setSpeed(float speed)

@@ -37,8 +37,7 @@ public class Asteroid extends StaticEntity {
 				canvas.rotate(rotation,getCenterX(),getCenterY());
 				canvas.drawBitmap(image,x,y,null);
 				canvas.restore();
-				if(gameManager.drawDebugInfo)
-					drawDebugCollision(canvas);
+				
 			}
 		}
 	
