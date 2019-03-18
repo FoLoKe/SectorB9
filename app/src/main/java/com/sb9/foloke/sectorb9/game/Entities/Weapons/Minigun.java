@@ -25,9 +25,11 @@ public class Minigun extends Weapon
 	}
 	public void shoot()
 	{
-		if(enabled)
+		if(enabled)		
 		if(fireDelay.getTick()<=1)
+				if(turret.getParent().getHolder().getInventory().takeOneItemFromAllInventory(18,1))
 		{
+		
 		float mathRotation=(float)(Math.PI/180*turret.getParent().getHolder().getWorldRotation());
 		PointF tpointOfShooting =new PointF((float)(turret.getPointOfShooting().x * Math.cos(mathRotation) - turret.getPointOfShooting().y * Math.sin(mathRotation))
 											,(float)(turret.getPointOfShooting().x * Math.sin(mathRotation) + turret.getPointOfShooting().y * Math.cos(mathRotation)));

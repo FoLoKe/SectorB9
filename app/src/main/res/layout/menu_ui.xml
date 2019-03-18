@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<FrameLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:id="@+id/menuUI"
 	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	
->
+	android:layout_height="match_parent">
+
 	<Button
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:textColor="#ffffff"
 		android:text="Close Menu"
 		android:id="@+id/closeMenu"
-		android:layout_gravity="top|center"
-	/>
+		android:layout_gravity="top|center"/>
+
 	<LinearLayout
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
@@ -22,105 +22,97 @@
 		android:id="@+id/menuUILinearLayout"
 		android:layout_margin="5dp"
 		android:layout_marginTop="100dp">
+
 		<TextView
 			android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+			android:layout_height="wrap_content"
 			android:text="MENU"
 			android:layout_gravity="center_horizontal|top"
-			android:textColor="#ffffff"
+			android:textColor="#ffffff"/>
 
-		/>
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_gravity="center"
-        android:layout_margin="5dp"
-        android:layout_marginTop="100dp">
-        <Button
-            android:id="@+id/menu_ui_set_first_ship"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="select ship 1"
-            android:textColor="#ffffff"
-            android:layout_gravity="center"
-            />
-        <Button
-            android:id="@+id/menu_ui_set_second_ship"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="ship 2"
-            android:textColor="#ffffff"
-            android:layout_gravity="center"
-            />
-        <Button
-            android:id="@+id/menu_ui_set_third_ship"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="ship 3"
-            android:textColor="#ffffff"
-            android:layout_gravity="center"
-            />
-    </LinearLayout>
-		<Button
+		<LinearLayout
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			android:layout_gravity="center"
+			android:layout_margin="5dp"
+			android:layout_marginTop="100dp">
+
+			<Button
+				android:id="@+id/menu_ui_set_first_ship"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="select ship 1"
+				android:textColor="#ffffff"
+				android:layout_gravity="center"/>
+
+			<Button
+				android:id="@+id/menu_ui_set_second_ship"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="ship 2"
+				android:textColor="#ffffff"
+				android:layout_gravity="center"/>
+
+			<Button
+				android:id="@+id/menu_ui_set_third_ship"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="ship 3"
+				android:textColor="#ffffff"
+				android:layout_gravity="center"/>
+
+		</LinearLayout>
+
+		<ImageButton
 			android:id="@+id/menu_ui_open_options"
-			android:layout_width="match_parent"
+			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:text="Options"
 			android:textColor="#ffffff"
-			android:layout_gravity="center"
-		/>
-		<Switch
-			android:id="@+id/framelimiter_switch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-			android:layout_gravity="right"
-			android:textColor="#ffffff"
-            android:text="frame limmiter"
-            android:textOff="off"
-            android:textOn="on" 
-			android:checked="false"
-			/>
-		<Button
+			android:layout_gravity="center"/>
+
+		<ImageButton
 			android:id="@+id/menu_uiOpenHelpButton"
-			android:layout_width="match_parent"
+			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:text="Help"
 			android:textColor="#ffffff"
-			android:layout_gravity="center"
-			/>
-		<Button
+			android:layout_gravity="center"/>
+
+		<ImageButton
 			android:id="@+id/menu_save"
-			android:layout_width="match_parent"
+			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:text="Save"
 			android:textColor="#ffffff"
-			android:layout_gravity="center"
-			/>
-		<Button
+			android:layout_gravity="center"/>
+
+		<ImageButton
 			android:id="@+id/menu_load"
-			android:layout_width="match_parent"
+			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:text="Load"
 			android:textColor="#ffffff"
-			android:layout_gravity="center"
-		/>
-		<Button
+			android:layout_gravity="center"/>
+
+		<ImageButton
 			android:id="@+id/menu_openMapButton"
-			android:layout_width="match_parent"
+			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:text="Galaxy Map"
 			android:textColor="#ffffff"
-			android:layout_gravity="center"
-		/>
-		<Button
+			android:layout_gravity="center"/>
+
+		<ImageButton
 			android:id="@+id/menu_ToMainMenu"
-			android:layout_width="match_parent"
+			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:text="Exit To Main Menu"
 			android:textColor="#ffffff"
-			android:layout_gravity="center"
-		/>
+			android:layout_gravity="center"/>
 
 	</LinearLayout>
+
 </FrameLayout>
+

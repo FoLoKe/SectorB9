@@ -9,13 +9,14 @@ public class ShipMk1 extends Ship
 	public ShipMk1(DynamicEntity holder)
 	{
 		super(ShipAsset.player_mk1,ShipAsset.engine_mk1,null,holder);
-        speed=5;
-        rotSpeed=5f;
+        
+        sidewayImpulse=10;
         maxHP=50;
         maxSH=25;
         shieldSize=1;
-        accel=0.009f;
-        decel=0.009f;
+        frontImpulse=0.09f;
+        bacwardImpulse=0.08f;
+		mass=4;
 		init(holder);
 
 	}

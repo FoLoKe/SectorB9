@@ -39,6 +39,7 @@ import android.view.View.*;
 import android.app.*;
 import android.content.*;
 import com.sb9.foloke.sectorb9.game.Funtions.*;
+import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
 
 public class MainActivity extends Activity {
 
@@ -49,18 +50,59 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+		
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 		if(!hasPermissions())
 			requestPerms();
-		startupOptions();
+		
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		
+		int currentApiVersion;
+
+
+		currentApiVersion = android.os.Build.VERSION.SDK_INT;
+
+		final int flags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+			| View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+			| View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+			| View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+			| View.SYSTEM_UI_FLAG_FULLSCREEN
+			| View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+
+		// This work only for android 4.4+
+		if(currentApiVersion >= Build.VERSION_CODES.KITKAT)
+		{
+
+			getWindow().getDecorView().setSystemUiVisibility(flags);
+
+			// Code below is to handle presses of Volume up or Volume down.
+			// Without this, after pressing volume buttons, the navigation bar will
+			// show up and won't hide
+			final View decorView = getWindow().getDecorView();
+			decorView
+				.setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener()
+				{
+
+					@Override
+					public void onSystemUiVisibilityChange(int visibility)
+					{
+						if((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0)
+						{
+							decorView.setSystemUiVisibility(flags);
+						}
+					}
+				});
+		}
+		
 		prepareMenu();
+		startupOptions();
 	}
 	
 	public void startupOptions()
 	{
 		try
 		{
+			Options.inti(this);
 			String documentsFolderPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString();
 			File documentsFolder  = new File(documentsFolderPath);
 			
@@ -72,7 +114,7 @@ public class MainActivity extends Activity {
 			if(!documentsFolder.exists())
 			{
 				documentsFolder.mkdir();
-				makeToast("no DOCUMENTS WRITE/READ PERMISSION");
+				makeToast("no DOCUMENTS WRITE/READ PERMISSION",1);
 				return;
 			}
 			
@@ -86,11 +128,12 @@ public class MainActivity extends Activity {
 			if(!gameFolder.exists())
 			{
 				gameFolder.mkdir();
-				makeToast("no inside DOCUMENTS WRITE/READ PERMISSION");
+				makeToast("no inside DOCUMENTS WRITE/READ PERMISSION",1);
 				return;
 			}
 			
             File optionsFile = new File (gameFolder, "options.txt");
+			
             if (optionsFile.exists ())
             {
                 loadOptions();
@@ -99,13 +142,13 @@ public class MainActivity extends Activity {
 			{
 				//saveAsNew
 				saveOptions();
-				makeToast("optioms created");
+				makeToast("options created",0);
 			}
 			
 		}
 		catch(Exception e)
 		{
-			makeToast(e.toString());
+			makeToast(e.toString(),1);
 		}
 	}
 	
@@ -122,7 +165,7 @@ public class MainActivity extends Activity {
 			if(!documentsFolder.exists())
 			{
 				documentsFolder.mkdir();
-				makeToast("no DOCUMENTS READ PERMISSION");
+				makeToast("no DOCUMENTS READ PERMISSION",1);
 			}
 			String gameFolderPath=documentsFolderPath+File.separator+"sb9";
 			File gameFolder=new File(gameFolderPath);
@@ -133,7 +176,7 @@ public class MainActivity extends Activity {
 			if(!gameFolder.exists())
 			{
 				gameFolder.mkdir();
-				makeToast("no inside DOCUMENTS READ PERMISSION");
+				makeToast("no inside DOCUMENTS READ PERMISSION",1);
 			}
 			
 			File optionsFile = new File (gameFolder, "options.txt");
@@ -146,26 +189,26 @@ public class MainActivity extends Activity {
 					BufferedReader reader = new BufferedReader(isr);
 					////todo load
 					reader.readLine();
-					for(Options p:Options.values())
-					p.load(reader);
+					
+					Options.load(reader);
 					inputStream.close();
 					reader.close();
 					isr.close();
 					///options setup
 					//setOptions();
-					makeToast("Successfully loaded options");
+					makeToast("Successfully loaded options",0);
 					return;
 				}
 				else
 				{
-					makeToast("inputStream error");
+					makeToast("inputStream error",1);
 					return;
 				}
 			}
 		}
 		catch(Exception e)
 		{ 
-			makeToast(e.toString());
+			makeToast(e.toString(),1);
 		}
 	}
 	
@@ -183,7 +226,7 @@ public class MainActivity extends Activity {
 			if(!documentsFolder.exists())
 			{
 				documentsFolder.mkdir();
-				makeToast("no DOCUMENTS WRITE PERMISSION");
+				makeToast("no DOCUMENTS WRITE PERMISSION",1);
 				return;
 			}
 			
@@ -197,7 +240,7 @@ public class MainActivity extends Activity {
 			if(!gameFolder.exists())
 			{
 				gameFolder.mkdir();
-				makeToast("no inside DOCUMENTS WRITE PERMISSION");
+				makeToast("no inside DOCUMENTS WRITE PERMISSION",1);
 				return;
 			}
 
@@ -216,14 +259,14 @@ public class MainActivity extends Activity {
 				osw.close();
 				out.close();
 				//setOptions();
-				makeToast("Successfully saved options");
+				makeToast("Successfully saved options",0);
 		
 	
 			}
 		}
 		catch(Exception e)
 		{
-			makeToast(e.toString());
+			makeToast(e.toString(),1);
 		}
 	}
 	
@@ -231,7 +274,7 @@ public class MainActivity extends Activity {
 	{
 		BuildUI.deinit(this);
 		setContentView(R.layout.main_menu);
-		
+		GameLog.update("preparing menu",0);
 		Button startNewGameButton= findViewById(R.id.new_game_button);
 	
 		startNewGameButton.setOnClickListener(new OnClickListener()
@@ -251,6 +294,7 @@ public class MainActivity extends Activity {
 					loadGame();
 				}
 			});
+		GameLog.update("menu created",0);
 	}
 	
 	private void makeOnNewGameDialog()
@@ -274,8 +318,8 @@ public class MainActivity extends Activity {
 		builder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int id) {
 					
-					prepareNewGame(input.getText().toString());
-                    WorldGenerator.makeRandomSector(gamePanel.getGameManager().getWorldManager());
+					prepareNewGame(input.getText().toString(),true);
+                    
 				}
 			});
 		builder.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
@@ -294,11 +338,11 @@ public class MainActivity extends Activity {
 		dialog.show();
 	}
 	
-	private void prepareNewGame(String s)
+	private void prepareNewGame(String s,boolean state)
 	{
-		if(s==""||s==null||s==" "||s.length()==0)
+		if(s==""||s==null||s==" "||s.length()==0||s.contains(" "))
 		{
-			makeToast("wrong savename");
+			makeToast("wrong savename",1);
 			return;
 		}
 		
@@ -343,23 +387,26 @@ public class MainActivity extends Activity {
 				v.setVisibility(View.GONE);
 			}
 		});
+		if(state)
+		WorldGenerator.makeRandomSector(gamePanel.getGameManager().getWorldManager());
 	}
 	
 	public int prepareNewLoad(String s)
 	{
-		prepareNewGame(s);
+		prepareNewGame(s,false);
+		//gamePanel.getGameManager().getEntityManager().reload();
 		String fileName="";
 		String playerSave="";
 		String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString()+File.separator+"sb9"+File.separator+s;
 		File myDir = new File(root);
 		if (!myDir.exists()) {
-			makeToast("Error: no directory");
+			makeToast("Error: no directory",1);
 			return -1;
 		}
 		String metaFileName="meta.txt";
 		File metaFile = new File (myDir, metaFileName);
 		if (!metaFile.exists ())
-		{makeToast("Error: no metaFile");
+		{makeToast("Error: no metaFile",1);
 			return -4;}
 		else
 		{
@@ -382,12 +429,12 @@ public class MainActivity extends Activity {
 				}
 			}
 			catch(Exception e){
-				makeToast(e.toString());
+				makeToast(e.toString(),1);
 				return -5;}
 		}
 		gamePanel.getGameManager().getPlayer().initShip();
 		loadFile(fileName,s);
-		makeToast("Successfully loaded");
+		makeToast("Successfully loaded",0);
 		return 0;
 	}
     
@@ -451,9 +498,9 @@ public class MainActivity extends Activity {
             
             writer.close();
             osw.close();
-			makeToast("Successfully saved");
+			makeToast("Successfully saved",0);
         } catch (Throwable e) {
-			makeToast(e.toString());
+			makeToast(e.toString(),1);
            System.err.print(e);
         }
     }
@@ -464,7 +511,7 @@ public class MainActivity extends Activity {
 			String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString()+File.separator+"sb9"+File.separator+SaveName;
 			File myDir = new File(root);
 			if (!myDir.exists()) {
-				makeToast("Error: no directory");
+				makeToast("Error: no directory",1);
 				return -1;
 			}
                
@@ -482,21 +529,21 @@ public class MainActivity extends Activity {
                     inputStream.close();
                     reader.close();
                     isr.close();
-					makeToast("Successfully loaded file");
+					makeToast("Successfully loaded file",0);
                     return 0;
                 }
             }
             else
             {
-				makeToast("Error: no such file from meta");
+				makeToast("Error: no such file from meta",1);
                 return 1;
             }
         } catch (Throwable t)
         {
-			makeToast(t.toString());
+			makeToast(t.toString(),1);
             return -2;
         }
-		makeToast("Cant reach that!");
+		makeToast("Cant reach that! BUG",1);
         return -3;
     }
 
@@ -546,12 +593,14 @@ public class MainActivity extends Activity {
 		
 	}
 	
-	public void makeToast(final String toastText)
+	public void makeToast(final String toastText,final int state)
 	{
+		
 		runOnUiThread(new Runnable()
 		{
 			public void run()
 			{
+				GameLog.update(toastText,state);
 				Context context = getApplicationContext();
 				int duration = Toast.LENGTH_LONG;
 				Toast toast = Toast.makeText(context, toastText, duration);

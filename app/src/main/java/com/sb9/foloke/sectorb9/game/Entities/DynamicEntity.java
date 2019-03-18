@@ -8,19 +8,22 @@ import android.graphics.*;
 import com.sb9.foloke.sectorb9.game.Assets.ShipAsset;
 import com.sb9.foloke.sectorb9.game.Managers.GameManager;
 import com.sb9.foloke.sectorb9.game.Funtions.*;
+import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
 
 
 public abstract class DynamicEntity extends Entity {
 
-   	float dx,dy;
-	float speed=1;
-	float acceleration=0;
-	float targetAcceleration=0;
-	float rotationSpeed=0.01f;
-	boolean movable;
-	private PointF frontPoint=new PointF(1,0);
-	private float frontAcceleration=0.01f;
-	private float frontDeceleration=0.01f;
+   	protected float dx,dy;
+	
+	protected float mass=1;
+	protected float acceleration=0;
+	protected float targetAcceleration=0;
+	protected float sidewayImpulse=1f;
+	protected boolean movable;
+	protected float  frontImpulse;
+	protected float backwardImpulse;
+	protected PointF frontPoint=new PointF(1,0);
+	public float targetRotation=0;
 	protected boolean inBounds=true;
 
     DynamicEntity(float x, float y, float rotation,  GameManager gameManager, int ID)
@@ -36,29 +39,52 @@ public abstract class DynamicEntity extends Entity {
 		Paint tPaint=new Paint();
 		tPaint.setColor(Color.rgb(255,255,0));
 		tPaint.setStrokeWidth(5);
-		canvas.drawLine(getCenterX(),getCenterY(),getCenterX()+frontPoint.x*acceleration*20,getCenterY()+frontPoint.y*acceleration*20,tPaint);
+		canvas.drawLine(getCenterX(),getCenterY(),getCenterX()+dx*20,getCenterY()+dy*20,tPaint);
 	}
 
-	private void calculateMovement()
+	protected void calculateMovement()
 	{
-		if(this instanceof Player)
-			gameManager.getGamePanel().textDebug4.setString(""+targetAcceleration);
-		if(acceleration<targetAcceleration)
-			acceleration+=frontAcceleration;
-		else
-			acceleration-=frontDeceleration;
+		//TODO: for projectiles old system
+		
+		int maxSpeed=64;
+		float speed=(float)Math.sqrt(dx*dx+dy*dy)*60;
+			if(movable&&(speed<maxSpeed))
+			{
+				acceleration=frontImpulse/mass*targetAcceleration;
+				this.dy += (acceleration* this.frontPoint.y);
+				this.dx += (acceleration*this.frontPoint.x);
+				
+			}
+			else
+			{
+				
+				acceleration=backwardImpulse/mass;
+				if(acceleration>Math.abs(dx))
+					dx=0;
+				else
+				{
+					if(dx>0)
+					this.dx -=acceleration;
+					if(dx<0)
+					this.dx +=acceleration;
+				}
+				
+				if(acceleration>Math.abs(dy))
+					dy=0;
+				else
+				{
+					if(dy>0)
+					this.dy -= acceleration;
+					if(dy<0)
+					this.dy += acceleration;
+				}
+				
+			}
 			
-		if(acceleration<0)
-			acceleration=0;
-		//if(acceleration>1)
-		//	acceleration=1;
-
 		
-		this.dy =  (acceleration*speed * this.frontPoint.y);
-		this.dx = (acceleration*speed *this.frontPoint.x);
-		if(targetAcceleration>0)
-		targetAcceleration-=0.1;
 		
+		
+		//targetAcceleration=0;
 		
 	}
 	
@@ -79,9 +105,7 @@ public abstract class DynamicEntity extends Entity {
         float[] vector =new float[]{0,-1};
         transformMatrix.mapVectors(vector);
 
-        x += dx;
-        y += dy;
-		dx = dy = 0;
+        
 		calculateCollisionObject();
 
 		if(inBounds) {
@@ -100,7 +124,7 @@ public abstract class DynamicEntity extends Entity {
 		
 		x += dx;
         y += dy;
-        dx = dy = 0;
+       
         timerTick();
 
     }
@@ -172,20 +196,20 @@ public abstract class DynamicEntity extends Entity {
 		float BLength=(float)Math.sqrt(B.x*B.x+B.y*B.y);
 		B.set(B.x/BLength,B.y/BLength);
         float sinPhi = (frontPoint.x*B.y - frontPoint.y*B.x);
-		
+		targetRotation=rotation+sinPhi;
 		if(sinPhi>-0.02&&sinPhi<0.02)
             return true;
 		sinPhi*=100;
-		if(Math.abs(sinPhi)<rotationSpeed)
+		if(Math.abs(sinPhi)<sidewayImpulse/mass)
 		{
 			rotation-=sinPhi/2;
 		}
 		else
 		{
     	    if (sinPhi < 0)
-          		rotation+=rotationSpeed;
+          		rotation+=sidewayImpulse/mass;
         	if (sinPhi >=0)
-				rotation-=rotationSpeed;
+				rotation-=sidewayImpulse/mass;
 		}
        
         return false;
@@ -199,7 +223,7 @@ public abstract class DynamicEntity extends Entity {
 	
 	public float getAcceleration()
 	{
-		return acceleration;
+		return (float)Math.sqrt(dx*dx+dy*dy);
 	}
 
 	public boolean getMoveable()
@@ -232,23 +256,35 @@ public abstract class DynamicEntity extends Entity {
 		}
 	}
 	
-	public void setSpeed(float speed)
-	{
-		this.speed=speed;
-	}
+	
 
-	public void setRotationSpeed(float rotationSpeed)
+	public void setSidewayImpulse(float sidewayImpulse)
 	{
-		this.rotationSpeed=rotationSpeed;
+		this.sidewayImpulse=sidewayImpulse;
 	}
 	
-	public void setFrontAcceleration(float frontAcceleration)
+	public void setFrontImpulse(float frontImpulse)
 	{
-		this.frontAcceleration=frontAcceleration;
+		this.frontImpulse=frontImpulse;
 	}
 	
-	public void setFrontDeceleration(float frontDeceleration)
+	public void setBackwardImpulse(float backwardImpulse)
 	{
-		this.frontDeceleration=frontDeceleration;
+		this.backwardImpulse=backwardImpulse;
 	}
+	public void setMass(float mass)
+	{
+		this.mass=mass;
+	}
+	
+	public float getDx()
+	{
+		return dx;
+	}
+	
+	public float getDy()
+	{
+		return dy;
+	}
+	
 }

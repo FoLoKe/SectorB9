@@ -1,45 +1,51 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-	android:clickable="false" 
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:clickable="false"
 	android:focusable="false"
-	android:id="@+id/action_uiFrameLayout"
-    >
+	android:id="@+id/action_uiFrameLayout">
+	
 	<LinearLayout
 		android:layout_gravity="center|left"
 		android:orientation="vertical"
-
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content">
+
 		<ImageButton
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:visible="false"
 			android:id="@+id/action_u_collectAllButton"
 			android:text="collect debris"
-			android:textColor="#ffffff"/>
-    <LinearLayout
-		android:layout_gravity="center|left"
-		android:orientation="horizontal"
-		
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content">
+			android:textColor="#ffffff"
+			android:layout_marginBottom="10dp"/>
+
 		<LinearLayout
-			android:layout_gravity=""
-			android:orientation="vertical"
-			android:id="@+id/action_ui_WeaponsList"
+			android:layout_gravity="center|left"
+			android:orientation="horizontal"
+			android:gravity="center_vertical"
 			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:scaleType="fitXY"/>
-		
-		<ImageButton
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			
-			android:id="@+id/action_ui_weapons_button"/>
+			android:layout_height="wrap_content">
+
+			<LinearLayout
+				android:layout_gravity=""
+				android:orientation="vertical"
+				android:id="@+id/action_ui_WeaponsList"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:scaleType="fitXY"/>
+
+			<ImageButton
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:id="@+id/action_ui_weapons_button"/>
+
+		</LinearLayout>
+
 	</LinearLayout>
-	</LinearLayout>
-	
+
 	<LinearLayout
 		android:layout_gravity="center|top"
 		android:orientation="vertical"
@@ -47,17 +53,20 @@
 		android:layout_width="wrap_content"
 		android:layout_height="match_parent">
 
-	<Button
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:textColor="#ffffff"
-		android:text="Interaction"
-		android:id="@+id/Interaction"
-	/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="SECTOR B9 (by FOLOKE) ALPHA TEST V0.1"
-            android:textColor="#ffffff"/>
+		<Button
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textColor="#ffffff"
+			android:text="Interaction"
+			android:id="@+id/Interaction"/>
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="SECTOR B9 (by FOLOKE) ALPHA TEST V0.1"
+			android:textColor="#ffffff"/>
+
 	</LinearLayout>
+
 </FrameLayout>
+

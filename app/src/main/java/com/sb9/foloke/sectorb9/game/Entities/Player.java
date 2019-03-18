@@ -19,13 +19,11 @@ import com.sb9.foloke.sectorb9.game.UI.*;
 public class Player extends DynamicEntity
 {
 	public boolean shootFlag;
-
 	private Ship ship;
 	private int interactionRadius=150;
 	
     public Player(float x, float y, float rotation, GameManager gameManager)
     {
-		
         super(x,y,rotation,gameManager,1);
         drawHp=false;
 		gameManager.getGamePanel().pointOfTouch=getWorldLocation();
@@ -34,12 +32,12 @@ public class Player extends DynamicEntity
         this.dx=this.dy=0;
         this.movable=false;
 		this.renderable=true;
-		speed=1;
+		
 		this.inventoryMaxCapacity=10;
 		for(int i=0;i<inventory.getHeight();i++)
 			for(int j=0;j<inventory.getWidth();j++)
 				inventory.addNewItem(i*inventory.getWidth()+j,i*inventory.getWidth()+j);
-
+		inventory.addToExistingOrNull(18,800);
 		ShipUI.setUI(this, gameManager.getMainActivity());
 		initShip();
     }
@@ -80,7 +78,9 @@ public class Player extends DynamicEntity
 
     @Override
     public CustomCollisionObject getCollisionObject()
-    {return ship.getCollisonObject();}
+    {
+		return ship.getCollisonObject();
+	}
 	
     public void setMovable(boolean movable) 
 	{
@@ -107,8 +107,8 @@ public class Player extends DynamicEntity
 	
 	public void setShip(int i)
 	{
-
-	    switch(i) {
+	    switch(i) 
+		{
             case 1:
                 ship = new ShipMk1(this);
                 break;
@@ -134,12 +134,6 @@ public class Player extends DynamicEntity
 		ship.init(this);
 	}
 
-    @Override
-    public void applyDamage(float damage) {
-        super.applyDamage(damage);
-
-    }
-
     public void respawn()
 	{
 		x=90;y=90;
@@ -150,7 +144,7 @@ public class Player extends DynamicEntity
         this.movable=false;
 		this.renderable=true;
 		active=true;
-		speed=1;
+		
 		this.inventoryMaxCapacity=10;
 		for(int i=0;i<inventory.getHeight();i++)
 			for(int j=0;j<inventory.getWidth();j++)

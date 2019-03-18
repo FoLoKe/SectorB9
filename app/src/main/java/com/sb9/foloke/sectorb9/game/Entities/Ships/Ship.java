@@ -16,13 +16,14 @@ public class Ship
 	protected PointF[] pointOfShooting;
 	protected PointF pointOfEngineSmoke;
 	protected DynamicEntity holder;
-	protected float speed;
-	protected float rotSpeed;
+	
+	protected float sidewayImpulse;
     protected float maxHP;
     protected float maxSH;
     protected int shieldSize=1;
-    protected float decel=1;
-    protected float accel=1;
+    protected float bacwardImpulse=1;
+	protected float mass=1;
+    protected float frontImpulse=1;
 	private CustomCollisionObject collisonObject;
 
 	
@@ -46,13 +47,14 @@ public class Ship
 
 	protected void setOptionToDynamic()
     {
-        holder.setSpeed(speed);
-        holder.setRotationSpeed(rotSpeed);
+        
+        holder.setSidewayImpulse(sidewayImpulse);
         holder.setMaxHP(maxHP);
         holder.setMaxSH(maxSH);
         holder.setShieldSize(shieldSize);
-        holder.setFrontDeceleration(decel);
-        holder.setFrontAcceleration(accel);
+        holder.setBackwardImpulse(bacwardImpulse);
+        holder.setFrontImpulse(frontImpulse);
+		holder.setMass(mass);
     }
 
 	protected void setCollisionObject()

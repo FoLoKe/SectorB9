@@ -5,7 +5,7 @@ import android.graphics.Bitmap;
 public class UIAsset {
 
         public static Bitmap hpBackground,hpLine,stunBackground,stunLine,progressBarBorder,destroyedText,noEnergySign,
-		invFullSign,shootButton,uiBgBlur,turnedOffSign,cancelButton,buildModeButton,collectDebrisButton;
+		invFullSign,shootButton,uiBgBlur,turnedOffSign,cancelButton,buildModeButton,collectDebrisButton,optionsButton,saveButton,loadButton,helpButton,exitButton,mapButton;
 		public static Bitmap indexedImages[]={hpBackground,hpLine,progressBarBorder,destroyedText};
         public static void init(Bitmap sheet)
         {
@@ -24,6 +24,15 @@ public class UIAsset {
 			cancelButton=tsheet.crop(3,2);
 			buildModeButton=Bitmap.createBitmap(sheet,0,3*32,64,32,null,false);
 			collectDebrisButton=Bitmap.createBitmap(sheet,64,3*32,32,32,null,false);
+			
+			///menu buttons
+			optionsButton=Bitmap.createBitmap(sheet,0,4*32,96,32,null,false);
+			saveButton=Bitmap.createBitmap(sheet,0,5*32,96,32,null,false);
+			mapButton=Bitmap.createBitmap(sheet,0,6*32,96,32,null,false);
+			helpButton=Bitmap.createBitmap(sheet,96,4*32,96,32,null,false);
+			loadButton=Bitmap.createBitmap(sheet,96,5*32,96,32,null,false);
+			exitButton=Bitmap.createBitmap(sheet,96,6*32,96,32,null,false);
+			
 			turnedOffSign=Bitmap.createScaledBitmap(tsheet.crop(4,0),20,20,true);
         }
 		public static Bitmap getByIndex(int index)

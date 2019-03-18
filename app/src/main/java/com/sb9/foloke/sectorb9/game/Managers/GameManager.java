@@ -95,15 +95,13 @@ public class GameManager {
 
         worldManager=new WorldManager(MA,this);
 		worldManager.loadEmptyWorld();
-		
-		
-     	//worldManager.loadDebugWorld();
     }
 
     public void tick()
     {
         if(gamePause)
             return;
+			
         if(playerDestroyed)
         {
             if(destroyedTimer.tick())
@@ -113,21 +111,25 @@ public class GameManager {
             }
             return;
         }
+		
 		if(player!=null)
 		{
 			uIhp.set(player.getHp()/player.getMaxHP()*100);
 			uIsh.set(player.getSH()/player.getMaxSH()*100);
 			if(gamePanel.getTouched())
 			{
-			player.rotationToPoint(getGamePanel().getMovementPoint());
-
-			float targetAcceleration=gamePanel.getMovementSpeed();//(vectorLenght-minAcceleration)/(maxAcceleration-minAcceleration);
-			if(targetAcceleration>1)
-				targetAcceleration=1;
-     		player.addMovement(targetAcceleration);
+				player.rotationToPoint(getGamePanel().getMovementPoint());
+				float targetAcceleration=gamePanel.getMovementSpeed();
+				
+				if(targetAcceleration>1)
+					targetAcceleration=1;
+				if(targetAcceleration<0)
+					targetAcceleration=0;
+     			player.addMovement(targetAcceleration);
        		}
 
 		}
+		
 		Iterator<Entity> iterUi = getEntities().iterator();
 		boolean exist=false;
 		while (iterUi.hasNext()) {
@@ -138,7 +140,8 @@ public class GameManager {
 					break;
 				}
 			}
-			ActionUI.update(exist);
+		ActionUI.update(exist);
+		
 		if(collect)
         {
             boolean collected=true;
@@ -152,29 +155,27 @@ public class GameManager {
                             collected=false;
                     }
             }
+			
             if (collected)
             {
-            MA.runOnUiThread(new Runnable()
-            {
-                public void run()
-                {
+            
+                MA.makeToast("items collected",0);
 
-                        MA.makeToast("items collected" );
-
-                }
-            });
+          
             }
             else
                 MA.runOnUiThread(new Runnable()
                 {
                     public void run()
                     {
-                MA.makeToast("inventory full" );
+                MA.makeToast("inventory full" ,0);
                     }
                 });
-    }
+    	}
+	
         collect=false;
         worldManager.updateWorld();
+		
 		if(warpReady)
 			if(distanceTo(player.getWorldLocation(),warpingLocation)<200)
 				warp();
@@ -307,15 +308,14 @@ public class GameManager {
     {
 		sectorToWarp.set(xs,ys);
 		Point offset=new Point(worldManager.getSector().x-xs,worldManager.getSector().y-ys);
-		/////CENTER BY X
 		float dist=(float)Math.sqrt(offset.x*offset.x+offset.y*offset.y);
 		PointF vector=new PointF(offset.x/dist,offset.y/dist);
 		PointF tvector=new PointF(-vector.x*3000,-vector.y*3000);
 		warpingLocation.set((tvector.x+3000)/2,(tvector.y+3000)/2);
-        //worldManager.warpToSector(x,y);
-		gamePanel.textDebug5.setString(""+warpingLocation);
+		
 		warpReady=true;
     }
+	
 	public void warp()
 	{
 		warpReady=false;
@@ -359,5 +359,9 @@ public class GameManager {
 	public float distanceTo(PointF a,PointF b)
 	{
 		return (float)Math.sqrt((b.x-a.x)*(b.x-a.x)+(b.y-a.y)*(b.y-a.y));
+	}
+	public EntityManager getEntityManager()
+	{
+		return worldManager.getEntityManager();
 	}
 }

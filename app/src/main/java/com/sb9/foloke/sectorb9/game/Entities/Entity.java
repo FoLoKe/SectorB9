@@ -16,6 +16,7 @@ import com.sb9.foloke.sectorb9.game.DataSheets.BuildingsDataSheet;
 import com.sb9.foloke.sectorb9.game.Funtions.*;
 import java.io.*;
 import com.sb9.foloke.sectorb9.game.UI.Inventory.*;
+import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
 
 public abstract class Entity {
 	
@@ -299,6 +300,7 @@ public abstract class Entity {
 	}
 	
 	protected void onDestroy(){
+		GameLog.update("no HP "+this,2);
 		active=false;
 		if(!(this instanceof Player))
             toRemove=true;

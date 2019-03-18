@@ -17,22 +17,23 @@ public class Projectile extends DynamicEntity
 	private boolean collided=false;
 	//private Timer dustDelay;
 	private Entity parent;
+	private float adx=1,ady=1;
 	private float addedAcceleration;
 	
 	public Projectile(float x, float y, int lifetime, float speed, float rotation, float damage,Entity parent, GameManager gameManager)
 	{
 		super(x,y,0, gameManager,0);
 		this.inBounds=false;
+		this.movable=true;
 		this.parent=parent;
 		this.rotation=rotation;
-		this.speed=speed;
+		this.frontImpulse=0.1f;
 		this.lifetime=lifetime;
 		this.damage=damage;
 		this.lifeTimer=new Timer(0);
 		//this.dustDelay=new Timer(0);
 		//this.dustPuff=new SmallDustPuff(gameManager);
 		//this.effectDelay=1f;
-		
 	}
 	
 	public void recreateCollision()
@@ -43,6 +44,7 @@ public class Projectile extends DynamicEntity
 		this.height=image.getHeight();
 		createCollision();
 	}
+	
 	@Override
 	public void render(Canvas canvas)
 	{
@@ -58,8 +60,6 @@ public class Projectile extends DynamicEntity
 				canvas.rotate(rotation,getCenterX(),getCenterY());	
 				canvas.drawBitmap(image,x,y,null);
 				canvas.restore();
-
-   		        
 			}
 
 	}
@@ -69,31 +69,23 @@ public class Projectile extends DynamicEntity
 	{
 		if(active) 
 		{
-			targetAcceleration=1f+addedAcceleration;
-			acceleration=targetAcceleration;
+			
             super.tick();
 			
             if (lifeTimer.tick())
 			{
-				//if(!collided)
                	active = false;
 				return;
 			}
 			
-			gameManager.getGamePanel().textDebug2.setString(targetAcceleration+"");
-			//dustPuff.tick();
+			
 			if(collided)
 			{
-		    //if (dustDelay.tick())
-		    	{
-			    	collided=false;
-			    	active=false;
-		    	}
-		    return;
+			    collided=false;
+			    active=false;
+		    	return;
 			}	
         }
-			
-		
 	}
 
     @Override
@@ -106,15 +98,25 @@ public class Projectile extends DynamicEntity
        	 	this.lifeTimer.setTimer(0);
 		}
     }
-
+	
+	@Override
+	protected void calculateMovement()
+	{
+			acceleration=2;
+			this.dy = (acceleration* this.frontPoint.y)+ady;
+			this.dx = (acceleration*this.frontPoint.x)+adx;
+	}
+	
     public void setActive(boolean condition)
 	{
 		active=condition;
 	}
+	
 	public boolean getActive()
 	{
 		return active;
 	}
+	
 	public void shoot(PointF point,float rotation,float acceleration)
 	{
 		active=false;
@@ -125,7 +127,11 @@ public class Projectile extends DynamicEntity
 		this.rotation=rotation;
 		this.lifeTimer.setTimer(lifetime);
 		addedAcceleration=acceleration;
-
+		if(parent instanceof DynamicEntity)
+		{
+			adx=((DynamicEntity)parent).getDx();
+			ady=((DynamicEntity)parent).getDy();
+		}
 		renderable=true;
 		active=true;
 	}

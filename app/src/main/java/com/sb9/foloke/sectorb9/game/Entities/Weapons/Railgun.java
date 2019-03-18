@@ -132,7 +132,7 @@ public class Railgun extends Weapon
         }
         catch (Exception e)
         {
-            gameManager.getMainActivity().makeToast(e+"");
+            gameManager.getMainActivity().makeToast(e+"",1);
         }
 
         laserDamageEffect.render(canvas);

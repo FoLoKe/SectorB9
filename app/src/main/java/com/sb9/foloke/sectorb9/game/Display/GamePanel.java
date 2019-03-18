@@ -19,8 +19,10 @@ import java.io.*;
 import static com.sb9.foloke.sectorb9.game.Managers.GameManager.commandInteraction;
 import static com.sb9.foloke.sectorb9.game.Managers.GameManager.commandMoving;
 import android.graphics.*;
-import org.apache.commons.codec.language.*;
+
 import com.sb9.foloke.sectorb9.game.Funtions.*;
+import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
+import android.os.*;
 
 
 public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
@@ -48,7 +50,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 	private Text debugExchange;
 	
 	///camera positioning
-    private float scale=5;
+    private float scale=4;
     public float canvasH,canvasW;
     public PointF pointOfTouch;
     public PointF screenPointOfTouch;
@@ -73,19 +75,32 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 	private Paint joystickBgPaint=new Paint();
 	private PointF stickPoint=new PointF();
 	private Paint speedPaint=new Paint();
-	
+	//public GameLog LOG;
     public GamePanel(Context context, AttributeSet attributeSet)
     {
         super(context, attributeSet);
+		
         this.MA=(MainActivity)context;
-		DisplayMetrics displayMetrics = new DisplayMetrics();
-		((Activity) getContext()).getWindowManager()
-			.getDefaultDisplay()
-			.getMetrics(displayMetrics);
-		canvasH = displayMetrics.heightPixels;
-		canvasW = displayMetrics.widthPixels;
-
-
+		
+		WindowManager wm = ((WindowManager) 
+			context.getSystemService(Context.WINDOW_SERVICE));
+		Display display = wm.getDefaultDisplay();
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+			Point screenSize = new Point();
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+				display.getRealSize(screenSize);
+				canvasW = screenSize.x;
+				canvasH = screenSize.y;
+			} else {
+				display.getSize(screenSize);
+				canvasW = screenSize.x;
+				canvasH = screenSize.y;
+			}
+		} else {
+			canvasW = display.getWidth();
+			canvasH = display.getHeight();
+		}
+		
         screenPointOfTouch=new PointF(0,0);
         pointOfTouch=new PointF(0,0);
 
@@ -102,7 +117,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 		textInQueue=new Text("",500,750);
 		textScreenWH.setString(canvasW+"x"+canvasH);
 		
-		joystickBox.set(canvasW/2,canvasH/2,canvasW,canvasH);
+		joystickBox.set(canvasW/1.5f,canvasH/2,canvasW,canvasH);
         gameManager= new GameManager(this, MA);
 
         camera=new Camera(0,0,scale,gameManager.getPlayer());
@@ -117,6 +132,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 		
 		cursor.setDrawable(true);
 		//buildDrawingCache();
+		
+		
 		joystickBgPaint.setColor(Color.GRAY);
 		joystickBgPaint.setAlpha(200);
 		joystickPaint.setColor(Color.DKGRAY);
@@ -125,7 +142,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 		joystickBorderPaint.setAlpha(200);
 		joystickBorderPaint.setStyle(Paint.Style.STROKE);
 		joystickBorderPaint.setStrokeWidth(5);
-		
 		
 		debugPaint.setColor(Color.RED);
 		debugPaint.setStyle(Paint.Style.STROKE);
@@ -138,7 +154,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 		borderPaint.setStrokeWidth(20/camera.getScale());
 		borderPaint.setPathEffect(new DashPathEffect(new float[] { 200/camera.getScale(), 200/camera.getScale()}, 0));
 		
-		//MA.setOptions();
+		//MA.
 		
     }
 
@@ -147,10 +163,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 		this.MT=MT;
 	}
 	
-	public void setFrameLimiter(boolean state)
-	{
-		MT.switchFrameLimit(state);
-	}
+	
     @Override
     public void surfaceCreated(SurfaceHolder p1)
     {
@@ -168,7 +181,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                 mainThread.join();
                 retry=false;
             }catch(InterruptedException e)
-            {e.printStackTrace();}
+            {MA.makeToast(""+e,1);}
         }
     }
 
@@ -187,35 +200,36 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 		
 		if(touched)
 		{
-		relatedPoint.set(-joystickInitPoint.x+joystickCurrentPoint.x+camera.getWorldLocation().x,-joystickInitPoint.y+joystickCurrentPoint.y+camera.getWorldLocation().y);
+			relatedPoint.set(-joystickInitPoint.x+joystickCurrentPoint.x+camera.getWorldLocation().x,-joystickInitPoint.y+joystickCurrentPoint.y+camera.getWorldLocation().y);
 			
-		PointF tpoint=new PointF(-joystickInitPoint.x+joystickCurrentPoint.x,-joystickInitPoint.y+joystickCurrentPoint.y);
-		float size=(float)Math.sqrt(tpoint.x*tpoint.x+tpoint.y*tpoint.y);
-		float rl=1;
+			PointF tpoint=new PointF(-joystickInitPoint.x+joystickCurrentPoint.x,-joystickInitPoint.y+joystickCurrentPoint.y);
+			float size=(float)Math.sqrt(tpoint.x*tpoint.x+tpoint.y*tpoint.y);
+			float rl=1;
 		
-		if (size!=0&&size>200)
-		rl=200/size;
+			if (size!=0&&size>200)
+			rl=200/size;
 		
-		if(size>200)
-		{
-			size=200;
-		}
+			if(size>200)
+			{
+				size=200;
+			}
 		
-		float minAcceleration=joystickSafeZone; //0%
-		float maxAcceleration=joysticSize; //100%
+			float minAcceleration=joystickSafeZone; //0%
+			float maxAcceleration=joysticSize; //100%
 		
-		size=(size-minAcceleration)/(maxAcceleration-minAcceleration);
-		joysticAcceleration=size;//200;
-		textDebug5.setString(""+joysticAcceleration);
-		stickPoint.set(joystickInitPoint.x+tpoint.x*rl,joystickInitPoint.y+tpoint.y*rl);
+			size=(size-minAcceleration)/(maxAcceleration-minAcceleration);
+			joysticAcceleration=size;//200;
+			
+			stickPoint.set(joystickInitPoint.x+tpoint.x*rl,joystickInitPoint.y+tpoint.y*rl);
 		}
     }
 
     public void render(Canvas canvas)
     {
-
-        super.draw(canvas);
+		if(canvas==null)
+			return;
         camera.setScreenRect(canvasW,canvasH);
+		
         canvas.save();
         canvas.translate(-camera.getWorldLocation().x+canvas.getWidth()/2,-camera.getWorldLocation().y+canvas.getHeight()/2);
         canvas.scale(camera.getScale(),camera.getScale(),camera.getWorldLocation().x,camera.getWorldLocation().y);
@@ -255,11 +269,26 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 			String s=(""+(gameManager.getPlayer().getAcceleration()*60));
 			if(s.length()>4)
 				s=s.substring(0,4).toString();
-				s+=(" m/s");
+			s+=(" m/s");
 				
 			canvas.drawText(""+s,canvasW/2+128,canvasH/2,speedPaint);
 			
         }
+		Player player=gameManager.getPlayer();
+		Path p=new Path();
+		p.moveTo(0,-128+player.getDy()*60);
+		p.lineTo(32,-64);
+		p.lineTo(-32,-64);
+		p.lineTo(0,-128);
+		Matrix m=new Matrix();
+		m.postRotate(player.targetRotation);
+		m.postTranslate(canvasW/2,canvasH/2);
+		
+		p.transform(m);
+		//p.setFillType(Path.FillType.WINDING);
+		
+		//setLastPoint(canvasW/2+10,canvasH/2);
+		canvas.drawPath(p,debugPaint);
         textFPS.render(canvas);
 
 		if(Options.drawDebugInfo.getBoolean())
@@ -293,7 +322,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 		{
 			scale *= detector.getScaleFactor();
 			// Don't let the object get too small or too large.
-			scale = Math.max(1f, Math.min(scale, 6.0f));
+			scale = Math.max(0.5f, Math.min(scale, 4.0f));
 			gestureInProgress=true;
 			return true;
 		}
@@ -412,5 +441,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 	public boolean getTouched()
 	{
 		return touched;
+	}
+	
+	public MainThread getMainThread()
+	{
+		return MT;
 	}
 }

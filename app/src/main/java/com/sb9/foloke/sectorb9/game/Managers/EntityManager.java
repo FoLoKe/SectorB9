@@ -12,6 +12,7 @@ import java.io.*;
 import com.sb9.foloke.sectorb9.game.Entities.Buildings.*;
 import com.sb9.foloke.sectorb9.game.Entities.*;
 import com.sb9.foloke.sectorb9.game.DataSheets.*;
+import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
 
 
 public class EntityManager
@@ -19,7 +20,7 @@ public class EntityManager
 	private ArrayList<Entity> entityArray;
     private ArrayList<Entity> entityToAdd;
 	private GameManager gameManager;
-	
+	private boolean reloadFlag=false;
 	public EntityManager(GameManager gameManager)
 	{
 		this.gameManager = gameManager;
@@ -32,7 +33,7 @@ public class EntityManager
 	{
 
 		entityToAdd.add(entity);
-
+		GameLog.update("added :"+entity,2);
 	}
 
 	public void render(Canvas canvas)
@@ -45,8 +46,18 @@ public class EntityManager
 
 	public void tick()
 	{
+		if(reloadFlag)
+		{
+			entityArray.clear();
+			//entityToAdd.clear();
+			reloadFlag=false;
+			GameLog.update("EntityManager: preparing for reload",2);
+		}
 	    if(entityToAdd.size()>0)
-	    entityArray.addAll(entityToAdd);
+		{
+	    	entityArray.addAll(entityToAdd);
+			GameLog.update("added objects:"+entityToAdd.size(),0);
+		}
 	    entityToAdd.clear();
 	   Iterator<Entity> it=entityArray.iterator();
 
@@ -56,7 +67,10 @@ public class EntityManager
 			Entity e = (Entity) it.next();
 			e.tick();
 			if(e.toRemove)
+			{
 			    it.remove();
+				GameLog.update("removed "+e,2);
+			}
 		}
 	}
 
@@ -182,13 +196,14 @@ public class EntityManager
 				if(initiator.getInventory().takeOneItemFromAllInventory(BuildingsDataSheet.findById(ID).resToBuild[0],1))
 					return new Buildable(ID,initiator.getTeam(),gameManager);
 				else
-					gameManager.getMainActivity().makeToast("no resources");
+					gameManager.getMainActivity().makeToast("no resources",0);
 				
 		return null;
 	}
 	
 	public void reload()
     {
-        entityArray.clear();
+        reloadFlag=true;
+		GameLog.update("EntityManager: preparing for reload",2);
     }
 }
