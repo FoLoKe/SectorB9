@@ -5,25 +5,25 @@ import android.graphics.PointF;
 import android.graphics.Canvas;
 import android.graphics.*;
 
-import com.sb9.foloke.sectorb9.game.Assets.ShipAsset;
+
 import com.sb9.foloke.sectorb9.game.Managers.GameManager;
 import com.sb9.foloke.sectorb9.game.Funtions.*;
-import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
+
 
 
 public abstract class DynamicEntity extends Entity {
 
    	protected float dx,dy;
 	
-	protected float mass=1;
+	private float mass=1;
 	protected float acceleration=0;
-	protected float targetAcceleration=0;
-	protected float sidewayImpulse=1f;
+	private float targetAcceleration=0;
+	private float sidewayImpulse=1f;
 	protected boolean movable;
 	protected float  frontImpulse;
-	protected float backwardImpulse;
+	private float backwardImpulse;
 	protected PointF frontPoint=new PointF(1,0);
-	public float targetRotation=0;
+
 	protected boolean inBounds=true;
 
     DynamicEntity(float x, float y, float rotation,  GameManager gameManager, int ID)
@@ -32,7 +32,7 @@ public abstract class DynamicEntity extends Entity {
 		dx=dy=0;
     }
 	
-	public void drawVelocity(Canvas canvas)
+	private void drawVelocity(Canvas canvas)
 	{
 		if(!renderable)
 			return;
@@ -46,46 +46,25 @@ public abstract class DynamicEntity extends Entity {
 	{
 		//TODO: for projectiles old system
 		
-		int maxSpeed=64;
+		int maxSpeed=100;
 		float speed=(float)Math.sqrt(dx*dx+dy*dy)*60;
 			if(movable&&(speed<maxSpeed))
 			{
-				acceleration=frontImpulse/mass*targetAcceleration;
-				this.dy += (acceleration* this.frontPoint.y);
-				this.dx += (acceleration*this.frontPoint.x);
-				
+                acceleration=frontImpulse/mass*targetAcceleration;
+                this.dy += (acceleration * this.frontPoint.y);
+                this.dx += (acceleration * this.frontPoint.x);
 			}
 			else
 			{
-				
-				acceleration=backwardImpulse/mass;
-				if(acceleration>Math.abs(dx))
-					dx=0;
-				else
+				acceleration=backwardImpulse/mass*60;
+				if(speed>0)
 				{
-					if(dx>0)
-					this.dx -=acceleration;
-					if(dx<0)
-					this.dx +=acceleration;
-				}
-				
-				if(acceleration>Math.abs(dy))
-					dy=0;
-				else
-				{
-					if(dy>0)
-					this.dy -= acceleration;
-					if(dy<0)
-					this.dy += acceleration;
-				}
-				
+                    dy -= dy / speed * acceleration;// + (acceleration * this.frontPoint.y);
+                    dx -= dx / speed * acceleration;// + (acceleration * this.frontPoint.x);
+                }
 			}
-			
-		
-		
-		
-		//targetAcceleration=0;
-		
+
+
 	}
 	
     @Override
@@ -129,7 +108,7 @@ public abstract class DynamicEntity extends Entity {
 
     }
 
-    protected void checkCollision()
+    private void checkCollision()
     {
 
         for (Entity e : getGameManager().getEntities())
@@ -184,10 +163,21 @@ public abstract class DynamicEntity extends Entity {
 		float newcenterX=(midpointx +rad * (getCollisionObject().getCenterX() - e.getCollisionObject().getCenterX()) / dist);
 		float newcenterY=(midpointy + rad * (getCollisionObject().getCenterY() - e.getCollisionObject().getCenterY())/ dist);
 
-		dx+=-getCenterX()+newcenterX;
-		dy+=-getCenterY()+newcenterY;
 
 
+		if(e instanceof DynamicEntity) {
+            dx = (((DynamicEntity) e).getDx() + dx) / 2;
+            dy = (((DynamicEntity) e).getDx() + dy) / 2;
+            ((DynamicEntity) e).setDx(dx);
+            ((DynamicEntity) e).setDy(dy);
+        }
+        else
+        {
+            dx+= -getCenterX()+newcenterX;
+            dy+=-getCenterY()+newcenterY;
+        }
+        x+=-getCenterX()+newcenterX;
+        y+=-getCenterY()+newcenterY;
 	}
 	
     public boolean rotationToPoint(PointF point)
@@ -196,7 +186,7 @@ public abstract class DynamicEntity extends Entity {
 		float BLength=(float)Math.sqrt(B.x*B.x+B.y*B.y);
 		B.set(B.x/BLength,B.y/BLength);
         float sinPhi = (frontPoint.x*B.y - frontPoint.y*B.x);
-		targetRotation=rotation+sinPhi;
+
 		if(sinPhi>-0.02&&sinPhi<0.02)
             return true;
 		sinPhi*=100;
@@ -248,7 +238,7 @@ public abstract class DynamicEntity extends Entity {
             uIhp.render(canvas);
         }
         if(SH>0&&shieldShow.getTick()>0)
-        	canvas.drawBitmap(shieldImg,getCenterX()-shieldImg.getWidth()/2,getCenterY()-shieldImg.getHeight()/2,shieldpaint);
+        	canvas.drawBitmap(shieldImg,getCenterX()-(float)shieldImg.getWidth()/2,getCenterY()-(float)shieldImg.getHeight()/2,shieldpaint);
 		if(Options.drawDebugInfo.getBoolean())
 		{
 			drawVelocity(canvas);
@@ -286,5 +276,19 @@ public abstract class DynamicEntity extends Entity {
 	{
 		return dy;
 	}
-	
+    public void setDx(float dx)
+    {
+        this.dx=dx;
+    }
+
+    public void setDy(float dy)
+    {
+        this.dy=dy;
+    }
+
+    public float getSpeed()
+    {
+        return (float)Math.sqrt(dx*dx+dy*dy)*60;
+    }
+
 }

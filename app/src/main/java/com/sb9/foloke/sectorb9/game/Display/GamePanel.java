@@ -11,7 +11,7 @@ import com.sb9.foloke.sectorb9.MainThread;
 import com.sb9.foloke.sectorb9.game.Managers.GameManager;
 import com.sb9.foloke.sectorb9.game.UI.Text;
 import com.sb9.foloke.sectorb9.game.Entities.*;
-import android.app.*;
+
 import com.sb9.foloke.sectorb9.*;
 import android.view.ScaleGestureDetector.*;
 import android.view.*;
@@ -21,8 +21,8 @@ import static com.sb9.foloke.sectorb9.game.Managers.GameManager.commandMoving;
 import android.graphics.*;
 
 import com.sb9.foloke.sectorb9.game.Funtions.*;
-import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
-import android.os.*;
+
+
 
 
 public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
@@ -84,22 +84,17 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 		
 		WindowManager wm = ((WindowManager) 
 			context.getSystemService(Context.WINDOW_SERVICE));
+
 		Display display = wm.getDefaultDisplay();
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-			Point screenSize = new Point();
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-				display.getRealSize(screenSize);
-				canvasW = screenSize.x;
-				canvasH = screenSize.y;
-			} else {
-				display.getSize(screenSize);
-				canvasW = screenSize.x;
-				canvasH = screenSize.y;
-			}
-		} else {
-			canvasW = display.getWidth();
-			canvasH = display.getHeight();
-		}
+
+                if(display!=null) {
+
+                    Point screenSize = new Point();
+                    display.getRealSize(screenSize);
+                    canvasW = screenSize.x;
+                    canvasH = screenSize.y;
+                }
+
 		
         screenPointOfTouch=new PointF(0,0);
         pointOfTouch=new PointF(0,0);
@@ -231,7 +226,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
         camera.setScreenRect(canvasW,canvasH);
 		
         canvas.save();
-        canvas.translate(-camera.getWorldLocation().x+canvas.getWidth()/2,-camera.getWorldLocation().y+canvas.getHeight()/2);
+        canvas.translate(-camera.getWorldLocation().x+canvasW/2,-camera.getWorldLocation().y+canvasH/2);
         canvas.scale(camera.getScale(),camera.getScale(),camera.getWorldLocation().x,camera.getWorldLocation().y);
 			
         //objects
@@ -268,27 +263,39 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 			
 			String s=(""+(gameManager.getPlayer().getAcceleration()*60));
 			if(s.length()>4)
-				s=s.substring(0,4).toString();
+				s=s.substring(0,4);
 			s+=(" m/s");
 				
 			canvas.drawText(""+s,canvasW/2+128,canvasH/2,speedPaint);
 			
         }
+
 		Player player=gameManager.getPlayer();
-		Path p=new Path();
-		p.moveTo(0,-128+player.getDy()*60);
-		p.lineTo(32,-64);
-		p.lineTo(-32,-64);
-		p.lineTo(0,-128);
-		Matrix m=new Matrix();
-		m.postRotate(player.targetRotation);
-		m.postTranslate(canvasW/2,canvasH/2);
-		
-		p.transform(m);
-		//p.setFillType(Path.FillType.WINDING);
-		
-		//setLastPoint(canvasW/2+10,canvasH/2);
-		canvas.drawPath(p,debugPaint);
+        if(player.getSpeed()>0) {
+            Path p = new Path();
+
+            p.moveTo(32, -160 - player.getSpeed() * 2);
+            //p.lineTo(point.x,129-player.getSpeed());
+            p.lineTo(0, -192 - player.getSpeed() * 2);
+            p.lineTo(-32, -160 - player.getSpeed() * 2);
+           // p.lineTo(0, -128 - player.getSpeed() * 2);
+            //p.close();
+
+                    Paint debugPaint2=new Paint();
+            debugPaint2.setColor(Color.CYAN);
+            Matrix m = new Matrix();
+            m.postRotate((float)Math.toDegrees(Math.atan2(player.getDy(),player.getDx()))+90);
+
+            m.postTranslate(canvasW / 2, canvasH / 2);
+
+
+
+            p.transform(m);
+            //p.setFillType(Path.FillType.WINDING);
+
+            //setLastPoint(canvasW/2+10,canvasH/2);
+            canvas.drawPath(p, debugPaint2);
+        }
         textFPS.render(canvas);
 
 		if(Options.drawDebugInfo.getBoolean())

@@ -17,7 +17,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="SECTOR B9 (by FOLOKE) ALPHA TEST V0.1"
+            android:text="SECTOR B9 (by FOLOKE) ALPHA TEST V0.3"
             android:textColor="#ffffff"/>
 	<Button
 		android:layout_width="match_parent"

@@ -102,7 +102,7 @@ public class MainActivity extends Activity {
 	{
 		try
 		{
-			Options.inti(this);
+
 			String documentsFolderPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString();
 			File documentsFolder  = new File(documentsFolderPath);
 			
@@ -197,12 +197,10 @@ public class MainActivity extends Activity {
 					///options setup
 					//setOptions();
 					makeToast("Successfully loaded options",0);
-					return;
 				}
 				else
 				{
 					makeToast("inputStream error",1);
-					return;
 				}
 			}
 		}
@@ -340,9 +338,9 @@ public class MainActivity extends Activity {
 	
 	private void prepareNewGame(String s,boolean state)
 	{
-		if(s==""||s==null||s==" "||s.length()==0||s.contains(" "))
+		if(s.equals("")||s.equals(" ")||s.length()==0||s.contains(" "))
 		{
-			makeToast("wrong savename",1);
+			makeToast("wrong save name",1);
 			return;
 		}
 		
@@ -391,7 +389,7 @@ public class MainActivity extends Activity {
 		WorldGenerator.makeRandomSector(gamePanel.getGameManager().getWorldManager());
 	}
 	
-	public int prepareNewLoad(String s)
+	public void prepareNewLoad(String s)
 	{
 		prepareNewGame(s,false);
 		//gamePanel.getGameManager().getEntityManager().reload();
@@ -401,13 +399,15 @@ public class MainActivity extends Activity {
 		File myDir = new File(root);
 		if (!myDir.exists()) {
 			makeToast("Error: no directory",1);
-			return -1;
+			return;
 		}
 		String metaFileName="meta.txt";
 		File metaFile = new File (myDir, metaFileName);
 		if (!metaFile.exists ())
-		{makeToast("Error: no metaFile",1);
-			return -4;}
+		{
+		    makeToast("Error: no metaFile",1);
+			return;
+		}
 		else
 		{
 			try
@@ -428,14 +428,16 @@ public class MainActivity extends Activity {
 					isr.close();
 				}
 			}
-			catch(Exception e){
+			catch(Exception e)
+            {
 				makeToast(e.toString(),1);
-				return -5;}
+				return;
+            }
 		}
 		gamePanel.getGameManager().getPlayer().initShip();
 		loadFile(fileName,s);
 		makeToast("Successfully loaded",0);
-		return 0;
+
 	}
     
 	public void loadGame()
@@ -499,7 +501,9 @@ public class MainActivity extends Activity {
             writer.close();
             osw.close();
 			makeToast("Successfully saved",0);
-        } catch (Throwable e) {
+        }
+        catch (Throwable e) 
+        {
 			makeToast(e.toString(),1);
            System.err.print(e);
         }
