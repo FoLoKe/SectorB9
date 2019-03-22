@@ -47,6 +47,7 @@ public class MainActivity extends Activity {
 	private ViewFlipper VF;
 	
 	private static final int PERMISSION_REQUEST_CODE = 123;
+	
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
@@ -292,11 +293,22 @@ public class MainActivity extends Activity {
 					loadGame();
 				}
 			});
+			
+		Button continueGameButton= findViewById(R.id.continue_game_button);
+
+		continueGameButton.setOnClickListener(new OnClickListener()
+			{
+				public void onClick(View v)
+				{
+					continueGame();
+				}
+			});
 		GameLog.update("menu created",0);
 	}
 	
 	private void makeOnNewGameDialog()
 	{
+		GameLog.update("preparing new game alertDialog",0);
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		
 		LinearLayout LL=new LinearLayout(this);
@@ -315,14 +327,14 @@ public class MainActivity extends Activity {
 
 		builder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int id) {
-					
+					GameLog.update("preparing new game dialog ok option",0);
 					prepareNewGame(input.getText().toString(),true);
                     
 				}
 			});
 		builder.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int id) {
-					
+					GameLog.update("preparing new game dialog cancel option",0);
 					
 				}
 			});
@@ -334,16 +346,46 @@ public class MainActivity extends Activity {
 		
 		dialog.setView(LL);
 		dialog.show();
+		GameLog.update("preparing new game dialog successful",0);
 	}
 	
 	private void prepareNewGame(String s,boolean state)
 	{
+		GameLog.update("preparing new game",0);
 		if(s.equals("")||s.equals(" ")||s.length()==0||s.contains(" "))
 		{
 			makeToast("wrong save name",1);
 			return;
 		}
 		
+		if(state)
+		{
+			GameLog.update("checking for existing" ,0);
+			String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString()+File.separator+"sb9";
+			File myDir = new File(root);
+			if (!myDir.exists()) 
+			{
+				myDir.mkdir();
+			}
+
+			File[] files = myDir.listFiles();
+			//File target=null;
+		
+			if (files.length>0)
+			{
+				//target=files[0];
+				for(File f:files)
+				{
+					if(f.getName()==s)
+						if (f.isDirectory())
+						{
+							makeToast("save name already used" ,0);
+							return;
+						}
+				}
+			}
+			
+		}
         setContentView(R.layout.main_activity);
         gamePanel =findViewById(R.id.Game);
 		gamePanel.getGameManager().setSaveName(s);
@@ -386,11 +428,14 @@ public class MainActivity extends Activity {
 			}
 		});
 		if(state)
-		WorldGenerator.makeRandomSector(gamePanel.getGameManager().getWorldManager());
+			WorldGenerator.makeTestingBox(gamePanel.getGameManager());
+		//WorldGenerator.makeRandomSector(gamePanel.getGameManager().getWorldManager());
+		GameLog.update("preparing new game successful",0);
 	}
 	
 	public void prepareNewLoad(String s)
 	{
+		GameLog.update("preparing load for save - "+s,0);
 		prepareNewGame(s,false);
 		//gamePanel.getGameManager().getEntityManager().reload();
 		String fileName="";
@@ -436,7 +481,7 @@ public class MainActivity extends Activity {
 		}
 		gamePanel.getGameManager().getPlayer().initShip();
 		loadFile(fileName,s);
-		makeToast("Successfully loaded",0);
+		makeToast("Successfully loaded - "+s,0);
 
 	}
     
@@ -447,6 +492,42 @@ public class MainActivity extends Activity {
 		
 	}
 	
+	private void continueGame()
+	{
+		makeToast("preparing for continue" ,0);
+		String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString()+File.separator+"sb9";
+		File myDir = new File(root);
+		if (!myDir.exists()) {
+			myDir.mkdir();
+		}
+
+		File[] files = myDir.listFiles();
+		File target=null;
+		if (files.length>0)
+		{
+			target=files[0];
+			for(File f:files)
+			{
+				if(f.lastModified()>target.lastModified())
+					if (f.isDirectory())
+					target=f;
+			}
+		}
+	
+		if(target==null)
+		{
+			makeToast("no saves",2);
+			return;
+		}
+		
+		prepareNewLoad(target.getName());
+		GameLog.update("continue successful",0);
+		
+
+		
+	
+	}
+	
 	public ViewFlipper getViewFlipper()
 	{
 		return VF;
@@ -454,6 +535,7 @@ public class MainActivity extends Activity {
 	
 	public void saveFile(String fileName,String saveName) 
 	{
+		GameLog.update("trying to save",0);
         try 
 		{
 			String fname = "save"+fileName+".txt";
@@ -505,7 +587,7 @@ public class MainActivity extends Activity {
         catch (Throwable e) 
         {
 			makeToast(e.toString(),1);
-           System.err.print(e);
+           
         }
     }
 	
@@ -585,6 +667,7 @@ public class MainActivity extends Activity {
 	
 	public Bitmap getBitmapFromView(View view) {
 		
+		GameLog.update("taking screenshoot",0);
 		view.setDrawingCacheEnabled(true);
 		view.buildDrawingCache(true);	
 		final Bitmap bitmap = Bitmap.createBitmap( view.getDrawingCache() );
@@ -593,6 +676,7 @@ public class MainActivity extends Activity {
 		gamePanel.render(c);
 		view.setDrawingCacheEnabled(false);
 		view.destroyDrawingCache();
+		GameLog.update("screenshoot created",0);
 		return bitmap;
 		
 	}

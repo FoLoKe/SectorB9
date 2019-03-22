@@ -69,8 +69,12 @@ public class EntityManager
 			if(e.toRemove)
 			{
 			    it.remove();
+				
 				GameLog.update("removed "+e,2);
 			}
+			
+			if(e instanceof DynamicEntity)
+				((DynamicEntity)e).collidedWith.clear();
 		}
 	}
 

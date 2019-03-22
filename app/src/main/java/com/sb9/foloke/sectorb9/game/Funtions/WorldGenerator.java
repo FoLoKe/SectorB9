@@ -43,4 +43,17 @@ public class WorldGenerator
 			entityManager.addObject(new Asteroid(50*rand.nextInt(50)+25*rand.nextInt(20),100*rand.nextInt(20)+20*rand.nextInt(50),rand.nextInt(180), gameManager,rand.nextInt(3)));
     }
 	
+	public static void makeTestingBox(GameManager gameManager)
+	{
+		EntityManager entityManager=gameManager.getEntityManager();
+		entityManager.reload();
+        Random rand=new Random();
+		gameManager.getGamePanel().setWorldSize(250);
+		entityManager.addObject(gameManager.getPlayer());
+		for(int i=0;i<3;i++)
+			entityManager.addObject(new EnemyShip(rand.nextInt(100),rand.nextInt(100),0,gameManager));
+		for(int i=0;i<2;i++)
+			entityManager.addObject(new Asteroid(rand.nextInt(50),rand.nextInt(180),0, gameManager,rand.nextInt(3)));
+	}
+	
 }

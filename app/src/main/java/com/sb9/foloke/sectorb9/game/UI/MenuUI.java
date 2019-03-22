@@ -193,6 +193,9 @@ public class MenuUI
 							MA.loadGame();
 							break;
 						case "exit":
+							MA.prepareMenu();
+							break;
+							/*
 							MainThread mainThread=MA.getGameManager().getGamePanel().getMainThread();
 							boolean retry = true;
 							while(retry)
@@ -211,7 +214,7 @@ public class MenuUI
 							android.os.Process.killProcess(android.os.Process.myPid());
 							//MA.finish();
 							MA.startActivity(homeIntent); 
-							break;
+							break;*/
 					}
 				}
 			});
@@ -283,7 +286,7 @@ public class MenuUI
 						case "load":
 							MA.loadGame();
 							break;
-						case "menu":
+						case "exit":
 							MA.prepareMenu();
 							break;
 					}

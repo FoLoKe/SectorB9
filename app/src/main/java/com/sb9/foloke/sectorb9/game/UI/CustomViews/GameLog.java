@@ -73,7 +73,7 @@ public class GameLog extends LinearLayout
 				else
 					TV.setVisibility(GONE);
 				if(folderlog)
-				newLine(s);
+				newLine(state+" "+s);
 				String ts="";
 				switch(state)
 				{

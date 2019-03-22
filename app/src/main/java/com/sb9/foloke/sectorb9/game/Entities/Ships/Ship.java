@@ -42,6 +42,8 @@ public class Ship
 		engineSmoke.setAccuracy(new Point(16,1));
 		pointOfEngineSmoke=new PointF(0,shipImage.getHeight()/2);
 	}
+	
+	
 	public void init(DynamicEntity e)
 	{}
 
@@ -74,7 +76,7 @@ public class Ship
 		for(TurretSystem t:turrets)
 		t.render(canvas);
 		
-		if(holder.getAcceleration()>0.4)
+		if(holder.getAcceleration()>0)
 		{
 			float mathRotation=(float)(Math.PI/180*(holder.getWorldRotation()));
 			PointF tpointOfEngineSmoke =new PointF((float)((pointOfEngineSmoke.x )* Math.cos(mathRotation) - pointOfEngineSmoke.y * Math.sin(mathRotation))

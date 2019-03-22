@@ -16,6 +16,7 @@ import com.sb9.foloke.sectorb9.game.Managers.GameManager;
 import static java.lang.Math.PI;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
+import com.sb9.foloke.sectorb9.game.Entities.Ships.*;
 
 public class EnemyShip extends DynamicEntity {
 
@@ -25,7 +26,7 @@ public class EnemyShip extends DynamicEntity {
     public EnemyShip(int x, int y, int rotation, GameManager gameManager)
     {
         super(x,y,rotation,gameManager,ID);
-        this.ship=new ShipMk1(this);
+        this.ship=new ShipMk2(this);
         AI=new EnemyAI(this);
 		movable=true;
 	

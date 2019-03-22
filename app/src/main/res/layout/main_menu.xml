@@ -3,28 +3,39 @@
     android:layout_height="fill_parent"
     android:orientation="vertical"
 	android:background="#000000">
+	
 	<com.sb9.foloke.sectorb9.game.UI.CustomViews.GameLog
         android:layout_width="match_parent"
     	android:layout_height="match_parent"
-
    		android:id="@+id/gameLog"/>
+	
     <LinearLayout
-	android:layout_width="wrap_content"
-	android:layout_height="wrap_content"
-	android:orientation="vertical"
-	android:layout_gravity="center|left"
-	android:layout_marginLeft="50dp">
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:orientation="vertical"
+		android:layout_gravity="center|left"
+		android:layout_marginLeft="50dp">
+		
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="SECTOR B9 (by FOLOKE) ALPHA TEST V0.3"
             android:textColor="#ffffff"/>
-	<Button
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:id="@+id/new_game_button"
-		android:text="Start new game"
-		android:textColor="#ffffff"/>
+
+		<Button
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/continue_game_button"
+			android:text="Continue game"
+			android:textColor="#ffffff"/>
+		
+		<Button
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/new_game_button"
+			android:text="Start new game"
+			android:textColor="#ffffff"/>
+		
 		<Button
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
@@ -33,4 +44,5 @@
 			android:textColor="#ffffff"/>
 
 	</LinearLayout>
+	
 </FrameLayout>

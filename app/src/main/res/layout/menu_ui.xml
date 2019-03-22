@@ -12,7 +12,7 @@
 		android:textColor="#ffffff"
 		android:text="Close Menu"
 		android:id="@+id/closeMenu"
-		android:layout_gravity="top|center"/>
+		android:layout_gravity="top|right"/>
 
 	<LinearLayout
 		android:layout_width="wrap_content"
@@ -21,7 +21,8 @@
 		android:layout_gravity="center"
 		android:id="@+id/menuUILinearLayout"
 		android:layout_margin="5dp"
-		android:layout_marginTop="100dp">
+		
+		>
 
 		<TextView
 			android:layout_width="wrap_content"
@@ -44,7 +45,8 @@
 				android:layout_height="wrap_content"
 				android:text="select ship 1"
 				android:textColor="#ffffff"
-				android:layout_gravity="center"/>
+				android:layout_gravity="center"
+				/>
 
 			<Button
 				android:id="@+id/menu_ui_set_second_ship"
@@ -63,22 +65,33 @@
 				android:layout_gravity="center"/>
 
 		</LinearLayout>
-
+		
 		<ImageButton
-			android:id="@+id/menu_ui_open_options"
+			android:id="@+id/menu_openMapButton"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text="Options"
+			android:text="Galaxy Map"
 			android:textColor="#ffffff"
-			android:layout_gravity="center"/>
-
+			android:layout_gravity="center"
+			android:layout_margin="2dp"/>
+		
 		<ImageButton
 			android:id="@+id/menu_uiOpenHelpButton"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:text="Help"
 			android:textColor="#ffffff"
-			android:layout_gravity="center"/>
+			android:layout_gravity="center"
+			android:layout_margin="2dp"/>
+		
+		<ImageButton
+			android:id="@+id/menu_ui_open_options"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Options"
+			android:textColor="#ffffff"
+			android:layout_gravity="center"
+			android:layout_margin="2dp"/>
 
 		<ImageButton
 			android:id="@+id/menu_save"
@@ -86,7 +99,8 @@
 			android:layout_height="wrap_content"
 			android:text="Save"
 			android:textColor="#ffffff"
-			android:layout_gravity="center"/>
+			android:layout_gravity="center"
+			android:layout_margin="2dp"/>
 
 		<ImageButton
 			android:id="@+id/menu_load"
@@ -94,15 +108,8 @@
 			android:layout_height="wrap_content"
 			android:text="Load"
 			android:textColor="#ffffff"
-			android:layout_gravity="center"/>
-
-		<ImageButton
-			android:id="@+id/menu_openMapButton"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:text="Galaxy Map"
-			android:textColor="#ffffff"
-			android:layout_gravity="center"/>
+			android:layout_gravity="center"
+			android:layout_margin="2dp"/>
 
 		<ImageButton
 			android:id="@+id/menu_ToMainMenu"
@@ -110,7 +117,8 @@
 			android:layout_height="wrap_content"
 			android:text="Exit To Main Menu"
 			android:textColor="#ffffff"
-			android:layout_gravity="center"/>
+			android:layout_gravity="center"
+			android:layout_margin="2dp"/>
 
 	</LinearLayout>
 

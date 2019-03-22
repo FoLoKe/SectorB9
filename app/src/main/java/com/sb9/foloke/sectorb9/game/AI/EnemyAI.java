@@ -38,7 +38,7 @@ public class EnemyAI {
         	
         		if(taskRotateToPoint(wayPoint)) 
             		if (isInAcceptableRadius(wayPoint))
-                		child.shoot();
+                		wayPoint=wayPoint;//child.shoot();
 			}
 			else
 			{

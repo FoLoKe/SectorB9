@@ -69,6 +69,7 @@ public class GameManager {
 	private Point sectorToWarp=new Point();
 	private PointF warpingLocation=new PointF();
 	private boolean warpReady=false;
+	
     public GameManager(GamePanel gamePanel, MainActivity MA)
     {
         command=0;
@@ -132,24 +133,28 @@ public class GameManager {
 		
 		Iterator<Entity> iterUi = getEntities().iterator();
 		boolean exist=false;
-		while (iterUi.hasNext()) {
+		while (iterUi.hasNext()) 
+		{
 			Entity e = (Entity) iterUi.next();
 			if (e instanceof DroppedItems)
-				if (distanceTo(player.getWorldLocation(), e.getWorldLocation()) < 200) {
+				if (distanceTo(player.getWorldLocation(), e.getWorldLocation()) < 200) 
+				{
 					exist=true;
 					break;
 				}
-			}
+		}
 		ActionUI.update(exist);
 		
 		if(collect)
         {
             boolean collected=true;
             Iterator<Entity> iter = getEntities().iterator();
-            while (iter.hasNext()) {
+            while (iter.hasNext()) 
+			{
                 Entity e = (Entity) iter.next();
                 if (e instanceof DroppedItems)
-                    if (distanceTo(player.getWorldLocation(), e.getWorldLocation()) < 200) {
+                    if (distanceTo(player.getWorldLocation(), e.getWorldLocation()) < 200) 
+					{
                         boolean b = player.getInventory().collectFromInventory(e);
                         if(!b)
                             collected=false;
@@ -157,20 +162,11 @@ public class GameManager {
             }
 			
             if (collected)
-            {
-            
-                MA.makeToast("items collected",0);
-
-          
+            {         
+                MA.makeToast("items collected",0);     
             }
             else
-                MA.runOnUiThread(new Runnable()
-                {
-                    public void run()
-                    {
                 MA.makeToast("inventory full" ,0);
-                    }
-                });
     	}
 	
         collect=false;

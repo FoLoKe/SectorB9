@@ -21,6 +21,7 @@ import static com.sb9.foloke.sectorb9.game.Managers.GameManager.commandMoving;
 import android.graphics.*;
 
 import com.sb9.foloke.sectorb9.game.Funtions.*;
+import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
 
 
 
@@ -221,8 +222,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 
     public void render(Canvas canvas)
     {
+		//todo: direction and distance to enemy as arrow
 		if(canvas==null)
 			return;
+			
         camera.setScreenRect(canvasW,canvasH);
 		
         canvas.save();
@@ -233,14 +236,12 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
         gameManager.render(canvas);
         cursor.render(canvas);
 
-			
         if (Options.drawDebugInfo.getBoolean())
         {
             camera.render(canvas);
 			canvas.drawCircle(relatedPoint.x,relatedPoint.y,5,debugPaint);
 		}
 			
-
         if(pressedObject!=null)
         {
             pressedObject.drawDebugCollision(canvas);
@@ -251,7 +252,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
         canvas.restore();
 
         //UI
-        if(gameManager.command==commandMoving) {
+        if(gameManager.command==commandMoving) 
+		{
             gameManager.uIhp.render(canvas);
             gameManager.uIsh.render(canvas);
 			if(touched)
@@ -261,41 +263,89 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 				canvas.drawCircle(stickPoint.x,stickPoint.y,75,joystickPaint);
 			}
 			
-			String s=(""+(gameManager.getPlayer().getAcceleration()*60));
+			String s=(""+(gameManager.getPlayer().getSpeed()));
 			if(s.length()>4)
 				s=s.substring(0,4);
 			s+=(" m/s");
 				
 			canvas.drawText(""+s,canvasW/2+128,canvasH/2,speedPaint);
-			
         }
 
 		Player player=gameManager.getPlayer();
-        if(player.getSpeed()>0) {
+		
+        if(player.getSpeed()>0) 
+		{
             Path p = new Path();
+			float size=player.getSpeed()/100+0.5f;
+            p.moveTo(32*size, -160*size - player.getSpeed() * 2);
+            p.lineTo(0, -192*size - player.getSpeed() * 2);
+            p.lineTo(-32*size, -160*size - player.getSpeed() * 2);
 
-            p.moveTo(32, -160 - player.getSpeed() * 2);
-            //p.lineTo(point.x,129-player.getSpeed());
-            p.lineTo(0, -192 - player.getSpeed() * 2);
-            p.lineTo(-32, -160 - player.getSpeed() * 2);
-           // p.lineTo(0, -128 - player.getSpeed() * 2);
-            //p.close();
-
-                    Paint debugPaint2=new Paint();
+            Paint debugPaint2=new Paint();
             debugPaint2.setColor(Color.CYAN);
             Matrix m = new Matrix();
             m.postRotate((float)Math.toDegrees(Math.atan2(player.getDy(),player.getDx()))+90);
-
             m.postTranslate(canvasW / 2, canvasH / 2);
-
-
-
             p.transform(m);
-            //p.setFillType(Path.FillType.WINDING);
-
-            //setLastPoint(canvasW/2+10,canvasH/2);
             canvas.drawPath(p, debugPaint2);
         }
+		
+		for(Entity e:gameManager.getEntities())
+		{
+			if(e.getTeam()!=0)
+				if(e.getTeam()!=player.getTeam())
+				{
+					Path p = new Path();
+					float dist=distanceTo(player.getWorldLocation(),e.getWorldLocation());
+					float size=Math.max(1,dist/1000);
+					size=Math.min(4,size);
+			
+					size=1/size;
+           		 	p.moveTo(32*size, -64);
+            		p.lineTo(0, -64-32*size);
+            		p.lineTo(-32*size, -64);
+
+            		Paint debugPaint2=new Paint();
+            		debugPaint2.setColor(Color.RED);
+					debugPaint2.setStyle(Paint.Style.STROKE);
+					debugPaint2.setStrokeWidth(5);
+            		Matrix m = new Matrix();
+			
+            		m.postRotate((float)Math.toDegrees(-Math.atan2(-player.getWorldLocation().x+e.getWorldLocation().x,-player.getWorldLocation().y+e.getWorldLocation().y))+180);
+					m.postTranslate(canvasW / 2, canvasH / 2);
+            		p.transform(m);
+					
+					canvas.drawPath(p, debugPaint2);
+					
+					float[] f=new float[]{0,-192*size};
+					m.mapPoints(f);
+					debugPaint2.setStrokeWidth(2);
+					debugPaint2.setTextSize(40);
+					debugPaint2.setStyle(Paint.Style.FILL);
+					//debugPaint2.set
+					
+					String s;
+					if(dist>1000)
+					{
+						s=(""+(dist/1000));
+						if(s.length()>3)
+							s=s.substring(0,3);
+						s+=(" km");
+					}
+					else
+					{
+						s=(""+(dist));
+						if(s.length()>3)
+							s=s.substring(0,3);
+						s+=(" m");
+					}
+					//canvas.drawText(""+s,canvasW/2+128,canvasH/2,speedPaint);
+					
+					canvas.drawText(""+s,f[0],f[1],debugPaint2);
+            		
+				}
+			}
+			
         textFPS.render(canvas);
 
 		if(Options.drawDebugInfo.getBoolean())
@@ -453,5 +503,14 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 	public MainThread getMainThread()
 	{
 		return MT;
+	}
+	
+	public float distanceTo(PointF a,PointF b)
+	{
+		return (float)Math.sqrt((a.x-b.x)*(a.x-b.x)+(a.y-b.y)*(a.y-b.y));
+	}
+	
+	public void setWorldSize(float ws){
+		worldSize=ws;
 	}
 }
