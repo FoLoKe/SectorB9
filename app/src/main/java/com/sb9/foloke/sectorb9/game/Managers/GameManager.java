@@ -36,6 +36,9 @@ import java.util.Iterator;
 import com.sb9.foloke.sectorb9.game.UI.*;
 import com.sb9.foloke.sectorb9.game.Entities.*;
 import android.graphics.*;
+import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
+import android.os.*;
+import java.io.*;
 
 
 public class GameManager {
@@ -55,7 +58,7 @@ public class GameManager {
 
     //world manager
     private WorldManager worldManager;
-
+	private MapManager mapManager;
     //booleans
     public boolean gamePause=false;
     public boolean playerDestroyed=false;
@@ -94,6 +97,7 @@ public class GameManager {
 
         player=new Player(900,900,0,this);
 
+		mapManager=new MapManager(MA,this);
         worldManager=new WorldManager(MA,this);
 		worldManager.loadEmptyWorld();
     }
@@ -359,5 +363,311 @@ public class GameManager {
 	public EntityManager getEntityManager()
 	{
 		return worldManager.getEntityManager();
+	}
+	
+	public MapManager getMapManager()
+	{
+		return mapManager;
+	}
+	
+	public boolean loadSector(int x,int y) {return false;};
+
+		
+		
+	public void  loadGame()
+	{
+		try
+		{
+			GameLog.update("satrting game load",2);
+			File saveFolder=checkSaveFolder();
+			if(saveFolder!=null)
+			{
+				File mapFile = new File (saveFolder,"map.txt");
+				if (mapFile.exists ())
+				{
+					//TO Read meta
+					File meta=new File(saveFolder,"meta.txt");
+					if(!meta.exists())
+					{
+						MA.makeToast("meta did not exist",1);
+						return;
+					}
+					
+					FileInputStream mits=new FileInputStream(meta);
+					InputStreamReader mis=new InputStreamReader(mits);
+					BufferedReader metareader=new BufferedReader(mis);
+
+					int x=Integer.parseInt(metareader.readLine());
+					int y=Integer.parseInt(metareader.readLine());
+					worldManager.setSector(x,y);
+					metareader.close();
+					mis.close();
+					mits.close();
+					//Meta readed
+					
+					//TO read map
+					FileInputStream ins=new FileInputStream(mapFile);
+					InputStreamReader isr=new InputStreamReader(ins);
+					BufferedReader reader=new BufferedReader(isr);
+
+					String s;
+
+					GameLog.update(mapFile.getAbsolutePath(),2);
+					GameLog.update(mapFile.canRead()+"",2);
+					GameLog.update(mapFile.length()+"",2);
+					//while there rows
+					while((s=reader.readLine())!=null)
+					{
+						//if new sector
+						if(s.startsWith("<"))
+						{
+							String[] words;
+							s=s.replace("<","");
+							s=s.replace(">","");
+							words=s.split(" ");
+						
+							//equals loading one?
+							if(Integer.parseInt(words[1])==worldManager.getSector().x &&
+							   Integer.parseInt(words[2])==worldManager.getSector().y)
+							{
+							
+								MapManager.Sector sector=mapManager.getSector(worldManager.getSector().x,worldManager.getSector().y);
+								GameLog.update(sector.x+" "+sector.y+"loading objects",2);
+								String toLoadEntity="";
+								int objectsCount=0;
+								for(String object:words)
+								{
+									if (object.contains("["))
+									{
+										toLoadEntity="";
+									}
+									
+									toLoadEntity+=object+" ";
+									if(object.contains("]"))
+									{
+										toLoadEntity=toLoadEntity.replace("[","");
+										toLoadEntity=toLoadEntity.replace("]","");
+									
+										String[] entityParams=toLoadEntity.split(" ");
+										Entity createdEntity=getEntityManager().createObject(Integer.parseInt(entityParams[0]));
+										createdEntity.load(entityParams);
+										getEntityManager().addObject(createdEntity);
+										objectsCount++;
+									}
+								}
+							}
+						}
+					}
+				
+					ins.close();
+					isr.close();
+					reader.close();
+
+				
+					MA.makeToast("Successfully loaded game",0);
+				}
+				else
+				{
+					GameLog.update("save file did not exist",1);
+					return;
+				}
+			}
+			else
+				GameLog.update("save folder did not exist",2);
+		}
+		catch(Exception e)
+		{
+			MA.makeToast(e.toString(),1);
+		}
+	}
+	
+	public void saveGame()
+	{
+		try
+		{
+			GameLog.update("satrting game save",2);
+			File saveFolder=checkSaveFolder();
+			if(saveFolder!=null)
+			{
+				File mapFile = new File (saveFolder,"map.txt");
+				if (mapFile.exists ())
+				{
+					//TO WRITE
+					File tempMapFile = new File (saveFolder,"tmap.txt");
+					FileOutputStream out = new FileOutputStream(tempMapFile);
+					OutputStreamWriter osw = new OutputStreamWriter(out);
+					BufferedWriter writer = new BufferedWriter(osw);
+
+					//TO COPY
+					FileInputStream ins=new FileInputStream(mapFile);
+					InputStreamReader isr=new InputStreamReader(ins);
+					BufferedReader reader=new BufferedReader(isr);
+
+					String s;
+					
+					GameLog.update(mapFile.getAbsolutePath(),2);
+					GameLog.update(mapFile.canRead()+"",2);
+					GameLog.update(mapFile.length()+"",2);
+					//while there rows
+					while((s=reader.readLine())!=null)
+					{
+						//if new sector
+						if(s.startsWith("<"))
+						{
+							String[] head;
+							s.replace("<","");
+							s.replace(">","");
+
+							head=s.split(" ");
+							
+							//equals saving one?
+							if(Integer.parseInt(head[1])==worldManager.getSector().x &&
+							   Integer.parseInt(head[2])==worldManager.getSector().y)
+							{
+								GameLog.update(s,2);
+								MapManager.Sector sector=mapManager.getSector(worldManager.getSector().x,worldManager.getSector().y);
+					
+								writer.write("< "+sector.x+" "+sector.y+" "+sector.discovered+" "+sector.explored+" ");
+								getEntityManager().save(writer);
+								writer.write(">");
+								writer.newLine();
+							}
+							else
+							{
+								writer.write(s);
+								writer.newLine();
+							}
+						}
+					}
+
+					File meta=new File(saveFolder,"meta.txt");
+					if(meta.exists())
+						meta.delete();
+					FileOutputStream mots=new FileOutputStream(meta);
+					OutputStreamWriter mos=new OutputStreamWriter(mots);
+					BufferedWriter metawriter=new BufferedWriter(mos);
+					
+					metawriter.write(""+worldManager.getSector().x);
+					metawriter.newLine();
+					metawriter.write(""+worldManager.getSector().y);
+					metawriter.newLine();
+					metawriter.write(""+getPlayer().getHp());
+					metawriter.newLine();
+					metawriter.write(""+getPlayer().getSH());
+					metawriter.newLine();
+					metawriter.write(""+getPlayer().getCenterX());
+					metawriter.newLine();
+					metawriter.write(""+getPlayer().getCenterY());
+					metawriter.newLine();
+					
+					metawriter.close();
+					mos.close();
+					mots.close();
+					
+					Bitmap img=MA.getBitmapFromView(gamePanel);
+					String imgname="image.jpg";
+					FileOutputStream imgout = new FileOutputStream(saveFolder+File.separator+imgname);
+					img.compress(Bitmap.CompressFormat.JPEG, 100, imgout); // bmp is your Bitmap instance
+						// PNG is a lossless format, the compression factor (100) is ignored
+					
+					ins.close();
+					isr.close();
+					reader.close();
+					
+					writer.close();
+					osw.close();
+					out.close();
+					
+					mapFile.delete();
+					tempMapFile.renameTo(mapFile);
+					MA.makeToast("Successfully saved game",0);
+				}
+				else
+				{
+					GameLog.update("save file did not exist",1);
+					return;
+				}
+			}
+			else
+			GameLog.update("save folder did not exist",2);
+		}
+		catch(Exception e)
+		{
+			MA.makeToast(e.toString(),1);
+		}
+	}
+	
+	public void createSaveFile()
+	{
+		try
+		{
+			GameLog.update("creating files",2);
+			File saveFolder=checkSaveFolder();
+			if(saveFolder!=null)
+			{
+				File mapFile = new File (saveFolder,"map.txt");
+				if (!mapFile.exists ())
+				{
+					FileOutputStream out = new FileOutputStream(mapFile);
+					OutputStreamWriter osw = new OutputStreamWriter(out);
+					BufferedWriter writer = new BufferedWriter(osw);
+					
+					for(MapManager.Sector s:mapManager.getSectors())
+					{
+						writer.write("< "+s.x+" "+s.y+" "+s.discovered+" "+s.explored+" >");
+						writer.newLine();
+					}
+					
+					writer.close();
+					osw.close();
+					out.close();
+					MA.makeToast("Successfully created saves for map",0);
+				}
+				else
+				{
+					GameLog.update(mapFile.getName()+" already exists",1);
+					return;
+				}
+
+				GameLog.update("files created",2);
+			}
+			else
+			{
+				GameLog.update("permissions not granted or folder has been deleted",1);
+			}
+		}
+		catch(Exception e)
+		{
+			MA.makeToast(e.toString(),1);
+		}
+		
+	}
+	
+	public File checkSaveFolder()
+	{
+		String documentsFolderPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString();
+		File documentsFolder  = new File(documentsFolderPath);
+
+		if(!documentsFolder.exists())
+		{
+			MA.makeToast("no DOCUMENTS WRITE PERMISSION",1);
+			return null;
+		}
+
+		String gameFolderPath=documentsFolderPath+File.separator+"sb9";
+		File gameFolder=new File(gameFolderPath);
+
+		if(!gameFolder.exists())
+		{
+			MA.makeToast("no inside DOCUMENTS WRITE PERMISSION",1);
+			return null;
+		}
+		File saveFolder=new File(gameFolderPath,getSaveName());
+		if(!saveFolder.exists())
+		{
+			MA.makeToast("no inside DOCUMENTS WRITE PERMISSION",1);
+			return null;
+		}
+	return saveFolder;
 	}
 }

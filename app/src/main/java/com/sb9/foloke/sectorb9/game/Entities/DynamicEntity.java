@@ -17,7 +17,7 @@ import android.text.style.*;
 public abstract class DynamicEntity extends Entity {
 
    	protected float dx,dy;
-	
+	private float maxSpeed=250;
 	private float mass=1;
 	protected float acceleration=0;
 	private float targetAcceleration=0;
@@ -48,7 +48,7 @@ public abstract class DynamicEntity extends Entity {
 
 	protected void calculateMovement()
 	{
-		int maxSpeed=100;
+		int maxSpeed=250;
 		float speed=getSpeed();
 			if(movable&&(speed<maxSpeed))
 			{

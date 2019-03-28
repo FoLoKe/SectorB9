@@ -161,13 +161,13 @@ public class WorldManager
 	
     public void warpToSector(int x,int y)
     {
-		MA.saveFile("sector-"+sectorX+"-"+sectorY,gameManager.getSaveName());
+		gameManager.saveGame();
 		sectorX=x;
 		sectorY=y;
-        if(MA.loadFile("save"+"sector-"+x+"-"+y+".txt",gameManager.getSaveName())==1)
+        if(gameManager.loadSector(x,y))
         {
            WorldGenerator.makeRandomSector(this);
-			MA.saveFile("sector-"+x+"-"+y,gameManager.getSaveName());
+			gameManager.saveGame();
         }
     }
 	

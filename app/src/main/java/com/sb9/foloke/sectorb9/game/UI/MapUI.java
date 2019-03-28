@@ -10,6 +10,7 @@ import android.graphics.*;
 import java.util.*;
 import com.sb9.foloke.sectorb9.game.Funtions.*;
 import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
+import com.sb9.foloke.sectorb9.game.Managers.*;
 
 
 
@@ -19,9 +20,10 @@ public class MapUI
 	private static MapTile playerMapPositionView;
 	private static LineView line;
 	private	static MainActivity MA;
+	private static MapManager MM;
+	
 	private static Point currentSector;
-	private static final int mapWidth=32;
-	private static final int mapHeight=32;
+	
 	private static ArrayList<MapTile> mapTiles=new ArrayList<MapTile>();
 
 	
@@ -48,9 +50,27 @@ public class MapUI
 
 	public static void init(final MainActivity mainActivity ,final ViewFlipper VF)
 	{
+		GameLog.update("preparing MapUI",0);
 		MA=mainActivity;
+		MM=MA.getGameManager().getMapManager();
 		currentSector=MA.getGameManager().getCurrentSector();
+		MM.getSector(currentSector.x,currentSector.y).discovered=true;
+		MM.getSector(currentSector.x,currentSector.y).explored=true;
+		int scanDepth=1;
+		if(true)
+		for(int i=-scanDepth;i<=scanDepth;i++)
+			for(int j=-scanDepth;j<=scanDepth;j++)
+			{	
+				MapManager.Sector sector=MM.getSector(currentSector.x+i,currentSector.y+j);
+				if(sector!=null)
+					sector.discovered=true;
+				
+			}
+			
+		MM.getSector(currentSector.x,currentSector.y).discovered=true;
+		MM.getSector(currentSector.x,currentSector.y).explored=true;
 		
+		GameLog.update("preparing MapUI: discovered set",0);
 		MA.findViewById(R.id.map_closeButton).setOnClickListener(
 		new OnClickListener(){
 			@Override
@@ -83,10 +103,11 @@ public class MapUI
 		//line=line2;
 		
 		//line2.invalidate();
+		GameLog.update("preparing MapUI: views set",0);
 		TableLayout table=MA.findViewById(R.id.map_uiTilesTable);
 		table.removeAllViews();
 			
-				for(int j=0;j<mapHeight+1;j++)
+				for(int j=0;j<mainActivity.getGameManager().getMapManager().getMapHeight()+1;j++)
 				{
 					TableRow row=new TableRow(MA);
 					TextView rowHead=new TextView(MA);
@@ -95,11 +116,19 @@ public class MapUI
 					if(j!=0)
 					{
 						row.addView(rowHead);
-						for(int i=1;i<mapWidth+1;i++)
+						for(int i=1;i<mainActivity.getGameManager().getMapManager().getMapWidth()+1;i++)
 						{
 						MapTile tile=new MapTile(MA,i,j,row);
 						mapTiles.add(tile);
 						tile.setImageBitmap(InventoryAsset.inv_empty);
+						MapManager.Sector sector=MM.getSector(i,j);
+						if(sector!=null)
+							{
+							if(sector.discovered)
+								tile.setBackgroundColor(Color.BLACK);
+							if(sector.explored)
+								tile.setBackgroundColor(Color.GREEN);
+							}
 						tile.setOnClickListener(new OnClickListener(){
 							@Override
 							public void onClick(View v)
@@ -121,7 +150,7 @@ public class MapUI
 					}
 					else
 					{
-						for(int i=0;i<mapWidth+1;i++)
+						for(int i=0;i<mainActivity.getGameManager().getMapManager().getMapWidth()+1;i++)
 						{
 							
 							TextView columnHead=new TextView(MA);
@@ -137,6 +166,7 @@ public class MapUI
 					}
 						table.addView(row);
 				}
+		GameLog.update("preparing MapUI: tiles set",0);
 			for(MapTile tile:mapTiles)
 			{
 				if(tile.getPoint().equals(currentSector.x,currentSector.y))
@@ -145,6 +175,7 @@ public class MapUI
 					playerMapPositionView=tile;
 				}
 			}
+			GameLog.update("MapUI prepared",0);
 	}
 	private static Line2D getMapLine()
 	{

@@ -70,15 +70,10 @@ public class MainActivity extends Activity {
 			| View.SYSTEM_UI_FLAG_FULLSCREEN
 			| View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
 
-		// This work only for android 4.4+
 		if(currentApiVersion >= Build.VERSION_CODES.KITKAT)
 		{
 
 			getWindow().getDecorView().setSystemUiVisibility(flags);
-
-			// Code below is to handle presses of Volume up or Volume down.
-			// Without this, after pressing volume buttons, the navigation bar will
-			// show up and won't hide
 			final View decorView = getWindow().getDecorView();
 			decorView
 				.setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener()
@@ -96,178 +91,10 @@ public class MainActivity extends Activity {
 		}
 		
 		prepareMenu();
-		startupOptions();
+		Options.startupOptions();
 	}
 	
-	public void startupOptions()
-	{
-		try
-		{
-
-			String documentsFolderPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString();
-			File documentsFolder  = new File(documentsFolderPath);
-			
-			if(!documentsFolder.exists())
-			{
-				documentsFolder.mkdir();
-			}
-			
-			if(!documentsFolder.exists())
-			{
-				documentsFolder.mkdir();
-				makeToast("no DOCUMENTS WRITE/READ PERMISSION",1);
-				return;
-			}
-			
-			String gameFolderPath=documentsFolderPath+File.separator+"sb9";
-			File gameFolder=new File(gameFolderPath);
-			
-			if(!gameFolder.exists())
-			{
-				gameFolder.mkdir();
-			}
-			if(!gameFolder.exists())
-			{
-				gameFolder.mkdir();
-				makeToast("no inside DOCUMENTS WRITE/READ PERMISSION",1);
-				return;
-			}
-			
-            File optionsFile = new File (gameFolder, "options.txt");
-			
-            if (optionsFile.exists ())
-            {
-                loadOptions();
-			}
-			else
-			{
-				//saveAsNew
-				saveOptions();
-				makeToast("options created",0);
-			}
-			
-		}
-		catch(Exception e)
-		{
-			makeToast(e.toString(),1);
-		}
-	}
 	
-	public void loadOptions()
-	{	
-		try
-		{
-			String documentsFolderPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString();
-			File documentsFolder  = new File(documentsFolderPath);
-			if(!documentsFolder.exists())
-			{
-				documentsFolder.mkdir();
-			}
-			if(!documentsFolder.exists())
-			{
-				documentsFolder.mkdir();
-				makeToast("no DOCUMENTS READ PERMISSION",1);
-			}
-			String gameFolderPath=documentsFolderPath+File.separator+"sb9";
-			File gameFolder=new File(gameFolderPath);
-			if(!gameFolder.exists())
-			{
-				gameFolder.mkdir();
-			}
-			if(!gameFolder.exists())
-			{
-				gameFolder.mkdir();
-				makeToast("no inside DOCUMENTS READ PERMISSION",1);
-			}
-			
-			File optionsFile = new File (gameFolder, "options.txt");
-			if (optionsFile.exists ())
-			{
-				FileInputStream inputStream = new FileInputStream(optionsFile);
-				if (inputStream != null)
-				{
-					InputStreamReader isr = new InputStreamReader(inputStream);
-					BufferedReader reader = new BufferedReader(isr);
-					////todo load
-					reader.readLine();
-					
-					Options.load(reader);
-					inputStream.close();
-					reader.close();
-					isr.close();
-					///options setup
-					//setOptions();
-					makeToast("Successfully loaded options",0);
-				}
-				else
-				{
-					makeToast("inputStream error",1);
-				}
-			}
-		}
-		catch(Exception e)
-		{ 
-			makeToast(e.toString(),1);
-		}
-	}
-	
-	public void saveOptions()
-	{
-		try
-		{
-			String documentsFolderPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString();
-			File documentsFolder  = new File(documentsFolderPath);
-			
-			if(!documentsFolder.exists())
-			{
-				documentsFolder.mkdir();
-			}
-			if(!documentsFolder.exists())
-			{
-				documentsFolder.mkdir();
-				makeToast("no DOCUMENTS WRITE PERMISSION",1);
-				return;
-			}
-			
-			String gameFolderPath=documentsFolderPath+File.separator+"sb9";
-			File gameFolder=new File(gameFolderPath);
-			
-			if(!gameFolder.exists())
-			{
-				gameFolder.mkdir();
-			}
-			if(!gameFolder.exists())
-			{
-				gameFolder.mkdir();
-				makeToast("no inside DOCUMENTS WRITE PERMISSION",1);
-				return;
-			}
-
-			File optionsFile = new File (gameFolder, "options.txt");
-			if (optionsFile.exists ())
-			{
-				FileOutputStream out = new FileOutputStream(optionsFile);
-				OutputStreamWriter osw = new OutputStreamWriter(out);
-				BufferedWriter writer = new BufferedWriter(osw);
-
-
-				writer.write("game options SB9");
-				writer.newLine();
-				Options.save(writer);
-				writer.close();
-				osw.close();
-				out.close();
-				//setOptions();
-				makeToast("Successfully saved options",0);
-		
-	
-			}
-		}
-		catch(Exception e)
-		{
-			makeToast(e.toString(),1);
-		}
-	}
 	
 	public void prepareMenu()
 	{
@@ -384,7 +211,16 @@ public class MainActivity extends Activity {
 						}
 				}
 			}
-			
+			GameLog.update("creating folder",2);
+			File saveDir=new File(myDir,s);
+			saveDir.mkdir();
+			if(saveDir.exists())
+			{
+				GameLog.update("folder created",0);
+				
+			}
+			else
+				GameLog.update("folder creating error",1);
 		}
         setContentView(R.layout.main_activity);
         gamePanel =findViewById(R.id.Game);
@@ -428,8 +264,13 @@ public class MainActivity extends Activity {
 			}
 		});
 		if(state)
-			WorldGenerator.makeTestingBox(gamePanel.getGameManager());
-		//WorldGenerator.makeRandomSector(gamePanel.getGameManager().getWorldManager());
+		{
+			//WorldGenerator.makeTestingBox(gamePanel.getGameManager());
+			GameLog.update("creating saves",2);
+			gamePanel.getGameManager().createSaveFile();
+			WorldGenerator.makeRandomSector(gamePanel.getGameManager().getWorldManager());
+			GameLog.update("preparing new game successful",0);
+		}
 		GameLog.update("preparing new game successful",0);
 	}
 	
@@ -438,49 +279,9 @@ public class MainActivity extends Activity {
 		GameLog.update("preparing load for save - "+s,0);
 		prepareNewGame(s,false);
 		//gamePanel.getGameManager().getEntityManager().reload();
-		String fileName="";
-		String playerSave="";
-		String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString()+File.separator+"sb9"+File.separator+s;
-		File myDir = new File(root);
-		if (!myDir.exists()) {
-			makeToast("Error: no directory",1);
-			return;
-		}
-		String metaFileName="meta.txt";
-		File metaFile = new File (myDir, metaFileName);
-		if (!metaFile.exists ())
-		{
-		    makeToast("Error: no metaFile",1);
-			return;
-		}
-		else
-		{
-			try
-			{
-				FileInputStream inputStream = new FileInputStream(metaFile);	
-				if (inputStream != null)
-				{
-					InputStreamReader isr = new InputStreamReader(inputStream);
-					BufferedReader reader = new BufferedReader(isr);
-					fileName=reader.readLine();
-					gamePanel.getGameManager().getWorldManager().setSector(Integer.parseInt(reader.readLine()),Integer.parseInt(reader.readLine()));
-					playerSave=reader.readLine();
-					String[] words = playerSave.split("\\s"); 
-					gamePanel.getGameManager().getPlayer().load(words);
-					gamePanel.pointOfTouch=gamePanel.getGameManager().getPlayer().getWorldLocation();
-					inputStream.close();
-					reader.close();
-					isr.close();
-				}
-			}
-			catch(Exception e)
-            {
-				makeToast(e.toString(),1);
-				return;
-            }
-		}
+		
+		gamePanel.getGameManager().loadGame();
 		gamePanel.getGameManager().getPlayer().initShip();
-		loadFile(fileName,s);
 		makeToast("Successfully loaded - "+s,0);
 
 	}
@@ -533,105 +334,9 @@ public class MainActivity extends Activity {
 		return VF;
 	}
 	
-	public void saveFile(String fileName,String saveName) 
-	{
-		GameLog.update("trying to save",0);
-        try 
-		{
-			String fname = "save"+fileName+".txt";
-            String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString()+File.separator+"sb9"+File.separator+saveName;
-            File myDir = new File(root);
-            if (!myDir.exists()) 
-			{
-                myDir.mkdir();
-            }
-			
-			String metaFileName="meta.txt";
-			File metaFile = new File (myDir, metaFileName);
-				if (metaFile.exists ())
-					metaFile.delete ();
-			FileOutputStream mout = new FileOutputStream(metaFile);
-            OutputStreamWriter mosw = new OutputStreamWriter(mout);
-            BufferedWriter mwriter = new BufferedWriter(mosw);
-
-            mwriter.write(fname);
-			mwriter.newLine();
-			Point p=gamePanel.getGameManager().getWorldManager().getSector();
-			mwriter.write(p.x+"");
-			mwriter.newLine();
-			mwriter.write(p.y+"");
-			mwriter.newLine();
-            gamePanel.getGameManager().getPlayer().save(mwriter);
-
-            mwriter.close();
-            mosw.close();
-			mout.close();		
-            
-            File file = new File (myDir, fname);
-            if (file.exists ())
-                file.delete ();
-			Bitmap image=getBitmapFromView(findViewById(R.id.Game));
-			image.compress(Bitmap.CompressFormat.JPEG, 100, new FileOutputStream(new File(root,"image.jpg")));
-            FileOutputStream out = new FileOutputStream(file);
-            OutputStreamWriter osw = new OutputStreamWriter(out);
-            BufferedWriter writer = new BufferedWriter(osw);
-		
-            writer.write("SB9 debug save");
-			writer.newLine();
-            gamePanel.save(writer);
-            
-            writer.close();
-            osw.close();
-			makeToast("Successfully saved",0);
-        }
-        catch (Throwable e) 
-        {
-			makeToast(e.toString(),1);
-           
-        }
-    }
 	
-	public int loadFile(String fileName,String SaveName) {
-        
-        try {
-			String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString()+File.separator+"sb9"+File.separator+SaveName;
-			File myDir = new File(root);
-			if (!myDir.exists()) {
-				makeToast("Error: no directory",1);
-				return -1;
-			}
-               
-            File file = new File (myDir, fileName);
-            if (file.exists ())
-            {
-               
-                FileInputStream inputStream = new FileInputStream(file);
-
-                if (inputStream != null)
-                {
-                    InputStreamReader isr = new InputStreamReader(inputStream);
-                    BufferedReader reader = new BufferedReader(isr);
-                    gamePanel.load(reader);
-                    inputStream.close();
-                    reader.close();
-                    isr.close();
-					makeToast("Successfully loaded file",0);
-                    return 0;
-                }
-            }
-            else
-            {
-				makeToast("Error: no such file from meta",1);
-                return 1;
-            }
-        } catch (Throwable t)
-        {
-			makeToast(t.toString(),1);
-            return -2;
-        }
-		makeToast("Cant reach that! BUG",1);
-        return -3;
-    }
+	
+	
 
     public GameManager getGameManager()
     {
@@ -668,15 +373,17 @@ public class MainActivity extends Activity {
 	public Bitmap getBitmapFromView(View view) {
 		
 		GameLog.update("taking screenshoot",0);
-		view.setDrawingCacheEnabled(true);
-		view.buildDrawingCache(true);	
+		gamePanel.setDrawingCacheEnabled(true);
+		gamePanel.buildDrawingCache(true);	
 		final Bitmap bitmap = Bitmap.createBitmap( view.getDrawingCache() );
 		Canvas c=new Canvas(bitmap);
 		gamePanel.tick();
 		gamePanel.render(c);
-		view.setDrawingCacheEnabled(false);
-		view.destroyDrawingCache();
+		gamePanel.setDrawingCacheEnabled(false);
+		gamePanel.destroyDrawingCache();
 		GameLog.update("screenshoot created",0);
+		
+		
 		return bitmap;
 		
 	}

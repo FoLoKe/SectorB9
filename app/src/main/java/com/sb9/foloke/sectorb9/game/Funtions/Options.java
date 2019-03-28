@@ -2,6 +2,7 @@ package com.sb9.foloke.sectorb9.game.Funtions;
 import java.io.*;
 import com.sb9.foloke.sectorb9.*;
 import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
+import android.os.*;
 
 public enum Options
 {
@@ -17,7 +18,7 @@ public enum Options
 	private int	value; // 1/0  for boolean
 	private final int max;
 	private final int min;
-	private MainActivity MA;
+	//private MainActivity MA;
 		
 	Options(String in_name,typeOfElement in_type,int in_value,int in_max, int in_min)
 	{
@@ -89,6 +90,173 @@ public enum Options
 		catch(Exception e)
 		{
             GameLog.update(e.toString(),1);
+		}
+	}
+	
+	public static void startupOptions()
+	{
+		try
+		{
+			String documentsFolderPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString();
+			File documentsFolder  = new File(documentsFolderPath);
+
+			if(!documentsFolder.exists())
+			{
+				documentsFolder.mkdir();
+			}
+
+			if(!documentsFolder.exists())
+			{
+				documentsFolder.mkdir();
+				GameLog.update("no DOCUMENTS WRITE/READ PERMISSION",1);
+				return;
+			}
+
+			String gameFolderPath=documentsFolderPath+File.separator+"sb9";
+			File gameFolder=new File(gameFolderPath);
+
+			if(!gameFolder.exists())
+			{
+				gameFolder.mkdir();
+			}
+			if(!gameFolder.exists())
+			{
+				gameFolder.mkdir();
+				GameLog.update("no inside DOCUMENTS WRITE/READ PERMISSION",1);
+				return;
+			}
+
+            File optionsFile = new File (gameFolder, "options.txt");
+
+            if (optionsFile.exists ())
+            {
+                loadOptions();
+			}
+			else
+			{
+				//saveAsNew
+				saveOptions();
+				GameLog.update("options created",0);
+			}
+
+		}
+		catch(Exception e)
+		{
+			GameLog.update(e.toString(),1);
+		}
+	}
+
+	public static void loadOptions()
+	{	
+		try
+		{
+			String documentsFolderPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString();
+			File documentsFolder  = new File(documentsFolderPath);
+			if(!documentsFolder.exists())
+			{
+				documentsFolder.mkdir();
+			}
+			if(!documentsFolder.exists())
+			{
+				documentsFolder.mkdir();
+				GameLog.update("no DOCUMENTS READ PERMISSION",1);
+			}
+			String gameFolderPath=documentsFolderPath+File.separator+"sb9";
+			File gameFolder=new File(gameFolderPath);
+			if(!gameFolder.exists())
+			{
+				gameFolder.mkdir();
+			}
+			if(!gameFolder.exists())
+			{
+				gameFolder.mkdir();
+				GameLog.update("no inside DOCUMENTS READ PERMISSION",1);
+			}
+
+			File optionsFile = new File (gameFolder, "options.txt");
+			if (optionsFile.exists ())
+			{
+				FileInputStream inputStream = new FileInputStream(optionsFile);
+				if (inputStream != null)
+				{
+					InputStreamReader isr = new InputStreamReader(inputStream);
+					BufferedReader reader = new BufferedReader(isr);
+					////todo load
+					reader.readLine();
+
+					load(reader);
+					inputStream.close();
+					reader.close();
+					isr.close();
+					///options setup
+					//setOptions();
+					GameLog.update("Successfully loaded options",0);
+				}
+				else
+				{
+					GameLog.update("inputStream error",1);
+				}
+			}
+		}
+		catch(Exception e)
+		{ 
+			GameLog.update(e.toString(),1);
+		}
+	}
+
+	public static void saveOptions()
+	{
+		try
+		{
+			String documentsFolderPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString();
+			File documentsFolder  = new File(documentsFolderPath);
+
+			if(!documentsFolder.exists())
+			{
+				documentsFolder.mkdir();
+			}
+			if(!documentsFolder.exists())
+			{
+				documentsFolder.mkdir();
+				GameLog.update("no DOCUMENTS WRITE PERMISSION",1);
+				return;
+			}
+
+			String gameFolderPath=documentsFolderPath+File.separator+"sb9";
+			File gameFolder=new File(gameFolderPath);
+
+			if(!gameFolder.exists())
+			{
+				gameFolder.mkdir();
+			}
+			if(!gameFolder.exists())
+			{
+				gameFolder.mkdir();
+				GameLog.update("no inside DOCUMENTS WRITE PERMISSION",1);
+				return;
+			}
+
+			File optionsFile = new File (gameFolder, "options.txt");
+			if (optionsFile.exists ())
+			{
+				FileOutputStream out = new FileOutputStream(optionsFile);
+				OutputStreamWriter osw = new OutputStreamWriter(out);
+				BufferedWriter writer = new BufferedWriter(osw);
+
+
+				writer.write("game options SB9");
+				writer.newLine();
+				save(writer);
+				writer.close();
+				osw.close();
+				out.close();
+				//setOptions();
+				GameLog.update("Successfully saved options",0);
+			}
+		}
+		catch(Exception e)
+		{
+			GameLog.update(e.toString(),1);
 		}
 	}
 

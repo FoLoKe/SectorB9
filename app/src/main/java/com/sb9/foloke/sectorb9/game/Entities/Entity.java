@@ -19,7 +19,9 @@ import com.sb9.foloke.sectorb9.game.UI.Inventory.*;
 import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
 
 public abstract class Entity {
-	
+	///TODO: NEW CLASS PRUDCTION BUILDING OR ENTITY TO HANDLE ITRMS CREATION
+	///MARKERS WITH NAMES AND RADIO OPTIONS
+	///REFACTOR ALL PRODUCTION OBJECTS
 	protected float width=2,height=2;
 	protected float relativeCentreX,relativeCenterY;
     protected float x,y;
@@ -132,8 +134,7 @@ public abstract class Entity {
 		try
         {
 			String s=invSave();
-		    writer.write(ID+" "+name+" "+x+" "+y+" "+rotation+" "+HP+" "+TEAM+" "+s);
-		    writer.newLine();
+		    writer.write("["+ID+" "+name+" "+x+" "+y+" "+rotation+" "+HP+" "+TEAM+" "+s+"] ");
 		}
 		catch(Throwable t)
 		{

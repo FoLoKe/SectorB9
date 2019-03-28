@@ -182,7 +182,7 @@ public class MenuUI
 				public void onClick(DialogInterface dialog, int id) {
 					// User clicked OK button
 
-					MA.saveFile("sector-"+MA.getGameManager().getCurrentSector().x+"-"+MA.getGameManager().getCurrentSector().y,MA.getGameManager().getSaveName());
+					MA.getGameManager().saveGame();
 				
 					switch(actionName)
 					{

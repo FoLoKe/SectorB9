@@ -58,7 +58,7 @@ public class OptionsUI
 								else
 								option.setValue(0);
 								
-								MA.saveOptions();
+								option.saveOptions();
 							}
 						});
 						TLL.addView(SW);
