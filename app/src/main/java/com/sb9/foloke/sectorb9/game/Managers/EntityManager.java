@@ -23,10 +23,12 @@ public class EntityManager
 	private boolean reloadFlag=false;
 	public EntityManager(GameManager gameManager)
 	{
+        GameLog.update("EntityManager: preparing manager",0);
 		this.gameManager = gameManager;
 
 		entityArray=new ArrayList<>();
         entityToAdd=new ArrayList<>();
+        GameLog.update("EntityManager: READY",0);
 	}
 
 	public void addObject(Entity entity)

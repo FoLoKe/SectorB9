@@ -23,7 +23,7 @@ public class ActionUI
 	{
 	MA=MA_in;
 		//to prevent texture overblurring scale by one axis scaleX=MA.getGameManager().getGamePanel().canvasW/2500;
-		scaleY=MA.getGameManager().getGamePanel().canvasH/1600;
+		scaleY=MA.getGameManager().getScreenSize().y/1600;
 		if(scaleX>2)
 			scaleX=2;
 			if(scaleX<0.5f)

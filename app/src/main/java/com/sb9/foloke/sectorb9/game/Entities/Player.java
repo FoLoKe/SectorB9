@@ -26,7 +26,7 @@ public class Player extends DynamicEntity
     {
         super(x,y,rotation,gameManager,1);
         drawHp=false;
-		gameManager.getGamePanel().pointOfTouch=getWorldLocation();
+
 		TEAM=1;
 		this.ship=new ShipMk3(this);
         this.dx=this.dy=0;

@@ -7,7 +7,7 @@ import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
 
 public class MainThread extends Thread
 {
-    private int FPS =60;
+    private final int FPS =60;
     private double averageFPS;
     private SurfaceHolder surfaceHolder;
     private GamePanel mapPanel;
@@ -81,13 +81,5 @@ public class MainThread extends Thread
     {
         running=b;
     }
-	public void switchFrameLimit(boolean state)
-	{
-		if(state)
-			FPS=30;
-		else
-			FPS=60;
 
-
-	}
 }

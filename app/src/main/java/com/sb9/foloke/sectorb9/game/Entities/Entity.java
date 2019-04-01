@@ -23,7 +23,7 @@ public abstract class Entity {
 	///MARKERS WITH NAMES AND RADIO OPTIONS                 '''''
 	///REFACTOR ALL PRODUCTION OBJECTS                      '''''
 	///LOADING SCREEN                                       '''''
-	///SEPARATE GAMEMANAGER FROM GAMEPANEL AND MAINACTIVITY <----
+	///SEPARATE GAMEMANAGER FROM GAMEPANEL AND MAINACTIVITY ?????
     ///FIX SHIELDS                                          '''''
 	protected float width=2,height=2;
 	protected float relativeCentreX,relativeCenterY;

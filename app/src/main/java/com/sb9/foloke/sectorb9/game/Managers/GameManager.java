@@ -1,10 +1,13 @@
 package com.sb9.foloke.sectorb9.game.Managers;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Point;
 import android.graphics.PointF;
+import android.view.Display;
+import android.view.WindowManager;
 import android.widget.TableLayout;
 
 import com.sb9.foloke.sectorb9.MainActivity;
@@ -14,6 +17,8 @@ import com.sb9.foloke.sectorb9.game.Assets.InventoryAsset;
 import com.sb9.foloke.sectorb9.game.Assets.ShipAsset;
 import com.sb9.foloke.sectorb9.game.Assets.UIAsset;
 import com.sb9.foloke.sectorb9.game.Assets.WeaponsAsset;
+import com.sb9.foloke.sectorb9.game.Funtions.Options;
+import com.sb9.foloke.sectorb9.game.Funtions.WorldGenerator;
 import com.sb9.foloke.sectorb9.game.UI.Inventory.InventoryExchangeInterface;
 import com.sb9.foloke.sectorb9.game.UI.ProgressBarUI;
 import com.sb9.foloke.sectorb9.game.UI.InventoryUI;
@@ -37,6 +42,8 @@ import com.sb9.foloke.sectorb9.game.Entities.*;
 import android.graphics.*;
 import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
 import android.os.*;
+import android.widget.ViewFlipper;
+
 import java.io.*;
 
 
@@ -45,65 +52,122 @@ public class GameManager {
     private MainActivity MA;
     private GamePanel gamePanel;
 	private String saveName="0";
+
     //UIs
-    
     private InventoryExchangeInterface excInterface;
     public ProgressBarUI uIhp;
     public ProgressBarUI uIsh;
-    
-
 
     //world manager
     private WorldManager worldManager;
 	private MapManager mapManager;
+
     //booleans
-    public boolean gamePause=false;
+    public boolean gamePause=true;
     private boolean playerDestroyed=false;
-    //public boolean drawDebugInfo=false;
+    private boolean collect=false;
+    private boolean warpReady=false;
+
     private Timer destroyedTimer;
     private Player player;
-    private boolean collect=false;
+
 
     public int command;
     public static final int commandInteraction=1,commandMoving=0;
 	private Point sectorToWarp=new Point();
 	private PointF warpingLocation=new PointF();
-	private boolean warpReady=false;
+    private  Point screenSize=new Point();
 	
-    public GameManager(GamePanel gamePanel, MainActivity MA)
+    public GameManager( MainActivity MA)
     {
-        command=0;
         this.MA=MA;
-        this.gamePanel=gamePanel;
-		destroyedTimer=new Timer(0);
+        Options.startupOptions();
+    }
+
+    public void init(boolean state,String saveName)
+    {
+        GameLog.update("GameManager: preparing game",0);
+        setSaveName(saveName);
+        command=0;
+        destroyedTimer=new Timer(0);
         BitmapFactory.Options bitmapOptions=new BitmapFactory.Options();
         bitmapOptions.inScaled=false;
 
+        GameLog.update("GameManager: preparing assets",0);
         InventoryAsset.init(Bitmap.createBitmap(BitmapFactory.decodeResource(MA.getResources(), R.drawable.ui_inventory_sheet,bitmapOptions)));
         ShipAsset.init(Bitmap.createBitmap(BitmapFactory.decodeResource(MA.getResources(),R.drawable.ships_sheet,bitmapOptions)));
         UIAsset.init(Bitmap.createBitmap(BitmapFactory.decodeResource(MA.getResources(),R.drawable.ui_asset_sheet,bitmapOptions)));
         WeaponsAsset.init(Bitmap.createBitmap(BitmapFactory.decodeResource(MA.getResources(),R.drawable.ships_sheet,bitmapOptions)));
         EffectsAsset.init(Bitmap.createBitmap(BitmapFactory.decodeResource(MA.getResources(),R.drawable.ships_sheet,bitmapOptions)));
 
+        GameLog.update("GameManager: preparing datasheets",0);
         BuildingsDataSheet.init(MA);
         ItemsDataSheet.init(MA);
         excInterface=new InventoryExchangeInterface(this);
-        uIhp=new ProgressBarUI(this,gamePanel.canvasW/3,gamePanel.canvasH/20,50,50,UIAsset.hpBackground,UIAsset.hpLine,UIAsset.progressBarBorder,100);
-        uIsh=new ProgressBarUI(this,gamePanel.canvasW/3,gamePanel.canvasH/40,50,50+gamePanel.canvasH/20,UIAsset.stunBackground,UIAsset.stunLine,UIAsset.progressBarBorder,100);
 
+        WindowManager wm = ((WindowManager)
+                MA.getSystemService(Context.WINDOW_SERVICE));
+        Display display = wm.getDefaultDisplay();
 
+        if(display!=null) {
+
+            screenSize = new Point();
+            display.getRealSize(screenSize);
+        }
+
+        GameLog.update("GameManager: preparing action UI",0);
+        uIhp=new ProgressBarUI(this,screenSize.x/3f,screenSize.y/20f,50,50,UIAsset.hpBackground,UIAsset.hpLine,UIAsset.progressBarBorder,100);
+        uIsh=new ProgressBarUI(this,screenSize.x/3f,screenSize.y/40f,50,50+screenSize.y/20f,UIAsset.stunBackground,UIAsset.stunLine,UIAsset.progressBarBorder,100);
+
+        GameLog.update("GameManager: preparing player",0);
         player=new Player(900,900,0,this);
 
-		mapManager=new MapManager(MA,this);
+        GameLog.update("GameManager: preparing managers",0);
+        mapManager=new MapManager();
         worldManager=new WorldManager(MA,this);
-		worldManager.loadEmptyWorld();
+        worldManager.loadEmptyWorld();
+
+        GameLog.update("GameManager: preparing canvas",0);
+        MA.setContentView(R.layout.main_activity);
+
+        this.gamePanel=MA.findViewById(R.id.Game);
+
+        GameLog.update("GameManager: preparing UIs",0);
+        TableLayout playerTable=MA.findViewById(R.id.PlayerTableLayout);
+        TableLayout objectTable=MA.findViewById(R.id.ObjectTableLayout);
+
+        makeInventoryUI(playerTable,objectTable,MA);
+
+        ViewFlipper VF = MA.findViewById(R.id.UIFlipper);
+        VF.setDisplayedChild(VF.indexOfChild( MA.findViewById(R.id.actionUI)));
+
+        BuildUI.init( MA,VF);
+        ActionUI.init( MA,VF);
+        InteractionUI.init( MA,VF,null);
+        HelpUI.init( MA,VF,1);
+        MapUI.init( MA,VF);
+
+        if(state)
+        {
+            ///new game state
+            GameLog.update("creating saves",2);
+            createSaveFile();
+            WorldGenerator.makeRandomSector(getWorldManager());
+        }
+        else
+            ///load state
+            loadGame();
+
+        GameLog.update("GameManager: READY",0);
+        setPause(false);
     }
 
     public void tick()
     {
         if(gamePause)
             return;
-			
+
+
         if(playerDestroyed)
         {
             if(destroyedTimer.tick())
@@ -224,7 +288,7 @@ public class GameManager {
         return player;
     }
 
-    public void makeInventoryUI(TableLayout playerTable, TableLayout objectTable, MainActivity context)
+   private void makeInventoryUI(TableLayout playerTable, TableLayout objectTable, MainActivity context)
     {
 
         InventoryUI.set(playerTable,player,objectTable,null,excInterface,context);
@@ -317,7 +381,7 @@ public class GameManager {
 		return saveName;
 	}
 	
-	public void setSaveName(String s)
+	private void setSaveName(String s)
 	{
 		saveName=s;
 	}
@@ -448,7 +512,7 @@ public class GameManager {
 					ins.close();
 					isr.close();
 					reader.close();
-
+                    getPlayer().initShip();
 					GameLog.update("Successfully loaded game",0);
 				}
 				else
@@ -589,7 +653,7 @@ public class GameManager {
 		}
 	}
 	
-	public void createSaveFile()
+	private void createSaveFile()
 	{
 		try
 		{
@@ -660,6 +724,11 @@ public class GameManager {
 			GameLog.update("no inside DOCUMENTS WRITE PERMISSION",1);
 			return null;
 		}
-	return saveFolder;
+	    return saveFolder;
 	}
+
+    public Point getScreenSize()
+    {
+        return screenSize;
+    }
 }

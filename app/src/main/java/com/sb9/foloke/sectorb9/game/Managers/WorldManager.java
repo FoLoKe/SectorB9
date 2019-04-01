@@ -9,6 +9,7 @@ import android.graphics.*;
 import java.io.*;
 import com.sb9.foloke.sectorb9.game.Funtions.*;
 import com.sb9.foloke.sectorb9.game.UI.*;
+import com.sb9.foloke.sectorb9.game.UI.CustomViews.GameLog;
 
 public class WorldManager
 {
@@ -24,11 +25,12 @@ public class WorldManager
 
 	WorldManager(MainActivity MA, GameManager gameManager)
 	{
+        GameLog.update("WorldManager: preparing manager",0);
 		this.MA=MA;
 		this.gameManager = gameManager;
 		this.entityManager=new EntityManager(gameManager);
 		interObject=new CustomCollisionObject(2,2,gameManager);
-		
+        GameLog.update("WorldManager: READY",0);
 	}
 	
 	void loadEmptyWorld()

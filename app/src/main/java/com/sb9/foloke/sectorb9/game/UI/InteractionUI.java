@@ -14,7 +14,7 @@ public class InteractionUI
 	private static float scaleX=1,scaleY=1;
 	public static void init(final MainActivity MA,final ViewFlipper VF,final StaticEntity target)
 	{
-		scaleY=MA.getGameManager().getGamePanel().canvasH/1600;
+		scaleY=MA.getGameManager().getScreenSize().y/1600;
 		if(scaleX>2)
 			scaleX=2;
 		if(scaleX<0.5f)

@@ -31,7 +31,8 @@ import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
 
 public class MainActivity extends Activity {
 
-    private static GamePanel gamePanel;
+    private GameManager gameManager;
+    //private static GamePanel gamePanel;
 
 	private ViewFlipper VF;
 	
@@ -79,19 +80,18 @@ public class MainActivity extends Activity {
 				});
 		}
 
+        setContentView(R.layout.main_menu);
+        gameManager=new GameManager(this);
+        GameLog.update(" ",0);
+
+        GameLog.update("-NEW START-",2);
 		prepareMenu();
-		Options.startupOptions();
 	}
 
 	public void prepareMenu()
 	{
-		BuildUI.deinit(this);
 		setContentView(R.layout.main_menu);
-        GameLog.update(" ",0);
-        GameLog.update("-NEW START-",2);
-
-
-		GameLog.update("preparing menu",0);
+		GameLog.update("Activity: preparing menu",0);
 		Button startNewGameButton= findViewById(R.id.new_game_button);
 	
 		startNewGameButton.setOnClickListener(new OnClickListener()
@@ -108,7 +108,6 @@ public class MainActivity extends Activity {
 			{
 				public void onClick(View v)
 				{
-
 					loadGame();
 				}
 			});
@@ -119,7 +118,6 @@ public class MainActivity extends Activity {
 			{
 				public void onClick(View v)
 				{
-
 					continueGame();
 				}
 			});
@@ -172,84 +170,71 @@ public class MainActivity extends Activity {
 	
 	private void prepareNewGame(String s,boolean state)
 	{
-		//.addView(loadingScreen);
-		GameLog.update("preparing new game",0);
+
+		GameLog.update("Activity: preparing new game",0);
 		if(s.equals("")||s.equals(" ")||s.length()==0||s.contains(" "))
 		{
-			GameLog.update("wrong save name",1);
+			GameLog.update("Activity: wrong save name",1);
 			return;
 		}
 
 		if(state)
 		{
-			GameLog.update("checking for existing" ,0);
+			GameLog.update("Activity: checking for existing" ,0);
 			String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString()+File.separator+"sb9";
 			File myDir = new File(root);
 			if (!myDir.exists()) 
 			{
 				if(!myDir.mkdir()) {
-                    GameLog.update("cant't create folder:" + myDir.getName(), 1);
+                    GameLog.update("Activity: cant't create folder:" + myDir.getName(), 1);
                     return;
                 }
 			}
 
 			File[] files = myDir.listFiles();
-			//File target=null;
-		
+
 			if (files.length>0)
 			{
-				//target=files[0];
 				for(File f:files)
 				{
 					if(f.getName().equals(s))
 						if (f.isDirectory())
 						{
-							GameLog.update("save name already used" ,0);
+							GameLog.update("Activity: save name already used" ,0);
 							return;
 						}
 				}
 			}
-			GameLog.update("creating folder",2);
+
+			GameLog.update("Activity: creating folder",2);
 			File saveDir=new File(myDir,s);
+
 			if(saveDir.mkdir())
 			{
-				GameLog.update("folder created",0);
+				GameLog.update("Activity: folder created",0);
 			}
 			else
 			{
-                GameLog.update("folder creating error", 1);
+                GameLog.update("Activity: folder creating error", 1);
                 return;
             }
 		}
-        setContentView(R.layout.main_activity);
-        gamePanel =findViewById(R.id.Game);
-		gamePanel.getGameManager().setSaveName(s);
-        BitmapFactory.Options options=new BitmapFactory.Options();
-		
-        options.inScaled=false;
-		
-		
-		TableLayout playerTable=findViewById(R.id.PlayerTableLayout);
-		TableLayout objectTable=findViewById(R.id.ObjectTableLayout);
 
-		gamePanel.getGameManager().makeInventoryUI(playerTable,objectTable,this);
-		
-		VF = findViewById(R.id.UIFlipper);
-		VF.setDisplayedChild(VF.indexOfChild(findViewById(R.id.actionUI)));
-		
-		BuildUI.init(this,VF);
-		ActionUI.init(this,VF);
-		InteractionUI.init(this,VF,null);
-		HelpUI.init(this,VF,1);
-		MapUI.init(this,VF);
-		findViewById(R.id.menuUILinearLayout).setBackground(new BitmapDrawable(this.getResources(),UIAsset.uiBgBlur));
-		
-		final FrameLayout menuUIFrame=findViewById(R.id.menuUI);
+
+        gameManager.init(state,s);
+
+        VF = findViewById(R.id.UIFlipper);
+        VF.setDisplayedChild(VF.indexOfChild(findViewById(R.id.actionUI)));
+
+        findViewById(R.id.menuUILinearLayout).setBackground(new BitmapDrawable(this.getResources(),UIAsset.uiBgBlur));
+
+        final FrameLayout menuUIFrame=findViewById(R.id.menuUI);
 		final MainActivity MA=this;
 		
 		
 		
 		Button menuButton=findViewById(R.id.Menu);
+
 		menuButton.setOnClickListener(new OnClickListener() 
 		{
 			@Override
@@ -258,37 +243,29 @@ public class MainActivity extends Activity {
 				final int a=VF.getDisplayedChild();
 				MenuUI.init(MA,VF,a);
 				VF.setDisplayedChild(VF.indexOfChild(menuUIFrame));
-				gamePanel.getGameManager().setPause(true);
+				gameManager.setPause(true);
 				v.setVisibility(View.GONE);
 			}
 		});
-		if(state)
-		{
 
-			GameLog.update("creating saves",2);
-			gamePanel.getGameManager().createSaveFile();
-			WorldGenerator.makeRandomSector(gamePanel.getGameManager().getWorldManager());
-		}
+
+
 		GameLog.update("preparing new game successful",0);
-		getGameManager().saveGame();
 	}
 	
 	public void prepareNewLoad(String s)
 	{
-		//ProgressDialog dialog = ProgressDialog.show(this,"loading","Loading. Please wait...");
+
+		///ProgressDialog dialog = ProgressDialog.show(this,"loading","Loading. Please wait...");
+		///dialog.show();
+
 		GameLog.update("preparing load for save - "+s,0);
 		
 		prepareNewGame(s,false);
 
 
-		//gamePanel.getGameManager().getEntityManager().reload();
-		
-		gamePanel.getGameManager().loadGame();
-		gamePanel.getGameManager().getPlayer().initShip();
-
 		GameLog.update("Successfully loaded: "+s,0);
 		//dialog.hide();
-
 	}
     
 	public void loadGame()
@@ -348,15 +325,10 @@ public class MainActivity extends Activity {
 	{
 		return VF;
 	}
-	
-    public GameManager getGameManager()
-    {
-        return gamePanel.getGameManager();
-    }
 
     public void toActionFast()
     {
-        getGameManager().setPause(false);
+       gameManager.setPause(false);
         findViewById(R.id.Menu).setVisibility(View.VISIBLE);
         VF.setDisplayedChild(VF.indexOfChild(findViewById(R.id.actionUI)));
     }
@@ -384,20 +356,25 @@ public class MainActivity extends Activity {
 	public Bitmap getBitmapFromView(View view) {
 		
 		GameLog.update("taking screen shoot",0);
-		gamePanel.setDrawingCacheEnabled(true);
-		gamePanel.buildDrawingCache(true);	
+        gameManager.getGamePanel().setDrawingCacheEnabled(true);
+        gameManager.getGamePanel().buildDrawingCache(true);
 		final Bitmap bitmap = Bitmap.createBitmap( view.getDrawingCache() );
 		Canvas c=new Canvas(bitmap);
-		gamePanel.tick();
-		gamePanel.render(c);
-		gamePanel.setDrawingCacheEnabled(false);
-		gamePanel.destroyDrawingCache();
+        gameManager.getGamePanel().tick();
+        gameManager.getGamePanel().render(c);
+        gameManager.getGamePanel().setDrawingCacheEnabled(false);
+        gameManager.getGamePanel().destroyDrawingCache();
 		GameLog.update("screen shoot created",0);
 		
 		
 		return bitmap;
 		
 	}
+
+	public GameManager getGameManager()
+    {
+        return gameManager;
+    }
 	
 	
 }

@@ -24,13 +24,11 @@ public class LoadingScreen extends FrameLayout
 	}
 	public void show()
 	{
-		GameLog.update("preparing for show loding screen",0);
 		setVisibility(View.VISIBLE);
 	}
 	
 	public void hide()
 	{
-		GameLog.update("preparing for hide loding screen",0);
 		setVisibility(View.GONE);
 	}
 }

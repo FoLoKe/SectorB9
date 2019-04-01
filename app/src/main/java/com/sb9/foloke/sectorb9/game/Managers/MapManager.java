@@ -21,8 +21,7 @@ public class MapManager
             return values()[random.nextInt(values().length)];}
 	}
 	
-	private MainActivity MA;
-	private GameManager GM;
+
 	private static final int mapWidth=32;
 	private static final int mapHeight=32;
 	private ArrayList<Sector> sectors=new ArrayList<Sector>();
@@ -44,10 +43,9 @@ public class MapManager
 		}
 	}
 	
-	public MapManager(MainActivity MA,GameManager GM)
+	public MapManager()
 	{
-		this.GM=GM;
-		this.MA=MA;
+
 		for(int i=0;i<mapWidth;i++)
 			for(int j=0;j<mapHeight;j++)
 				sectors.add(new Sector(i,j,sectorType.getRandomType(),sectorAgr.getRandomAgr()));
