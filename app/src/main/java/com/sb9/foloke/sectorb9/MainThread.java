@@ -20,7 +20,6 @@ public class MainThread extends Thread
         super();
         this.surfaceHolder=surfaceHolder;
         this.mapPanel=mapPanel;
-		mapPanel.linkThread(this);
     }
 
     @Override

@@ -30,6 +30,7 @@ public class Projectile extends DynamicEntity
 		this.lifetime=lifetime;
 		this.damage=damage;
 		this.lifeTimer=new Timer(0);
+		this.maxSpeed=speed;
 	}
 	
 	public void recreateCollision()

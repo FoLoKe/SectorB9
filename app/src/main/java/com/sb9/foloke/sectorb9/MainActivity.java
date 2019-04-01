@@ -6,24 +6,13 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Environment;
-//import android.support.v4.app.ActivityCompat;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.Button;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-
-
 import android.widget.*;
 import android.view.*;
-
 
 import com.sb9.foloke.sectorb9.game.Funtions.WorldGenerator;
 import com.sb9.foloke.sectorb9.game.Managers.GameManager;
@@ -35,7 +24,6 @@ import android.content.pm.*;
 import android.os.*;
 import com.sb9.foloke.sectorb9.game.UI.MainMenu.*;
 import android.graphics.*;
-import android.view.View.*;
 import android.app.*;
 import android.content.*;
 import com.sb9.foloke.sectorb9.game.Funtions.*;
@@ -94,9 +82,7 @@ public class MainActivity extends Activity {
 		prepareMenu();
 		Options.startupOptions();
 	}
-	
-	
-	
+
 	public void prepareMenu()
 	{
 		BuildUI.deinit(this);
@@ -199,7 +185,10 @@ public class MainActivity extends Activity {
 			File myDir = new File(root);
 			if (!myDir.exists()) 
 			{
-				myDir.mkdir();
+				if(!myDir.mkdir()) {
+                    GameLog.update("cant't create folder:" + myDir.getName(), 1);
+                    return;
+                }
 			}
 
 			File[] files = myDir.listFiles();
@@ -210,7 +199,7 @@ public class MainActivity extends Activity {
 				//target=files[0];
 				for(File f:files)
 				{
-					if(f.getName()==s)
+					if(f.getName().equals(s))
 						if (f.isDirectory())
 						{
 							GameLog.update("save name already used" ,0);
@@ -220,14 +209,15 @@ public class MainActivity extends Activity {
 			}
 			GameLog.update("creating folder",2);
 			File saveDir=new File(myDir,s);
-			saveDir.mkdir();
-			if(saveDir.exists())
+			if(saveDir.mkdir())
 			{
 				GameLog.update("folder created",0);
-				
 			}
 			else
-				GameLog.update("folder creating error",1);
+			{
+                GameLog.update("folder creating error", 1);
+                return;
+            }
 		}
         setContentView(R.layout.main_activity);
         gamePanel =findViewById(R.id.Game);
@@ -279,6 +269,7 @@ public class MainActivity extends Activity {
 			GameLog.update("preparing new game successful",0);
 		}
 		GameLog.update("preparing new game successful",0);
+		getGameManager().saveGame();
 	}
 	
 	public void prepareNewLoad(String s)
@@ -287,7 +278,7 @@ public class MainActivity extends Activity {
 		GameLog.update("preparing load for save - "+s,0);
 		
 		prepareNewGame(s,false);
-		((FrameLayout)findViewById(R.id.main_activityFrameLayout)).addView(loadingScreen);
+
 		loadingScreen.show();
 		//gamePanel.getGameManager().getEntityManager().reload();
 		
@@ -312,7 +303,11 @@ public class MainActivity extends Activity {
 		String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString()+File.separator+"sb9";
 		File myDir = new File(root);
 		if (!myDir.exists()) {
-			myDir.mkdir();
+            if (!myDir.mkdir())
+            {
+                GameLog.update("Can't create directory:" + myDir.getName(), 1);
+                return;
+            }
 		}
 
 		File[] files = myDir.listFiles();
@@ -332,7 +327,7 @@ public class MainActivity extends Activity {
 					}
 					else
 					{
-						target=files[0];
+						target=f;
 					}
 				}
 			}
@@ -366,7 +361,7 @@ public class MainActivity extends Activity {
     }
 	
 	private boolean hasPermissions(){
-        int res = 0;
+        int res;
         String[] permissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
         for (String perms : permissions){
@@ -387,7 +382,7 @@ public class MainActivity extends Activity {
 	
 	public Bitmap getBitmapFromView(View view) {
 		
-		GameLog.update("taking screenshoot",0);
+		GameLog.update("taking screen shoot",0);
 		gamePanel.setDrawingCacheEnabled(true);
 		gamePanel.buildDrawingCache(true);	
 		final Bitmap bitmap = Bitmap.createBitmap( view.getDrawingCache() );
@@ -396,7 +391,7 @@ public class MainActivity extends Activity {
 		gamePanel.render(c);
 		gamePanel.setDrawingCacheEnabled(false);
 		gamePanel.destroyDrawingCache();
-		GameLog.update("screenshoot created",0);
+		GameLog.update("screen shoot created",0);
 		
 		
 		return bitmap;

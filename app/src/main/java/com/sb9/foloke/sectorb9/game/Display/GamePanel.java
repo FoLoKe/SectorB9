@@ -56,10 +56,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
     public PointF pointOfTouch;
     public PointF screenPointOfTouch;
 	private float worldSize=3000;
-	private MainActivity MA;
+
 	public StaticEntity pressedObject;
 	private GameManager gameManager;
-	private MainThread MT;
+
 	private boolean gestureInProgress=false;
 	private Paint borderPaint = new Paint();
     private boolean touched=false;
@@ -81,7 +81,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
     {
         super(context, attributeSet);
 		
-        this.MA=(MainActivity)context;
+       MainActivity MA=(MainActivity)context;
 		
 		WindowManager wm = ((WindowManager) 
 			context.getSystemService(Context.WINDOW_SERVICE));
@@ -150,15 +150,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 		borderPaint.setStrokeWidth(20/camera.getScale());
 		borderPaint.setPathEffect(new DashPathEffect(new float[] { 200/camera.getScale(), 200/camera.getScale()}, 0));
 		
-		//MA.
+
 		
     }
 
-	public void linkThread(MainThread MT)
-	{
-		this.MT=MT;
-	}
-	
 	
     @Override
     public void surfaceCreated(SurfaceHolder p1)
@@ -222,7 +217,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 
     public void render(Canvas canvas)
     {
-		//todo: direction and distance to enemy as arrow
 		if(canvas==null)
 			return;
 			
@@ -499,12 +493,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 	{
 		return touched;
 	}
-	
-	public MainThread getMainThread()
-	{
-		return MT;
-	}
-	
+
 	public float distanceTo(PointF a,PointF b)
 	{
 		return (float)Math.sqrt((a.x-b.x)*(a.x-b.x)+(a.y-b.y)*(a.y-b.y));

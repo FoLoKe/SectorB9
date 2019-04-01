@@ -20,10 +20,10 @@ import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
 
 public abstract class Entity {
 	///TODO: NEW CLASS PRUDCTION BUILDING OR ENTITY TO HANDLE ITRMS CREATION
-	///MARKERS WITH NAMES AND RADIO OPTIONS
-	///REFACTOR ALL PRODUCTION OBJECTS
-	///LOADING SCREEN
-	///SEPARATE GAMEMANAGER FROM GAMEPANEL AND MAINACTIVITY
+	///MARKERS WITH NAMES AND RADIO OPTIONS                 '''''
+	///REFACTOR ALL PRODUCTION OBJECTS                      '''''
+	///LOADING SCREEN                                       '''''
+	///SEPARATE GAMEMANAGER FROM GAMEPANEL AND MAINACTIVITY <----
 	protected float width=2,height=2;
 	protected float relativeCentreX,relativeCenterY;
     protected float x,y;
@@ -58,8 +58,8 @@ public abstract class Entity {
 	protected Bitmap image,shieldImg;
     protected Timer shieldShow=new Timer(0);
     protected Paint shieldpaint=new Paint();
-    float shildShowTime=2;
-    float regainSH=0.2f;
+    private float shildShowTime=2;
+    private float regainSH=0.2f;
 
     public Entity(float x, float y, float rotation, GameManager gameManager, int ID)
     {
@@ -78,8 +78,8 @@ public abstract class Entity {
         this.y=y;
 		this.gameManager = gameManager;
         
-		this.relativeCenterY=image.getHeight()/2;
-		this.relativeCentreX=image.getWidth()/2;
+		this.relativeCenterY=(float)image.getHeight()/2;
+		this.relativeCentreX=(float)image.getWidth()/2;
 
 		this.inventory=new Inventory(this, inventoryMaxCapacity,4);
 		this.rotation=rotation;
@@ -140,7 +140,7 @@ public abstract class Entity {
 		}
 		catch(Throwable t)
 		{
-			System.out.println(t);
+			GameLog.update(t.toString(),1);
 		}
 	}
 
@@ -172,7 +172,7 @@ public abstract class Entity {
 		}
 		catch(Throwable t)
 		{
-			System.out.println(t);
+            GameLog.update(t.toString(),1);
 		}
 	}
 
@@ -259,7 +259,7 @@ public abstract class Entity {
 		frameTimer=delay*60;
 	}
 
-	public void timerTick()
+	protected void timerTick()
 	{
 		if((frameTimer-=1)<0)
 			frameTimer=0;	

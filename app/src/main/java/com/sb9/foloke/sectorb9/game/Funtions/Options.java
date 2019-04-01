@@ -1,6 +1,5 @@
 package com.sb9.foloke.sectorb9.game.Funtions;
 import java.io.*;
-import com.sb9.foloke.sectorb9.*;
 import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
 import android.os.*;
 
@@ -97,34 +96,9 @@ public enum Options
 	{
 		try
 		{
-			String documentsFolderPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString();
-			File documentsFolder  = new File(documentsFolderPath);
-
-			if(!documentsFolder.exists())
-			{
-				documentsFolder.mkdir();
-			}
-
-			if(!documentsFolder.exists())
-			{
-				documentsFolder.mkdir();
-				GameLog.update("no DOCUMENTS WRITE/READ PERMISSION",1);
-				return;
-			}
-
-			String gameFolderPath=documentsFolderPath+File.separator+"sb9";
-			File gameFolder=new File(gameFolderPath);
-
-			if(!gameFolder.exists())
-			{
-				gameFolder.mkdir();
-			}
-			if(!gameFolder.exists())
-			{
-				gameFolder.mkdir();
-				GameLog.update("no inside DOCUMENTS WRITE/READ PERMISSION",1);
-				return;
-			}
+		    File gameFolder=checkFolders();
+			if(gameFolder==null)
+                return;
 
             File optionsFile = new File (gameFolder, "options.txt");
 
@@ -150,28 +124,9 @@ public enum Options
 	{	
 		try
 		{
-			String documentsFolderPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString();
-			File documentsFolder  = new File(documentsFolderPath);
-			if(!documentsFolder.exists())
-			{
-				documentsFolder.mkdir();
-			}
-			if(!documentsFolder.exists())
-			{
-				documentsFolder.mkdir();
-				GameLog.update("no DOCUMENTS READ PERMISSION",1);
-			}
-			String gameFolderPath=documentsFolderPath+File.separator+"sb9";
-			File gameFolder=new File(gameFolderPath);
-			if(!gameFolder.exists())
-			{
-				gameFolder.mkdir();
-			}
-			if(!gameFolder.exists())
-			{
-				gameFolder.mkdir();
-				GameLog.update("no inside DOCUMENTS READ PERMISSION",1);
-			}
+            File gameFolder=checkFolders();
+            if(gameFolder==null)
+                return;
 
 			File optionsFile = new File (gameFolder, "options.txt");
 			if (optionsFile.exists ())
@@ -181,15 +136,14 @@ public enum Options
 				{
 					InputStreamReader isr = new InputStreamReader(inputStream);
 					BufferedReader reader = new BufferedReader(isr);
-					////todo load
+
 					reader.readLine();
 
 					load(reader);
 					inputStream.close();
 					reader.close();
 					isr.close();
-					///options setup
-					//setOptions();
+
 					GameLog.update("Successfully loaded options",0);
 				}
 				else
@@ -208,33 +162,9 @@ public enum Options
 	{
 		try
 		{
-			String documentsFolderPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString();
-			File documentsFolder  = new File(documentsFolderPath);
-
-			if(!documentsFolder.exists())
-			{
-				documentsFolder.mkdir();
-			}
-			if(!documentsFolder.exists())
-			{
-				documentsFolder.mkdir();
-				GameLog.update("no DOCUMENTS WRITE PERMISSION",1);
-				return;
-			}
-
-			String gameFolderPath=documentsFolderPath+File.separator+"sb9";
-			File gameFolder=new File(gameFolderPath);
-
-			if(!gameFolder.exists())
-			{
-				gameFolder.mkdir();
-			}
-			if(!gameFolder.exists())
-			{
-				gameFolder.mkdir();
-				GameLog.update("no inside DOCUMENTS WRITE PERMISSION",1);
-				return;
-			}
+            File gameFolder=checkFolders();
+            if(gameFolder==null)
+                return;
 
 			File optionsFile = new File (gameFolder, "options.txt");
 			if (optionsFile.exists ())
@@ -260,4 +190,35 @@ public enum Options
 		}
 	}
 
+	private static File checkFolders()
+    {
+        String documentsFolderPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString();
+        File documentsFolder  = new File(documentsFolderPath);
+
+        if(!documentsFolder.exists())
+        {
+            GameLog.update("creating docs folder",2);
+            if(!documentsFolder.mkdir()) {
+                GameLog.update("no DOCUMENTS WRITE/READ PERMISSION for documents directory", 1);
+                return null;
+            }
+            GameLog.update("docs folder created",2);
+        }
+
+        String gameFolderPath=documentsFolderPath+File.separator+"sb9";
+        File gameFolder=new File(gameFolderPath);
+
+        if(!gameFolder.exists())
+        {
+            GameLog.update("creating game folder",2);
+            if(!gameFolder.mkdir())
+            {
+                GameLog.update("no inside DOCUMENTS WRITE/READ PERMISSION for game directory", 1);
+                return null;
+            }
+            GameLog.update("docs folder created",2);
+        }
+
+        return gameFolder;
+    }
 }

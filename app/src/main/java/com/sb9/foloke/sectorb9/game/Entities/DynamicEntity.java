@@ -8,20 +8,19 @@ import android.graphics.*;
 
 import com.sb9.foloke.sectorb9.game.Managers.GameManager;
 import com.sb9.foloke.sectorb9.game.Funtions.*;
-import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
 import java.util.*;
-import android.text.style.*;
+
 
 
 
 public abstract class DynamicEntity extends Entity {
 
    	protected float dx,dy;
-	private float maxSpeed=250;
+	protected float maxSpeed=250;
 	private float mass=1;
 	protected float acceleration=0;
 	private float targetAcceleration=0;
-	private float sidewayImpulse=1f;
+	private float sidewaysImpulse=1f;
 	protected boolean movable;
 	protected float  frontImpulse;
 	private float backwardImpulse;
@@ -48,7 +47,7 @@ public abstract class DynamicEntity extends Entity {
 
 	protected void calculateMovement()
 	{
-		int maxSpeed=250;
+
 		float speed=getSpeed();
 			if(movable&&(speed<maxSpeed))
 			{
@@ -219,16 +218,16 @@ public abstract class DynamicEntity extends Entity {
 			
 		sinPhi*=100;
 		
-		if(Math.abs(sinPhi)<sidewayImpulse/mass)
+		if(Math.abs(sinPhi)<sidewaysImpulse/mass)
 		{
 			rotation-=sinPhi/2;
 		}
 		else
 		{
     	    if (sinPhi < 0)
-          		rotation+=sidewayImpulse/mass;
+          		rotation+=sidewaysImpulse/mass;
         	if (sinPhi >=0)
-				rotation-=sidewayImpulse/mass;
+				rotation-=sidewaysImpulse/mass;
 		}
        
         return false;
@@ -271,7 +270,7 @@ public abstract class DynamicEntity extends Entity {
 
 	public void setSidewayImpulse(float sidewayImpulse)
 	{
-		this.sidewayImpulse=sidewayImpulse;
+		this.sidewaysImpulse=sidewayImpulse;
 	}
 	
 	public void setFrontImpulse(float frontImpulse)
