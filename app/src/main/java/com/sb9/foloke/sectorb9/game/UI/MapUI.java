@@ -48,10 +48,11 @@ public class MapUI
 		}
 	}
 
-	public static void init(final MainActivity mainActivity ,final ViewFlipper VF)
-	{
+	public static void init(final MainActivity mainActivity)
+	{MA=mainActivity;
+        final ViewFlipper VF = MA.findViewById(R.id.UIFlipper);
 		GameLog.update("preparing MapUI",0);
-		MA=mainActivity;
+
 		MM=MA.getGameManager().getMapManager();
 		currentSector=MA.getGameManager().getCurrentSector();
 		MM.getSector(currentSector.x,currentSector.y).discovered=true;

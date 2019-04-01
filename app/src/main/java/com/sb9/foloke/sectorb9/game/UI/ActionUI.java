@@ -16,14 +16,16 @@ public class ActionUI
 	//TODO: BUTTONS SIZE FROM SCREEN SIZE
 	private static boolean weaponsOpened=false;
 	private static ImageButton collectAllButton;
-	public static float scaleX=1;
-	public static float scaleY=1;
+	private static float scaleX=1;
+	private static float scaleY=1;
 	private static MainActivity MA;
-	public static void init(final MainActivity MA_in,final ViewFlipper VF)
+	public static void init(final MainActivity MA_in)
 	{
-	MA=MA_in;
+        //
+	    MA=MA_in;
+        final ViewFlipper VF = MA.findViewById(R.id.UIFlipper);
 		//to prevent texture overblurring scale by one axis scaleX=MA.getGameManager().getGamePanel().canvasW/2500;
-		scaleY=MA.getGameManager().getScreenSize().y/1600;
+		scaleY=MA.getGameManager().getScreenSize().y/1600f;
 		if(scaleX>2)
 			scaleX=2;
 			if(scaleX<0.5f)
@@ -41,7 +43,7 @@ public class ActionUI
 				{
 					MA.getGameManager().command= GameManager.commandInteraction;
 					VF.setDisplayedChild(VF.indexOfChild(MA.findViewById(R.id.interactionUI)));
-					InteractionUI.init(MA,VF,null);
+					InteractionUI.init(MA,null);
 				}
 			});
 		ImageButton shootButton = MA.findViewById(R.id.shootButton);
@@ -115,7 +117,7 @@ public class ActionUI
 		});
 	}
 	
-	public static void initWeapons(final MainActivity MA)
+	private static void initWeapons(final MainActivity MA)
 	{
 		LinearLayout LL=MA.findViewById(R.id.action_ui_WeaponsList);
 		

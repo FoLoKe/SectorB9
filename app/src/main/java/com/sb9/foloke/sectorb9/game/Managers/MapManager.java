@@ -1,21 +1,16 @@
 package com.sb9.foloke.sectorb9.game.Managers;
-import com.sb9.foloke.sectorb9.*;
+
 import java.util.*;
-import android.os.*;
-import java.io.*;
-import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
-import android.graphics.*;
 
 public class MapManager
 {
-	//TODO: map pregenerated and saved in file
-	public static enum sectorType{ASTEROID_BELT,ASTEROIDS_CLUSTER,STATION,EMPTY,RANDOM,EVENT;
+	public enum sectorType{ASTEROID_BELT,ASTEROIDS_CLUSTER,STATION,EMPTY,RANDOM,EVENT;
 		public static sectorType getRandomType() {
             Random random = new Random();
             return values()[random.nextInt(values().length)];}
 	}
 	
-	public static enum sectorAgr{PEACEFUL,HOSTILE,NEUTRAL;
+	public enum sectorAgr{PEACEFUL,HOSTILE,NEUTRAL;
 		public static sectorAgr getRandomAgr() {
             Random random = new Random();
             return values()[random.nextInt(values().length)];}
@@ -29,12 +24,12 @@ public class MapManager
 	public class Sector
 	{
 		public int x=0,y=0;
-		public sectorType type;
-		public sectorAgr agr;
+		sectorType type;
+		sectorAgr agr;
 		public boolean discovered=false;
 		public boolean explored=false;
 		
-		public Sector(int x,int y,sectorType type,sectorAgr agr)
+		Sector(int x,int y,sectorType type,sectorAgr agr)
 		{
 			this.x=x;
 			this.y=y;
@@ -43,7 +38,7 @@ public class MapManager
 		}
 	}
 	
-	public MapManager()
+	MapManager()
 	{
 
 		for(int i=0;i<mapWidth;i++)
@@ -81,7 +76,7 @@ public class MapManager
 		return null;
 	}
 	
-	public ArrayList<Sector> getSectors()
+	ArrayList<Sector> getSectors()
 	{
 		return sectors;
 	}

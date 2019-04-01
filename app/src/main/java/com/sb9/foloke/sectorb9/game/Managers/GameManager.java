@@ -141,11 +141,11 @@ public class GameManager {
         ViewFlipper VF = MA.findViewById(R.id.UIFlipper);
         VF.setDisplayedChild(VF.indexOfChild( MA.findViewById(R.id.actionUI)));
 
-        BuildUI.init( MA,VF);
-        ActionUI.init( MA,VF);
-        InteractionUI.init( MA,VF,null);
-        HelpUI.init( MA,VF,1);
-        MapUI.init( MA,VF);
+        BuildUI.init( MA);
+        ActionUI.init( MA);
+        InteractionUI.init( MA,null);
+        HelpUI.init( MA,1);
+        MapUI.init( MA);
 
         if(state)
         {
@@ -423,41 +423,105 @@ public class GameManager {
 		return mapManager;
 	}
 	
-	boolean loadSector(int x,int y) {return false;};
+	boolean loadSector(int x,int y) {
 
+        worldManager.setSector(x,y);
+        //set new sector in meta
+        saveMeta();
+
+        //load sector with new meta
+        boolean state=loadGame();
+        return state;
+    }
+
+    private  void saveMeta()
+    {
+        try {
+            File saveFolder = checkSaveFolder();
+            if (saveFolder != null) {
+                File meta = new File(saveFolder, "meta.txt");
+                if (meta.exists())
+                    if (!meta.delete()) {
+                        GameLog.update("meta deleting error", 1);
+                        return;
+                    }
+                FileOutputStream mots = new FileOutputStream(meta);
+                OutputStreamWriter mos = new OutputStreamWriter(mots);
+                BufferedWriter metaWriter = new BufferedWriter(mos);
+
+                metaWriter.write("" + worldManager.getSector().x);
+                metaWriter.newLine();
+                metaWriter.write("" + worldManager.getSector().y);
+                metaWriter.newLine();
+                metaWriter.write("" + getPlayer().getHp());
+                metaWriter.newLine();
+                metaWriter.write("" + getPlayer().getSH());
+                metaWriter.newLine();
+                metaWriter.write("" + getPlayer().getCenterX());
+                metaWriter.newLine();
+                metaWriter.write("" + getPlayer().getCenterY());
+                metaWriter.newLine();
+
+                metaWriter.close();
+                mos.close();
+                mots.close();
+            }
+        }
+        catch (Exception e)
+        {
+            GameLog.update("GameManager: "+e.toString(),1);
+        }
+    }
+
+    private void loadMeta()
+    {
+        try {
+            File saveFolder = checkSaveFolder();
+            if (saveFolder != null) {
+                //TO Read meta
+                File meta = new File(saveFolder, "meta.txt");
+                if (!meta.exists()) {
+                    GameLog.update("meta did not exist", 1);
+                    return;
+                }
+
+                FileInputStream mits = new FileInputStream(meta);
+                InputStreamReader mis = new InputStreamReader(mits);
+                BufferedReader metareader = new BufferedReader(mis);
+
+                int x = Integer.parseInt(metareader.readLine());
+                int y = Integer.parseInt(metareader.readLine());
+                metareader.readLine();
+                metareader.readLine();
+                worldManager.setSector(x, y);
+                player.setWorldLocation(new PointF(Float.parseFloat(metareader.readLine()),Float.parseFloat(metareader.readLine())));
+                metareader.close();
+                mis.close();
+                mits.close();
+                //Meta readed
+            }
+        }
+        catch (Exception e)
+        {
+            GameLog.update("GameManager: "+e.toString(),1);
+        }
+    }
 		
-		
-	public void  loadGame()
+	private boolean loadGame()
 	{
 		try
 		{
 			GameLog.update("starting game load",2);
-			File saveFolder=checkSaveFolder();
-			if(saveFolder!=null)
-			{
-				File mapFile = new File (saveFolder,"map.txt");
-				if (mapFile.exists ())
-				{
-					//TO Read meta
-					File meta=new File(saveFolder,"meta.txt");
-					if(!meta.exists())
-					{
-						GameLog.update("meta did not exist",1);
-						return;
-					}
-					
-					FileInputStream mits=new FileInputStream(meta);
-					InputStreamReader mis=new InputStreamReader(mits);
-					BufferedReader metareader=new BufferedReader(mis);
 
-					int x=Integer.parseInt(metareader.readLine());
-					int y=Integer.parseInt(metareader.readLine());
-					worldManager.setSector(x,y);
-					metareader.close();
-					mis.close();
-					mits.close();
-					//Meta readed
-					
+			getEntityManager().reload();
+			getEntityManager().addObject(player);
+			File saveFolder=checkSaveFolder();
+            if(saveFolder!=null)
+            {
+                File mapFile = new File (saveFolder,"map.txt");
+                if (mapFile.exists ())
+                {
+					loadMeta();
 					//TO read map
 					FileInputStream ins=new FileInputStream(mapFile);
 					InputStreamReader isr=new InputStreamReader(ins);
@@ -480,7 +544,9 @@ public class GameManager {
 							if(Integer.parseInt(words[1])==worldManager.getSector().x &&
 							   Integer.parseInt(words[2])==worldManager.getSector().y)
 							{
-							
+							//explored?
+                                if(!Boolean.parseBoolean(words[4]))
+                                    return false;
 								MapManager.Sector sector=mapManager.getSector(worldManager.getSector().x,worldManager.getSector().y);
 								GameLog.update(sector.x+" "+sector.y+"loading objects",2);
 								String toLoadEntity="";
@@ -514,6 +580,7 @@ public class GameManager {
 					reader.close();
                     getPlayer().initShip();
 					GameLog.update("Successfully loaded game",0);
+					return true;
 				}
 				else
 				{
@@ -529,6 +596,7 @@ public class GameManager {
 		{
 			GameLog.update(e.toString(),1);
 		}
+		return false;
 	}
 	
 	public void saveGame()
@@ -584,46 +652,20 @@ public class GameManager {
 						}
 					}
 
-					File meta=new File(saveFolder,"meta.txt");
-					if(meta.exists())
-						if(!meta.delete())
-                        {
-                            GameLog.update("meta deleting error",1);
-                            return;
-                        }
-					FileOutputStream mots=new FileOutputStream(meta);
-					OutputStreamWriter mos=new OutputStreamWriter(mots);
-					BufferedWriter metaWriter=new BufferedWriter(mos);
-					
-					metaWriter.write(""+worldManager.getSector().x);
-					metaWriter.newLine();
-					metaWriter.write(""+worldManager.getSector().y);
-					metaWriter.newLine();
-					metaWriter.write(""+getPlayer().getHp());
-					metaWriter.newLine();
-					metaWriter.write(""+getPlayer().getSH());
-					metaWriter.newLine();
-					metaWriter.write(""+getPlayer().getCenterX());
-					metaWriter.newLine();
-					metaWriter.write(""+getPlayer().getCenterY());
-					metaWriter.newLine();
-					
-					metaWriter.close();
-					mos.close();
-					mots.close();
-					
+                    ins.close();
+                    isr.close();
+                    reader.close();
+
+                    writer.close();
+                    osw.close();
+                    out.close();
+
+                    saveMeta();
+
 					Bitmap img=MA.getBitmapFromView(gamePanel);
 					String imgName="image.jpg";
 					FileOutputStream imgOut = new FileOutputStream(saveFolder+File.separator+imgName);
 					img.compress(Bitmap.CompressFormat.JPEG, 100, imgOut);
-
-					ins.close();
-					isr.close();
-					reader.close();
-					
-					writer.close();
-					osw.close();
-					out.close();
 
 					if(!mapFile.delete())
 					{

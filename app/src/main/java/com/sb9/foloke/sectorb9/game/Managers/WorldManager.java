@@ -116,7 +116,7 @@ public class WorldManager
 					if(e instanceof StaticEntity)
 					{
 						gameManager.setPressedObject((StaticEntity)e);
-						InteractionUI.init(MA,MA.getViewFlipper(),(StaticEntity)e);
+						InteractionUI.init(MA,(StaticEntity)e);
 					}
 
 				}							

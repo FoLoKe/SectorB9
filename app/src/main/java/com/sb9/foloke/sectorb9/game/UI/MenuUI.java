@@ -16,8 +16,9 @@ public class MenuUI
 	public static float scaleX=1;
 	public static float scaleY=1;
 	public static final int size=64;
-	public static void init(final MainActivity MA,final ViewFlipper VF,final int view)
+	public static void init(final MainActivity MA,final int view)
 	{
+        final ViewFlipper VF = MA.findViewById(R.id.UIFlipper);
 		scaleY=MA.getGameManager().getScreenSize().y/1600;
 		if(scaleX>2)
 			scaleX=2;
@@ -59,7 +60,7 @@ public class MenuUI
 				@Override
 				public void onClick(View v) 
 				{
-					HelpUI.init(MA,VF,view);
+					HelpUI.init(MA,view);
 					VF.setDisplayedChild(VF.indexOfChild(MA.findViewById(R.id.help_sectionUI)));
 				}
 			});
@@ -72,7 +73,7 @@ public class MenuUI
 				@Override
 				public void onClick(View v) 
 				{
-					OptionsUI.init(MA,VF);
+					OptionsUI.init(MA);
 					VF.setDisplayedChild(VF.indexOfChild(MA.findViewById(R.id.options_ui)));
 				}
 			});
@@ -82,7 +83,7 @@ public class MenuUI
 			@Override
 			public void onClick(View v)
 			{
-				MapUI.init(MA,VF);
+				MapUI.init(MA);
 				VF.setDisplayedChild(VF.indexOfChild(MA.findViewById(R.id.map_ui)));
 			}
 		});

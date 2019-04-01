@@ -241,7 +241,7 @@ public class MainActivity extends Activity {
 			public void onClick(View v) 
 			{
 				final int a=VF.getDisplayedChild();
-				MenuUI.init(MA,VF,a);
+				MenuUI.init(MA,a);
 				VF.setDisplayedChild(VF.indexOfChild(menuUIFrame));
 				gameManager.setPause(true);
 				v.setVisibility(View.GONE);

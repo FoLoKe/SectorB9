@@ -20,9 +20,9 @@ public class BuildUI
 	private static int ObjectID=0;
 	private static View prevPressed;
 
-	public static void init(final MainActivity MA,final ViewFlipper VF)
+	public static void init(final MainActivity MA)
 	{
-		
+        final ViewFlipper VF = MA.findViewById(R.id.UIFlipper);
 		ScrollView.LayoutParams lp= new ScrollView.LayoutParams(ScrollView.LayoutParams.WRAP_CONTENT,MA.getResources().getDisplayMetrics().heightPixels);
 		lp.setMargins(10,10,10,10);
 		MA.findViewById(R.id.buildTableLayout).setVisibility(View.VISIBLE);

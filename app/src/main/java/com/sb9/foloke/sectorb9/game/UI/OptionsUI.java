@@ -17,8 +17,9 @@ import android.graphics.*;
 
 public class OptionsUI
 {
-	public static void init(final MainActivity MA,final ViewFlipper VF)
+	public static void init(final MainActivity MA)
 	{
+        final ViewFlipper VF = MA.findViewById(R.id.UIFlipper);
 		LinearLayout LL=MA.findViewById(R.id.option_ui_linear_layout);
 		LL.removeAllViews();
 		MA.findViewById(R.id.options_ui).setBackground(new BitmapDrawable(MA.getResources(),UIAsset.uiBgBlur));

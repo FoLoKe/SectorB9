@@ -21,7 +21,7 @@ public class EntityManager
     private ArrayList<Entity> entityToAdd;
 	private GameManager gameManager;
 	private boolean reloadFlag=false;
-	public EntityManager(GameManager gameManager)
+	EntityManager(GameManager gameManager)
 	{
         GameLog.update("EntityManager: preparing manager",0);
 		this.gameManager = gameManager;

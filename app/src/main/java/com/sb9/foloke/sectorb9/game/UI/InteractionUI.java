@@ -7,14 +7,17 @@ import com.sb9.foloke.sectorb9.game.Entities.*;
 import android.graphics.*;
 import com.sb9.foloke.sectorb9.game.Entities.Buildings.*;
 import com.sb9.foloke.sectorb9.game.Assets.*;
+import com.sb9.foloke.sectorb9.game.Managers.GameManager;
+
 import android.graphics.drawable.*;
 
 public class InteractionUI
 {
 	private static float scaleX=1,scaleY=1;
-	public static void init(final MainActivity MA,final ViewFlipper VF,final StaticEntity target)
+	public static void init(final MainActivity MA,final StaticEntity target)
 	{
-		scaleY=MA.getGameManager().getScreenSize().y/1600;
+        final ViewFlipper VF = MA.findViewById(R.id.UIFlipper);
+		scaleY=MA.getGameManager().getScreenSize().y/1600f;
 		if(scaleX>2)
 			scaleX=2;
 		if(scaleX<0.5f)
@@ -114,7 +117,7 @@ public class InteractionUI
 				{
 					AssemblerUI.setOpened(false);				
 					MA.getGameManager().nullPressedObject();
-					MA.getGameManager().command=MA.getGameManager().commandMoving;
+					MA.getGameManager().command= GameManager.commandMoving;
 					VF.setDisplayedChild(VF.indexOfChild(MA.findViewById(R.id.actionUI)));
 				}
 			});
@@ -128,7 +131,7 @@ public class InteractionUI
 				@Override
 				public void onClick(View v) 
 				{
-					BuildUI.init(MA,VF);
+					BuildUI.init(MA);
 					MA.getGameManager().nullPressedObject();
 					AssemblerUI.setOpened(false);
 					VF.setDisplayedChild(VF.indexOfChild(MA.findViewById(R.id.buildUI)));

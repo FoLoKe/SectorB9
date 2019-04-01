@@ -302,16 +302,6 @@ public abstract class DynamicEntity extends Entity {
 	{
 		return dy;
 	}
-	
-    public void setDx(float dx)
-    {
-        this.dx=dx;
-    }
-
-    public void setDy(float dy)
-    {
-        this.dy=dy;
-    }
 
     public float getSpeed()
     {
