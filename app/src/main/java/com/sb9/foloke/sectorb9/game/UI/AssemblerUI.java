@@ -34,7 +34,7 @@ public class AssemblerUI
 		TL.removeAllViews();
 		
 		int j=0;
-		for(int i = 0; i<ItemsDataSheet.getLenght(); i++)
+		for(int i = 0; i<ItemsDataSheet.getLength(); i++)
 		{
 			if(!ItemsDataSheet.findById(i).madeFrom.containsKey(0))
 			{
@@ -44,7 +44,7 @@ public class AssemblerUI
 		
 		itemsIDs=new Integer[j];
 		j=0;
-		for(int i = 0; i<ItemsDataSheet.getLenght(); i++)
+		for(int i = 0; i<ItemsDataSheet.getLength(); i++)
 		{
 			if(!ItemsDataSheet.findById(i).madeFrom.containsKey(0))
 			{

@@ -18,7 +18,7 @@ public class WorldGenerator
 				randomSectorHostile(WM.getEntityManager(),WM.getGameManager());
 				break;
 		}
-		randomSectorHostile(WM.getEntityManager(),WM.getGameManager());
+
 	}
 	
 	public static void randomSectorPeaceful(EntityManager entityManager,GameManager gameManager)

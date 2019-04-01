@@ -7,9 +7,9 @@ import com.sb9.foloke.sectorb9.*;
 
 public class ItemsDataSheet
 {
-	static ArrayList<ItemInfo> objects = new ArrayList<ItemInfo>();
+	private static ArrayList<ItemInfo> objects = new ArrayList<>();
 	
-	public class MadeFrom
+	/*public static class MadeFrom
 	{
 		public int item;
 		public int count;
@@ -18,8 +18,8 @@ public class ItemsDataSheet
 			this.item=items;
 			this.count=count;
 		}
-	}
-	public class ItemInfo
+	}*/
+	public static class ItemInfo
 	{
 		public String name;
 		public int ID;
@@ -31,7 +31,7 @@ public class ItemsDataSheet
 		public Map<Integer,Integer> madeFrom;
 		public String info;
 
-		public ItemInfo(String name,int ID,Bitmap image,int[] items,int[] counts,int crushToID,int SmeltToID,int crushFromID,int smeltFromID,String info)
+		ItemInfo(String name,int ID,Bitmap image,int[] items,int[] counts,int crushToID,int SmeltToID,int crushFromID,int smeltFromID,String info)
 		{
 			this.name=name;
 			this.ID=ID;
@@ -49,7 +49,7 @@ public class ItemsDataSheet
 		}
 
 	}
-	public ItemsDataSheet(MainActivity MA)
+	public static void init(MainActivity MA)
 	{
 		BitmapFactory.Options options=new BitmapFactory.Options();
         options.inScaled=false;
@@ -85,7 +85,7 @@ public class ItemsDataSheet
 		}
 		return objects.get(0);
 	}
-	public static int getLenght()
+	public static int getLength()
 	{
 		return objects.size();
 	}

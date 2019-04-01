@@ -9,8 +9,6 @@ import android.graphics.drawable.*;
 import com.sb9.foloke.sectorb9.game.Assets.UIAsset;
 import com.sb9.foloke.sectorb9.game.DataSheets.BuildingsDataSheet;
 import com.sb9.foloke.sectorb9.game.Entities.*;
-import com.sb9.foloke.sectorb9.game.Entities.Buildings.*;
-import com.sb9.foloke.sectorb9.game.Managers.*;
 import com.sb9.foloke.sectorb9.game.Assets.*;
 
 import java.util.Random;
@@ -39,7 +37,7 @@ public class BuildUI
 		BitmapFactory.Options options=new BitmapFactory.Options();
         options.inScaled=false;
 		table.setBackground(new BitmapDrawable(MA.getResources(),UIAsset.uiBgBlur));
-		for(int i = 1; i< BuildingsDataSheet.getLenght(); i++)
+		for(int i = 1; i< BuildingsDataSheet.getLength(); i++)
 		{
 			if(!BuildingsDataSheet.findById(i).buildable)
 				continue;

@@ -94,6 +94,7 @@ public enum Options
 	
 	public static void startupOptions()
 	{
+	    GameLog.update("startup options",2);
 		try
 		{
 		    File gameFolder=checkFolders();
@@ -104,6 +105,7 @@ public enum Options
 
             if (optionsFile.exists ())
             {
+                GameLog.update("loading existing options",2);
                 loadOptions();
 			}
 			else
@@ -163,12 +165,12 @@ public enum Options
 		try
 		{
             File gameFolder=checkFolders();
-            if(gameFolder==null)
+            if(gameFolder==null) {
+                GameLog.update("saving options interrupted",1);
                 return;
-
+            }
 			File optionsFile = new File (gameFolder, "options.txt");
-			if (optionsFile.exists ())
-			{
+
 				FileOutputStream out = new FileOutputStream(optionsFile);
 				OutputStreamWriter osw = new OutputStreamWriter(out);
 				BufferedWriter writer = new BufferedWriter(osw);
@@ -182,7 +184,7 @@ public enum Options
 				out.close();
 				//setOptions();
 				GameLog.update("Successfully saved options",0);
-			}
+
 		}
 		catch(Exception e)
 		{
@@ -216,7 +218,7 @@ public enum Options
                 GameLog.update("no inside DOCUMENTS WRITE/READ PERMISSION for game directory", 1);
                 return null;
             }
-            GameLog.update("docs folder created",2);
+            GameLog.update("game folder created",2);
         }
 
         return gameFolder;

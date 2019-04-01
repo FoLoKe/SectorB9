@@ -7,9 +7,9 @@ import com.sb9.foloke.sectorb9.*;
 
 public class BuildingsDataSheet
 {
-    private static ArrayList<BuildingObjectInfo> objects = new ArrayList<BuildingObjectInfo>();
+    private static ArrayList<BuildingObjectInfo> objects = new ArrayList<>();
 
-	public class BuildingObjectInfo
+	public static class BuildingObjectInfo
 	{
 		public String name;
 		public int ID;
@@ -24,7 +24,7 @@ public class BuildingsDataSheet
 		public boolean interactableByDefault;
 		public boolean collidable;
 		public boolean buildable;
-		public BuildingObjectInfo(String name,int ID,Bitmap image,Bitmap[] animation,boolean opened,boolean enabled,int capacity,boolean interacable,boolean collidable,boolean buildable,int[] res,int[] count)
+		BuildingObjectInfo(String name,int ID,Bitmap image,Bitmap[] animation,boolean opened,boolean enabled,int capacity,boolean interacable,boolean collidable,boolean buildable,int[] res,int[] count)
 		{
 			this.name=name;
 			this.ID=ID;
@@ -42,7 +42,7 @@ public class BuildingsDataSheet
 		
 	}
 
-	public BuildingsDataSheet(MainActivity MA)
+	public static void init(MainActivity MA)
 	{
 		objects.clear();
 		BitmapFactory.Options options=new BitmapFactory.Options();
@@ -74,7 +74,7 @@ public class BuildingsDataSheet
 		return objects.get(0);
 	}
 
-	public static int getLenght()
+	public static int getLength()
 	{
 		return objects.size();
 	}

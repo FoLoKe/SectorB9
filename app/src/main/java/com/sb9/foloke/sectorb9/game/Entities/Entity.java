@@ -24,6 +24,7 @@ public abstract class Entity {
 	///REFACTOR ALL PRODUCTION OBJECTS                      '''''
 	///LOADING SCREEN                                       '''''
 	///SEPARATE GAMEMANAGER FROM GAMEPANEL AND MAINACTIVITY <----
+    ///FIX SHIELDS                                          '''''
 	protected float width=2,height=2;
 	protected float relativeCentreX,relativeCenterY;
     protected float x,y;
@@ -63,8 +64,6 @@ public abstract class Entity {
 
     public Entity(float x, float y, float rotation, GameManager gameManager, int ID)
     {
-
-
         this.debugPaint.setColor(Color.RED);
         this.debugPaint.setStyle(Paint.Style.STROKE);
         this.debugPaint.setStrokeWidth(2);
@@ -89,8 +88,6 @@ public abstract class Entity {
         this.uIsh=new ProgressBarUI(this,50,8,-25,-56,UIAsset.stunBackground,UIAsset.stunLine,UIAsset.progressBarBorder,getSH());
 
 		createCollision();
-
-
     }
 	
 	private void applyStandartOptions()
@@ -388,6 +385,7 @@ public abstract class Entity {
         maxHP=mhp;
         HP=mhp;
     }
+
     public void setMaxSH(float msh)
     {
         maxSH=msh;
@@ -398,10 +396,12 @@ public abstract class Entity {
     {
         return  maxHP;
     }
+
     public float getMaxSH()
     {
         return maxSH;
     }
+
     public float getSH()
     {
         return SH;

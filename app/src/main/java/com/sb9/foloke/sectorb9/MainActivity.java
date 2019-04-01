@@ -32,7 +32,7 @@ import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
 public class MainActivity extends Activity {
 
     private static GamePanel gamePanel;
-	private LoadingScreen loadingScreen;
+
 	private ViewFlipper VF;
 	
 	private static final int PERMISSION_REQUEST_CODE = 123;
@@ -78,7 +78,7 @@ public class MainActivity extends Activity {
 					}
 				});
 		}
-		loadingScreen=new LoadingScreen(this);
+
 		prepareMenu();
 		Options.startupOptions();
 	}
@@ -87,8 +87,10 @@ public class MainActivity extends Activity {
 	{
 		BuildUI.deinit(this);
 		setContentView(R.layout.main_menu);
-		loadingScreen=findViewById(R.id.loading_screen);
-		
+        GameLog.update(" ",0);
+        GameLog.update("-NEW START-",2);
+
+
 		GameLog.update("preparing menu",0);
 		Button startNewGameButton= findViewById(R.id.new_game_button);
 	
@@ -106,7 +108,7 @@ public class MainActivity extends Activity {
 			{
 				public void onClick(View v)
 				{
-					loadingScreen.show();
+
 					loadGame();
 				}
 			});
@@ -117,12 +119,12 @@ public class MainActivity extends Activity {
 			{
 				public void onClick(View v)
 				{
-					loadingScreen.show();
+
 					continueGame();
 				}
 			});
 		GameLog.update("menu created",0);
-		loadingScreen.hide();
+
 	}
 	
 	private void makeOnNewGameDialog()
@@ -177,7 +179,7 @@ public class MainActivity extends Activity {
 			GameLog.update("wrong save name",1);
 			return;
 		}
-		loadingScreen.show();
+
 		if(state)
 		{
 			GameLog.update("checking for existing" ,0);
@@ -262,11 +264,10 @@ public class MainActivity extends Activity {
 		});
 		if(state)
 		{
-			//WorldGenerator.makeTestingBox(gamePanel.getGameManager());
+
 			GameLog.update("creating saves",2);
 			gamePanel.getGameManager().createSaveFile();
 			WorldGenerator.makeRandomSector(gamePanel.getGameManager().getWorldManager());
-			GameLog.update("preparing new game successful",0);
 		}
 		GameLog.update("preparing new game successful",0);
 		getGameManager().saveGame();
@@ -279,12 +280,12 @@ public class MainActivity extends Activity {
 		
 		prepareNewGame(s,false);
 
-		loadingScreen.show();
+
 		//gamePanel.getGameManager().getEntityManager().reload();
 		
 		gamePanel.getGameManager().loadGame();
 		gamePanel.getGameManager().getPlayer().initShip();
-		loadingScreen.hide();
+
 		GameLog.update("Successfully loaded: "+s,0);
 		//dialog.hide();
 

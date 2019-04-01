@@ -25,8 +25,8 @@ public class EntityManager
 	{
 		this.gameManager = gameManager;
 
-		entityArray=new ArrayList<Entity>();
-        entityToAdd=new ArrayList<Entity>();
+		entityArray=new ArrayList<>();
+        entityToAdd=new ArrayList<>();
 	}
 
 	public void addObject(Entity entity)
@@ -51,7 +51,7 @@ public class EntityManager
 			entityArray.clear();
 			//entityToAdd.clear();
 			reloadFlag=false;
-			GameLog.update("EntityManager: preparing for reload",2);
+			GameLog.update("EntityManager: reloaded",2);
 		}
 	    if(entityToAdd.size()>0)
 		{
@@ -64,7 +64,7 @@ public class EntityManager
 
 		while(it.hasNext())
 		{
-			Entity e = (Entity) it.next();
+			Entity e =  it.next();
 			e.tick();
 			if(e.toRemove)
 			{
@@ -81,16 +81,6 @@ public class EntityManager
 	public ArrayList<Entity> getArray()
 	{
 		return entityArray;
-	}
-
-	public void deleteObject(Entity entity)
-	{
-		entityArray.remove(entity);
-	}
-
-	public Entity getObject(int index)
-	{
-		return entityArray.get(index);
 	}
 
 	public void save(BufferedWriter writer)
@@ -121,7 +111,7 @@ public class EntityManager
 		}
 		catch(Throwable t)
 		{
-			System.out.println(t);
+			GameLog.update(t.toString(),1);
 		}
 	}
 
@@ -189,11 +179,8 @@ public class EntityManager
 		
 		return e;
 	}
-	public void onAddItmesToNewBuilding(Entity e)
-	{
-		
-	}
-	public Entity createBuildable(int ID,Entity initiator)
+
+	Entity createBuildable(int ID,Entity initiator)
 	{
 		if(BuildingsDataSheet.findById(ID).buildable)
 			if(initiator.getInventory().contains(BuildingsDataSheet.findById(ID).resToBuild[0],1))
@@ -208,6 +195,6 @@ public class EntityManager
 	public void reload()
     {
         reloadFlag=true;
-		GameLog.update("EntityManager: preparing for reload",2);
+		GameLog.update("EntityManager: reload call",2);
     }
 }

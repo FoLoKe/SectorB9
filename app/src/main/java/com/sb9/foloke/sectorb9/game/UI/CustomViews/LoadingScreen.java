@@ -13,14 +13,14 @@ public class LoadingScreen extends FrameLayout
 	{
 		super(context);
 		//GameLog.update("preparing loding screen",0);
-		
+        hide();
 		
 	}
 	
 	public LoadingScreen(Context context,AttributeSet attrSet)
 	{
 		super(context,attrSet);
-		//hide();
+		hide();
 	}
 	public void show()
 	{

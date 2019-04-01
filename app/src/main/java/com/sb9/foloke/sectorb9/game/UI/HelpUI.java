@@ -45,7 +45,7 @@ public class HelpUI
 			});
 
 		//list containment
-		for(int i = 1; i<ItemsDataSheet.getLenght(); i++)
+		for(int i = 1; i<ItemsDataSheet.getLength(); i++)
 		{
 			TextView text= new TextView(MA);
 			text.setText(

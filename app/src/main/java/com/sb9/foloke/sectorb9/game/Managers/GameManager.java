@@ -16,7 +16,6 @@ import com.sb9.foloke.sectorb9.game.Assets.UIAsset;
 import com.sb9.foloke.sectorb9.game.Assets.WeaponsAsset;
 import com.sb9.foloke.sectorb9.game.UI.Inventory.InventoryExchangeInterface;
 import com.sb9.foloke.sectorb9.game.UI.ProgressBarUI;
-import com.sb9.foloke.sectorb9.game.UI.CustomImageUI;
 import com.sb9.foloke.sectorb9.game.UI.InventoryUI;
 import com.sb9.foloke.sectorb9.game.DataSheets.BuildingsDataSheet;
 import com.sb9.foloke.sectorb9.game.DataSheets.ItemsDataSheet;
@@ -43,32 +42,30 @@ import java.io.*;
 
 public class GameManager {
 
-    MainActivity MA;
-    GamePanel gamePanel;
-	String saveName="0";
+    private MainActivity MA;
+    private GamePanel gamePanel;
+	private String saveName="0";
     //UIs
     
     private InventoryExchangeInterface excInterface;
     public ProgressBarUI uIhp;
     public ProgressBarUI uIsh;
     
-    private BuildingsDataSheet buildingsData;
-    private ItemsDataSheet itemsData;
-    private CustomImageUI destroyedImage;
+
 
     //world manager
     private WorldManager worldManager;
 	private MapManager mapManager;
     //booleans
     public boolean gamePause=false;
-    public boolean playerDestroyed=false;
+    private boolean playerDestroyed=false;
     //public boolean drawDebugInfo=false;
     private Timer destroyedTimer;
     private Player player;
     private boolean collect=false;
 
     public int command;
-    public static final int commandInteraction=1,commandMoving=0,commandBuild=2;
+    public static final int commandInteraction=1,commandMoving=0;
 	private Point sectorToWarp=new Point();
 	private PointF warpingLocation=new PointF();
 	private boolean warpReady=false;
@@ -88,12 +85,12 @@ public class GameManager {
         WeaponsAsset.init(Bitmap.createBitmap(BitmapFactory.decodeResource(MA.getResources(),R.drawable.ships_sheet,bitmapOptions)));
         EffectsAsset.init(Bitmap.createBitmap(BitmapFactory.decodeResource(MA.getResources(),R.drawable.ships_sheet,bitmapOptions)));
 
-        buildingsData=new BuildingsDataSheet(MA);
-        itemsData=new ItemsDataSheet(MA);
+        BuildingsDataSheet.init(MA);
+        ItemsDataSheet.init(MA);
         excInterface=new InventoryExchangeInterface(this);
         uIhp=new ProgressBarUI(this,gamePanel.canvasW/3,gamePanel.canvasH/20,50,50,UIAsset.hpBackground,UIAsset.hpLine,UIAsset.progressBarBorder,100);
         uIsh=new ProgressBarUI(this,gamePanel.canvasW/3,gamePanel.canvasH/40,50,50+gamePanel.canvasH/20,UIAsset.stunBackground,UIAsset.stunLine,UIAsset.progressBarBorder,100);
-        destroyedImage=new CustomImageUI(UIAsset.destroyedText);
+
 
         player=new Player(900,900,0,this);
 
@@ -139,7 +136,7 @@ public class GameManager {
 		boolean exist=false;
 		while (iterUi.hasNext()) 
 		{
-			Entity e = (Entity) iterUi.next();
+			Entity e =  iterUi.next();
 			if (e instanceof DroppedItems)
 				if (distanceTo(player.getWorldLocation(), e.getWorldLocation()) < 200) 
 				{
@@ -155,7 +152,7 @@ public class GameManager {
             Iterator<Entity> iter = getEntities().iterator();
             while (iter.hasNext()) 
 			{
-                Entity e = (Entity) iter.next();
+                Entity e = iter.next();
                 if (e instanceof DroppedItems)
                     if (distanceTo(player.getWorldLocation(), e.getWorldLocation()) < 200) 
 					{
@@ -207,7 +204,7 @@ public class GameManager {
         worldManager.interactionCheck(x,y);
     }
 
-    public void createNewPlayer()
+    private void createNewPlayer()
     {
         player=null;
         gamePanel.getCamera().setPointOfLook(null);
@@ -264,15 +261,11 @@ public class GameManager {
         gamePanel.pressedObject=null;
     }
 
-    public void setPressedObject(StaticEntity pressedObject)
+    void setPressedObject(StaticEntity pressedObject)
     {
         gamePanel.pressedObject=pressedObject;
     }
 
-    public PointF getTouchPoint()
-    {
-        return gamePanel.pointOfTouch;
-    }
 
     public void initAssemblerUI(final Assembler assembler)
     {
@@ -289,15 +282,11 @@ public class GameManager {
         return MA;
     }
 
-    public Camera getCamera()
+    Camera getCamera()
     {
         return gamePanel.getCamera();
     }
 
-    public void addObject(Entity e)
-    {
-        worldManager.addObject(e);
-    }
 
     public Point getCurrentSector()
     {
@@ -316,14 +305,14 @@ public class GameManager {
 		warpReady=true;
     }
 	
-	public void warp()
+	private void warp()
 	{
 		warpReady=false;
 		worldManager.warpToSector(sectorToWarp.x,sectorToWarp.y);
 		player.setWorldLocation(new PointF(3000-warpingLocation.x,3000-warpingLocation.y));
 	}
 	
-	public String getSaveName()
+	private String getSaveName()
 	{
 		return saveName;
 	}
@@ -356,7 +345,7 @@ public class GameManager {
 	    collect=true;
 	}
 	
-	public float distanceTo(PointF a,PointF b)
+	private float distanceTo(PointF a,PointF b)
 	{
 		return (float)Math.sqrt((b.x-a.x)*(b.x-a.x)+(b.y-a.y)*(b.y-a.y));
 	}
@@ -370,7 +359,7 @@ public class GameManager {
 		return mapManager;
 	}
 	
-	public boolean loadSector(int x,int y) {return false;};
+	boolean loadSector(int x,int y) {return false;};
 
 		
 		
@@ -378,7 +367,7 @@ public class GameManager {
 	{
 		try
 		{
-			GameLog.update("satrting game load",2);
+			GameLog.update("starting game load",2);
 			File saveFolder=checkSaveFolder();
 			if(saveFolder!=null)
 			{
@@ -412,9 +401,6 @@ public class GameManager {
 
 					String s;
 
-					GameLog.update(mapFile.getAbsolutePath(),2);
-					GameLog.update(mapFile.canRead()+"",2);
-					GameLog.update(mapFile.length()+"",2);
 					//while there rows
 					while((s=reader.readLine())!=null)
 					{
@@ -434,7 +420,7 @@ public class GameManager {
 								MapManager.Sector sector=mapManager.getSector(worldManager.getSector().x,worldManager.getSector().y);
 								GameLog.update(sector.x+" "+sector.y+"loading objects",2);
 								String toLoadEntity="";
-								int objectsCount=0;
+
 								for(String object:words)
 								{
 									if (object.contains("["))
@@ -452,7 +438,7 @@ public class GameManager {
 										Entity createdEntity=getEntityManager().createObject(Integer.parseInt(entityParams[0]));
 										createdEntity.load(entityParams);
 										getEntityManager().addObject(createdEntity);
-										objectsCount++;
+
 									}
 								}
 							}
@@ -463,25 +449,21 @@ public class GameManager {
 					isr.close();
 					reader.close();
 
-				
 					GameLog.update("Successfully loaded game",0);
 				}
 				else
 				{
 					GameLog.update("save file did not exist",1);
-					return;
 				}
 			}
 			else
 			{
 				GameLog.update("save folder did not exist",2);
-				return;
 			}
 		}
 		catch(Exception e)
 		{
 			GameLog.update(e.toString(),1);
-			return;
 		}
 	}
 	
@@ -489,7 +471,7 @@ public class GameManager {
 	{
 		try
 		{
-			GameLog.update("satrting game save",2);
+			GameLog.update("starting game save",2);
 			File saveFolder=checkSaveFolder();
 			if(saveFolder!=null)
 			{
@@ -497,7 +479,7 @@ public class GameManager {
 				if (mapFile.exists ())
 				{
 					//TO WRITE
-					File tempMapFile = new File (saveFolder,"tmap.txt");
+					File tempMapFile = new File (saveFolder,"tempMap.txt");
 					FileOutputStream out = new FileOutputStream(tempMapFile);
 					OutputStreamWriter osw = new OutputStreamWriter(out);
 					BufferedWriter writer = new BufferedWriter(osw);
@@ -508,10 +490,7 @@ public class GameManager {
 					BufferedReader reader=new BufferedReader(isr);
 
 					String s;
-					
-					GameLog.update(mapFile.getAbsolutePath(),2);
-					GameLog.update(mapFile.canRead()+"",2);
-					GameLog.update(mapFile.length()+"",2);
+
 					//while there rows
 					while((s=reader.readLine())!=null)
 					{
@@ -519,8 +498,6 @@ public class GameManager {
 						if(s.startsWith("<"))
 						{
 							String[] head;
-							s.replace("<","");
-							s.replace(">","");
 
 							head=s.split(" ");
 							
@@ -528,7 +505,6 @@ public class GameManager {
 							if(Integer.parseInt(head[1])==worldManager.getSector().x &&
 							   Integer.parseInt(head[2])==worldManager.getSector().y)
 							{
-								GameLog.update(s,2);
 								MapManager.Sector sector=mapManager.getSector(worldManager.getSector().x,worldManager.getSector().y);
 					
 								writer.write("< "+sector.x+" "+sector.y+" "+sector.discovered+" "+sector.explored+" ");
@@ -546,34 +522,37 @@ public class GameManager {
 
 					File meta=new File(saveFolder,"meta.txt");
 					if(meta.exists())
-						meta.delete();
+						if(!meta.delete())
+                        {
+                            GameLog.update("meta deleting error",1);
+                            return;
+                        }
 					FileOutputStream mots=new FileOutputStream(meta);
 					OutputStreamWriter mos=new OutputStreamWriter(mots);
-					BufferedWriter metawriter=new BufferedWriter(mos);
+					BufferedWriter metaWriter=new BufferedWriter(mos);
 					
-					metawriter.write(""+worldManager.getSector().x);
-					metawriter.newLine();
-					metawriter.write(""+worldManager.getSector().y);
-					metawriter.newLine();
-					metawriter.write(""+getPlayer().getHp());
-					metawriter.newLine();
-					metawriter.write(""+getPlayer().getSH());
-					metawriter.newLine();
-					metawriter.write(""+getPlayer().getCenterX());
-					metawriter.newLine();
-					metawriter.write(""+getPlayer().getCenterY());
-					metawriter.newLine();
+					metaWriter.write(""+worldManager.getSector().x);
+					metaWriter.newLine();
+					metaWriter.write(""+worldManager.getSector().y);
+					metaWriter.newLine();
+					metaWriter.write(""+getPlayer().getHp());
+					metaWriter.newLine();
+					metaWriter.write(""+getPlayer().getSH());
+					metaWriter.newLine();
+					metaWriter.write(""+getPlayer().getCenterX());
+					metaWriter.newLine();
+					metaWriter.write(""+getPlayer().getCenterY());
+					metaWriter.newLine();
 					
-					metawriter.close();
+					metaWriter.close();
 					mos.close();
 					mots.close();
 					
 					Bitmap img=MA.getBitmapFromView(gamePanel);
-					String imgname="image.jpg";
-					FileOutputStream imgout = new FileOutputStream(saveFolder+File.separator+imgname);
-					img.compress(Bitmap.CompressFormat.JPEG, 100, imgout); // bmp is your Bitmap instance
-						// PNG is a lossless format, the compression factor (100) is ignored
-					
+					String imgName="image.jpg";
+					FileOutputStream imgOut = new FileOutputStream(saveFolder+File.separator+imgName);
+					img.compress(Bitmap.CompressFormat.JPEG, 100, imgOut);
+
 					ins.close();
 					isr.close();
 					reader.close();
@@ -581,15 +560,24 @@ public class GameManager {
 					writer.close();
 					osw.close();
 					out.close();
-					
-					mapFile.delete();
-					tempMapFile.renameTo(mapFile);
+
+					if(!mapFile.delete())
+					{
+                        GameLog.update("map deleting error",1);
+                        return;
+                    }
+
+					if(!tempMapFile.renameTo(mapFile))
+                    {
+                        GameLog.update("temp map renaming error",1);
+                        return;
+                    }
+
 					GameLog.update("Successfully saved game",0);
 				}
 				else
 				{
 					GameLog.update("save file did not exist",1);
-					return;
 				}
 			}
 			else
@@ -647,7 +635,7 @@ public class GameManager {
 		
 	}
 	
-	public File checkSaveFolder()
+	private File checkSaveFolder()
 	{
 		String documentsFolderPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString();
 		File documentsFolder  = new File(documentsFolderPath);

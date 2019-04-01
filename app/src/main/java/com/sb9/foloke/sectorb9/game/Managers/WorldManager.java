@@ -22,7 +22,7 @@ public class WorldManager
 	////current sector
 	private int sectorX=0,sectorY=0;
 
-	public WorldManager(MainActivity MA, GameManager gameManager)
+	WorldManager(MainActivity MA, GameManager gameManager)
 	{
 		this.MA=MA;
 		this.gameManager = gameManager;
@@ -31,7 +31,7 @@ public class WorldManager
 		
 	}
 	
-	public void loadEmptyWorld()
+	void loadEmptyWorld()
 	{
 		sectorX=1;
 		sectorY=1;
@@ -66,7 +66,7 @@ public class WorldManager
 			entityManager.addObject(new Asteroid(50*rand.nextInt(50)+25*rand.nextInt(20),100*rand.nextInt(20)+20*rand.nextInt(50),rand.nextInt(180), gameManager,rand.nextInt(10)));
 	}
 	
-	public void updateWorld()
+	void updateWorld()
 	{
 		int i=0;
 		for(Entity e : entityManager.getArray())
@@ -87,11 +87,11 @@ public class WorldManager
 		}
 		
 		//objects ticks
-		gameManager.gamePanel.debugText.setString("objects in render:"+ i);
+		gameManager.getGamePanel().debugText.setString("objects in render:"+ i);
 		entityManager.tick();
 	}
 	
-	public void renderWorld(Canvas canvas)
+	void renderWorld(Canvas canvas)
 	{
 		//if(background!=null)
 		//canvas.drawBitmap(background,0,0,null);
@@ -99,7 +99,7 @@ public class WorldManager
 		entityManager.render(canvas);
 	}
 	
-	public void interactionCheck(float x,float y)
+	void interactionCheck(float x,float y)
 	{
 		interObject.calculateCollisionObject(x,y);
 		Player player=gameManager.getPlayer();
@@ -121,12 +121,7 @@ public class WorldManager
 			}
 		}
 	}
-	
-	public void addObject(Entity e)
-	{
-		entityManager.addObject(e);
-	}
-	
+
 	public EntityManager getEntityManager()
 	{
 		return entityManager;
@@ -148,34 +143,33 @@ public class WorldManager
 		entityManager.addObject(gameManager.getPlayer());
 	}
 
-	public Point getSector()
+	Point getSector()
 	{
 		return new Point(sectorX,sectorY);
 	}
 
-	public void setSector(int x,int y)
+	void setSector(int x,int y)
 	{
 		sectorX=x;
 		sectorY=y;
 	}
 	
-    public void warpToSector(int x,int y)
+    void warpToSector(int x,int y)
     {
 		gameManager.saveGame();
 		sectorX=x;
 		sectorY=y;
-        if(gameManager.loadSector(x,y))
+        if(!gameManager.loadSector(x,y))
         {
            WorldGenerator.makeRandomSector(this);
 			gameManager.saveGame();
         }
     }
 	
-	public void spawnDestroyed(Entity e)
+	void spawnDestroyed(Entity e)
 	{
         double a =System.nanoTime();
 		entityManager.addObject(new DroppedItems(e));
-		//entityManager.deleteObject(e);
         double b =System.nanoTime();
         gameManager.getGamePanel().textDebug3.setString(""+(b-a));
 	}
