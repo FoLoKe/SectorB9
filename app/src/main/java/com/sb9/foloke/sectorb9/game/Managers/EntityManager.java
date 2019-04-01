@@ -200,7 +200,7 @@ public class EntityManager
 				if(initiator.getInventory().takeOneItemFromAllInventory(BuildingsDataSheet.findById(ID).resToBuild[0],1))
 					return new Buildable(ID,initiator.getTeam(),gameManager);
 				else
-					gameManager.getMainActivity().makeToast("no resources",0);
+					GameLog.update("no resources",0);
 				
 		return null;
 	}

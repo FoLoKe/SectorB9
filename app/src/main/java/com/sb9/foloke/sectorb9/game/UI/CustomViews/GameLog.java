@@ -116,7 +116,7 @@ public class GameLog extends LinearLayout
 			{
 				folderlog=false;
 				documentsFolder.mkdir();
-				MA.makeToast("no DOCUMENTS WRITE PERMISSION",1);
+				GameLog.update("no DOCUMENTS WRITE PERMISSION",1);
 				return;
 			}
 
@@ -131,7 +131,7 @@ public class GameLog extends LinearLayout
 			{
 				gameFolder.mkdir();
 				folderlog=false;
-				MA.makeToast("no inside DOCUMENTS WRITE PERMISSION",1);
+				GameLog.update("no inside DOCUMENTS WRITE PERMISSION",1);
 				return;
 			}
 
@@ -161,7 +161,7 @@ public class GameLog extends LinearLayout
 		}
 		catch(Exception e)
 		{
-			MA.makeToast(e.toString(),1);
+			GameLog.update(e.toString(),1);
 		}
 		}
 	}

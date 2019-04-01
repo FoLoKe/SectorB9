@@ -22,6 +22,8 @@ public abstract class Entity {
 	///TODO: NEW CLASS PRUDCTION BUILDING OR ENTITY TO HANDLE ITRMS CREATION
 	///MARKERS WITH NAMES AND RADIO OPTIONS
 	///REFACTOR ALL PRODUCTION OBJECTS
+	///LOADING SCREEN
+	///SEPARATE GAMEMANAGER FROM GAMEPANEL AND MAINACTIVITY
 	protected float width=2,height=2;
 	protected float relativeCentreX,relativeCenterY;
     protected float x,y;

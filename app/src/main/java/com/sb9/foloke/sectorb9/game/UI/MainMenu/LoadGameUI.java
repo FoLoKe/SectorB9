@@ -169,18 +169,18 @@ public class LoadGameUI
 									new File(save, children[i]).delete();
 								}
 							if(save.delete())
-							MA.makeToast(saveName+" deleted",0);
+									GameLog.update(saveName+" deleted",0);
 							}
 							catch(Throwable t)
 							{
-								MA.makeToast("ERROR: write error"+t,1);
+								GameLog.update("ERROR: write error"+t,1);
 							}
 						}
 							else
-								MA.makeToast("ERROR: save did not exist",1);
+							GameLog.update("ERROR: save did not exist",1);
 					}
 					else
-					MA.makeToast("ERROR: dir not exist or name wrong",1);
+						GameLog.update("ERROR: dir not exist or name wrong",1);
 					LoadGameUI.init(MA);
 				}
 			});

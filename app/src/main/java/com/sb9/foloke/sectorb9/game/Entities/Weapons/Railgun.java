@@ -15,6 +15,7 @@ import com.sb9.foloke.sectorb9.game.ParticleSystem.ParticleSystem;
 import com.sb9.foloke.sectorb9.game.UI.ProgressBarUI;
 
 import java.util.Random;
+import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
 
 public class Railgun extends Weapon
 {
@@ -132,7 +133,7 @@ public class Railgun extends Weapon
         }
         catch (Exception e)
         {
-            gameManager.getMainActivity().makeToast(e+"",1);
+            GameLog.update(e+"",1);
         }
 
         laserDamageEffect.render(canvas);

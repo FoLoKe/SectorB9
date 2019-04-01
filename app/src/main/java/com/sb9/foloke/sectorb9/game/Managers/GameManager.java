@@ -167,10 +167,10 @@ public class GameManager {
 			
             if (collected)
             {         
-                MA.makeToast("items collected",0);     
+                GameLog.update("items collected",0);     
             }
             else
-                MA.makeToast("inventory full" ,0);
+                GameLog.update("inventory full" ,0);
     	}
 	
         collect=false;
@@ -389,7 +389,7 @@ public class GameManager {
 					File meta=new File(saveFolder,"meta.txt");
 					if(!meta.exists())
 					{
-						MA.makeToast("meta did not exist",1);
+						GameLog.update("meta did not exist",1);
 						return;
 					}
 					
@@ -464,7 +464,7 @@ public class GameManager {
 					reader.close();
 
 				
-					MA.makeToast("Successfully loaded game",0);
+					GameLog.update("Successfully loaded game",0);
 				}
 				else
 				{
@@ -473,11 +473,15 @@ public class GameManager {
 				}
 			}
 			else
+			{
 				GameLog.update("save folder did not exist",2);
+				return;
+			}
 		}
 		catch(Exception e)
 		{
-			MA.makeToast(e.toString(),1);
+			GameLog.update(e.toString(),1);
+			return;
 		}
 	}
 	
@@ -580,7 +584,7 @@ public class GameManager {
 					
 					mapFile.delete();
 					tempMapFile.renameTo(mapFile);
-					MA.makeToast("Successfully saved game",0);
+					GameLog.update("Successfully saved game",0);
 				}
 				else
 				{
@@ -593,7 +597,7 @@ public class GameManager {
 		}
 		catch(Exception e)
 		{
-			MA.makeToast(e.toString(),1);
+			GameLog.update(e.toString(),1);
 		}
 	}
 	
@@ -621,7 +625,7 @@ public class GameManager {
 					writer.close();
 					osw.close();
 					out.close();
-					MA.makeToast("Successfully created saves for map",0);
+					GameLog.update("Successfully created saves for map",0);
 				}
 				else
 				{
@@ -638,7 +642,7 @@ public class GameManager {
 		}
 		catch(Exception e)
 		{
-			MA.makeToast(e.toString(),1);
+			GameLog.update(e.toString(),1);
 		}
 		
 	}
@@ -650,7 +654,7 @@ public class GameManager {
 
 		if(!documentsFolder.exists())
 		{
-			MA.makeToast("no DOCUMENTS WRITE PERMISSION",1);
+			GameLog.update("no DOCUMENTS WRITE PERMISSION",1);
 			return null;
 		}
 
@@ -659,13 +663,13 @@ public class GameManager {
 
 		if(!gameFolder.exists())
 		{
-			MA.makeToast("no inside DOCUMENTS WRITE PERMISSION",1);
+			GameLog.update("no inside DOCUMENTS WRITE PERMISSION",1);
 			return null;
 		}
 		File saveFolder=new File(gameFolderPath,getSaveName());
 		if(!saveFolder.exists())
 		{
-			MA.makeToast("no inside DOCUMENTS WRITE PERMISSION",1);
+			GameLog.update("no inside DOCUMENTS WRITE PERMISSION",1);
 			return null;
 		}
 	return saveFolder;

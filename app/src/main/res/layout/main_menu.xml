@@ -2,7 +2,8 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical"
-	android:background="#000000">
+	android:background="#000000"
+	>
 	
 	<com.sb9.foloke.sectorb9.game.UI.CustomViews.GameLog
         android:layout_width="match_parent"
@@ -44,5 +45,9 @@
 			android:textColor="#ffffff"/>
 
 	</LinearLayout>
-	
+	<com.sb9.foloke.sectorb9.game.UI.CustomViews.LoadingScreen
+		android:layout_width="match_parent"
+    	android:layout_height="match_parent"
+   		android:id="@+id/loading_screen"
+		android:background="#000000"/>
 </FrameLayout>

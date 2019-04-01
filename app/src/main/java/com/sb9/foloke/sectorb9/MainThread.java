@@ -3,6 +3,7 @@ package com.sb9.foloke.sectorb9;
 import android.graphics.Canvas;
 import android.view.SurfaceHolder;
 import com.sb9.foloke.sectorb9.game.Display.GamePanel;
+import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
 
 public class MainThread extends Thread
 {
@@ -49,7 +50,7 @@ public class MainThread extends Thread
             }
             catch(Exception e){
                 
-				mapPanel.getGameManager().getMainActivity().makeToast(""+e,1);
+				GameLog.update(""+e,1);
             }
 
             finally{if(canvas!=null)

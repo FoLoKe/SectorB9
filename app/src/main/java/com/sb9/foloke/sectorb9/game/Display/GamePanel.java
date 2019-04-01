@@ -177,7 +177,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                 mainThread.join();
                 retry=false;
             }catch(InterruptedException e)
-            {MA.makeToast(""+e,1);}
+            {GameLog.update(""+e,1);}
         }
     }
 

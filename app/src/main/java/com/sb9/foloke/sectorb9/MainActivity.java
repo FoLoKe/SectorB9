@@ -44,6 +44,7 @@ import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
 public class MainActivity extends Activity {
 
     private static GamePanel gamePanel;
+	private LoadingScreen loadingScreen;
 	private ViewFlipper VF;
 	
 	private static final int PERMISSION_REQUEST_CODE = 123;
@@ -89,7 +90,7 @@ public class MainActivity extends Activity {
 					}
 				});
 		}
-		
+		loadingScreen=new LoadingScreen(this);
 		prepareMenu();
 		Options.startupOptions();
 	}
@@ -100,6 +101,8 @@ public class MainActivity extends Activity {
 	{
 		BuildUI.deinit(this);
 		setContentView(R.layout.main_menu);
+		loadingScreen=findViewById(R.id.loading_screen);
+		
 		GameLog.update("preparing menu",0);
 		Button startNewGameButton= findViewById(R.id.new_game_button);
 	
@@ -117,6 +120,7 @@ public class MainActivity extends Activity {
 			{
 				public void onClick(View v)
 				{
+					loadingScreen.show();
 					loadGame();
 				}
 			});
@@ -127,10 +131,12 @@ public class MainActivity extends Activity {
 			{
 				public void onClick(View v)
 				{
+					loadingScreen.show();
 					continueGame();
 				}
 			});
 		GameLog.update("menu created",0);
+		loadingScreen.hide();
 	}
 	
 	private void makeOnNewGameDialog()
@@ -178,13 +184,14 @@ public class MainActivity extends Activity {
 	
 	private void prepareNewGame(String s,boolean state)
 	{
+		//.addView(loadingScreen);
 		GameLog.update("preparing new game",0);
 		if(s.equals("")||s.equals(" ")||s.length()==0||s.contains(" "))
 		{
-			makeToast("wrong save name",1);
+			GameLog.update("wrong save name",1);
 			return;
 		}
-		
+		loadingScreen.show();
 		if(state)
 		{
 			GameLog.update("checking for existing" ,0);
@@ -206,7 +213,7 @@ public class MainActivity extends Activity {
 					if(f.getName()==s)
 						if (f.isDirectory())
 						{
-							makeToast("save name already used" ,0);
+							GameLog.update("save name already used" ,0);
 							return;
 						}
 				}
@@ -276,13 +283,19 @@ public class MainActivity extends Activity {
 	
 	public void prepareNewLoad(String s)
 	{
+		//ProgressDialog dialog = ProgressDialog.show(this,"loading","Loading. Please wait...");
 		GameLog.update("preparing load for save - "+s,0);
+		
 		prepareNewGame(s,false);
+		((FrameLayout)findViewById(R.id.main_activityFrameLayout)).addView(loadingScreen);
+		loadingScreen.show();
 		//gamePanel.getGameManager().getEntityManager().reload();
 		
 		gamePanel.getGameManager().loadGame();
 		gamePanel.getGameManager().getPlayer().initShip();
-		makeToast("Successfully loaded - "+s,0);
+		loadingScreen.hide();
+		GameLog.update("Successfully loaded: "+s,0);
+		//dialog.hide();
 
 	}
     
@@ -295,7 +308,7 @@ public class MainActivity extends Activity {
 	
 	private void continueGame()
 	{
-		makeToast("preparing for continue" ,0);
+		GameLog.update("preparing for continue" ,0);
 		String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString()+File.separator+"sb9";
 		File myDir = new File(root);
 		if (!myDir.exists()) {
@@ -306,27 +319,33 @@ public class MainActivity extends Activity {
 		File target=null;
 		if (files.length>0)
 		{
-			target=files[0];
+			
 			for(File f:files)
 			{
-				if(f.lastModified()>target.lastModified())
-					if (f.isDirectory())
-					target=f;
+				GameLog.update("checking folder: "+f.getName(),2); 
+				if (f.isDirectory())
+				{
+					if(target!=null)
+					{
+						if(f.lastModified()>target.lastModified())
+							target=f;
+					}
+					else
+					{
+						target=files[0];
+					}
+				}
 			}
 		}
 	
 		if(target==null)
 		{
-			makeToast("no saves",2);
+			GameLog.update("no saves",2);
 			return;
 		}
-		
+		GameLog.update("file selected to continue: "+target.getName(),2);
 		prepareNewLoad(target.getName());
 		GameLog.update("continue successful",0);
-		
-
-		
-	
 	}
 	
 	public ViewFlipper getViewFlipper()
@@ -334,10 +353,6 @@ public class MainActivity extends Activity {
 		return VF;
 	}
 	
-	
-	
-	
-
     public GameManager getGameManager()
     {
         return gamePanel.getGameManager();
@@ -388,19 +403,5 @@ public class MainActivity extends Activity {
 		
 	}
 	
-	public void makeToast(final String toastText,final int state)
-	{
-		
-		runOnUiThread(new Runnable()
-		{
-			public void run()
-			{
-				GameLog.update(toastText,state);
-				Context context = getApplicationContext();
-				int duration = Toast.LENGTH_LONG;
-				Toast toast = Toast.makeText(context, toastText, duration);
-				toast.show();
-			}
-		});
-	}
+	
 }
