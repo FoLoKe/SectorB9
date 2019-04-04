@@ -89,7 +89,7 @@ public class WorldManager
 		}
 		
 		//objects ticks
-		gameManager.getGamePanel().debugText.setString("objects in render:"+ i);
+		
 		entityManager.tick();
 	}
 	
@@ -170,9 +170,9 @@ public class WorldManager
 	
 	void spawnDestroyed(Entity e)
 	{
-        double a =System.nanoTime();
+        
 		entityManager.addObject(new DroppedItems(e));
-        double b =System.nanoTime();
-        gameManager.getGamePanel().textDebug3.setString(""+(b-a));
+        
+        
 	}
 }

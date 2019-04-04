@@ -211,7 +211,7 @@ public abstract class DynamicEntity extends Entity {
         float sinPhi = (frontPoint.x*B.y - frontPoint.y*B.x);
 		
 		float deg=(float)Math.toDegrees(sinPhi);
-		gameManager.getGamePanel().textDebug5.setString(""+deg);//(
+		
 		
 		if(sinPhi>-0.02&&sinPhi<0.02)
             return true;

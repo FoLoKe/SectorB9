@@ -28,16 +28,17 @@ import android.app.*;
 import android.content.*;
 import com.sb9.foloke.sectorb9.game.Funtions.*;
 import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
+import com.sb9.foloke.sectorb9.game.UI.Inventory.*;
 
 public class MainActivity extends Activity {
 
     private GameManager gameManager;
     //private static GamePanel gamePanel;
-
+	
 	private ViewFlipper VF;
 	
 	private static final int PERMISSION_REQUEST_CODE = 123;
-	
+	private InventoryExchangeInterface excInterface;
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
@@ -88,6 +89,14 @@ public class MainActivity extends Activity {
 		prepareMenu();
 	}
 
+	@Override
+	protected void onResume()
+	{
+		// TODO: Implement this method
+		super.onResume();
+		gameManager.resume();
+	}
+	
 	public void prepareMenu()
 	{
 		setContentView(R.layout.main_menu);
@@ -170,7 +179,7 @@ public class MainActivity extends Activity {
 	
 	private void prepareNewGame(String s,boolean state)
 	{
-
+	try{
 		GameLog.update("Activity: preparing new game",0);
 		if(s.equals("")||s.equals(" ")||s.length()==0||s.contains(" "))
 		{
@@ -220,9 +229,22 @@ public class MainActivity extends Activity {
             }
 		}
 
-
+		////ONLY PLACE TO START GAME THREAD
+		
+		GameLog.update("Activity: preparing GameManager",2);
         gameManager.init(state,s);
+		GameLog.update("GameManager: preparing UIs",0);
+        TableLayout playerTable=findViewById(R.id.PlayerTableLayout);
+        TableLayout objectTable=findViewById(R.id.ObjectTableLayout);
 
+        makeInventoryUI(playerTable,objectTable,this);
+
+        
+        BuildUI.init( this);
+        ActionUI.init( this);
+        InteractionUI.init( this,null);
+        HelpUI.init( this,1);
+        MapUI.init( this);
         VF = findViewById(R.id.UIFlipper);
         VF.setDisplayedChild(VF.indexOfChild(findViewById(R.id.actionUI)));
 
@@ -251,6 +273,7 @@ public class MainActivity extends Activity {
 
 
 		GameLog.update("preparing new game successful",0);
+		}catch(Exception e){GameLog.update(e.toString(),1);}
 	}
 	
 	public void prepareNewLoad(String s)
@@ -376,5 +399,9 @@ public class MainActivity extends Activity {
         return gameManager;
     }
 	
-	
+	private void makeInventoryUI(TableLayout playerTable, TableLayout objectTable, MainActivity context)
+    {
+		excInterface=new InventoryExchangeInterface(gameManager);
+        InventoryUI.set(playerTable,gameManager.getPlayer(),objectTable,null,excInterface,context);
+    }
 }

@@ -45,16 +45,18 @@ import android.os.*;
 import android.widget.ViewFlipper;
 
 import java.io.*;
+import com.sb9.foloke.sectorb9.*;
+import com.sb9.foloke.sectorb9.game.Funtions.*;
 
 
 public class GameManager {
-
+	private MainThread mainThread;
     private MainActivity MA;
     private GamePanel gamePanel;
 	private String saveName="0";
 
-    //UIs
-    private InventoryExchangeInterface excInterface;
+    //UIs not views 
+    
     public ProgressBarUI uIhp;
     public ProgressBarUI uIsh;
 
@@ -77,6 +79,8 @@ public class GameManager {
 	private Point sectorToWarp=new Point();
 	private PointF warpingLocation=new PointF();
     private  Point screenSize=new Point();
+	public Joystick joystick;
+	private PointF joystickTouchPoint=new PointF();
 	
     public GameManager( MainActivity MA)
     {
@@ -103,7 +107,7 @@ public class GameManager {
         GameLog.update("GameManager: preparing datasheets",0);
         BuildingsDataSheet.init(MA);
         ItemsDataSheet.init(MA);
-        excInterface=new InventoryExchangeInterface(this);
+      
 
         WindowManager wm = ((WindowManager)
                 MA.getSystemService(Context.WINDOW_SERVICE));
@@ -128,24 +132,13 @@ public class GameManager {
         worldManager.loadEmptyWorld();
 
         GameLog.update("GameManager: preparing canvas",0);
-        MA.setContentView(R.layout.main_activity);
-
+        
+		//ONLY UI view OBJECT
+		GameLog.update("Activity: content set",2);
+		MA.setContentView(R.layout.main_activity);
         this.gamePanel=MA.findViewById(R.id.Game);
 
-        GameLog.update("GameManager: preparing UIs",0);
-        TableLayout playerTable=MA.findViewById(R.id.PlayerTableLayout);
-        TableLayout objectTable=MA.findViewById(R.id.ObjectTableLayout);
-
-        makeInventoryUI(playerTable,objectTable,MA);
-
-        ViewFlipper VF = MA.findViewById(R.id.UIFlipper);
-        VF.setDisplayedChild(VF.indexOfChild( MA.findViewById(R.id.actionUI)));
-
-        BuildUI.init( MA);
-        ActionUI.init( MA);
-        InteractionUI.init( MA,null);
-        HelpUI.init( MA,1);
-        MapUI.init( MA);
+        
 
         if(state)
         {
@@ -157,17 +150,22 @@ public class GameManager {
         else
             ///load state
             loadGame();
-
+		joystick=new Joystick(new RectF(screenSize.x/1.5f,screenSize.y/2,screenSize.x,screenSize.y));
         GameLog.update("GameManager: READY",0);
+		mainThread= new MainThread(this);
+		mainThread.setRunning(true);
+        mainThread.start();
         setPause(false);
     }
 
     public void tick()
     {
+		gamePanel.tick();
         if(gamePause)
             return;
-
-
+		joystickTouchPoint.set(joystick.getPoint().x+gamePanel.getCamera().getWorldLocation().x,joystick.getPoint().y+gamePanel.getCamera().getWorldLocation().y);
+		joystick.tick(gamePanel.getPointOfTouch());
+		
         if(playerDestroyed)
         {
             if(destroyedTimer.tick())
@@ -182,10 +180,11 @@ public class GameManager {
 		{
 			uIhp.set(player.getHp()/player.getMaxHP()*100);
 			uIsh.set(player.getSH()/player.getMaxSH()*100);
-			if(gamePanel.getTouched())
+			if(joystick.getTouched())
 			{
-				player.rotationToPoint(getGamePanel().getMovementPoint());
-				float targetAcceleration=gamePanel.getMovementSpeed();
+				
+				player.rotationToPoint(joystickTouchPoint);
+				float targetAcceleration=joystick.getAcceleration();
 				
 				if(targetAcceleration>1)
 					targetAcceleration=1;
@@ -244,14 +243,29 @@ public class GameManager {
 
     public void render(Canvas canvas)
     {
+		gamePanel.render(canvas);
         worldManager.renderWorld(canvas);
         player.render(canvas);
 		Paint debugPaint= new Paint();
 		debugPaint.setColor(Color.CYAN);
 		debugPaint.setStyle(Paint.Style.STROKE);
 		debugPaint.setStrokeWidth(10);
+		canvas.drawCircle(joystickTouchPoint.x,joystickTouchPoint.y,5,debugPaint);
+		
 		if(warpReady)
        	canvas.drawCircle(warpingLocation.x,warpingLocation.y,200,debugPaint);
+		canvas.restore();
+		gamePanel.drawPlayerMovement(canvas);
+		gamePanel.drawRadioPoints(canvas);
+		
+		if(command==commandMoving) 
+		{
+            uIhp.render(canvas);
+            uIsh.render(canvas);
+        }
+		
+		joystick.render(canvas);
+		canvas.drawRect(joystick.getActionZone(),debugPaint);
     }
 
 	public void spawnDestroyed(Entity e)
@@ -288,11 +302,7 @@ public class GameManager {
         return player;
     }
 
-   private void makeInventoryUI(TableLayout playerTable, TableLayout objectTable, MainActivity context)
-    {
-
-        InventoryUI.set(playerTable,player,objectTable,null,excInterface,context);
-    }
+   
 
     public void updateInventory(final Entity caller)
     {
@@ -773,4 +783,33 @@ public class GameManager {
     {
         return screenSize;
     }
+	
+	public void shutdown()
+	{
+		boolean retry = true;
+        while(retry)
+        {
+            try{mainThread.setRunning(false);
+                mainThread.join();
+                retry=false;
+            }catch(InterruptedException e)
+            {GameLog.update(""+e,1);}
+        }
+	}
+	public void resume()
+	{
+		if(mainThread==null)
+			return;
+		mainThread= new MainThread(this);
+		mainThread.setRunning(true);
+        mainThread.start();
+        setPause(false);
+	}
+	
+	public void checkJoystick(boolean touched,PointF screenPoint)
+	{
+		joystick.setTouched(touched,screenPoint);
+		//touched=touched;
+		player.setMovable(joystick.getTouched());
+	}
 }

@@ -4,22 +4,23 @@ import android.graphics.Canvas;
 import android.view.SurfaceHolder;
 import com.sb9.foloke.sectorb9.game.Display.GamePanel;
 import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
+import com.sb9.foloke.sectorb9.game.Managers.*;
 
 public class MainThread extends Thread
 {
     private final int FPS =60;
     private double averageFPS;
     private SurfaceHolder surfaceHolder;
-    private GamePanel mapPanel;
+    private GameManager gameManager;
     private boolean running;
     private static Canvas canvas;
 
 
-    public MainThread(SurfaceHolder surfaceHolder, GamePanel mapPanel)
+    public MainThread(GameManager gameManager)
     {
         super();
-        this.surfaceHolder=surfaceHolder;
-        this.mapPanel=mapPanel;
+        this.surfaceHolder=gameManager.getGamePanel().getHolder();
+        this.gameManager=gameManager;
     }
 
     @Override
@@ -43,8 +44,8 @@ public class MainThread extends Thread
                 canvas=this.surfaceHolder.lockCanvas();
                 synchronized(surfaceHolder)
                 {
-                    this.mapPanel.tick();
-                    this.mapPanel.render(canvas);
+                    this.gameManager.tick();
+                    this.gameManager.render(canvas);
                 }
             }
             catch(Exception e){
@@ -72,7 +73,7 @@ public class MainThread extends Thread
                 averageFPS= 1000/((totalTime/frameCount)/1000000);
                 frameCount=0;
                 totalTime=0;
-				mapPanel.textFPS.setString("FPS: "+averageFPS);
+				gameManager.getGamePanel().textFPS.setString("FPS: "+averageFPS);
                 System.out.println(averageFPS);
             }
         }
