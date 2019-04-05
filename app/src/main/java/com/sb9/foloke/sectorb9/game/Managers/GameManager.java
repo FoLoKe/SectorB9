@@ -244,7 +244,7 @@ public class GameManager {
 
     public void render(Canvas canvas)
     {	
-	if(canvas==null)
+		if(canvas==null)
 			return;
 		gamePanel.render(canvas);
         worldManager.renderWorld(canvas);
@@ -253,6 +253,7 @@ public class GameManager {
 		debugPaint.setColor(Color.CYAN);
 		debugPaint.setStyle(Paint.Style.STROKE);
 		debugPaint.setStrokeWidth(10);
+		if(Options.drawDebugInfo.getBoolean())
 		canvas.drawCircle(joystickTouchPoint.x,joystickTouchPoint.y,5,debugPaint);
 		
 		if(warpReady)
@@ -268,6 +269,8 @@ public class GameManager {
         }
 		
 		joystick.render(canvas);
+		
+		if(Options.drawDebugInfo.getBoolean())
 		canvas.drawRect(joystick.getActionZone(),debugPaint);
     }
 

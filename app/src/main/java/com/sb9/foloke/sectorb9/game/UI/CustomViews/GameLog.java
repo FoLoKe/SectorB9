@@ -27,7 +27,8 @@ public class GameLog extends LinearLayout
 	private static boolean folderlog=true;
 	private static TextView TV;
 	private static MainActivity MA;
-	
+	private static boolean errState;
+	private static int counters;
 	public GameLog(Context context)
 	{
 		super(context);
@@ -60,6 +61,7 @@ public class GameLog extends LinearLayout
 		 TV.setText("LOG");
 		 this.addView(TV);
 		 setZ(10);
+		 
 	}
 	
 	public GameLog(Context context, AttributeSet attrs)
@@ -76,28 +78,34 @@ public class GameLog extends LinearLayout
 	
 	public static void update(final String s,final int state)
 	{
+		
+		
 		MA.runOnUiThread(new Runnable()
 		{
 			
 			public void run()
-			{
-				if(Options.drawDebugInfo.getBoolean())
-					TV.setVisibility(VISIBLE);
-				else
-					TV.setVisibility(GONE);
+			{int time=0;
+				
+					
 				if(folderlog)
 				newLine(state+" "+s);
+				if(!Options.drawDebugInfo.getBoolean()&&state==0)
+					return;
 				String ts="";
 				switch(state)
 				{
 					case 0:
 						ts="<font color=\"green\">"+s+"</font><br>";
+						time=1000;
 						break;
 					case 1:
 						ts=("<font color=\"red\">"+s+"</font><br>");
+						time=10000;
+						errState=true;
 						break;
 					case 2:
 						ts="<font color=\"yellow\">"+s+"</font><br>";
+						time=5000;
 						break;
 				}
 				StringBuffer sb=new StringBuffer();
@@ -110,10 +118,67 @@ public class GameLog extends LinearLayout
 				}
 				Spanned finalString=Html.fromHtml(sb.toString());
 				TV.setText(finalString);
+				final int threadDelay=time;
+			
+				if(counters<maxCount)
+				{
+					counters++;
+				if(errState)
+					new Thread(new Runnable()
+						{
+							public void run(){
+								try{
+
+									//this.wait(100);
+
+									Thread.sleep(10000);
+									if(text.size()>0)
+										text.remove(0);
+									update();
+									errState=false;
+								}
+
+								catch(Exception e){}
+							}
+						}).start();
+				else
+				new Thread(new Runnable()
+				{
+					public void run(){
+						try{
+							
+						//this.wait(100);
+							
+						Thread.sleep(threadDelay);
+							if(text.size()>0)
+								text.remove(0);
+							update();
+						}
+						
+						catch(Exception e){}
+					}
+				}).start();
+				}
 			}
 		});
-		}
 		
+	}
+		
+	private static void update()
+	{
+		StringBuffer sb=new StringBuffer();
+		
+		if(text.size()>maxCount)
+			text.remove(0);
+		for(String t:text)
+		{
+			sb.append(t);
+		}
+		final Spanned finalString=Html.fromHtml(sb.toString());
+		TV.post(new Runnable(){public void run(){TV.setText(finalString); }});
+		counters--;
+	}
+	
 	private static void newLine(String s)
 	{
 		try

@@ -9,7 +9,7 @@ public class WorldGenerator
 	public static void makeRandomSector(WorldManager WM)
 	{
 		Random rnd=new Random();
-		switch(rnd.nextInt(1))
+		switch(1)//rnd.nextInt(1))
 		{
 			case 0:
 				randomSectorPeaceful(WM.getEntityManager(),WM.getGameManager());
