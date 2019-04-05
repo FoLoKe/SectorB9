@@ -137,8 +137,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 
     public void render(Canvas canvas)
     {
-		if(canvas==null)
-			return;
+		
 			
         camera.setScreenRect(canvasW,canvasH);
 		

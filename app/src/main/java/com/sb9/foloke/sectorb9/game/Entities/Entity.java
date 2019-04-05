@@ -137,7 +137,7 @@ public abstract class Entity {
 		}
 		catch(Throwable t)
 		{
-			GameLog.update(t.toString(),1);
+			GameLog.update("Entity: "+t.toString(),1);
 		}
 	}
 
@@ -169,7 +169,7 @@ public abstract class Entity {
 		}
 		catch(Throwable t)
 		{
-            GameLog.update(t.toString(),1);
+            GameLog.update("Entity: "+t.toString(),1);
 		}
 	}
 
@@ -299,8 +299,8 @@ public abstract class Entity {
 			onDestroy();			
 	}
 	
-	protected void onDestroy(){
-		GameLog.update("no HP "+this,2);
+	protected void onDestroy()
+	{
 		active=false;
 		if(!(this instanceof Player))
             toRemove=true;

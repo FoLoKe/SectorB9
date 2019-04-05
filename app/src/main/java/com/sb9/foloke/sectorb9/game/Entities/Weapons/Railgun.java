@@ -133,7 +133,7 @@ public class Railgun extends Weapon
         }
         catch (Exception e)
         {
-            GameLog.update(e+"",1);
+            GameLog.update("Railgun: " +e.toString(),1);
         }
 
         laserDamageEffect.render(canvas);

@@ -62,7 +62,7 @@ public enum Options
 		}
 		catch(Exception e)
 		{
-			GameLog.update(e.toString(),1);
+			GameLog.update("Options: "+e.toString(),1);
 		}
 	}
 	
@@ -78,23 +78,23 @@ public enum Options
 
 			for(Options p:values())
 			{
-				GameLog.update("loading option: "+p,0);
+				GameLog.update("Options: "+"loading option: "+p,0);
 				String s=reader.readLine();
 				String elemWords[]=s.split("=");
 				p.setValue(Integer.parseInt(elemWords[1]));
-				GameLog.update("loaded: "+s,0);
+				GameLog.update("Options: "+"loaded: "+s,0);
 			}
-			GameLog.update("options loaded",0);
+			GameLog.update("Options: "+"options loaded",0);
 		}
 		catch(Exception e)
 		{
-            GameLog.update(e.toString(),1);
+            GameLog.update("Options: "+ e.toString(),1);
 		}
 	}
 	
 	public static void startupOptions()
 	{
-	    GameLog.update("startup options",2);
+	    GameLog.update("Options: "+"startup options",0);
 		try
 		{
 		    File gameFolder=checkFolders();
@@ -105,20 +105,20 @@ public enum Options
 
             if (optionsFile.exists ())
             {
-                GameLog.update("loading existing options",2);
+                GameLog.update("Options: "+"loading existing options",0);
                 loadOptions();
 			}
 			else
 			{
 				//saveAsNew
 				saveOptions();
-				GameLog.update("options created",0);
+				GameLog.update("Options: "+"options created",0);
 			}
 
 		}
 		catch(Exception e)
 		{
-			GameLog.update(e.toString(),1);
+			GameLog.update("Options: "+ e.toString(),1);
 		}
 	}
 
@@ -146,11 +146,11 @@ public enum Options
 					reader.close();
 					isr.close();
 
-					GameLog.update("Successfully loaded options",0);
+					GameLog.update("Options: "+"successfully loaded options",0);
 				}
 				else
 				{
-					GameLog.update("inputStream error",1);
+					GameLog.update("Options: "+"inputStream error",1);
 				}
 			}
 		}
@@ -166,7 +166,7 @@ public enum Options
 		{
             File gameFolder=checkFolders();
             if(gameFolder==null) {
-                GameLog.update("saving options interrupted",1);
+                GameLog.update("Options: "+"saving options interrupted",1);
                 return;
             }
 			File optionsFile = new File (gameFolder, "options.txt");
@@ -176,19 +176,19 @@ public enum Options
 				BufferedWriter writer = new BufferedWriter(osw);
 
 
-				writer.write("game options SB9");
+				writer.write("Options: "+"game options SB9");
 				writer.newLine();
 				save(writer);
 				writer.close();
 				osw.close();
 				out.close();
 				//setOptions();
-				GameLog.update("Successfully saved options",0);
+				GameLog.update("Options: "+"successfully saved options",0);
 
 		}
 		catch(Exception e)
 		{
-			GameLog.update(e.toString(),1);
+			GameLog.update("Options: "+e.toString(),1);
 		}
 	}
 
@@ -199,12 +199,12 @@ public enum Options
 
         if(!documentsFolder.exists())
         {
-            GameLog.update("creating docs folder",2);
+            GameLog.update("Options: "+"creating docs folder",0);
             if(!documentsFolder.mkdir()) {
-                GameLog.update("no DOCUMENTS WRITE/READ PERMISSION for documents directory", 1);
+                GameLog.update("Options: "+"no DOCUMENTS WRITE/READ PERMISSION for documents directory", 1);
                 return null;
             }
-            GameLog.update("docs folder created",2);
+            GameLog.update("Options: "+"docs folder created",0);
         }
 
         String gameFolderPath=documentsFolderPath+File.separator+"sb9";
@@ -212,13 +212,13 @@ public enum Options
 
         if(!gameFolder.exists())
         {
-            GameLog.update("creating game folder",2);
+            GameLog.update("Options: "+"creating game folder",0);
             if(!gameFolder.mkdir())
             {
-                GameLog.update("no inside DOCUMENTS WRITE/READ PERMISSION for game directory", 1);
+                GameLog.update("Options: "+"no inside DOCUMENTS WRITE/READ PERMISSION for game directory", 1);
                 return null;
             }
-            GameLog.update("game folder created",2);
+            GameLog.update("Options: "+"game folder created",0);
         }
 
         return gameFolder;

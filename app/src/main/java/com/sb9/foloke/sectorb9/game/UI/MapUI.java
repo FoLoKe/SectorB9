@@ -51,7 +51,7 @@ public class MapUI
 	public static void init(final MainActivity mainActivity)
 	{MA=mainActivity;
         final ViewFlipper VF = MA.findViewById(R.id.UIFlipper);
-		GameLog.update("preparing MapUI",0);
+		GameLog.update("Map UI: preparing",0);
 
 		MM=MA.getGameManager().getMapManager();
 		currentSector=MA.getGameManager().getCurrentSector();
@@ -71,7 +71,7 @@ public class MapUI
 		MM.getSector(currentSector.x,currentSector.y).discovered=true;
 		MM.getSector(currentSector.x,currentSector.y).explored=true;
 		
-		GameLog.update("preparing MapUI: discovered set",0);
+		GameLog.update("Map UI: discovered set",0);
 		MA.findViewById(R.id.map_closeButton).setOnClickListener(
 		new OnClickListener(){
 			@Override
@@ -104,7 +104,7 @@ public class MapUI
 		//line=line2;
 		
 		//line2.invalidate();
-		GameLog.update("preparing MapUI: views set",0);
+		GameLog.update("Map UI: views set",0);
 		TableLayout table=MA.findViewById(R.id.map_uiTilesTable);
 		table.removeAllViews();
 			
@@ -167,7 +167,7 @@ public class MapUI
 					}
 						table.addView(row);
 				}
-		GameLog.update("preparing MapUI: tiles set",0);
+		GameLog.update("Map UI: tiles set",0);
 			for(MapTile tile:mapTiles)
 			{
 				if(tile.getPoint().equals(currentSector.x,currentSector.y))
@@ -176,7 +176,7 @@ public class MapUI
 					playerMapPositionView=tile;
 				}
 			}
-			GameLog.update("MapUI prepared",0);
+			GameLog.update("Map UI: READY",0);
 	}
 	private static Line2D getMapLine()
 	{

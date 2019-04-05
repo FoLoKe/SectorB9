@@ -33,7 +33,22 @@ public class GameLog extends LinearLayout
 		super(context);
 		init(context);
 	}
-	
+	public static void delete()
+	{
+		String documentsFolderPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString();
+		
+		String gameFolderPath=documentsFolderPath+File.separator+"sb9";
+		String gamelogPath=gameFolderPath+File.separator+"log.txt";
+
+		try
+		{
+			File logFile = new File (gamelogPath);
+			if(logFile.exists())
+			{
+				logFile.delete();
+			}
+		}catch(Exception e){}
+	}
 	public void init(Context in_context)
 	{
 		MA=(MainActivity)in_context;
@@ -61,8 +76,6 @@ public class GameLog extends LinearLayout
 	
 	public static void update(final String s,final int state)
 	{
-		
-			
 		MA.runOnUiThread(new Runnable()
 		{
 			
@@ -116,7 +129,7 @@ public class GameLog extends LinearLayout
 			{
 				folderlog=false;
 				documentsFolder.mkdir();
-				GameLog.update("no DOCUMENTS WRITE PERMISSION",1);
+				//GameLog.update("no DOCUMENTS WRITE PERMISSION",1);
 				return;
 			}
 
@@ -131,7 +144,7 @@ public class GameLog extends LinearLayout
 			{
 				gameFolder.mkdir();
 				folderlog=false;
-				GameLog.update("no inside DOCUMENTS WRITE PERMISSION",1);
+				//GameLog.update("no inside DOCUMENTS WRITE PERMISSION",1);
 				return;
 			}
 
@@ -161,7 +174,7 @@ public class GameLog extends LinearLayout
 		}
 		catch(Exception e)
 		{
-			GameLog.update(e.toString(),1);
+			//GameLog.update(e.toString(),1);
 		}
 		}
 	}

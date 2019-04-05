@@ -35,7 +35,7 @@ public class EntityManager
 	{
 
 		entityToAdd.add(entity);
-		GameLog.update("added :"+entity,2);
+		
 	}
 
 	public void render(Canvas canvas)
@@ -53,14 +53,15 @@ public class EntityManager
 			entityArray.clear();
 			//entityToAdd.clear();
 			reloadFlag=false;
-			GameLog.update("EntityManager: reloaded",2);
+			GameLog.update("EntityManager: reloaded",0);
 		}
 	    if(entityToAdd.size()>0)
 		{
 	    	entityArray.addAll(entityToAdd);
-			GameLog.update("added objects:"+entityToAdd.size(),0);
+			GameLog.update("EntityManager: added objects:"+entityToAdd.size(),0);
+			entityToAdd.clear();
 		}
-	    entityToAdd.clear();
+	    
 	   Iterator<Entity> it=entityArray.iterator();
 
 
@@ -71,8 +72,7 @@ public class EntityManager
 			if(e.toRemove)
 			{
 			    it.remove();
-				
-				GameLog.update("removed "+e,2);
+				GameLog.update("EntityManager: removed "+e,0);
 			}
 			
 			if(e instanceof DynamicEntity)
@@ -113,7 +113,7 @@ public class EntityManager
 		}
 		catch(Throwable t)
 		{
-			GameLog.update(t.toString(),1);
+			GameLog.update("EntityManager: "+t.toString(),1);
 		}
 	}
 
@@ -189,7 +189,7 @@ public class EntityManager
 				if(initiator.getInventory().takeOneItemFromAllInventory(BuildingsDataSheet.findById(ID).resToBuild[0],1))
 					return new Buildable(ID,initiator.getTeam(),gameManager);
 				else
-					GameLog.update("no resources",0);
+					GameLog.update("EntityManager: no resources",0);
 				
 		return null;
 	}
@@ -197,6 +197,6 @@ public class EntityManager
 	public void reload()
     {
         reloadFlag=true;
-		GameLog.update("EntityManager: reload call",2);
+		GameLog.update("EntityManager: reload call",0);
     }
 }

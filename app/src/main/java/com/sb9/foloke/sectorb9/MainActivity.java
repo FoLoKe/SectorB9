@@ -82,10 +82,10 @@ public class MainActivity extends Activity {
 		}
 
         setContentView(R.layout.main_menu);
+		GameLog.delete();
+		GameLog.update(" ",0);
+		GameLog.update("Activity: Starting",0);
         gameManager=new GameManager(this);
-        GameLog.update(" ",0);
-
-        GameLog.update("-NEW START-",2);
 		prepareMenu();
 	}
 
@@ -95,6 +95,14 @@ public class MainActivity extends Activity {
 		// TODO: Implement this method
 		super.onResume();
 		gameManager.resume();
+	}
+
+	@Override
+	protected void onPause()
+	{
+		// TODO: Implement this method
+		super.onPause();
+		gameManager.shutdown();
 	}
 	
 	public void prepareMenu()
@@ -130,13 +138,13 @@ public class MainActivity extends Activity {
 					continueGame();
 				}
 			});
-		GameLog.update("menu created",0);
+		GameLog.update("Activity: menu created",0);
 
 	}
 	
 	private void makeOnNewGameDialog()
 	{
-		GameLog.update("preparing new game alertDialog",0);
+		GameLog.update("Activity: preparing new game alert Dialog",0);
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		
 		LinearLayout LL=new LinearLayout(this);
@@ -155,14 +163,14 @@ public class MainActivity extends Activity {
 
 		builder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int id) {
-					GameLog.update("preparing new game dialog ok option",0);
+					
 					prepareNewGame(input.getText().toString(),true);
                     
 				}
 			});
 		builder.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int id) {
-					GameLog.update("preparing new game dialog cancel option",0);
+					
 					
 				}
 			});
@@ -174,7 +182,7 @@ public class MainActivity extends Activity {
 		
 		dialog.setView(LL);
 		dialog.show();
-		GameLog.update("preparing new game dialog successful",0);
+		GameLog.update("Activity: preparing new game dialog successful",0);
 	}
 	
 	private void prepareNewGame(String s,boolean state)
@@ -215,7 +223,7 @@ public class MainActivity extends Activity {
 				}
 			}
 
-			GameLog.update("Activity: creating folder",2);
+			GameLog.update("Activity: creating folder",0);
 			File saveDir=new File(myDir,s);
 
 			if(saveDir.mkdir())
@@ -231,9 +239,9 @@ public class MainActivity extends Activity {
 
 		////ONLY PLACE TO START GAME THREAD
 		
-		GameLog.update("Activity: preparing GameManager",2);
+		GameLog.update("Activity: preparing GameManager",0);
         gameManager.init(state,s);
-		GameLog.update("GameManager: preparing UIs",0);
+		GameLog.update("Activity: preparing UIs",0);
         TableLayout playerTable=findViewById(R.id.PlayerTableLayout);
         TableLayout objectTable=findViewById(R.id.ObjectTableLayout);
 
@@ -272,8 +280,8 @@ public class MainActivity extends Activity {
 
 
 
-		GameLog.update("preparing new game successful",0);
-		}catch(Exception e){GameLog.update(e.toString(),1);}
+		GameLog.update("Activity: preparing new game successful",0);
+		}catch(Exception e){GameLog.update("Activity: "+e.toString(),1);}
 	}
 	
 	public void prepareNewLoad(String s)
@@ -282,12 +290,12 @@ public class MainActivity extends Activity {
 		///ProgressDialog dialog = ProgressDialog.show(this,"loading","Loading. Please wait...");
 		///dialog.show();
 
-		GameLog.update("preparing load for save - "+s,0);
+		GameLog.update("Activity: preparing load for save - "+s,0);
 		
 		prepareNewGame(s,false);
 
 
-		GameLog.update("Successfully loaded: "+s,0);
+		GameLog.update("Activity: successfully loaded: "+s,0);
 		//dialog.hide();
 	}
     
@@ -300,13 +308,13 @@ public class MainActivity extends Activity {
 	
 	private void continueGame()
 	{
-		GameLog.update("preparing for continue" ,0);
+		GameLog.update("Activity: preparing for continue" ,0);
 		String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString()+File.separator+"sb9";
 		File myDir = new File(root);
 		if (!myDir.exists()) {
             if (!myDir.mkdir())
             {
-                GameLog.update("Can't create directory:" + myDir.getName(), 1);
+                GameLog.update("Activity: can't create directory:" + myDir.getName(), 1);
                 return;
             }
 		}
@@ -318,7 +326,7 @@ public class MainActivity extends Activity {
 			
 			for(File f:files)
 			{
-				GameLog.update("checking folder: "+f.getName(),2); 
+				GameLog.update("Activity: checking folder: "+f.getName(),0); 
 				if (f.isDirectory())
 				{
 					if(target!=null)
@@ -336,12 +344,12 @@ public class MainActivity extends Activity {
 	
 		if(target==null)
 		{
-			GameLog.update("no saves",2);
+			GameLog.update("Activity: no saves",0);
 			return;
 		}
-		GameLog.update("file selected to continue: "+target.getName(),2);
+		GameLog.update("Activity: file selected to continue: "+target.getName(),0);
 		prepareNewLoad(target.getName());
-		GameLog.update("continue successful",0);
+		GameLog.update("Activity: continue successful",0);
 	}
 	
 	public ViewFlipper getViewFlipper()
@@ -352,8 +360,8 @@ public class MainActivity extends Activity {
     public void toActionFast()
     {
        gameManager.setPause(false);
-        findViewById(R.id.Menu).setVisibility(View.VISIBLE);
-        VF.setDisplayedChild(VF.indexOfChild(findViewById(R.id.actionUI)));
+       findViewById(R.id.Menu).setVisibility(View.VISIBLE);
+       VF.setDisplayedChild(VF.indexOfChild(findViewById(R.id.actionUI)));
     }
 	
 	private boolean hasPermissions(){
@@ -378,7 +386,7 @@ public class MainActivity extends Activity {
 	
 	public Bitmap getBitmapFromView(View view) {
 		
-		GameLog.update("taking screen shoot",0);
+		GameLog.update("Activity: taking screen shoot",0);
         gameManager.getGamePanel().setDrawingCacheEnabled(true);
         gameManager.getGamePanel().buildDrawingCache(true);
 		final Bitmap bitmap = Bitmap.createBitmap( view.getDrawingCache() );
@@ -387,7 +395,7 @@ public class MainActivity extends Activity {
         gameManager.getGamePanel().render(c);
         gameManager.getGamePanel().setDrawingCacheEnabled(false);
         gameManager.getGamePanel().destroyDrawingCache();
-		GameLog.update("screen shoot created",0);
+		GameLog.update("Activity: screen shoot created",0);
 		
 		
 		return bitmap;

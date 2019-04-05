@@ -169,18 +169,18 @@ public class LoadGameUI
 									new File(save, children[i]).delete();
 								}
 							if(save.delete())
-									GameLog.update(saveName+" deleted",0);
+									GameLog.update("Load game UI: "+saveName+" deleted",0);
 							}
 							catch(Throwable t)
 							{
-								GameLog.update("ERROR: write error"+t,1);
+								GameLog.update("Load game UI: write error"+t,1);
 							}
 						}
 							else
-							GameLog.update("ERROR: save did not exist",1);
+							GameLog.update("Load game UI: save did not exist",1);
 					}
 					else
-						GameLog.update("ERROR: dir not exist or name wrong",1);
+						GameLog.update("Load game UI: dir not exist or name wrong",1);
 					LoadGameUI.init(MA);
 				}
 			});

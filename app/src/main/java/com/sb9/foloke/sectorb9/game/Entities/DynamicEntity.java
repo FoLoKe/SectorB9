@@ -67,7 +67,7 @@ public abstract class DynamicEntity extends Entity {
 				{
 					dx=dy=0;
 				}
-				//GameLog.update(dx+" "+dy,1);
+			
 			}
 		if(speed>maxSpeed)
 		{

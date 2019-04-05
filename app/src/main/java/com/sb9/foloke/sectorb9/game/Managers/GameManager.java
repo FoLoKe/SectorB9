@@ -134,7 +134,7 @@ public class GameManager {
         GameLog.update("GameManager: preparing canvas",0);
         
 		//ONLY UI view OBJECT
-		GameLog.update("Activity: content set",2);
+		GameLog.update("GameManager: content set",0);
 		MA.setContentView(R.layout.main_activity);
         this.gamePanel=MA.findViewById(R.id.Game);
 
@@ -143,7 +143,7 @@ public class GameManager {
         if(state)
         {
             ///new game state
-            GameLog.update("creating saves",2);
+            GameLog.update("GameManager: creating saves",0);
             createSaveFile();
             WorldGenerator.makeRandomSector(getWorldManager());
         }
@@ -207,6 +207,7 @@ public class GameManager {
 					break;
 				}
 		}
+		if(MA!=null)
 		ActionUI.update(exist);
 		
 		if(collect)
@@ -227,10 +228,10 @@ public class GameManager {
 			
             if (collected)
             {         
-                GameLog.update("items collected",0);     
+                GameLog.update("GameManager: items collected",0);     
             }
             else
-                GameLog.update("inventory full" ,0);
+                GameLog.update("GameManager: inventory full" ,0);
     	}
 	
         collect=false;
@@ -242,7 +243,9 @@ public class GameManager {
     }
 
     public void render(Canvas canvas)
-    {
+    {	
+	if(canvas==null)
+			return;
 		gamePanel.render(canvas);
         worldManager.renderWorld(canvas);
         player.render(canvas);
@@ -305,7 +308,7 @@ public class GameManager {
    
 
     public void updateInventory(final Entity caller)
-    {
+    {GameLog.update("GameManager: update Inventory UI",0);
         MA.runOnUiThread(new Runnable(){
             public void run()
             {
@@ -343,6 +346,7 @@ public class GameManager {
 
     public void initAssemblerUI(final Assembler assembler)
     {
+		GameLog.update("GameManager: init. Assembler UI",0);
         MA.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -452,7 +456,7 @@ public class GameManager {
                 File meta = new File(saveFolder, "meta.txt");
                 if (meta.exists())
                     if (!meta.delete()) {
-                        GameLog.update("meta deleting error", 1);
+                        GameLog.update("GameManager: meta deleting error", 1);
                         return;
                     }
                 FileOutputStream mots = new FileOutputStream(meta);
@@ -491,7 +495,7 @@ public class GameManager {
                 //TO Read meta
                 File meta = new File(saveFolder, "meta.txt");
                 if (!meta.exists()) {
-                    GameLog.update("meta did not exist", 1);
+                    GameLog.update("GameManger: meta did not exist", 1);
                     return;
                 }
 
@@ -521,7 +525,7 @@ public class GameManager {
 	{
 		try
 		{
-			GameLog.update("starting game load",2);
+			GameLog.update("GameManager: starting game load",0);
 
 			getEntityManager().reload();
 			getEntityManager().addObject(player);
@@ -558,7 +562,7 @@ public class GameManager {
                                 if(!Boolean.parseBoolean(words[4]))
                                     return false;
 								MapManager.Sector sector=mapManager.getSector(worldManager.getSector().x,worldManager.getSector().y);
-								GameLog.update(sector.x+" "+sector.y+"loading objects",2);
+								GameLog.update("GameManger: "+sector.x+" "+sector.y+"loading objects",0);
 								String toLoadEntity="";
 
 								for(String object:words)
@@ -589,22 +593,22 @@ public class GameManager {
 					isr.close();
 					reader.close();
                     getPlayer().initShip();
-					GameLog.update("Successfully loaded game",0);
+					GameLog.update("GameMnager: successfully loaded game",0);
 					return true;
 				}
 				else
 				{
-					GameLog.update("save file did not exist",1);
+					GameLog.update("GameManger: save file did not exist",1);
 				}
 			}
 			else
 			{
-				GameLog.update("save folder did not exist",2);
+				GameLog.update("GameManager: save folder did not exist",1);
 			}
 		}
 		catch(Exception e)
 		{
-			GameLog.update(e.toString(),1);
+			GameLog.update("GameManager: "+e.toString(),1);
 		}
 		return false;
 	}
@@ -613,7 +617,7 @@ public class GameManager {
 	{
 		try
 		{
-			GameLog.update("starting game save",2);
+			GameLog.update("GameManager: starting game save",0);
 			File saveFolder=checkSaveFolder();
 			if(saveFolder!=null)
 			{
@@ -679,29 +683,29 @@ public class GameManager {
 
 					if(!mapFile.delete())
 					{
-                        GameLog.update("map deleting error",1);
+                        GameLog.update("GameManager: map deleting error",1);
                         return;
                     }
 
 					if(!tempMapFile.renameTo(mapFile))
                     {
-                        GameLog.update("temp map renaming error",1);
+                        GameLog.update("GameManager: temp map renaming error",1);
                         return;
                     }
 
-					GameLog.update("Successfully saved game",0);
+					GameLog.update("GameManger: successfully saved game",0);
 				}
 				else
 				{
-					GameLog.update("save file did not exist",1);
+					GameLog.update("GameManager: save file did not exist",1);
 				}
 			}
 			else
-			GameLog.update("save folder did not exist",2);
+			GameLog.update("GameManager: save folder did not exist",0);
 		}
 		catch(Exception e)
 		{
-			GameLog.update(e.toString(),1);
+			GameLog.update("GameManager: "+e.toString(),1);
 		}
 	}
 	
@@ -709,7 +713,7 @@ public class GameManager {
 	{
 		try
 		{
-			GameLog.update("creating files",2);
+			GameLog.update("GameManger: creating files",0);
 			File saveFolder=checkSaveFolder();
 			if(saveFolder!=null)
 			{
@@ -729,19 +733,19 @@ public class GameManager {
 					writer.close();
 					osw.close();
 					out.close();
-					GameLog.update("Successfully created saves for map",0);
+					GameLog.update("GameMnager: successfully created saves for map",0);
 				}
 				else
 				{
-					GameLog.update(mapFile.getName()+" already exists",1);
+					GameLog.update("GameMnager: "+mapFile.getName()+" already exists",1);
 					return;
 				}
 
-				GameLog.update("files created",2);
+				GameLog.update("GameManager: files created",0);
 			}
 			else
 			{
-				GameLog.update("permissions not granted or folder has been deleted",1);
+				GameLog.update("GameManager: permissions not granted or folder has been deleted",1);
 			}
 		}
 		catch(Exception e)
@@ -758,7 +762,7 @@ public class GameManager {
 
 		if(!documentsFolder.exists())
 		{
-			GameLog.update("no DOCUMENTS WRITE PERMISSION",1);
+			GameLog.update("GameManager: no DOCUMENTS WRITE PERMISSION",1);
 			return null;
 		}
 
@@ -767,13 +771,13 @@ public class GameManager {
 
 		if(!gameFolder.exists())
 		{
-			GameLog.update("no inside DOCUMENTS WRITE PERMISSION",1);
+			GameLog.update("GameManager: no inside DOCUMENTS WRITE PERMISSION",1);
 			return null;
 		}
 		File saveFolder=new File(gameFolderPath,getSaveName());
 		if(!saveFolder.exists())
 		{
-			GameLog.update("no inside DOCUMENTS WRITE PERMISSION",1);
+			GameLog.update("GameManager: no inside DOCUMENTS WRITE PERMISSION",1);
 			return null;
 		}
 	    return saveFolder;
@@ -786,24 +790,29 @@ public class GameManager {
 	
 	public void shutdown()
 	{
+		GameLog.update("GameManager: shutdown",0);
 		boolean retry = true;
         while(retry)
         {
             try{mainThread.setRunning(false);
                 mainThread.join();
                 retry=false;
+				//mainThread.stop();
             }catch(InterruptedException e)
-            {GameLog.update(""+e,1);}
+            {GameLog.update("GameManager: "+e.toString(),1);}
         }
+		GameLog.update("GameManager: thread stopped",0);
 	}
 	public void resume()
 	{
+		GameLog.update("GameManager: resume",0);
 		if(mainThread==null)
 			return;
-		mainThread= new MainThread(this);
+		//mainThread= new MainThread(this);
 		mainThread.setRunning(true);
         mainThread.start();
         setPause(false);
+		GameLog.update("GameManager: thread in progress",0);
 	}
 	
 	public void checkJoystick(boolean touched,PointF screenPoint)
