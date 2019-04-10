@@ -127,20 +127,17 @@ public abstract class Entity {
         setCollisionObject();
     }
 
-	public void save(BufferedWriter writer)
+	public String getSaveString()
 	{
-		try
-        {
-			String s=invSave();
-		    writer.write("["+ID+" "+name+" "+x+" "+y+" "+rotation+" "+HP+" "+TEAM+" "+s+"] ");
-		}
-		catch(Throwable t)
-		{
-			GameLog.update("Entity: "+t.toString(),1);
-		}
+			String s=getInvSaveString();
+		    return "["+ID+" "+name+" "+x+" "+y+" "+rotation+" "+HP+" "+SH+" "+TEAM+" "+s+"] ";
 	}
 
-	public void load(String[] words)
+	//**********SYNTAX***********
+	//WORDS: ID NAME X Y ROTATION 
+	//       HP SH TEAM INVENTORY
+	//***************************
+	public void loadFromStrings(String[] words)
 	{
 		try
 		{		
@@ -149,19 +146,10 @@ public abstract class Entity {
 			y=Float.parseFloat(words[3]);
 			rotation= Float.parseFloat(words[4]);
 			HP=Float.parseFloat(words[5]);
-			TEAM=Integer.parseInt(words[6]);
-			String[] invWords;
-			if((invWords = words[7].split(":")).length>0)
-			{
-				for(String s: invWords)
-				{
-					if(s.length()>0)
-					{
-						String elemWords[]=s.split("=");
-						inventory.addNewItem(Integer.parseInt(elemWords[0]),Integer.parseInt(elemWords[1]));
-					}
-				}
-			}
+			SH=Float.parseFloat(words[6]);
+			TEAM=Integer.parseInt(words[7]);
+			LoadInvFromString(words[8]);
+			
 			uIsh.set(SH/maxSH*100);
 			uIhp.set(HP/maxHP*100);
 			setCollisionObject();
@@ -171,8 +159,29 @@ public abstract class Entity {
             GameLog.update("Entity: "+t.toString(),1);
 		}
 	}
-
-	private String invSave()
+	
+	
+	public void LoadInvFromString(String saveString)
+	{
+		inventory.clear();
+		String[] invWords;
+		if((invWords = saveString.split(":")).length>0)
+		{
+			for(String s: invWords)
+			{
+				if(s.length()>0)
+				{
+					String elemWords[]=s.split("=");
+					inventory.addNewItem(Integer.parseInt(elemWords[0]),Integer.parseInt(elemWords[1]));
+				}
+			}
+		}
+	}
+	
+	//*************SYNTAX***************
+	// :(FIRST)ITEM ID=ITEM COUNT:(NEXT)
+	//**********************************
+	public String getInvSaveString()
 	{
 		String s=":";
 		for (Inventory.InventoryItem i: inventory.getArray())
@@ -405,4 +414,12 @@ public abstract class Entity {
     {
         return SH;
     }
+	public void setHP(float HP)
+	{
+		this.HP=HP;
+	}
+	public void setSH(float SH)
+	{
+		this.SH=SH;
+	}
 }

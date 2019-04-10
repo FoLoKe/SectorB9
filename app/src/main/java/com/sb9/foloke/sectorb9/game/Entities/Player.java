@@ -15,6 +15,7 @@ import com.sb9.foloke.sectorb9.game.UI.ProgressBarUI;
 import com.sb9.foloke.sectorb9.game.Funtions.*;
 import com.sb9.foloke.sectorb9.game.Entities.Ships.*;
 import com.sb9.foloke.sectorb9.game.UI.*;
+import com.sb9.foloke.sectorb9.game.Entities.Buildings.*;
 
 public class Player extends DynamicEntity
 {
@@ -134,21 +135,42 @@ public class Player extends DynamicEntity
 		ship.init(this);
 	}
 
-    public void respawn()
+    public void respawn(SpaceDock sd)
 	{
-		x=90;y=90;
+		x=sd.getX();
+		y=sd.getY();
+		//x=90;y=90;
 		gameManager.getGamePanel().pointOfTouch=getWorldLocation();
 		TEAM=1;
-		this.ship=new ShipMk3(this);
+		this.ship=new ShipMk1(this);
+		
         this.dx=this.dy=0;
         this.movable=false;
 		this.renderable=true;
 		active=true;
 		
-		this.inventoryMaxCapacity=10;
-		for(int i=0;i<inventory.getHeight();i++)
-			for(int j=0;j<inventory.getWidth();j++)
-				inventory.addNewItem(i*inventory.getWidth()+j,i*inventory.getWidth()+j);
+		
+
+		ShipUI.setUI(this, gameManager.getMainActivity());
+		initShip();
+		HP=100;
+	}
+	
+	public void forceRespawn()
+	{
+		x=90;
+		y=90;
+		//x=90;y=90;
+		gameManager.getGamePanel().pointOfTouch=getWorldLocation();
+		TEAM=1;
+		this.ship=new ShipMk1(this);
+
+        this.dx=this.dy=0;
+        this.movable=false;
+		this.renderable=true;
+		active=true;
+
+
 
 		ShipUI.setUI(this, gameManager.getMainActivity());
 		initShip();

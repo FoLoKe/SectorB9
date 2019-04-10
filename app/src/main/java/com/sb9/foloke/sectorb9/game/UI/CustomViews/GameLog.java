@@ -17,7 +17,6 @@ public class GameLog extends LinearLayout
 	
 	/*
 	TODO:
-	-TEXTVIEW
 	-INPUTLINE VITH ENTER BUTTON
 	
 	*/

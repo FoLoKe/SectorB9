@@ -42,7 +42,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
     private float canvasH,canvasW;
     public PointF pointOfTouch;
     public PointF screenPointOfTouch;
-	private float worldSize=3000;
+	private float worldSize=3000;//3km
 	public Text textFPS;
 	public StaticEntity pressedObject;
 	private Paint debugPaint=new Paint();
@@ -135,7 +135,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 		
     }
 
-    public void render(Canvas canvas)
+    public void preRender(Canvas canvas)
     {
 		
 			
@@ -160,16 +160,17 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
             pressedObject.drawDebugCollision(canvas);
         }
 
-		canvas.drawRect(0,0,worldSize,worldSize,borderPaint);
-		
-        
-
-        //UI
-        
-
-		
 		
     }
+	
+	public void postRender(Canvas canvas)
+	{
+		cursor.render(canvas);
+		canvas.drawRect(0,0,worldSize,worldSize,borderPaint);
+		canvas.restore();
+	}
+	
+	
 	public void drawWorldBorder()
 	{
 		

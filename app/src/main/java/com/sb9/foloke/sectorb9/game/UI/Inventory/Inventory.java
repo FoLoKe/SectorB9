@@ -42,7 +42,15 @@ public class Inventory
 		public int getCount(){return count;}
 		public void setID(int ID){this.ID=ID;}
 	}
-
+	
+	public void clear()
+	{
+		for(InventoryItem invI:items)
+		{
+			invI.set(0,0);
+		}
+	}
+	
 	public Inventory copy(Entity caller)
     {
         Inventory inv=new Inventory(caller,this.height,this.width);

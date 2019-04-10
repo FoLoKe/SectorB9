@@ -64,10 +64,11 @@ public class EntityManager
 	    
 	   Iterator<Entity> it=entityArray.iterator();
 
-
+		
 		while(it.hasNext())
 		{
 			Entity e =  it.next();
+			
 			e.tick();
 			if(e.toRemove)
 			{
@@ -87,11 +88,16 @@ public class EntityManager
 
 	public void save(BufferedWriter writer)
 	{
-		for(Entity e:entityArray)
+		try
 		{
-			if(!(e instanceof Player))
-			e.save(writer);
+			for (Entity e:entityArray)
+			{
+				if (!(e instanceof Player))
+					writer.write(e.getSaveString());
+			}
 		}
+		catch (IOException e)
+		{GameLog.update(e.toString(),1);}
 	}
 
 	public void load(BufferedReader reader)
@@ -107,7 +113,7 @@ public class EntityManager
 				String[] words = s.split("\\s"); 
 				int tID=Integer.parseInt(words[0]);
 				Entity e=createObject(tID);
-				e.load(words);
+				e.loadFromStrings(words);
 				addObject(e);
 			}
 		}
@@ -169,9 +175,14 @@ public class EntityManager
             }
 			case 10:
 			{
-				e=new EnemyShip(0,0,0,gameManager);
+				e=new ControlledShip(0,0,0,gameManager);
 				break;
 			}
+			case 12:
+				{
+					e=new SpaceDock(0,0,0,gameManager);
+					break;
+				}
 			default:
 				{
 					e=new NullObject( gameManager);
@@ -199,4 +210,20 @@ public class EntityManager
         reloadFlag=true;
 		GameLog.update("EntityManager: reload call",0);
     }
+	
+	public Entity findRespawnPoint(int Team)
+	{
+		Iterator<Entity> it=entityArray.iterator();
+
+
+		while(it.hasNext())
+		{
+			Entity e =  it.next();
+		
+			if(e instanceof SpaceDock)
+				if(e.getTeam()==Team)
+					return e;
+		}
+		return null;
+	}
 }

@@ -129,6 +129,22 @@ public class MapUI
 								tile.setBackgroundColor(Color.BLACK);
 							if(sector.explored)
 								tile.setBackgroundColor(Color.GREEN);
+								if(MA.getGameManager().getMapManager().getSector(i,j).discovered)
+							switch(MA.getGameManager().getMapManager().getSector(i,j).type)
+							{
+								case EMPTY:
+									tile.setBackgroundColor(Color.BLUE);
+									break;
+								case STATION:
+									tile.setBackgroundColor(Color.RED);
+									break;
+								case ASTEROID_CLUSTER:
+									tile.setBackgroundColor(Color.YELLOW);
+									break;
+								case ASTEROID_BELT:
+									tile.setBackgroundColor(Color.MAGENTA);
+									break;
+							}
 							}
 						tile.setOnClickListener(new OnClickListener(){
 							@Override

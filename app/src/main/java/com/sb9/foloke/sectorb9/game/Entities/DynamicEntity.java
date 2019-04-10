@@ -95,13 +95,25 @@ public abstract class DynamicEntity extends Entity {
         y += dy;
 		if(inBounds) {
             if (x < 0)
+			{
                 x = 0;
+				dx=0;
+			}
             if (y < 0)
+			{
+				dy=0;
                 y = 0;
+			}
             if (x > gameManager.getGamePanel().getWorldSize())
+			{
+				dx=0;
                 x = gameManager.getGamePanel().getWorldSize();
+			}
             if (y > gameManager.getGamePanel().getWorldSize())
+			{
+				dy=0;
                 y = gameManager.getGamePanel().getWorldSize();
+			}
         }
 		calculateMovement();
 		

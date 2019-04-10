@@ -61,6 +61,7 @@ public class BuildingsDataSheet
 		objects.add(new BuildingObjectInfo("droppedItem"			,9	,ObjectsAsset.asteroidDust_1			,null							,true	,false	,1		,true			,false		,false		,new int[]{}	,new int[]{}));
 		objects.add(new BuildingObjectInfo("enemy"					,10	,ShipAsset.player_mk1					,null							,false	,false	,0		,false			,true		,true		,new int[]{12}	,new int[]{1}));
 		objects.add(new BuildingObjectInfo("buildable"				,11	,ObjectsAsset.asteroidDust_2			,null							,false	,false	,0		,false			,true		,false		,new int[]{}	,new int[]{}));
+		objects.add(new BuildingObjectInfo("basicSpaceDock"			,12	,ObjectsAsset.smallShipDock				,null							,true	,true	,8		,true			,true		,true		,new int[]{11}	,new int[]{10}));
 		
 	}
 

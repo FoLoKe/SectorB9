@@ -41,7 +41,7 @@ public class WorldManager
 		bitmapOptions.inScaled=false;
 		background=Bitmap.createBitmap(BitmapFactory.decodeResource(MA.getResources(),R.drawable.galactic_outflow,bitmapOptions));
 
-		entityManager.addObject(gameManager.getPlayer());
+		//entityManager.addObject(gameManager.getPlayer());
 		
 		}
 	
@@ -63,7 +63,7 @@ public class WorldManager
 		entityManager.addObject(new Crusher(700,900,rand.nextInt(180), gameManager));
 		entityManager.addObject(new SmallCargoContainer(600,900,rand.nextInt(180), gameManager));
         entityManager.addObject(gameManager.getPlayer());
-		entityManager.addObject(new EnemyShip(700,900,0,gameManager));
+		entityManager.addObject(new ControlledShip(700,900,0,gameManager));
 		for (int i=0;i<50;i++)
 			entityManager.addObject(new Asteroid(50*rand.nextInt(50)+25*rand.nextInt(20),100*rand.nextInt(20)+20*rand.nextInt(50),rand.nextInt(180), gameManager,rand.nextInt(10)));
 	}
@@ -163,9 +163,10 @@ public class WorldManager
 		sectorY=y;
         if(!gameManager.loadSector(x,y))
         {
-           WorldGenerator.makeRandomSector(this);
+           WorldGenerator.makeSector(gameManager,gameManager.getMapManager().getSector(x,y));
 			gameManager.saveGame();
         }
+		gameManager.getMapManager().getSector(x,y).explored=true;
     }
 	
 	void spawnDestroyed(Entity e)

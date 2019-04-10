@@ -392,7 +392,7 @@ public class MainActivity extends Activity {
 		final Bitmap bitmap = Bitmap.createBitmap( view.getDrawingCache() );
 		Canvas c=new Canvas(bitmap);
         gameManager.getGamePanel().tick();
-        gameManager.getGamePanel().render(c);
+        gameManager.getGamePanel().preRender(c);
         gameManager.getGamePanel().setDrawingCacheEnabled(false);
         gameManager.getGamePanel().destroyDrawingCache();
 		GameLog.update("Activity: screen shoot created",0);

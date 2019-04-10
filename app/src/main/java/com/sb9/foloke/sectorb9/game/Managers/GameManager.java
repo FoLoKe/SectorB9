@@ -47,6 +47,7 @@ import android.widget.ViewFlipper;
 import java.io.*;
 import com.sb9.foloke.sectorb9.*;
 import com.sb9.foloke.sectorb9.game.Funtions.*;
+import com.sb9.foloke.sectorb9.game.Entities.Buildings.*;
 
 
 public class GameManager {
@@ -246,7 +247,7 @@ public class GameManager {
     {	
 		if(canvas==null)
 			return;
-		gamePanel.render(canvas);
+		gamePanel.preRender(canvas);
         worldManager.renderWorld(canvas);
         player.render(canvas);
 		Paint debugPaint= new Paint();
@@ -258,7 +259,9 @@ public class GameManager {
 		
 		if(warpReady)
        	canvas.drawCircle(warpingLocation.x,warpingLocation.y,200,debugPaint);
-		canvas.restore();
+		
+		gamePanel.postRender(canvas);
+		
 		gamePanel.drawPlayerMovement(canvas);
 		gamePanel.drawRadioPoints(canvas);
 		
@@ -416,7 +419,22 @@ public class GameManager {
 	public void onPlayerDestroyed()
 	{
 		destroyedTimer.setTimer(5);
-		player.respawn();
+		SpaceDock sd=(SpaceDock)worldManager.getEntityManager().findRespawnPoint(player.getTeam());
+		if(sd!=null)
+		player.respawn(sd);
+		else
+		{
+			GameLog.update("respawning in homeworld",2);
+			loadSector(1,1);
+			sd=(SpaceDock)worldManager.getEntityManager().findRespawnPoint(player.getTeam());
+			if(sd!=null)
+			player.respawn(sd);
+			else
+			{
+				GameLog.update("no respawn point",2);
+				player.forceRespawn();
+			}
+		}
 		gamePanel.getCamera().setPointOfLook(player);
 		
 	}
@@ -478,7 +496,10 @@ public class GameManager {
                 metaWriter.newLine();
                 metaWriter.write("" + getPlayer().getCenterY());
                 metaWriter.newLine();
-
+				metaWriter.write("" + getPlayer().getWorldRotation());
+                metaWriter.newLine();
+				metaWriter.write("" + getPlayer().getInvSaveString());
+				metaWriter.newLine();
                 metaWriter.close();
                 mos.close();
                 mots.close();
@@ -508,14 +529,19 @@ public class GameManager {
 
                 int x = Integer.parseInt(metareader.readLine());
                 int y = Integer.parseInt(metareader.readLine());
-                metareader.readLine();
-                metareader.readLine();
-                worldManager.setSector(x, y);
+				worldManager.setSector(x, y);
+				
+                player.setHP(Float.parseFloat(metareader.readLine()));
+                player.setSH(Float.parseFloat(metareader.readLine()));
+                
                 player.setWorldLocation(new PointF(Float.parseFloat(metareader.readLine()),Float.parseFloat(metareader.readLine())));
+				player.setWorldRotation(Float.parseFloat(metareader.readLine()));
+				player.LoadInvFromString(metareader.readLine());
                 metareader.close();
                 mis.close();
                 mits.close();
                 //Meta readed
+				GameLog.update("GameManager: meta loaded",0);
             }
         }
         catch (Exception e)
@@ -537,7 +563,8 @@ public class GameManager {
             {
                 File mapFile = new File (saveFolder,"map.txt");
                 if (mapFile.exists ())
-                {
+                {GameLog.update("GameManager: starting load meta",0);
+					
 					loadMeta();
 					//TO read map
 					FileInputStream ins=new FileInputStream(mapFile);
@@ -547,6 +574,7 @@ public class GameManager {
 					String s;
 
 					//while there rows
+					GameLog.update("GameManager: reading lines for "+worldManager.getSector(),0);
 					while((s=reader.readLine())!=null)
 					{
 						//if new sector
@@ -556,12 +584,16 @@ public class GameManager {
 							s=s.replace("<","");
 							s=s.replace(">","");
 							words=s.split(" ");
-						
+							int sX=Integer.parseInt(words[1]);
+							int sY=Integer.parseInt(words[2]);
+							mapManager.getSector(sX,sY).discovered=Boolean.parseBoolean(words[3]);
+							mapManager.getSector(sX,sY).explored=Boolean.parseBoolean(words[4]);
 							//equals loading one?
 							if(Integer.parseInt(words[1])==worldManager.getSector().x &&
 							   Integer.parseInt(words[2])==worldManager.getSector().y)
 							{
 							//explored?
+								GameLog.update("GameManager: sector founded "+worldManager.getSector(),0);
                                 if(!Boolean.parseBoolean(words[4]))
                                     return false;
 								MapManager.Sector sector=mapManager.getSector(worldManager.getSector().x,worldManager.getSector().y);
@@ -583,7 +615,7 @@ public class GameManager {
 									
 										String[] entityParams=toLoadEntity.split(" ");
 										Entity createdEntity=getEntityManager().createObject(Integer.parseInt(entityParams[0]));
-										createdEntity.load(entityParams);
+										createdEntity.loadFromStrings(entityParams);
 										getEntityManager().addObject(createdEntity);
 
 									}
@@ -618,6 +650,7 @@ public class GameManager {
 	
 	public void saveGame()
 	{
+		shutdown();
 		try
 		{
 			GameLog.update("GameManager: starting game save",0);
@@ -710,6 +743,7 @@ public class GameManager {
 		{
 			GameLog.update("GameManager: "+e.toString(),1);
 		}
+		resume();
 	}
 	
 	private void createSaveFile()
