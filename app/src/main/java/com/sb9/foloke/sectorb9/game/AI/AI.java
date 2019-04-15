@@ -19,10 +19,12 @@ public abstract class AI {
 	//private PointF pickedRandomPoint;
 	protected PointF wayPoint=new PointF(0,0);
 	protected Entity enemy;
+	protected Paint p=new Paint();
 	
     public AI(ControlledShip child)
     {
         this.child=child;
+		p.setColor(Color.RED);
 		wayPoint=pickRandomPoint((int)child.getGameManager().getGamePanel().getWorldSize(),(int)child.getGameManager().getGamePanel().getWorldSize());
     }
 	
@@ -50,7 +52,14 @@ public abstract class AI {
 	protected void taskAddMovement(float acceleration)
 	{
 		child.addMovement(acceleration);
+		child.setMoveable(true);
 	}
+	protected void taskStop()
+	{
+		child.setMoveable(false);
+	}
+	
+	
 	
 	protected boolean isInAcceptableRadius(PointF p)
 	{
@@ -71,7 +80,7 @@ public abstract class AI {
 	{
 		if(!Options.drawDebugInfo.drawDebugInfo.getBoolean())
 			return;
-		Paint p=new Paint();
+		
 		
 		if(!isInAcceptableRadius(wayPoint))
 			p.setColor(Color.GREEN);

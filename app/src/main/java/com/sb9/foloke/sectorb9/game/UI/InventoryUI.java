@@ -115,15 +115,21 @@ public class InventoryUI
 		
 			int height=target.getInventory().getHeight();
 			int width=target.getInventory().getWidth();
+			int c=0;
+			int maxC=target.getInventory().getCapacity();
 			
 		for(int i=0;i<height;i++)
 		{
+			if(c>=maxC)
+				break;
 			final TableRow row=new TableRow(MA);
 			TableLayout.LayoutParams tableRowParams=new TableLayout.LayoutParams(TableLayout.LayoutParams.WRAP_CONTENT,TableLayout.LayoutParams.FILL_PARENT);
 			row.setLayoutParams(tableRowParams);
 			
 			for(int j=0;j<width;j++)
 			{
+				if(c<maxC)
+				{
 				final int x=j;
 				final int y=i;
 				final Inventory inventory=target.getInventory();
@@ -162,6 +168,8 @@ public class InventoryUI
 						
 					IFL.addView(sprite);
 					IFL.addView(itemCountText);
+					}
+					c++;
 				}
 			table.addView(row);
 			}

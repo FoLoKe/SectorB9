@@ -2,12 +2,14 @@ package com.sb9.foloke.sectorb9.game.UI.Inventory;
 import android.graphics.*;
 import java.util.*;
 import com.sb9.foloke.sectorb9.game.Entities.*;
+import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
 
 public class Inventory
 {
 	int height=0;
 	Entity parent;
 	int width=4;
+	int capacity=0;
 	ArrayList<InventoryItem> items=new ArrayList<InventoryItem>();
 	public static class InventoryItem
 	{
@@ -59,15 +61,26 @@ public class Inventory
         return inv;
     }
 
+	public int getCapacity()
+	{
+		return capacity;
+	}
+	
 	public Inventory(Entity parent,int height,int width)
 	{
 		this.parent=parent;
-		this.height=height;
-		this.width=width;
-		for(int i=0;i<height;i++)
-		for(int j=0;j<width;j++)
+		this.capacity=height;
+		this.height=(int)height/this.width+1;
+		if(this.height<1)
+			this.height=1;
+		//this.width=width;
+		int c=0;
+		for(int i=0;i<this.height;i++)
+		for(int j=0;j<this.width;j++)
 		{
+			if(c<capacity)
 			items.add(new InventoryItem(j,i,0,0));
+			c++;
 		}
 	}
 	public int getWidth(){return width;}
@@ -79,6 +92,7 @@ public class Inventory
 		{
 			if(i.ID==0)
 			{
+				GameLog.update("Inventory "+parent.toString()+": Added"+ID+" "+count,2);
 				i.ID=ID;
 				i.count=count;
 				return true;

@@ -1,7 +1,7 @@
 package com.sb9.foloke.sectorb9.game.Entities;
 import android.graphics.*;
 
-import com.sb9.foloke.sectorb9.game.DataSheets.BuildingsDataSheet;
+import com.sb9.foloke.sectorb9.game.DataSheets.ObjectsDataSheet;
 import com.sb9.foloke.sectorb9.game.Funtions.CustomCollisionObject;
 import com.sb9.foloke.sectorb9.game.Managers.*;
 import java.util.*;
@@ -21,7 +21,7 @@ public class Buildable extends StaticEntity
 		idOfObject=id;
 		uIhp.set(progress);
 		tteam=team;
-        collisionObject=new CustomCollisionObject(BuildingsDataSheet.findById(idOfObject).image.getWidth(),BuildingsDataSheet.findById(idOfObject).image.getHeight(),gameManager);
+        collisionObject=new CustomCollisionObject(ObjectsDataSheet.findById(idOfObject).image.getWidth(),ObjectsDataSheet.findById(idOfObject).image.getHeight(),gameManager);
         calculateCollisionObject();
 	}
 	@Override

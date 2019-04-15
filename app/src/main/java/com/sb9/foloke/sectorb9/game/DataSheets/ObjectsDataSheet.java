@@ -5,7 +5,7 @@ import android.graphics.*;
 import com.sb9.foloke.sectorb9.game.Assets.*;
 import com.sb9.foloke.sectorb9.*;
 
-public class BuildingsDataSheet
+public class ObjectsDataSheet
 {
     private static ArrayList<BuildingObjectInfo> objects = new ArrayList<>();
 
@@ -24,6 +24,7 @@ public class BuildingsDataSheet
 		public boolean interactableByDefault;
 		public boolean collidable;
 		public boolean buildable;
+		
 		BuildingObjectInfo(String name,int ID,Bitmap image,Bitmap[] animation,boolean opened,boolean enabled,int capacity,boolean interacable,boolean collidable,boolean buildable,int[] res,int[] count)
 		{
 			this.name=name;
@@ -59,7 +60,7 @@ public class BuildingsDataSheet
 		objects.add(new BuildingObjectInfo("lab_mk1"				,7	,ObjectsAsset.lab_mk1					,null							,true	,true	,10		,true			,true		,true		,new int[]{12}	,new int[]{1}));
 		objects.add(new BuildingObjectInfo("smallAsteroid"			,8	,ObjectsAsset.smallAsteroid				,null							,false	,false 	,1		,false			,true		,false		,new int[]{12}	,new int[]{1}));
 		objects.add(new BuildingObjectInfo("droppedItem"			,9	,ObjectsAsset.asteroidDust_1			,null							,true	,false	,1		,true			,false		,false		,new int[]{}	,new int[]{}));
-		objects.add(new BuildingObjectInfo("enemy"					,10	,ShipAsset.player_mk1					,null							,false	,false	,0		,false			,true		,true		,new int[]{12}	,new int[]{1}));
+		objects.add(new BuildingObjectInfo("ship"					,10	,ShipAsset.player_mk1					,null							,true	,true	,1		,true			,true		,true		,new int[]{12}	,new int[]{1}));
 		objects.add(new BuildingObjectInfo("buildable"				,11	,ObjectsAsset.asteroidDust_2			,null							,false	,false	,0		,false			,true		,false		,new int[]{}	,new int[]{}));
 		objects.add(new BuildingObjectInfo("basicSpaceDock"			,12	,ObjectsAsset.smallShipDock				,null							,true	,true	,8		,true			,true		,true		,new int[]{11}	,new int[]{10}));
 		

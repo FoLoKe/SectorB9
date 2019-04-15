@@ -2,33 +2,40 @@ package com.sb9.foloke.sectorb9.game.Funtions;
 import java.io.*;
 import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
 import android.os.*;
+import java.util.*;
 
 public enum Options
 {
-	drawDebugInfo("Draw debug info",typeOfElement.SWITCH,0,1,0),
-	drawParticles("Draw particles",typeOfElement.SWITCH,0,1,0),
-	debug2("debug",typeOfElement.SWITCH,0,1,0),
-	debug3("debug",typeOfElement.SWITCH,0,1,0),
-	debug4("debug",typeOfElement.SWITCH,0,1,0);
+	drawDebugInfo("Draw debug info",typeOfElement.SWITCH,0,1,0,null),
+	drawParticles("Draw particles",typeOfElement.SWITCH,0,1,0,null),
+	drawRadio("Radio options",typeOfElement.LIST,1,2,0,new ArrayList<String>(){{add("no");add("all");}}),
+	debug3("debug",typeOfElement.SWITCH,0,1,0,null),
+	debug4("debug",typeOfElement.SWITCH,0,1,0,null);
 	
-	public  enum typeOfElement{SWITCH,BAR,TEXT}
+	public  enum typeOfElement{SWITCH,BAR,TEXT,LIST}
 	private final String name;
 	private final typeOfElement type;
 	private int	value; // 1/0  for boolean
 	private final int max;
 	private final int min;
+	private ArrayList<String> names=new ArrayList<>();
 	//private MainActivity MA;
 		
-	Options(String in_name,typeOfElement in_type,int in_value,int in_max, int in_min)
+	Options(String in_name,typeOfElement in_type,int in_value,int in_max, int in_min,ArrayList<String> names)
 	{
-		name=in_name;
-		type=in_type;
-		value=in_value;
-		max=in_max;
-		min=in_min;
-		
+		this.name=in_name;
+		this.type=in_type;
+		this.value=in_value;
+		this.max=in_max;
+		this.min=in_min;
+		this.names=names;
 	}
-
+	
+	public ArrayList<String> getStrings()
+	{
+		return names;
+	}
+	
 	public void setValue(int in_value)
 	{
 		if(in_value>=min&&in_value<=max)
@@ -48,6 +55,11 @@ public enum Options
 	public String getName()
 	{
 		return name;
+	}
+	
+	public int getMax()
+	{
+		return max;
 	}
 	
 	public static void save(BufferedWriter writer)

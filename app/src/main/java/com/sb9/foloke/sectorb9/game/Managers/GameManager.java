@@ -22,7 +22,7 @@ import com.sb9.foloke.sectorb9.game.Funtions.WorldGenerator;
 import com.sb9.foloke.sectorb9.game.UI.Inventory.InventoryExchangeInterface;
 import com.sb9.foloke.sectorb9.game.UI.ProgressBarUI;
 import com.sb9.foloke.sectorb9.game.UI.InventoryUI;
-import com.sb9.foloke.sectorb9.game.DataSheets.BuildingsDataSheet;
+import com.sb9.foloke.sectorb9.game.DataSheets.ObjectsDataSheet;
 import com.sb9.foloke.sectorb9.game.DataSheets.ItemsDataSheet;
 import com.sb9.foloke.sectorb9.game.Display.Camera;
 import com.sb9.foloke.sectorb9.game.Display.GamePanel;
@@ -106,7 +106,7 @@ public class GameManager {
         EffectsAsset.init(Bitmap.createBitmap(BitmapFactory.decodeResource(MA.getResources(),R.drawable.ships_sheet,bitmapOptions)));
 
         GameLog.update("GameManager: preparing datasheets",0);
-        BuildingsDataSheet.init(MA);
+        ObjectsDataSheet.init(MA);
         ItemsDataSheet.init(MA);
       
 
@@ -181,6 +181,8 @@ public class GameManager {
 		{
 			uIhp.set(player.getHp()/player.getMaxHP()*100);
 			uIsh.set(player.getSH()/player.getMaxSH()*100);
+			player.setMovable(joystick.getTouched());
+			
 			if(joystick.getTouched())
 			{
 				
@@ -263,6 +265,7 @@ public class GameManager {
 		gamePanel.postRender(canvas);
 		
 		gamePanel.drawPlayerMovement(canvas);
+		if(Options.drawRadio.getValue()==1)
 		gamePanel.drawRadioPoints(canvas);
 		
 		if(command==commandMoving) 
@@ -856,6 +859,6 @@ public class GameManager {
 	{
 		joystick.setTouched(touched,screenPoint);
 		//touched=touched;
-		player.setMovable(joystick.getTouched());
+		
 	}
 }

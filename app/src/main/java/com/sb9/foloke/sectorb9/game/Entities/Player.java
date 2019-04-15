@@ -16,6 +16,8 @@ import com.sb9.foloke.sectorb9.game.Funtions.*;
 import com.sb9.foloke.sectorb9.game.Entities.Ships.*;
 import com.sb9.foloke.sectorb9.game.UI.*;
 import com.sb9.foloke.sectorb9.game.Entities.Buildings.*;
+import com.sb9.foloke.sectorb9.game.UI.Inventory.*;
+import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
 
 public class Player extends DynamicEntity
 {
@@ -34,10 +36,13 @@ public class Player extends DynamicEntity
         this.movable=false;
 		this.renderable=true;
 		
-		this.inventoryMaxCapacity=10;
-		for(int i=0;i<inventory.getHeight();i++)
-			for(int j=0;j<inventory.getWidth();j++)
-				inventory.addNewItem(i*inventory.getWidth()+j,i*inventory.getWidth()+j);
+		this.inventoryMaxCapacity=18;
+		this.inventory=new Inventory(this,inventoryMaxCapacity,1);
+		for(int i=0;i<inventoryMaxCapacity;i++)
+		{
+			
+				inventory.addNewItem(i,20);
+		}
 		inventory.addToExistingOrNull(18,800);
 		ShipUI.setUI(this, gameManager.getMainActivity());
 		initShip();

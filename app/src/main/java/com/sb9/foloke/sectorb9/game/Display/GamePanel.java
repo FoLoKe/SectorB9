@@ -187,13 +187,13 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
         if(player.getSpeed()>0) 
 		{
             Path p = new Path();
-			float size=player.getSpeed()/100+0.5f;
+			float size=player.getSpeed()/250+0.5f;
             p.moveTo(32*size, -160*size - player.getSpeed() * 2);
             p.lineTo(0, -192*size - player.getSpeed() * 2);
             p.lineTo(-32*size, -160*size - player.getSpeed() * 2);
 
             Paint debugPaint2=new Paint();
-            debugPaint2.setColor(Color.CYAN);
+            debugPaint2.setColor(Color.parseColor("#ffff00"));
             Matrix m = new Matrix();
             m.postRotate((float)Math.toDegrees(Math.atan2(player.getDy(),player.getDx()))+90);
             m.postTranslate(canvasW / 2, canvasH / 2);
@@ -204,12 +204,13 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 	}
 	
 	public void drawRadioPoints(Canvas canvas)
-	{Player player=gameManager.getPlayer();
+	{
+		Player player=gameManager.getPlayer();
 		
 		for(Entity e:gameManager.getEntities())
 		{
-			if(e.getTeam()!=0)
-				if(e.getTeam()!=player.getTeam())
+			if(true)
+				if(!(e instanceof Player))
 				{
 					Path p = new Path();
 					float dist=distanceTo(player.getWorldLocation(),e.getWorldLocation());
@@ -222,8 +223,23 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
             		p.lineTo(-32*size, -64);
 
             		Paint debugPaint2=new Paint();
-            		debugPaint2.setColor(Color.RED);
+					switch(e.getTeam())
+					{
+						case 0:
+            				debugPaint2.setColor(Color.LTGRAY);
+							break;
+						case 1:
+            				debugPaint2.setColor(Color.GREEN);
+							break;
+						case 2:
+            				debugPaint2.setColor(Color.RED);
+							break;
+					}
 					debugPaint2.setStyle(Paint.Style.STROKE);
+					int saturation=(int)(dist/10);
+					if(saturation>255)
+						saturation=255;
+					debugPaint2.setAlpha(255-saturation);
 					debugPaint2.setStrokeWidth(5);
             		Matrix m = new Matrix();
 

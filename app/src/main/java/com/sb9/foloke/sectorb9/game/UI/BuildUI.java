@@ -7,7 +7,7 @@ import android.graphics.*;
 import android.graphics.drawable.*;
 
 import com.sb9.foloke.sectorb9.game.Assets.UIAsset;
-import com.sb9.foloke.sectorb9.game.DataSheets.BuildingsDataSheet;
+import com.sb9.foloke.sectorb9.game.DataSheets.ObjectsDataSheet;
 import com.sb9.foloke.sectorb9.game.Entities.*;
 import com.sb9.foloke.sectorb9.game.Assets.*;
 
@@ -37,9 +37,9 @@ public class BuildUI
 		BitmapFactory.Options options=new BitmapFactory.Options();
         options.inScaled=false;
 		table.setBackground(new BitmapDrawable(MA.getResources(),UIAsset.uiBgBlur));
-		for(int i = 1; i< BuildingsDataSheet.getLength(); i++)
+		for(int i = 1; i< ObjectsDataSheet.getLength(); i++)
 		{
-			if(!BuildingsDataSheet.findById(i).buildable)
+			if(!ObjectsDataSheet.findById(i).buildable)
 				continue;
 			TableRow row=new TableRow(MA);
 			ImageView sprite=new ImageView(MA);
@@ -54,7 +54,7 @@ public class BuildUI
 			ObjectID=i;
 				
 			BitmapDrawable bdrawable;
-			bdrawable = new BitmapDrawable(MA.getResources(),BuildingsDataSheet.findById(ObjectID).image);
+			bdrawable = new BitmapDrawable(MA.getResources(),ObjectsDataSheet.findById(ObjectID).image);
 
 			sprite.setImageDrawable(bdrawable);
 				
@@ -72,7 +72,7 @@ public class BuildUI
 					}
 					initInfo(MA);
 					prevPressed=v;
-					MA.getGameManager().getGamePanel().getCursor().setImage(BuildingsDataSheet.findById(ObjectID).image);
+					MA.getGameManager().getGamePanel().getCursor().setImage(ObjectsDataSheet.findById(ObjectID).image);
 				}
 			});
 
@@ -146,7 +146,7 @@ public class BuildUI
 		TL.setBackground(new BitmapDrawable(MA.getResources(),UIAsset.uiBgBlur));
 		TL.removeAllViews();
 		int i=0;
-		for(int id:BuildingsDataSheet.findById(ObjectID).resToBuild)
+		for(int id:ObjectsDataSheet.findById(ObjectID).resToBuild)
 		{
 			TableRow row=new TableRow(MA);
 			ImageView IV=new ImageView(MA);
@@ -166,7 +166,7 @@ public class BuildUI
 			IV.setImageDrawable(bdrawable);
 			row.addView(IV);
 			
-			TV.setText(ItemsDataSheet.findById(id).name+" "+BuildingsDataSheet.findById(ObjectID).countToBuild[i]+"/"+MA.getGameManager().getPlayer().getInventory().countItem(BuildingsDataSheet.findById(ObjectID).resToBuild[i]));
+			TV.setText(ItemsDataSheet.findById(id).name+" "+ObjectsDataSheet.findById(ObjectID).countToBuild[i]+"/"+MA.getGameManager().getPlayer().getInventory().countItem(ObjectsDataSheet.findById(ObjectID).resToBuild[i]));
 			row.addView(TV);
 			TL.addView(row);
 			i++;

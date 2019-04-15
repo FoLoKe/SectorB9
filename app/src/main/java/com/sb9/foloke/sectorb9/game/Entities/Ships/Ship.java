@@ -21,7 +21,7 @@ public class Ship
     protected float maxHP;
     protected float maxSH;
     protected int shieldSize=1;
-    protected float bacwardImpulse=1;
+    protected float backwardImpulse=1;
 	protected float mass=1;
     protected float frontImpulse=1;
 	private CustomCollisionObject collisonObject;
@@ -54,7 +54,7 @@ public class Ship
         holder.setMaxHP(maxHP);
         holder.setMaxSH(maxSH);
         holder.setShieldSize(shieldSize);
-        holder.setBackwardImpulse(bacwardImpulse);
+        holder.setBackwardImpulse(backwardImpulse);
         holder.setFrontImpulse(frontImpulse);
 		holder.setMass(mass);
     }
@@ -68,7 +68,7 @@ public class Ship
         canvas.save();
 		canvas.rotate(holder.getWorldRotation(),holder.getCenterX(),holder.getCenterY());
 		if(holder.getMoveable())
-		canvas.drawBitmap(engineImage,holder.getCenterX()-engineImage.getWidth()/2+pointOfengine.x,holder.getCenterY()-engineImage.getHeight()/2+pointOfengine.y-5+(holder.getAcceleration())*5,null);
+		canvas.drawBitmap(engineImage,holder.getCenterX()-engineImage.getWidth()/2+pointOfengine.x,holder.getCenterY()-engineImage.getHeight()/2+pointOfengine.y-5+(holder.getAcceleration()*2),null);
 		canvas.drawBitmap(shipImage,holder.getCenterX()-shipImage.getWidth()/2,holder.getCenterY()-shipImage.getHeight()/2,null);
 
 		canvas.restore();

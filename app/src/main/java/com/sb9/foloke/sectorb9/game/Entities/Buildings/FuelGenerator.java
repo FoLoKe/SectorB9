@@ -1,7 +1,7 @@
 package com.sb9.foloke.sectorb9.game.Entities.Buildings;
 import com.sb9.foloke.sectorb9.game.Assets.*;
 import com.sb9.foloke.sectorb9.game.Managers.GameManager;
-import com.sb9.foloke.sectorb9.game.DataSheets.BuildingsDataSheet;
+import com.sb9.foloke.sectorb9.game.DataSheets.ObjectsDataSheet;
 import com.sb9.foloke.sectorb9.game.Funtions.*;
 
 import android.graphics.*;
@@ -26,7 +26,7 @@ public class FuelGenerator extends Generator
 		
 		prodTimer=new Timer(0);
 		prgBar=new ProgressBarUI(this,50,8,-25,-20,UIAsset.stunBackground,UIAsset.stunLine,UIAsset.progressBarBorder,prodTimer.getTick());
-		fuelGeneratorAnim=new Animation(BuildingsDataSheet.findById(ID).animation,15);
+		fuelGeneratorAnim=new Animation(ObjectsDataSheet.findById(ID).animation,15);
 		
 		calculateConsumers();
 	}

@@ -13,8 +13,8 @@ public class ShipMk3 extends Ship
         maxHP=300;
         maxSH=150;
         shieldSize=2;
-        frontImpulse=0.06f;
-        bacwardImpulse=0.06f;
+        frontImpulse=0.07f;
+        backwardImpulse=0.07f;
 		mass=60.5f;
 		init(holder);
 	}

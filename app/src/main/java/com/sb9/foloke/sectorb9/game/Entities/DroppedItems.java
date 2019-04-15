@@ -1,6 +1,6 @@
 package com.sb9.foloke.sectorb9.game.Entities;
 import com.sb9.foloke.sectorb9.game.Managers.GameManager;
-import com.sb9.foloke.sectorb9.game.DataSheets.BuildingsDataSheet;
+import com.sb9.foloke.sectorb9.game.DataSheets.ObjectsDataSheet;
 
 import java.util.*;
 import android.graphics.*;

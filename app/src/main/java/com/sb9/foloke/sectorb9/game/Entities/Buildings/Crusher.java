@@ -1,6 +1,6 @@
 package com.sb9.foloke.sectorb9.game.Entities.Buildings;
 import com.sb9.foloke.sectorb9.game.Managers.GameManager;
-import com.sb9.foloke.sectorb9.game.DataSheets.BuildingsDataSheet;
+import com.sb9.foloke.sectorb9.game.DataSheets.ObjectsDataSheet;
 import com.sb9.foloke.sectorb9.game.DataSheets.ItemsDataSheet;
 import com.sb9.foloke.sectorb9.game.Entities.*;
 import android.graphics.*;
@@ -29,7 +29,7 @@ public class Crusher extends StaticEntity
 	public Crusher(float x, float y, float rotation, GameManager gameManager)
 	{
 		super(x,y,rotation, gameManager,ID);
-		crusherAnim=new Animation(BuildingsDataSheet.findById(ID).animation,15);
+		crusherAnim=new Animation(ObjectsDataSheet.findById(ID).animation,15);
 		this.inventoryMaxCapacity=3;
 		this.opened=true;
 		inProduction=new Inventory.InventoryItem(0,0,0,0);

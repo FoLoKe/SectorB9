@@ -9,6 +9,7 @@ import android.graphics.*;
 import com.sb9.foloke.sectorb9.game.Managers.GameManager;
 import com.sb9.foloke.sectorb9.game.Funtions.*;
 import java.util.*;
+import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
 
 
 
@@ -16,7 +17,7 @@ import java.util.*;
 public abstract class DynamicEntity extends Entity {
 
    	protected float dx,dy;
-	protected float maxSpeed=250;
+	protected float maxSpeed=200;
 	private float mass=1;
 	protected float acceleration=0;
 	private float targetAcceleration=0;
@@ -47,41 +48,40 @@ public abstract class DynamicEntity extends Entity {
 
 	protected void calculateMovement()
 	{
-
 		float speed=getSpeed();
-			if(movable&&(speed<maxSpeed))
+			if(movable)
 			{
+				if(speed>=maxSpeed)
+				{
+					float deltaSpeed=maxSpeed/getSpeed();
+					dx*=deltaSpeed;
+					dy*=deltaSpeed;
+					
+				}
+				if(this instanceof Player)
+				
                 acceleration=frontImpulse/mass*targetAcceleration;
                 this.dy += (acceleration * this.frontPoint.y);
                 this.dx += (acceleration * this.frontPoint.x);
+				
 			}
 			else
 			{
-				acceleration=backwardImpulse/mass*60;
-				if(speed>frontImpulse*60)
-				{
-                    dy -= dy / speed * acceleration;// + (acceleration * this.frontPoint.y);
-                    dx -= dx / speed * acceleration;// + (acceleration * this.frontPoint.x);
-				}
-                else
-				{
-					dx=dy=0;
-				}
+				
+					acceleration=backwardImpulse/mass*60;
+					if(speed>frontImpulse*60)
+					{
+                    	dy -= dy / speed * acceleration;// + (acceleration * this.frontPoint.y);
+                    	dx -= dx / speed * acceleration;// + (acceleration * this.frontPoint.x);
+					}
+                	else
+					{
+						dx=dy=0;
+					}
 			
+				
 			}
-		if(speed>maxSpeed)
-		{
-			acceleration=backwardImpulse/mass*60;
-			if(speed>frontImpulse*60)
-			{
-				dy -= dy / speed * acceleration;// + (acceleration * this.frontPoint.y);
-				dx -= dx / speed * acceleration;// + (acceleration * this.frontPoint.x);
-			}
-			else
-			{
-				dx=dy=0;
-			}
-		}
+		
 	}
 	
     @Override
@@ -319,5 +319,10 @@ public abstract class DynamicEntity extends Entity {
     {
         return (float)Math.sqrt(dx*dx+dy*dy)*60;
     }
+	
+	public void setMoveable(boolean movable)
+	{
+		this.movable=movable;
+	}
 
 }

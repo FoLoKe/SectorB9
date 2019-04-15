@@ -175,7 +175,7 @@ public class EntityManager
             }
 			case 10:
 			{
-				e=new ControlledShip(0,0,0,gameManager);
+				e=new ControlledShip(0,0,0,gameManager,2);
 				break;
 			}
 			case 12:
@@ -195,9 +195,9 @@ public class EntityManager
 
 	Entity createBuildable(int ID,Entity initiator)
 	{
-		if(BuildingsDataSheet.findById(ID).buildable)
-			if(initiator.getInventory().contains(BuildingsDataSheet.findById(ID).resToBuild[0],1))
-				if(initiator.getInventory().takeOneItemFromAllInventory(BuildingsDataSheet.findById(ID).resToBuild[0],1))
+		if(ObjectsDataSheet.findById(ID).buildable)
+			if(initiator.getInventory().contains(ObjectsDataSheet.findById(ID).resToBuild[0],1))
+				if(initiator.getInventory().takeOneItemFromAllInventory(ObjectsDataSheet.findById(ID).resToBuild[0],1))
 					return new Buildable(ID,initiator.getTeam(),gameManager);
 				else
 					GameLog.update("EntityManager: no resources",0);

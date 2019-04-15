@@ -12,7 +12,7 @@ import com.sb9.foloke.sectorb9.game.Assets.ShipAsset;
 import com.sb9.foloke.sectorb9.game.Assets.UIAsset;
 import com.sb9.foloke.sectorb9.game.Managers.GameManager;
 import com.sb9.foloke.sectorb9.game.UI.*;
-import com.sb9.foloke.sectorb9.game.DataSheets.BuildingsDataSheet;
+import com.sb9.foloke.sectorb9.game.DataSheets.ObjectsDataSheet;
 import com.sb9.foloke.sectorb9.game.Funtions.*;
 import java.io.*;
 import com.sb9.foloke.sectorb9.game.UI.Inventory.*;
@@ -79,7 +79,7 @@ public abstract class Entity {
 		this.relativeCenterY=(float)image.getHeight()/2;
 		this.relativeCentreX=(float)image.getWidth()/2;
 
-		this.inventory=new Inventory(this, inventoryMaxCapacity,4);
+		this.inventory=new Inventory(this, inventoryMaxCapacity,1);
 		this.rotation=rotation;
         shieldImg= ShipAsset.shield;
 
@@ -91,13 +91,13 @@ public abstract class Entity {
 	
 	private void applyStandartOptions()
 	{
-		enabled					= BuildingsDataSheet.findById(ID).enabledByDefault;
-		inventoryMaxCapacity	= BuildingsDataSheet.findById(ID).inventoryCapacity;
-		isInteractable			= BuildingsDataSheet.findById(ID).interactableByDefault;
-		opened					= BuildingsDataSheet.findById(ID).openByDefault;
-		image					= BuildingsDataSheet.findById(ID).image;
-		name					= BuildingsDataSheet.findById(ID).name;
-		collidable				= BuildingsDataSheet.findById(ID).collidable;
+		enabled					= ObjectsDataSheet.findById(ID).enabledByDefault;
+		inventoryMaxCapacity	= ObjectsDataSheet.findById(ID).inventoryCapacity;
+		isInteractable			= ObjectsDataSheet.findById(ID).interactableByDefault;
+		opened					= ObjectsDataSheet.findById(ID).openByDefault;
+		image					= ObjectsDataSheet.findById(ID).image;
+		name					= ObjectsDataSheet.findById(ID).name;
+		collidable				= ObjectsDataSheet.findById(ID).collidable;
 	}
 
 	public void setShieldSize(int i)

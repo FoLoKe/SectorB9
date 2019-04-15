@@ -24,11 +24,22 @@ public class ControlledShip extends DynamicEntity {
     private AI AI;
     private Ship ship;
 	private static final int ID=10;
-    public ControlledShip(int x, int y, int rotation, GameManager gameManager)
+    public ControlledShip(int x, int y, int rotation, GameManager gameManager,int AIType)
     {
         super(x,y,rotation,gameManager,ID);
-        this.ship=new ShipMk2(this);
-        AI=new CombatAI(this);
+        this.ship=new ShipMk3(this);
+		switch (AIType)
+		{
+			case 0:
+        		AI=new CombatAI(this);
+				break;
+			case 1:
+				AI=new MinerAI(this);
+				break;
+			default:
+				AI=new CombatAI(this);
+				break;
+		}
 		movable=true;
 	
 		TEAM=2;

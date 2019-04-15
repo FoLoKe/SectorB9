@@ -14,6 +14,8 @@ import android.content.*;
 import android.graphics.drawable.*;
 import com.sb9.foloke.sectorb9.game.Assets.*;
 import android.graphics.*;
+import java.util.*;
+import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
 
 public class OptionsUI
 {
@@ -63,6 +65,30 @@ public class OptionsUI
 							}
 						});
 						TLL.addView(SW);
+						break;
+					}
+				case LIST:
+					{
+						final Options option=p;
+						
+						Spinner spinner = new Spinner(MA);
+						ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(MA, android.R.layout.simple_spinner_dropdown_item, option.getStrings());
+						
+						spinner.setAdapter(spinnerArrayAdapter);
+						spinner.setSelection(option.getValue());
+						
+						spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+								public void onItemSelected(AdapterView<?> parent,
+														   View itemSelected, int selectedItemPosition, long selectedId) {
+															   
+															   option.setValue(selectedItemPosition);
+															   option.saveOptions();
+															   
+														   }
+								public void onNothingSelected(AdapterView<?> parent){}});
+						
+									
+						TLL.addView(spinner);
 					}
 			}
 			LL.addView(TLL);

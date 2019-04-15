@@ -2,7 +2,7 @@ package com.sb9.foloke.sectorb9.game.Entities.Buildings;
 import com.sb9.foloke.sectorb9.game.Managers.GameManager;
 import com.sb9.foloke.sectorb9.game.UI.*;
 import com.sb9.foloke.sectorb9.game.Assets.*;
-import com.sb9.foloke.sectorb9.game.DataSheets.BuildingsDataSheet;
+import com.sb9.foloke.sectorb9.game.DataSheets.ObjectsDataSheet;
 import com.sb9.foloke.sectorb9.game.DataSheets.ItemsDataSheet;
 import com.sb9.foloke.sectorb9.game.Funtions.*;
 import android.graphics.*;
@@ -27,7 +27,7 @@ public class BigSmelter extends StaticEntity
 	public BigSmelter(float x, float y, float rotation, GameManager gameManager)
 	{
 		super(x,y,rotation, gameManager,ID);
-		smelterInWorkBitmap= BuildingsDataSheet.findById(ID).animation[0];
+		smelterInWorkBitmap= ObjectsDataSheet.findById(ID).animation[0];
 		this.inventoryMaxCapacity=3;
 		this.opened=true;
 		inProduction=new Inventory.InventoryItem(0,0,0,0);
