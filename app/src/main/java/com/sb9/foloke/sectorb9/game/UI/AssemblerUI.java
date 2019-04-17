@@ -9,6 +9,7 @@ import java.util.*;
 
 import com.sb9.foloke.sectorb9.game.DataSheets.ItemsDataSheet;
 import com.sb9.foloke.sectorb9.game.Entities.Buildings.*;
+import com.sb9.foloke.sectorb9.game.Entities.*;
 
 public class AssemblerUI
 {
@@ -23,11 +24,12 @@ public class AssemblerUI
 	{
 		try
 		{
-            final ViewFlipper VF = MA.findViewById(R.id.UIFlipper);
+			MA=mainActivity;
+           // final ViewFlipper VF = MA.findViewById(R.id.UIFlipper);
 		    inQueue=target.getQueue();
 		
 		    inProduction=target.getInProduction();
-		    MA=mainActivity;
+		    
 			
 		    //table
 		    TableLayout TL=MA.findViewById(R.id.assembler_ui_TL_toProduceList);
@@ -53,34 +55,9 @@ public class AssemblerUI
 			    }
 		    }
 
-		    LinearLayout LLofQueue=MA.findViewById(R.id.assembler_uiImageInQueue);
-		    LLofQueue.removeAllViews();
+		    updateQueue(target);
 
-		    for(Integer e:inQueue)
-			{
-				ImageView icon=new ImageView(MA);
-				icon.setId(e);
-
-				LLofQueue.addView(icon);
-				icon.setOnClickListener(new View.OnClickListener()
-					{
-						public void onClick(View view)
-						{
-							initHelp(view.getId());
-							newQueue=view.getId();
-						}
-					});
-				TableRow.LayoutParams trp=new TableRow.LayoutParams();
-				trp.setMargins(10,10,10,10);
-
-
-				BitmapDrawable bdrawable= new BitmapDrawable(MA.getResources(),ItemsDataSheet.findById(e).image);
-				icon.setImageDrawable(bdrawable);
-				icon.setLayoutParams(trp);
-			}
-
-			MA.findViewById(R.id.assembler_uiImageInProd).setBackgroundDrawable(new BitmapDrawable(MA.getResources(),ItemsDataSheet.findById(inProduction).image));
-				
+					
 		    int maxRowElems=4;
 
 		    for(int i=0; i<itemsIDs.length;)
@@ -200,7 +177,47 @@ public class AssemblerUI
             }
         }
     }
-			
+	
+	public static void updateQueue(Assembler caller)
+	{
+		inProduction=caller.getInProduction();
+		MA.runOnUiThread(new Runnable(){public void run(){
+		LinearLayout LLofQueue=MA.findViewById(R.id.assembler_uiImageInQueue);
+		LLofQueue.removeAllViews();
+
+		for(Integer e:inQueue)
+		{
+			ImageView icon=new ImageView(MA);
+			icon.setId(e);
+
+			LLofQueue.addView(icon);
+			icon.setOnClickListener(new View.OnClickListener()
+				{
+					public void onClick(View view)
+					{
+						initHelp(view.getId());
+						newQueue=view.getId();
+					}
+				});
+			TableRow.LayoutParams trp=new TableRow.LayoutParams();
+			trp.setMargins(10,10,10,10);
+
+
+			BitmapDrawable bdrawable= new BitmapDrawable(MA.getResources(),ItemsDataSheet.findById(e).image);
+			icon.setImageDrawable(bdrawable);
+			icon.setLayoutParams(trp);
+		}
+
+		MA.findViewById(R.id.assembler_uiImageInProd).setBackgroundDrawable(new BitmapDrawable(MA.getResources(),ItemsDataSheet.findById(inProduction).image));
+		}});
+	}
+	public static void updateCurrentProduction(Assembler caller)
+	{
+		inProduction=caller.getInProduction();
+		MA.runOnUiThread(new Runnable(){public void run(){
+		MA.findViewById(R.id.assembler_uiImageInProd).setBackgroundDrawable(new BitmapDrawable(MA.getResources(),ItemsDataSheet.findById(inProduction).image));
+	}});
+	}
     public static void setOpened(boolean state)
     {
         opened=state;
