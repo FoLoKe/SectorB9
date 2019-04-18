@@ -29,6 +29,7 @@ import android.content.*;
 import com.sb9.foloke.sectorb9.game.Funtions.*;
 import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
 import com.sb9.foloke.sectorb9.game.UI.Inventory.*;
+import com.sb9.foloke.sectorb9.game.UI.TechUIs.*;
 
 public class MainActivity extends Activity {
 
@@ -253,6 +254,7 @@ public class MainActivity extends Activity {
         InteractionUI.init( this,null);
         HelpUI.init( this,1);
         MapUI.init( this);
+		TechUI.init(this);
         VF = findViewById(R.id.UIFlipper);
         VF.setDisplayedChild(VF.indexOfChild(findViewById(R.id.actionUI)));
 

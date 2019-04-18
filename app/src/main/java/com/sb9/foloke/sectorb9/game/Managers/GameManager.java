@@ -48,6 +48,7 @@ import java.io.*;
 import com.sb9.foloke.sectorb9.*;
 import com.sb9.foloke.sectorb9.game.Funtions.*;
 import com.sb9.foloke.sectorb9.game.Entities.Buildings.*;
+import com.sb9.foloke.sectorb9.game.UI.TechUIs.*;
 
 
 public class GameManager {
@@ -108,7 +109,8 @@ public class GameManager {
         GameLog.update("GameManager: preparing datasheets",0);
         ObjectsDataSheet.init(MA);
         ItemsDataSheet.init(MA);
-      
+      	TechTree.init();
+		
 
         WindowManager wm = ((WindowManager)
                 MA.getSystemService(Context.WINDOW_SERVICE));

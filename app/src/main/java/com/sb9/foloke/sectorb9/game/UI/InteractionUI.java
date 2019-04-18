@@ -10,6 +10,8 @@ import com.sb9.foloke.sectorb9.game.Assets.*;
 import com.sb9.foloke.sectorb9.game.Managers.GameManager;
 
 import android.graphics.drawable.*;
+import com.sb9.foloke.sectorb9.game.Funtions.*;
+import com.sb9.foloke.sectorb9.game.UI.TechUIs.*;
 
 public class InteractionUI
 {
@@ -36,6 +38,22 @@ public class InteractionUI
 		openInventoryButton.setVisibility(View.GONE);
 		openInteraction.setVisibility(View.GONE);
 		openProduction.setVisibility(View.GONE);
+		
+		final Button openTechTree=MA.findViewById(R.id.openTechTree);
+		openTechTree.setBackgroundColor(Color.parseColor("#33ffffff"));
+		openTechTree.setOnClickListener(new OnClickListener()
+		{
+			public void onClick(View v)
+			{
+				AssemblerUI.setOpened(false);
+				openInteraction.setBackgroundColor(Color.parseColor("#22ffffff"));
+				openProduction.setBackgroundColor(Color.parseColor("#22ffffff"));
+				v.setBackgroundColor(Color.parseColor("#55ffffff"));
+				TechUI.updatePositions();
+				IVF.setDisplayedChild(IVF.indexOfChild(MA.findViewById(R.id.tech_ui)));
+			}
+		});
+		
 		if(target!=null)
 		{
 			if (target.getOpened())
@@ -52,6 +70,7 @@ public class InteractionUI
 							openInteraction.setBackgroundColor(Color.parseColor("#22ffffff"));
 							openProduction.setBackgroundColor(Color.parseColor("#22ffffff"));
 							v.setBackgroundColor(Color.parseColor("#55ffffff"));
+							
 							IVF.setDisplayedChild(IVF.indexOfChild(MA.findViewById(R.id.inventoryUI)));
 						}
 					});

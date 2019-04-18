@@ -37,6 +37,14 @@
 			android:id="@+id/openProduction"
 			android:layout_gravity="bottom|center"
 		/>
+		<Button
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textColor="#ffffff"
+			android:text="Tech Tree"
+			android:id="@+id/openTechTree"
+			android:layout_gravity="bottom|center"
+		/>
 		<ImageButton
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
@@ -71,6 +79,10 @@
 			android:layout_height="match_parent"/>
 		<include layout="@layout/assembler_ui"
 			android:id="@+id/assemblerUI"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"/>
+		<include layout="@layout/tech_ui"
+			android:id="@+id/tech_ui"
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"/>
 	</ViewFlipper>
