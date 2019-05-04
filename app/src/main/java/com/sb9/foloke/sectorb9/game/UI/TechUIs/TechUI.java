@@ -29,8 +29,7 @@ public class TechUI
 		MAL.setBackgroundColor(Color.parseColor("#55ffffff"));
 		for(TechTree.Tech t:TechTree.getTechs())
 		{
-			stackButtonsAdd(t,0);
-			
+			stackButtonsAdd(t,0);			
 		}
 		updatePositions();
 		

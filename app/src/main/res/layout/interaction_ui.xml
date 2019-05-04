@@ -41,6 +41,14 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:textColor="#ffffff"
+			android:text="Constructor"
+			android:id="@+id/openConstructor"
+			android:layout_gravity="bottom|center"
+		/>
+		<Button
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textColor="#ffffff"
 			android:text="Tech Tree"
 			android:id="@+id/openTechTree"
 			android:layout_gravity="bottom|center"
@@ -85,6 +93,11 @@
 			android:id="@+id/tech_ui"
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"/>
+		<include layout="@layout/ship_constructor_ui"
+			android:id="@+id/ship_constructor_ui"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"/>
+		
 	</ViewFlipper>
 </FrameLayout>
 	</LinearLayout>

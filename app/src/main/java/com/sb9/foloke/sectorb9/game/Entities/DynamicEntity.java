@@ -58,7 +58,7 @@ public abstract class DynamicEntity extends Entity {
 					dy*=deltaSpeed;
 					
 				}
-				if(this instanceof Player)
+				//if(this instanceof Player)
 				
                 acceleration=frontImpulse/mass*targetAcceleration;
                 this.dy += (acceleration * this.frontPoint.y);
@@ -69,7 +69,7 @@ public abstract class DynamicEntity extends Entity {
 			{
 				
 					acceleration=backwardImpulse/mass*60;
-					if(speed>frontImpulse*60)
+					if(speed>acceleration)
 					{
                     	dy -= dy / speed * acceleration;// + (acceleration * this.frontPoint.y);
                     	dx -= dx / speed * acceleration;// + (acceleration * this.frontPoint.x);
@@ -88,7 +88,7 @@ public abstract class DynamicEntity extends Entity {
     public void tick() 
 	{
         super.tick();
-
+		//GameLog.update(this+"s",3);
         transformMatrix.reset();
         transformMatrix.postRotate(rotation);
 		x += dx;
@@ -222,7 +222,7 @@ public abstract class DynamicEntity extends Entity {
 		B.set(B.x/BLength,B.y/BLength);
         float sinPhi = (frontPoint.x*B.y - frontPoint.y*B.x);
 		
-		float deg=(float)Math.toDegrees(sinPhi);
+		
 		
 		
 		if(sinPhi>-0.02&&sinPhi<0.02)
@@ -249,6 +249,7 @@ public abstract class DynamicEntity extends Entity {
 	{
 		if(movable)
 			targetAcceleration=accel;
+			
 	}
 	
 	public float getAcceleration()

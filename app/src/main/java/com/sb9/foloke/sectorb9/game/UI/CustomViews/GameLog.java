@@ -85,7 +85,7 @@ public class GameLog extends LinearLayout
 			public void run()
 			{int time=0;
 				
-					
+				if(state!=3)	
 				if(folderlog)
 				newLine(state+" "+s);
 				if(!Options.drawDebugInfo.getBoolean()&&state==0)
@@ -103,6 +103,10 @@ public class GameLog extends LinearLayout
 						errState=true;
 						break;
 					case 2:
+						ts="<font color=\"yellow\">"+s+"</font><br>";
+						time=5000;
+						break;
+					case 3:
 						ts="<font color=\"yellow\">"+s+"</font><br>";
 						time=5000;
 						break;

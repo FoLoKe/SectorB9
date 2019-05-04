@@ -21,6 +21,8 @@ public class EntityManager
     private ArrayList<Entity> entityToAdd;
 	private GameManager gameManager;
 	private boolean reloadFlag=false;
+	private boolean addedFlag=false;
+	
 	EntityManager(GameManager gameManager)
 	{
         GameLog.update("EntityManager: preparing manager",0);
@@ -60,6 +62,7 @@ public class EntityManager
 	    	entityArray.addAll(entityToAdd);
 			GameLog.update("EntityManager: added objects:"+entityToAdd.size(),0);
 			entityToAdd.clear();
+			addedFlag=true;
 		}
 	    
 	   Iterator<Entity> it=entityArray.iterator();
@@ -75,10 +78,16 @@ public class EntityManager
 			    it.remove();
 				GameLog.update("EntityManager: removed "+e,0);
 			}
-			
+			if(addedFlag)
+				if(e instanceof Generator)
+				{
+					((Generator)e).calculateConsumers();
+				}
+				
 			if(e instanceof DynamicEntity)
 				((DynamicEntity)e).collidedWith.clear();
 		}
+		addedFlag=false;
 	}
 
 	public ArrayList<Entity> getArray()
@@ -175,7 +184,7 @@ public class EntityManager
             }
 			case 10:
 			{
-				e=new ControlledShip(0,0,0,gameManager,2);
+				e=new ControlledShip(0,0,0,gameManager,2,1);
 				break;
 			}
 			case 12:

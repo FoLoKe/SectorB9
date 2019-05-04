@@ -16,6 +16,7 @@ import com.sb9.foloke.sectorb9.game.UI.ProgressBarUI;
 
 import java.util.Random;
 import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
+import android.graphics.*;
 
 public class Railgun extends Weapon
 {
@@ -25,8 +26,8 @@ public class Railgun extends Weapon
     private Line2D line;
     private float lenght = 1000;
     private Random rnd=new Random();
-    private float[] initShootVector;
-    private float[] tempShootVector=new float[4];
+    private float[] initLineEnd;
+    private float[] lineEnd=new float[2];
     private Entity hittedEntity;
     private float maxLoad=10;
     private float deload=0.2f;
@@ -40,28 +41,32 @@ public class Railgun extends Weapon
         super(turret, gameManager);
 		name="railgun";
         this.heatBar=new ProgressBarUI(this,20,2,-10,-2, UIAsset.hpBackground,UIAsset.hpLine,UIAsset.progressBarBorder,load/maxLoad*100);
-        initShootVector=new float[]{turret.getPointOfShooting().x,
-                turret.getPointOfShooting().y,
-                turret.getPointOfShooting().x,
-                turret.getPointOfShooting().y-lenght};
+        initLineEnd=new float[]{0,-lenght};
         damage=5;
 
         line=new Line2D(0,0,1,1);
         line.setThickness(3);
         line.setColor(Color.BLUE);
-        laserDamageEffect=new ParticleSystem(EffectsAsset.yellow_pixel,turret.getParent().getHolder().getWorldLocation().x,turret.getParent().getHolder().getWorldLocation().y,1f,new PointF(1,1),true,120, gameManager);
+        laserDamageEffect=new ParticleSystem(EffectsAsset.yellow_pixel,0,0,1f,new PointF(1,1),true,120, gameManager);
         laserDamageEffect.setAccuracy(new Point(10,10));
     }
 
     @Override
     public void tick()
     {
-        turret.getParent().getHolder().getTransformMatrix().mapVectors(tempShootVector,initShootVector);
+		
+		
+		Matrix m=new Matrix();
+		m.postRotate(turret.getRotation());
+			
+        m.mapVectors(lineEnd,initLineEnd);
 
-        line.set(tempShootVector[0]+turret.getParent().getHolder().getCenterX(),
-                tempShootVector[1]+turret.getParent().getHolder().getCenterY(),
-                tempShootVector[2]+turret.getParent().getHolder().getCenterX(),
-                tempShootVector[3]+turret.getParent().getHolder().getCenterY());
+		lineEnd[0]+=turret.getPointOfShooting()[0];
+		lineEnd[1]+=turret.getPointOfShooting()[1];
+        line.set(turret.getPointOfShooting()[0],
+                turret.getPointOfShooting()[1],
+                lineEnd[0],
+                lineEnd[1]);
         laserDamageEffect.tick();
         heatBar.setWorldLocation(line.getFirstPoint().x,line.getFirstPoint().y);
        loadRail();
@@ -123,8 +128,8 @@ public class Railgun extends Weapon
 
                         hittedEntity.applyDamage(damage);
                         laserDamageEffect.draw(hitPoint.x, hitPoint.y, rnd.nextInt(360), new PointF(0, 0));
-                        line.set(tempShootVector[0] + turret.getParent().getHolder().getCenterX(),
-                                tempShootVector[1] + turret.getParent().getHolder().getCenterY(), hitPoint.x, hitPoint.y);
+                        line.set(turret.getPointOfShooting()[0],
+                                turret.getInitPointOfShooting()[1],hitPoint.x, hitPoint.y);
                     }
                     line.render(canvas);
                 }
@@ -149,8 +154,8 @@ public class Railgun extends Weapon
 
     private float distanceTo(PointF p)
     {
-        float x=tempShootVector[0] + turret.getParent().getHolder().getCenterX()-p.x;
-        float y=tempShootVector[1] + turret.getParent().getHolder().getCenterY()-p.y;
+        float x=turret.getPointOfShooting()[0]-p.x;
+        float y=turret.getPointOfShooting()[1]-p.y;
         return (float)Math.sqrt(x*x+y*y);
     }
 }

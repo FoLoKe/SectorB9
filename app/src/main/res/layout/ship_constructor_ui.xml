@@ -1,0 +1,86 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="horizontal"
+	android:background="#000000"
+	>
+	
+    <LinearLayout
+		android:layout_width="wrap_content"
+		android:layout_height="fill_parent"
+		android:orientation="vertical"
+		android:id="@+id/ship_constructor_ui_MainLinearLayout">
+		<Spinner
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:id="@+id/ship_constructor_ui_hull_Spinner"
+		/>
+		<Spinner
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:id="@+id/ship_constructor_ui_engine_Spinner"
+		/>
+		<Spinner
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:id="@+id/ship_constructor_ui_generator_Spinner"
+		/>
+		<Spinner
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:id="@+id/ship_constructor_ui_shields_Spinner"
+		/>
+		<Spinner
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:id="@+id/ship_constructor_ui_ai_Spinner"
+		/>
+		<Button
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:id="@+id/ship_constructor_ui_produce_button"
+		/>
+			
+	</LinearLayout>
+	
+	<FrameLayout
+		android:layout_width="wrap_content"
+		android:layout_height="fill_parent"
+		android:layout_gravity="center"
+		android:background="#55ffffff">
+		<ImageView
+			android:layout_gravity="center"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:id="@+id/ship_constructor_ui_image"/>
+		
+	</FrameLayout>
+	
+	<LinearLayout
+		android:layout_width="wrap_content"
+		android:layout_height="fill_parent"
+		android:orientation="vertical"
+		android:id="@+id/ship_constructor_ui_MainRightLinearLayout">
+		<Spinner
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="fff"
+			android:id="@+id/ship_constructor_ui_ai_Spinner"
+		/>
+		
+	
+	</LinearLayout>
+	<FrameLayout
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:background="#55ffffff">
+		<TextView
+			android:id="@+id/scui_tv_ship_info"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:textColor="#00ff00"
+			android:text="DEBUG debug"
+			/>
+	</FrameLayout>
+		
+</LinearLayout>

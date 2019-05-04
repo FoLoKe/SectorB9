@@ -36,8 +36,7 @@ import java.util.*;
 			circlePaint.setStrokeWidth(2);
 			circlePaint.setPathEffect(new DashPathEffect(new float[] { 15, 16}, 0));
 
-			if(enabled)
-				calculateConsumers();
+			calculateConsumers();
 		}
 
 		@Override

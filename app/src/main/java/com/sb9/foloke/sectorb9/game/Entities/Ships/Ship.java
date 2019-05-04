@@ -8,6 +8,8 @@ import com.sb9.foloke.sectorb9.game.Funtions.*;
 import com.sb9.foloke.sectorb9.game.ParticleSystem.*;
 import com.sb9.foloke.sectorb9.game.Entities.Weapons.*;
 import com.sb9.foloke.sectorb9.game.Assets.*;
+import com.sb9.foloke.sectorb9.game.DataSheets.*;
+import com.sb9.foloke.sectorb9.game.Entities.*;
 
 public class Ship
 {
@@ -17,35 +19,80 @@ public class Ship
 	protected PointF pointOfEngineSmoke;
 	protected DynamicEntity holder;
 	
-	protected float sidewayImpulse;
-    protected float maxHP;
-    protected float maxSH;
+	protected float sidewayImpulse=100;
+    protected float maxHP=100;
+    protected float maxSH=100;
     protected int shieldSize=1;
     protected float backwardImpulse=1;
-	protected float mass=1;
+	protected float mass=0;
     protected float frontImpulse=1;
 	private CustomCollisionObject collisonObject;
-
+	public Entity target=null;
 	
 
 	protected TurretSystem turrets[];
 	private ParticleSystem engineSmoke;
 	
-	public Ship(Bitmap shipImage,Bitmap engineImage,Bitmap engineShieldImage,DynamicEntity holder)
+	
+	private ModulesDataSheet.HullModule hull;
+	private ModulesDataSheet.EngineModule engine;
+	private ModulesDataSheet.GeneratorModule generator;
+	private ModulesDataSheet.Module shields;
+	private ModulesDataSheet.TurretModule turretsMods[];
+	private ModulesDataSheet.WeaponModule weapons[];
+	
+	public Ship(int hullID,DynamicEntity holder)
 	{
-		this.shipImage=shipImage;
-		this.engineImage=engineImage;
-		this.engineShieldImage=engineShieldImage;
-		this.holder=holder;
+		this.hull=(ModulesDataSheet.HullModule)ModulesDataSheet.getByID(hullID);
+		this.engine=(ModulesDataSheet.EngineModule)ModulesDataSheet.getOfType(ModulesDataSheet.type.ENGINE)[0];
+		turretsMods=new ModulesDataSheet.TurretModule[1];
+		turretsMods[0]=(ModulesDataSheet.TurretModule)ModulesDataSheet.getOfType(ModulesDataSheet.type.TURRET)[0];
+		weapons=new ModulesDataSheet.WeaponModule[1];
+		weapons[0]=(ModulesDataSheet.WeaponModule)ModulesDataSheet.getOfType(ModulesDataSheet.type.WEAPON)[0];
+		init(holder);
+	}
+	
+	public Ship(ModulesDataSheet.HullModule hull,ModulesDataSheet.EngineModule engine,ModulesDataSheet.GeneratorModule generator,ModulesDataSheet.Module shields,
+	ModulesDataSheet.TurretModule turretsMods[],ModulesDataSheet.WeaponModule weapons[])
+	{
+		this.hull=hull;
+		this.engine=engine;
+		this.generator=generator;
+		this.shields=shields;
+		this.turretsMods=turretsMods;
+		this.weapons=weapons;
+		
+		
+		
+	}
+	
+	public void init(DynamicEntity e)
+	{
+		this.holder=e;
+		mass+=hull.mass;
+		this.shipImage=hull.image;
+		
+		mass+=engine.mass;
+		this.engineImage=ShipAsset.engine_mk1;
+		this.engineShieldImage=ShipAsset.engine_mk1;
+		
 		this.pointOfengine=new PointF(0,0);
 		this.engineSmoke=new ParticleSystem(EffectsAsset.yellow_pixel,holder.getWorldLocation().x,holder.getWorldLocation().y,1f,new PointF(0.2f,0),true,120,holder.getGameManager());
 		engineSmoke.setAccuracy(new Point(16,1));
 		pointOfEngineSmoke=new PointF(0,shipImage.getHeight()/2);
+
+		
+		turrets=new TurretSystem[hull.gunMounts.length];
+		for(int i=0;i<hull.gunMounts.length;i++)
+		{
+			//mass+=turretsMods[i].mass;
+			//mass+=weapons[i].mass;
+			turrets[i]=new TurretSystem(hull.gunMounts[i].mountPoints,weapons[i].type,holder.getGameManager(),this);
+		}
+		
+		collisonObject=new CustomCollisionObject(shipImage.getHeight(),shipImage.getWidth(),holder.getGameManager());
+		setOptionToDynamic();
 	}
-	
-	
-	public void init(DynamicEntity e)
-	{}
 
 	protected void setOptionToDynamic()
     {
@@ -94,7 +141,10 @@ public class Ship
 	public void tick()
 	{
 		for(TurretSystem t:turrets)
+		{
+			t.setTarget(target);
 			t.tick();
+		}
 		engineSmoke.tick();
 	}
 

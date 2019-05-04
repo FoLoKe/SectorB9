@@ -32,15 +32,35 @@ public class InteractionUI
 		final Button openInventoryButton = MA.findViewById(R.id.openInventory);
 		final Button openInteraction=MA.findViewById(R.id.openInteraction);
 		final Button openProduction=MA.findViewById(R.id.openProduction);
+		final Button openTechTree=MA.findViewById(R.id.openTechTree);
+		final Button openConstructor=MA.findViewById(R.id.openConstructor);
 		openInventoryButton.setBackgroundColor(Color.parseColor("#33ffffff"));
 		openInteraction.setBackgroundColor(Color.parseColor("#33ffffff"));
 		openProduction.setBackgroundColor(Color.parseColor("#33ffffff"));
+		openTechTree.setBackgroundColor(Color.parseColor("#33ffffff"));
+		openConstructor.setBackgroundColor(Color.parseColor("#33ffffff"));
 		openInventoryButton.setVisibility(View.GONE);
 		openInteraction.setVisibility(View.GONE);
 		openProduction.setVisibility(View.GONE);
+		openConstructor.setVisibility(View.GONE);
 		
-		final Button openTechTree=MA.findViewById(R.id.openTechTree);
-		openTechTree.setBackgroundColor(Color.parseColor("#33ffffff"));
+		if(target!=null)
+		if(target instanceof SpaceDock)
+		{
+			openConstructor.setVisibility(View.VISIBLE);
+			openConstructor.setOnClickListener(new OnClickListener()
+			{
+				public void onClick(View v)
+				{
+					AssemblerUI.setOpened(false);
+					openInteraction.setBackgroundColor(Color.parseColor("#22ffffff"));
+					openProduction.setBackgroundColor(Color.parseColor("#22ffffff"));
+					v.setBackgroundColor(Color.parseColor("#55ffffff"));
+					ConstructorUI.update((SpaceDock)target);
+					IVF.setDisplayedChild(IVF.indexOfChild(MA.findViewById(R.id.ship_constructor_ui)));
+				}
+			});
+		}
 		openTechTree.setOnClickListener(new OnClickListener()
 		{
 			public void onClick(View v)

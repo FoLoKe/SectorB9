@@ -141,7 +141,7 @@ public class MinerAI extends AI
 	private void taskGoForRes()
 	{
 		wayPoint=resourceSpot.getCenterWorldLocation();
-		
+		child.serTarget(resourceSpot);
 		if(taskRotateToPoint(wayPoint)) 
 			if (isInAcceptableRadius(wayPoint))
 			{

@@ -26,11 +26,8 @@ public class Plasmgun extends Weapon
 		if(enabled)
 		if(fireDelay.getTick()<=1)
 		{
-			float mathRotation=(float)(Math.PI/180*turret.getParent().getHolder().getWorldRotation());
-			PointF tpointOfShooting =new PointF((float)(turret.getPointOfShooting().x * Math.cos(mathRotation) - turret.getPointOfShooting().y * Math.sin(mathRotation))
-												,(float)(turret.getPointOfShooting().x * Math.sin(mathRotation) + turret.getPointOfShooting().y * Math.cos(mathRotation)));
-			tpointOfShooting.set(turret.getParent().getHolder().getCenterX()+tpointOfShooting.x,turret.getParent().getHolder().getCenterY()+tpointOfShooting.y);
-			projectiles.shoot(tpointOfShooting,turret.getParent().getHolder().getWorldRotation());
+			
+			projectiles.shoot(new PointF(turret.getPointOfShooting()[0],turret.getPointOfShooting()[1]),turret.getRotation());
 			fireDelay.setTimer(60f/fireRate);
 			//boolean shootFlag=false;
 		}

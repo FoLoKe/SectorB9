@@ -9,7 +9,7 @@ import com.sb9.foloke.sectorb9.game.AI.AI;
 import com.sb9.foloke.sectorb9.game.Assets.EffectsAsset;
 import com.sb9.foloke.sectorb9.game.Assets.ShipAsset;
 import com.sb9.foloke.sectorb9.game.Entities.Ships.Ship;
-import com.sb9.foloke.sectorb9.game.Entities.Ships.ShipMk1;
+
 import com.sb9.foloke.sectorb9.game.Funtions.CustomCollisionObject;
 import com.sb9.foloke.sectorb9.game.Managers.GameManager;
 
@@ -18,16 +18,17 @@ import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import com.sb9.foloke.sectorb9.game.Entities.Ships.*;
 import com.sb9.foloke.sectorb9.game.AI.*;
+import com.sb9.foloke.sectorb9.game.DataSheets.*;
 
 public class ControlledShip extends DynamicEntity {
 
     private AI AI;
     private Ship ship;
 	private static final int ID=10;
-    public ControlledShip(int x, int y, int rotation, GameManager gameManager,int AIType)
+    public ControlledShip(int x, int y, int rotation, GameManager gameManager,int AIType,int hullType)
     {
         super(x,y,rotation,gameManager,ID);
-        this.ship=new ShipMk3(this);
+        this.ship=new Ship(hullType,this);
 		switch (AIType)
 		{
 			case 0:
@@ -45,6 +46,27 @@ public class ControlledShip extends DynamicEntity {
 		TEAM=2;
     }
 
+	public ControlledShip(int x, int y, int rotation, GameManager gameManager,int AIType,Ship ship)
+    {
+        super(x,y,rotation,gameManager,ID);
+        this.ship=ship;
+		switch (AIType)
+		{
+			case 0:
+        		AI=new CombatAI(this);
+				break;
+			case 1:
+				AI=new MinerAI(this);
+				break;
+			default:
+				AI=new CombatAI(this);
+				break;
+		}
+		movable=true;
+
+		TEAM=2;
+    }
+	
     @Override
     public void render(Canvas canvas) {
 		if(!active||!renderable)
@@ -83,4 +105,9 @@ public class ControlledShip extends DynamicEntity {
     {
         ship.shoot();
     }
+	
+	public void serTarget(Entity e)
+	{
+		ship.target=e;
+	}
 }

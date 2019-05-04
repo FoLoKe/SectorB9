@@ -18,6 +18,7 @@ import com.sb9.foloke.sectorb9.game.UI.*;
 import com.sb9.foloke.sectorb9.game.Entities.Buildings.*;
 import com.sb9.foloke.sectorb9.game.UI.Inventory.*;
 import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
+import com.sb9.foloke.sectorb9.game.DataSheets.*;
 
 public class Player extends DynamicEntity
 {
@@ -31,7 +32,7 @@ public class Player extends DynamicEntity
         drawHp=false;
 
 		TEAM=1;
-		this.ship=new ShipMk3(this);
+		this.ship=new Ship(1,this);
         this.dx=this.dy=0;
         this.movable=false;
 		this.renderable=true;
@@ -116,13 +117,13 @@ public class Player extends DynamicEntity
 	    switch(i) 
 		{
             case 1:
-                ship = new ShipMk1(this);
+                ship = new Ship(1,this);
                 break;
             case 2:
-                ship = new ShipMk2(this);
+                ship = new Ship(2,this);
                 break;
             case 3:
-                ship = new ShipMk3(this);
+                ship = new Ship(3,this);
                 break;
         }
 	}
@@ -147,7 +148,7 @@ public class Player extends DynamicEntity
 		//x=90;y=90;
 		gameManager.getGamePanel().pointOfTouch=getWorldLocation();
 		TEAM=1;
-		this.ship=new ShipMk1(this);
+		this.ship=new Ship(1,this);
 		
         this.dx=this.dy=0;
         this.movable=false;
@@ -168,7 +169,7 @@ public class Player extends DynamicEntity
 		//x=90;y=90;
 		gameManager.getGamePanel().pointOfTouch=getWorldLocation();
 		TEAM=1;
-		this.ship=new ShipMk1(this);
+		this.ship=new Ship(1,this);
 
         this.dx=this.dy=0;
         this.movable=false;

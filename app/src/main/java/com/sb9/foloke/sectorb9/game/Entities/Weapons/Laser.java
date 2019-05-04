@@ -21,43 +21,47 @@ public class Laser extends Weapon
 	private Line2D line;
 	private float lenght=200;
 	private Random rnd=new Random();
-	private float[] initShootVector;
-	private float[] tempShootVector=new float[4];
+	//private float[] initShootVector;
+	//private float[] tempShootVector=new float[4];
 	private Entity hitedEntity;
 	private float maxHeat=10;
 	private float cooling=0.2f;
 	private boolean overheated=false;
 	private float heat=0;
 	private float heatGain=0.1f;
-	
+	private float[] initLineEnd;
+    private float[] lineEnd=new float[2];
 	private	ProgressBarUI heatBar;
 	
 	public Laser(TurretSystem turret, GameManager gameManager)
 	{
 		super(turret, gameManager);
 		name="laser";
+		initLineEnd=new float[]{0,-lenght};
 		this.heatBar=new ProgressBarUI(this,20,2,-10,-2,UIAsset.hpBackground,UIAsset.hpLine,UIAsset.progressBarBorder,heat/maxHeat*100);
-		initShootVector=new float[]{turret.getPointOfShooting().x,
-                turret.getPointOfShooting().y,
-                turret.getPointOfShooting().x,
-                turret.getPointOfShooting().y-lenght};
+		
 		damage=0.1f;
 		lenght=100;
 		line=new Line2D(0,0,1,1);
 		line.setThickness(3);
-		laserDamageEffect=new ParticleSystem(EffectsAsset.yellow_pixel,turret.getParent().getHolder().getWorldLocation().x,turret.getParent().getHolder().getWorldLocation().y,1f,new PointF(1,1),true,120, gameManager);
+		laserDamageEffect=new ParticleSystem(EffectsAsset.yellow_pixel,0,0,1f,new PointF(1,1),true,120, gameManager);
 		laserDamageEffect.setAccuracy(new Point(10,10));
 	}
 
 	@Override
 	public void tick()
 	{
-		turret.getParent().getHolder().getTransformMatrix().mapVectors(tempShootVector,initShootVector);
+		Matrix m=new Matrix();
+		m.postRotate(turret.getRotation());
 
-		line.set(tempShootVector[0]+turret.getParent().getHolder().getCenterX(),
-				 tempShootVector[1]+turret.getParent().getHolder().getCenterY(),
-				 tempShootVector[2]+turret.getParent().getHolder().getCenterX(),
-				 tempShootVector[3]+turret.getParent().getHolder().getCenterY());
+        m.mapVectors(lineEnd,initLineEnd);
+
+		lineEnd[0]+=turret.getPointOfShooting()[0];
+		lineEnd[1]+=turret.getPointOfShooting()[1];
+        line.set(turret.getPointOfShooting()[0],
+				 turret.getPointOfShooting()[1],
+				 lineEnd[0],
+				 lineEnd[1]);
 		laserDamageEffect.tick();
 		heatBar.setWorldLocation(line.getFirstPoint().x,line.getFirstPoint().y);
 		calculateHeat();
@@ -126,8 +130,8 @@ public class Laser extends Weapon
 			{
                 hitedEntity.applyDamage(damage);
                 laserDamageEffect.draw(hitPoint.x, hitPoint.y, rnd.nextInt(360), new PointF(0, 0));
-                line.set(tempShootVector[0] + turret.getParent().getHolder().getCenterX(),
-                        tempShootVector[1] + turret.getParent().getHolder().getCenterY(),hitPoint.x, hitPoint.y);
+                line.set(turret.getPointOfShooting()[0],
+						 turret.getInitPointOfShooting()[1],hitPoint.x, hitPoint.y);
             }
 			line.render(canvas);
 		}
@@ -147,8 +151,8 @@ public class Laser extends Weapon
 
 	private float distanceTo(PointF p)
     {
-        float x=tempShootVector[0] + turret.getParent().getHolder().getCenterX()-p.x;
-        float y=tempShootVector[1] + turret.getParent().getHolder().getCenterY()-p.y;
+        float x=turret.getPointOfShooting()[0]-p.x;
+        float y=turret.getPointOfShooting()[1]-p.y;
         return (float)Math.sqrt(x*x+y*y);
     }
 }

@@ -255,6 +255,7 @@ public class MainActivity extends Activity {
         HelpUI.init( this,1);
         MapUI.init( this);
 		TechUI.init(this);
+		ConstructorUI.init(this);
         VF = findViewById(R.id.UIFlipper);
         VF.setDisplayedChild(VF.indexOfChild(findViewById(R.id.actionUI)));
 
