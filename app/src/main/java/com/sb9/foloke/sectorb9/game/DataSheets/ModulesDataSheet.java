@@ -120,11 +120,12 @@ public class ModulesDataSheet
 									  																	 	new HullModule.GunMount(new PointF(-16,1),true),
 																											new HullModule.GunMount(new PointF(8,9),true),
 																											new HullModule.GunMount(new PointF(-8,9),true)}));
-		modules.add(new EngineModule(4,"null",ShipAsset.engine_mk1,type.ENGINE,10,60));
-		modules.add(new EngineModule(5,"null",ShipAsset.engine_mk2,type.ENGINE,50,2));
-		modules.add(new EngineModule(6,"null",ShipAsset.engine_mk3,type.ENGINE,100,3));
-		modules.add(new GeneratorModule(7,"null",ObjectsAsset.nullItem,type.GENERATOR,100,0.5f));
-		modules.add(new WeaponModule(8,"null",ObjectsAsset.nullItem,type.WEAPON,100,0));
+		modules.add(new EngineModule(4,"engine mk1",ShipAsset.engine_mk1,type.ENGINE,10,60));
+		modules.add(new EngineModule(5,"engine mk2",ShipAsset.engine_mk2,type.ENGINE,50,120));
+		modules.add(new EngineModule(6,"engine mk3",ShipAsset.engine_mk3,type.ENGINE,100,180));
+		modules.add(new GeneratorModule(7,"generator mk1",ObjectsAsset.nullItem,type.GENERATOR,100,0.5f));
+
+		modules.add(new WeaponModule(8,"empty",ObjectsAsset.nullItem,type.WEAPON,100,0));
 		modules.add(new WeaponModule(9,"minigun",ObjectsAsset.nullItem,type.WEAPON,100,1));
 		modules.add(new WeaponModule(10,"plasmgun",ObjectsAsset.nullItem,type.WEAPON,100,2));
 		modules.add(new WeaponModule(11,"laser",ObjectsAsset.nullItem,type.WEAPON,100,3));

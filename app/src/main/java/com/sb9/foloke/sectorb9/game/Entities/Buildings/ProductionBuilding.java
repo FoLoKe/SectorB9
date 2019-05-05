@@ -80,7 +80,7 @@ public abstract class ProductionBuilding extends StaticEntity
 					
 				}
 				if(progression.getTick()>0)
-					prgBar.set(progression.getTick()/(progressionTime*0.6f));
+					prgBar.tick(progression.getTick()/(progressionTime*0.6f));
 			}
 
 	protected abstract int chooseItemToProduce(ArrayList<Inventory.InventoryItem> items);
@@ -110,7 +110,7 @@ public abstract class ProductionBuilding extends StaticEntity
 		if(!active)
 			return;
 		super.tick();
-		prgBar.set(progression.getTick()/(progressionTime*0.6f));
+		prgBar.tick(progression.getTick()/(progressionTime*0.6f));
 	}
 	
 	

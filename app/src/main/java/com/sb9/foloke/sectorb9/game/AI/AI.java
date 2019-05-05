@@ -52,14 +52,12 @@ public abstract class AI {
 	protected void taskAddMovement(float acceleration)
 	{
 		child.addMovement(acceleration);
-		child.setMoveable(true);
+		child.setMovable(true);
 	}
 	protected void taskStop()
 	{
-		child.setMoveable(false);
+		child.setMovable(false);
 	}
-	
-	
 	
 	protected boolean isInAcceptableRadius(PointF p)
 	{

@@ -73,7 +73,7 @@ public class Railgun extends Weapon
     }
 
     private void loadRail() {
-        heatBar.set(load / maxLoad * 100);
+        heatBar.tick(load / maxLoad * 100);
 
         if (active)
         {

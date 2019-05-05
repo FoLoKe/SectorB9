@@ -88,6 +88,7 @@ public class ControlledShip extends DynamicEntity {
 	
 	public void serTarget(Entity e)
 	{
-		ship.target=e;
+		if(ship!=null)
+	    ship.target=e;
 	}
 }

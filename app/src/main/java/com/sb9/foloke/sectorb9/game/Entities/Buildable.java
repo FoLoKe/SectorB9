@@ -19,7 +19,7 @@ public class Buildable extends StaticEntity
 	{
 		super(0,0,0,GM,ID);
 		idOfObject=id;
-		uIhp.set(progress);
+
 		tteam=team;
         collisionObject=new CustomCollisionObject(ObjectsDataSheet.findById(idOfObject).image.getWidth(),ObjectsDataSheet.findById(idOfObject).image.getHeight(),gameManager);
         calculateCollisionObject();
@@ -55,7 +55,7 @@ public class Buildable extends StaticEntity
 	public void applyDamage(float damage)
 	{
 		progress+=damage;
-		uIhp.set(progress);
+
 		if(progress>=maxProgress)
 		{
 			Entity e=gameManager.getWorldManager().getEntityManager().createObject(idOfObject);

@@ -183,8 +183,8 @@ public class GameManager {
 		
 		if(player!=null)
 		{
-			uIhp.set(player.getHp()/player.getMaxHP()*100);
-			uIsh.set(player.getSH()/player.getMaxSH()*100);
+		    uIhp.tick(player.getHp()/player.getMaxHP()*100);
+            uIsh.tick(player.getSH()/player.getMaxSH()*100);
 			player.setMovable(joystick.getTouched());
 			
 			if(joystick.getTouched())

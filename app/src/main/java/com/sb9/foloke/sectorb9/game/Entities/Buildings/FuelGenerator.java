@@ -65,7 +65,7 @@ public class FuelGenerator extends Generator
 					onAndOff();
 			}
 		if(prodTimer.getTick()>0)
-			prgBar.set(prodTimer.getTick()/(30f));
+			prgBar.tick(prodTimer.getTick()/(30f));
 		
 		if(enabled)
 		{

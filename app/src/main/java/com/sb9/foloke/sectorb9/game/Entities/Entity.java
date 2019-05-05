@@ -57,7 +57,7 @@ public abstract class Entity {
     protected Timer shieldShow=new Timer(0);
     protected Paint shieldPaint=new Paint();
     private float shieldShowTime=2;
-    private float regainSH=0.2f;
+    protected float regainSH=0.2f;
 
     public Entity(float x, float y, float rotation, GameManager gameManager, int ID)
     {
@@ -148,8 +148,7 @@ public abstract class Entity {
 			TEAM=Integer.parseInt(words[7]);
 			LoadInvFromString(words[8]);
 			
-			uIsh.set(SP/maxSP*100);
-			uIhp.set(HP/maxHP*100);
+
 			setCollisionObject();
 		}
 		catch(Throwable t)
@@ -157,8 +156,7 @@ public abstract class Entity {
             GameLog.update("Entity: "+t.toString(),1);
 		}
 	}
-	
-	
+
 	public void LoadInvFromString(String saveString)
 	{
 		inventory.clear();
@@ -204,6 +202,10 @@ public abstract class Entity {
             SP=maxSP;
         shieldPaint.setAlpha((int)(255*shieldShow.getSecond()/shieldShowTime));
         renderBox.set(getCenterX()-32,getCenterY()-32,getCenterX()+32,getCenterY()+32);
+
+
+        uIsh.tick(SP/maxSP*100);
+        uIhp.tick(HP/maxHP*100);
     }
 
     public float getX() {
@@ -299,8 +301,7 @@ public abstract class Entity {
             HP = sum;
         }
 		
-		uIhp.set(HP/maxHP*100);
-        uIsh.set(SP/maxSP*100);
+
 		if(HP<=0)
 			onDestroy();			
 	}
@@ -412,10 +413,12 @@ public abstract class Entity {
     {
         return SP;
     }
+
 	public void setHP(float HP)
 	{
 		this.HP=HP;
 	}
+
 	public void setSH(float SH)
 	{
 		this.SP=SH;

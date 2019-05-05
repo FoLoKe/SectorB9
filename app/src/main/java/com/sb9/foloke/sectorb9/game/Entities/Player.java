@@ -29,7 +29,7 @@ public class Player extends DynamicEntity
     public Player(float x, float y, float rotation, GameManager gameManager)
     {
         super(x,y,rotation,gameManager,1);
-        drawHp=false;
+        drawHp=true;
 
 		TEAM=1;
 		this.ship=Ship.createSimple();

@@ -53,7 +53,7 @@ public class Ship
 		this.turretsMods=turretsMods;
 		this.weapons=weapons;
 		this.gyroscope=gyroscope;
-		
+        this.collisionObject=new CustomCollisionObject(1,1,null);
 
 	}
 	
@@ -89,7 +89,6 @@ public class Ship
         //SHIELDS
         maxSP=shields.SP;
 
-
         //ENGINE SMOKE
         pointOfEngine=new PointF(0,0);
         engineSmoke=new ParticleSystem(EffectsAsset.yellow_pixel,holder.getWorldLocation().x,holder.getWorldLocation().y,1f,new PointF(0.2f,0),true,120,holder.getGameManager());
@@ -103,8 +102,7 @@ public class Ship
 
 	private void setOptionToDynamic()
     {
-        
-        holder.setSidewayImpulse(sidewaysImpulse);
+        holder.setSidewaysImpulse(sidewaysImpulse);
         holder.setMaxHP(maxHP);
         holder.setMaxSH(maxSP);
         holder.setShieldSize(shieldSize);
@@ -117,7 +115,7 @@ public class Ship
 	{
         canvas.save();
 		canvas.rotate(holder.getWorldRotation(),holder.getCenterX(),holder.getCenterY());
-		if(holder.getMoveable())
+		if(holder.getMovable())
 		canvas.drawBitmap(engineImage,holder.getCenterX()-engineImage.getWidth()/2f+pointOfEngine.x,holder.getCenterY()-engineImage.getHeight()/2f+pointOfEngine.y-5+(holder.getAcceleration()*2),null);
 		canvas.drawBitmap(shipImage,holder.getCenterX()-shipImage.getWidth()/2f,holder.getCenterY()-shipImage.getHeight()/2f,null);
 

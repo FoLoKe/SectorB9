@@ -1,18 +1,11 @@
 package com.sb9.foloke.sectorb9.game.Entities;
 
-
 import android.graphics.PointF;
 import android.graphics.Canvas;
 import android.graphics.*;
-
-
 import com.sb9.foloke.sectorb9.game.Managers.GameManager;
 import com.sb9.foloke.sectorb9.game.Funtions.*;
 import java.util.*;
-import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
-
-
-
 
 public abstract class DynamicEntity extends Entity {
 
@@ -176,25 +169,24 @@ public abstract class DynamicEntity extends Entity {
 			collidedWith.add((DynamicEntity)e);
 			if(((DynamicEntity)e).collidedWith.contains(this))
 				return;
+			((DynamicEntity) e).collidedWith.add(this);
 		}
-		
+
 		float midpointx = (e.getCollisionObject().getCenterX() +getCollisionObject().getCenterX()) / 2; 
 		float midpointy = (e.getCollisionObject().getCenterY() +getCollisionObject().getCenterY()) / 2;
 
 		float dist=(float)Math.sqrt((e.getCenterX()-getCenterX())*(e.getCenterX()-getCenterX())+(e.getCenterY()-getCenterY())*(e.getCenterY()-getCenterY()));
 
-		dist=(float)Math.max(0.1,dist);
+		//dist=(float)Math.max(0.1,dist);
 
 		float rad=(getCollisionObject().getRadius()+ e.getCollisionObject().getRadius())/2;
 		float newcenterX=(midpointx + rad * (getCollisionObject().getCenterX() - e.getCollisionObject().getCenterX())/ dist);
 		float newcenterY=(midpointy + rad * (getCollisionObject().getCenterY() - e.getCollisionObject().getCenterY())/ dist);
 
-		x+=-getCenterX()+newcenterX;
-		y+=-getCenterY()+newcenterY;
 
-		if(e instanceof DynamicEntity) 
-		{
-			float cx=getCenterX();
+
+
+			/*float cx=getCenterX();
 			float cy=getCenterY();
 			float cx2=e.getCenterY();
 			float cy2=e.getCenterX();
@@ -211,8 +203,16 @@ public abstract class DynamicEntity extends Entity {
 			float f2=((DynamicEntity)e).getMass()*v2;
 			
 			dx = (f-f2)/mass* (float)Math.cos(d1+d2 - ang);
-			dy = (f-f2)/mass * (float)Math.sin(d1+d2 - ang);
-        }
+			dy = (f-f2)/mass * (float)Math.sin(d1+d2 - ang);*/
+
+            dx += -getCenterX() + newcenterX;
+            dy += -getCenterY() + newcenterY;
+            float speed=(float)Math.sqrt(dx*dx+dy*dy)*60;
+            if(speed>maxSpeed)
+            {
+                dx *= maxSpeed / speed;
+                dy *= maxSpeed / speed;
+            }
 	}
 	
     public boolean rotationToPoint(PointF point)
@@ -257,7 +257,7 @@ public abstract class DynamicEntity extends Entity {
 		return (float)Math.sqrt(dx*dx+dy*dy);
 	}
 
-	public boolean getMoveable()
+	public boolean getMovable()
 	{
 		return movable;
 	}
@@ -284,10 +284,12 @@ public abstract class DynamicEntity extends Entity {
             canvas.drawText("SI: "+sidewaysImpulse,x-100,y+96,debugPaint);
             canvas.drawText("HP: "+HP+"/"+maxHP,x-100,y+128,debugPaint);
             canvas.drawText("HP: "+SP+"/"+maxSP,x-100,y+160,debugPaint);
+            //canvas.drawBitmap(image,new Rect(0,0,32,20),new RectF(x,y,x+32,y+32),null);
+
 		}
 	}
 
-	public void setSidewayImpulse(float sidewayImpulse)
+	public void setSidewaysImpulse(float sidewayImpulse)
 	{
 		this.sidewaysImpulse=sidewayImpulse;
 	}
@@ -327,7 +329,7 @@ public abstract class DynamicEntity extends Entity {
         return (float)Math.sqrt(dx*dx+dy*dy)*60;
     }
 	
-	public void setMoveable(boolean movable)
+	public void setMovable(boolean movable)
 	{
 		this.movable=movable;
 	}

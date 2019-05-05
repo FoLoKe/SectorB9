@@ -107,26 +107,30 @@ public class ConstructorUI
 		Spinner hullSpinner = MA.findViewById(R.id.ship_constructor_ui_hull_Spinner);
 		Spinner engineSpinner = MA.findViewById(R.id.ship_constructor_ui_engine_Spinner);
 		Spinner generatorSpinner = MA.findViewById(R.id.ship_constructor_ui_generator_Spinner);
-		Spinner shildsSpinner = MA.findViewById(R.id.ship_constructor_ui_shields_Spinner);
+		Spinner shieldsSpinner = MA.findViewById(R.id.ship_constructor_ui_shields_Spinner);
+        Spinner gyroscopSpinner = MA.findViewById(R.id.ship_constructor_ui_gyroscope_Spinner);
 		
 		//adapters
 		CustomAdapter hullSpinnerAdp = new CustomAdapter(MA,ModulesDataSheet.getOfType(ModulesDataSheet.type.HULL));
 		CustomAdapter engineSpinnerAdp = new CustomAdapter(MA,ModulesDataSheet.getOfType(ModulesDataSheet.type.ENGINE));
 		CustomAdapter shieldsSpinnerAdp = new CustomAdapter(MA,ModulesDataSheet.getOfType(ModulesDataSheet.type.SHIELD));
 		CustomAdapter generatorSpinnerAdp = new CustomAdapter(MA,ModulesDataSheet.getOfType(ModulesDataSheet.type.GENERATOR));
-		
+        CustomAdapter gyroscopSpinnerAdp = new CustomAdapter(MA,ModulesDataSheet.getOfType(ModulesDataSheet.type.GYROSCOPES));
+
 		//adapters set
 		hullSpinner.setAdapter(hullSpinnerAdp);
 		engineSpinner.setAdapter(engineSpinnerAdp);
-		shildsSpinner.setAdapter(shieldsSpinnerAdp);
+		shieldsSpinner.setAdapter(shieldsSpinnerAdp);
 		generatorSpinner.setAdapter(generatorSpinnerAdp);
-		
-		//backgroud set
+		gyroscopSpinner.setAdapter(gyroscopSpinnerAdp);
+
+		//background set
 		hullSpinner.setBackgroundColor(Color.parseColor("#55ffffff"));
 		engineSpinner.setBackgroundColor(Color.parseColor("#55ffffff"));
-		shildsSpinner.setBackgroundColor(Color.parseColor("#55ffffff"));
+		shieldsSpinner.setBackgroundColor(Color.parseColor("#55ffffff"));
 		generatorSpinner.setBackgroundColor(Color.parseColor("#55ffffff"));
-		
+		gyroscopSpinner.setBackgroundColor(Color.parseColor("#55ffffff"));
+
 		//listeners set
 		hullSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() 
 		{
@@ -160,7 +164,7 @@ public class ConstructorUI
 			public void onNothingSelected(AdapterView<?> parent){}
 		});
 		
-		shildsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() 
+		shieldsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
 		{
 			public void onItemSelected(AdapterView<?> parent,View itemSelected, int selectedItemPosition, long selectedId) 
 			{
@@ -169,8 +173,17 @@ public class ConstructorUI
 
 			public void onNothingSelected(AdapterView<?> parent){}
 		});
-		
-		
+
+        gyroscopSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+        {
+            public void onItemSelected(AdapterView<?> parent,View itemSelected, int selectedItemPosition, long selectedId)
+            {
+                selectedGyroscopes=(ModulesDataSheet.GyrosModule)ModulesDataSheet.getOfType(ModulesDataSheet.type.GYROSCOPES)[selectedItemPosition];
+                updatePreview(null,null);
+            }
+
+            public void onNothingSelected(AdapterView<?> parent){}
+        });
 		
 	}
 	

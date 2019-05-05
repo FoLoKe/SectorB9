@@ -69,7 +69,7 @@ public class Laser extends Weapon
 
 	private void calculateHeat()
 	{
-		heatBar.set(heat/maxHeat*100);
+		heatBar.tick(heat/maxHeat*100);
 		if(active)
 		{
 		
