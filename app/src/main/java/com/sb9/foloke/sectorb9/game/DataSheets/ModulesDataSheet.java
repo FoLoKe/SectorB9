@@ -6,7 +6,7 @@ import com.sb9.foloke.sectorb9.game.Assets.*;
 
 public class ModulesDataSheet
 {
-	public enum type{NULL,HULL,ENGINE,SHILED,WEAPON,GENERATOR,TURRET}
+	public enum type{NULL,HULL,ENGINE,SHIELD,WEAPON,GENERATOR,TURRET,GYROSCOPES}
 	public static ArrayList<Module> modules;
 	
 	public static class Module
@@ -29,6 +29,7 @@ public class ModulesDataSheet
 	public static class HullModule extends Module
 	{
 		public GunMount[] gunMounts;
+		public int HP;
 		public static class GunMount
 		{
 			public boolean fixed;
@@ -39,10 +40,11 @@ public class ModulesDataSheet
 				this.fixed=fixed;
 			}
 		}
-		public HullModule(int ID,String name,Bitmap image,type moduleType,int mass,GunMount[] gunMounts)
+		public HullModule(int ID,String name,Bitmap image,type moduleType,int mass,int HP,GunMount[] gunMounts)
 		{
 			super(ID,name,image,moduleType,mass);
 			this.gunMounts=gunMounts;
+			this.HP=HP;
 		}
 	}
 	
@@ -55,6 +57,16 @@ public class ModulesDataSheet
 			this.impulse=impulse;
 		}
 	}
+
+    public static class GyrosModule extends Module
+    {
+        public float impulse;
+        public GyrosModule(int ID,String name,Bitmap image,type moduleType,int mass,float impulse)
+        {
+            super(ID,name,image,moduleType,mass);
+            this.impulse=impulse;
+        }
+    }
 	
 	public static class GeneratorModule extends Module
 	{
@@ -85,19 +97,30 @@ public class ModulesDataSheet
 			this.type=type;
 		}
 	}
-	
+
+	public  static class ShieldModule extends Module
+    {
+        public int type;
+        public int SP;
+        public ShieldModule(int ID,String name,Bitmap image,type moduleType,int mass,int type,int SP)
+        {
+            super(ID,name,image,moduleType,mass);
+            this.type=type;
+            this.SP=SP;
+        }
+    }
 	public static void init(MainActivity MA)
 	{
 		modules=new ArrayList<>();
 		modules.add(new Module(0,"null",ObjectsAsset.nullItem,type.NULL,0));
-		modules.add(new HullModule(1,"small",ShipAsset.player_mk1,type.HULL,100,new HullModule.GunMount[]{new HullModule.GunMount(new PointF(0,-4),true)}));
-		modules.add(new HullModule(2,"medium",ShipAsset.player_mk2,type.HULL,200,new HullModule.GunMount[]{new HullModule.GunMount(new PointF(-16,0),true),
+		modules.add(new HullModule(1,"small",ShipAsset.player_mk1,type.HULL,100,100,new HullModule.GunMount[]{new HullModule.GunMount(new PointF(0,-4),true)}));
+		modules.add(new HullModule(2,"medium",ShipAsset.player_mk2,type.HULL,200,150,new HullModule.GunMount[]{new HullModule.GunMount(new PointF(-16,0),true),
 									  																	 	new HullModule.GunMount(new PointF(16,0),true)}));
-		modules.add(new HullModule(3,"large",ShipAsset.ship_mk3,type.HULL,500,new HullModule.GunMount[]{new HullModule.GunMount(new PointF(16,1),true),
+		modules.add(new HullModule(3,"large",ShipAsset.ship_mk3,type.HULL,500,400,new HullModule.GunMount[]{new HullModule.GunMount(new PointF(16,1),true),
 									  																	 	new HullModule.GunMount(new PointF(-16,1),true),
 																											new HullModule.GunMount(new PointF(8,9),true),
 																											new HullModule.GunMount(new PointF(-8,9),true)}));
-		modules.add(new EngineModule(4,"null",ShipAsset.engine_mk1,type.ENGINE,10,1));
+		modules.add(new EngineModule(4,"null",ShipAsset.engine_mk1,type.ENGINE,10,60));
 		modules.add(new EngineModule(5,"null",ShipAsset.engine_mk2,type.ENGINE,50,2));
 		modules.add(new EngineModule(6,"null",ShipAsset.engine_mk3,type.ENGINE,100,3));
 		modules.add(new GeneratorModule(7,"null",ObjectsAsset.nullItem,type.GENERATOR,100,0.5f));
@@ -107,6 +130,8 @@ public class ModulesDataSheet
 		modules.add(new WeaponModule(11,"laser",ObjectsAsset.nullItem,type.WEAPON,100,3));
 		modules.add(new TurretModule(12,"fixed turret",ObjectsAsset.nullItem,type.TURRET,0,1));
 		modules.add(new TurretModule(13,"light turret",ObjectsAsset.nullItem,type.TURRET,0,2));
+        modules.add(new ShieldModule(14,"shield mk1",ObjectsAsset.nullItem,type.SHIELD,0,1,100));
+        modules.add(new GyrosModule(15,"gyros mk1",ObjectsAsset.nullItem,type.GYROSCOPES,25,200));
 	}
 	
 	public static Module[] getOfType(type moduleType)

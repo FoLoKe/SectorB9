@@ -115,8 +115,13 @@ public class GameLog extends LinearLayout
 				text.add(ts);
 				if(text.size()>maxCount)
 					text.remove(0);
-				for(String t:text)
+
+				///Concurrent t
+                Iterator<String> it=text.iterator();
+
+                while(it.hasNext())
 				{
+				    String t=it.next();
 					sb.append(t);
 				}
 				Spanned finalString=Html.fromHtml(sb.toString());

@@ -33,7 +33,7 @@
 		<Spinner
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:id="@+id/ship_constructor_ui_ai_Spinner"
+			android:id="@+id/ship_constructor_ui_gyroscope_Spinner"
 		/>
 		<Button
 			android:layout_width="wrap_content"

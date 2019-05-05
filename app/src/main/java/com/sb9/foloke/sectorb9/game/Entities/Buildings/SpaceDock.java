@@ -8,8 +8,9 @@ import com.sb9.foloke.sectorb9.game.Entities.Ships.*;
 public class SpaceDock extends StaticEntity
 {
 	final static int ID=12;
-	boolean inProduction=false;
-	DynamicEntity toSpawn;
+	private boolean inProduction=false;
+	private DynamicEntity toSpawn;
+
 	public SpaceDock(float x,float y,float rotation,GameManager gm)
 	{
 		super(x,y,rotation,gm,ID);
@@ -18,8 +19,6 @@ public class SpaceDock extends StaticEntity
 	@Override
 	public void render(Canvas canvas)
 	{
-		// TODO: Implement this method
-		//super.render(canvas);
 		if(!renderable)
 			return;
 		super.render(canvas);
@@ -32,7 +31,6 @@ public class SpaceDock extends StaticEntity
 	@Override
 	public void tick()
 	{
-		// TODO: Implement this method
 		if(inProduction)
 		{
 			gameManager.getEntityManager().addObject(toSpawn);
@@ -41,10 +39,10 @@ public class SpaceDock extends StaticEntity
 		super.tick();
 	}
 	
-	public void setToProduce(ModulesDataSheet.HullModule hull,ModulesDataSheet.EngineModule engine,ModulesDataSheet.GeneratorModule generator,ModulesDataSheet.Module shields,
-							 ModulesDataSheet.TurretModule turrets[],ModulesDataSheet.WeaponModule weapons[])
+	public void setToProduce(ModulesDataSheet.HullModule hull, ModulesDataSheet.EngineModule engine, ModulesDataSheet.GeneratorModule generator, ModulesDataSheet.ShieldModule shields, ModulesDataSheet.GyrosModule gyroscope,
+							 ModulesDataSheet.TurretModule[] turrets, ModulesDataSheet.WeaponModule[] weapons)
 	{
-		Ship ship=new Ship(hull,engine,generator,shields,turrets,weapons);
+		Ship ship=new Ship(hull,engine,generator,shields,gyroscope,turrets,weapons);
 		toSpawn=new ControlledShip((int)this.x,(int)this.y,0,gameManager,1,ship);
 		ship.init(toSpawn);
 		inProduction=true;

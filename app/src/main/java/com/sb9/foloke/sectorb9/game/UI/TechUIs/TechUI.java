@@ -3,9 +3,7 @@ import android.widget.*;
 import com.sb9.foloke.sectorb9.*;
 import android.graphics.*;
 import com.sb9.foloke.sectorb9.game.Funtions.*;
-import android.graphics.drawable.*;
 import java.util.*;
-import android.widget.ActionMenuView.*;
 import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
 import android.view.*;
 
@@ -168,7 +166,7 @@ public class TechUI
 			else
 				ib.setBackgroundColor(Color.parseColor("#55ffffff"));
 				
-						ib.setOnClickListener(new OnClickListener()
+						ib.setOnClickListener(new View.OnClickListener()
 						{
 							public void onClick(View v)
 							{
@@ -196,7 +194,6 @@ public class TechUI
 				TechUILink tul =new TechUILink(MA,tfinish,tstart);
 				tstart.links.add(tul);
 				MAL.addView(tul);
-				GameLog.update(""+ntid,1);
 			}
 		}
 		}

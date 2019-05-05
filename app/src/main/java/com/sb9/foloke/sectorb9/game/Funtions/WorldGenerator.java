@@ -1,4 +1,5 @@
 package com.sb9.foloke.sectorb9.game.Funtions;
+import com.sb9.foloke.sectorb9.game.Entities.Ships.Ship;
 import com.sb9.foloke.sectorb9.game.Managers.*;
 import java.util.*;
 import com.sb9.foloke.sectorb9.game.Entities.*;
@@ -21,7 +22,7 @@ public class WorldGenerator
 
 	}
 	
-	public static void randomSectorPeaceful(EntityManager entityManager,GameManager gameManager)
+	private static void randomSectorPeaceful(EntityManager entityManager,GameManager gameManager)
     {
        	entityManager.reload();
 		
@@ -32,29 +33,16 @@ public class WorldGenerator
 			entityManager.addObject(new Asteroid(50*rand.nextInt(50)+25*rand.nextInt(20),100*rand.nextInt(20)+20*rand.nextInt(50),rand.nextInt(180), gameManager,rand.nextInt(3)));
     }
 	
-	public static void randomSectorHostile(EntityManager entityManager,GameManager gameManager)
+	private static void randomSectorHostile(EntityManager entityManager,GameManager gameManager)
     {
        	entityManager.reload();
         Random rand=new Random();
 		
 		for(int i=0;i<3;i++)
-			entityManager.addObject(new ControlledShip(50*rand.nextInt(50)+25*rand.nextInt(20),1000,0,gameManager,rand.nextInt(1),1));
+			entityManager.addObject(new ControlledShip(50*rand.nextInt(50)+25*rand.nextInt(20),1000,0,gameManager,rand.nextInt(1),Ship.createSimple()));
 		for(int i=0;i<500;i++)
 			entityManager.addObject(new Asteroid(50*rand.nextInt(50)+25*rand.nextInt(20),100*rand.nextInt(20)+20*rand.nextInt(50),rand.nextInt(180), gameManager,rand.nextInt(3)));
     }
-	
-	public static void makeTestingBox(GameManager gameManager)
-	{
-		EntityManager entityManager=gameManager.getEntityManager();
-		entityManager.reload();
-        Random rand=new Random();
-		gameManager.getGamePanel().setWorldSize(250);
-		entityManager.addObject(gameManager.getPlayer());
-		for(int i=0;i<3;i++)
-			entityManager.addObject(new ControlledShip(rand.nextInt(100),rand.nextInt(100),0,gameManager,rand.nextInt(1),1));
-		for(int i=0;i<2;i++)
-			entityManager.addObject(new Asteroid(rand.nextInt(50),rand.nextInt(180),0, gameManager,rand.nextInt(3)));
-	}
 	
 	public static void makeSector(GameManager gameManager,MapManager.Sector s)
 	{
@@ -64,7 +52,7 @@ public class WorldGenerator
 		float WS=gameManager.getGamePanel().getWorldSize();
 		switch(s.type)
 		{
-			case (EMPTY):
+			case EMPTY:
 				
 				break;
 			case ASTEROID_BELT:
@@ -87,11 +75,11 @@ public class WorldGenerator
 		{
 			case HOSTILE:
 			for(int i=0;i<5;i++)
-				entityManager.addObject(new ControlledShip(rand.nextInt((int)WS),rand.nextInt((int)WS),0,gameManager,0,1));
+				entityManager.addObject(new ControlledShip(rand.nextInt((int)WS),rand.nextInt((int)WS),0,gameManager,0, Ship.createSimple()));
 			break;
 			case PEACEFUL:
 				for(int i=0;i<5;i++)
-					entityManager.addObject(new ControlledShip(rand.nextInt((int)WS),rand.nextInt((int)WS),0,gameManager,1,1));
+					entityManager.addObject(new ControlledShip(rand.nextInt((int)WS),rand.nextInt((int)WS),0,gameManager,1,Ship.createSimple()));
 				break;
 		}
 		

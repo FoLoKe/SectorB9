@@ -267,17 +267,23 @@ public abstract class DynamicEntity extends Entity {
 	{
 		if(!renderable)
 			return;
-        if((SH<maxSH||HP<maxHP)&&drawHp)
+        if((SP<maxSP||HP<maxHP)&&drawHp)
         {
             uIsh.render(canvas);
             uIhp.render(canvas);
         }
-        if(SH>0&&shieldShow.getTick()>0)
-        	canvas.drawBitmap(shieldImg,getCenterX()-(float)shieldImg.getWidth()/2,getCenterY()-(float)shieldImg.getHeight()/2,shieldpaint);
+        if(SP>0&&shieldShow.getTick()>0)
+        	canvas.drawBitmap(shieldImg,getCenterX()-(float)shieldImg.getWidth()/2,getCenterY()-(float)shieldImg.getHeight()/2,shieldPaint);
 		if(Options.drawDebugInfo.getBoolean())
 		{
 			drawVelocity(canvas);
 			drawDebugCollision(canvas);
+			canvas.drawText("M:  "+mass,x-100,y,debugPaint);
+            canvas.drawText("FI: "+frontImpulse,x-100,y+32,debugPaint);
+            canvas.drawText("BI: "+backwardImpulse,x-100,y+64,debugPaint);
+            canvas.drawText("SI: "+sidewaysImpulse,x-100,y+96,debugPaint);
+            canvas.drawText("HP: "+HP+"/"+maxHP,x-100,y+128,debugPaint);
+            canvas.drawText("HP: "+SP+"/"+maxSP,x-100,y+160,debugPaint);
 		}
 	}
 

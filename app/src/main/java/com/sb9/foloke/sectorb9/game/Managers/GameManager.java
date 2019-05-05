@@ -318,8 +318,6 @@ public class GameManager {
         return player;
     }
 
-   
-
     public void updateInventory(final Entity caller)
     {GameLog.update("GameManager: update Inventory UI",0);
         MA.runOnUiThread(new Runnable(){
@@ -356,7 +354,6 @@ public class GameManager {
         gamePanel.pressedObject=pressedObject;
     }
 
-
     public void initAssemblerUI(final Assembler assembler)
     {
 		GameLog.update("GameManager: init. Assembler UI",0);
@@ -377,7 +374,6 @@ public class GameManager {
     {
         return gamePanel.getCamera();
     }
-
 
     public Point getCurrentSector()
     {
@@ -455,6 +451,7 @@ public class GameManager {
 	{
 		return (float)Math.sqrt((b.x-a.x)*(b.x-a.x)+(b.y-a.y)*(b.y-a.y));
 	}
+
 	public EntityManager getEntityManager()
 	{
 		return worldManager.getEntityManager();
@@ -847,6 +844,7 @@ public class GameManager {
         }
 		GameLog.update("GameManager: thread stopped",0);
 	}
+
 	public void resume()
 	{
 		GameLog.update("GameManager: resume",0);
@@ -862,7 +860,5 @@ public class GameManager {
 	public void checkJoystick(boolean touched,PointF screenPoint)
 	{
 		joystick.setTouched(touched,screenPoint);
-		//touched=touched;
-		
 	}
 }

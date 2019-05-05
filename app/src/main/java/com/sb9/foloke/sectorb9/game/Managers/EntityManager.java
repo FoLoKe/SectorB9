@@ -3,6 +3,7 @@ import java.util.*;
 
 import com.sb9.foloke.sectorb9.game.Entities.Asteroid;
 import com.sb9.foloke.sectorb9.game.Entities.Entity;
+import com.sb9.foloke.sectorb9.game.Entities.Ships.Ship;
 import com.sb9.foloke.sectorb9.game.Entities.SmallCargoContainer;
 
 
@@ -184,7 +185,7 @@ public class EntityManager
             }
 			case 10:
 			{
-				e=new ControlledShip(0,0,0,gameManager,2,1);
+				e=new ControlledShip(0,0,0,gameManager,2, Ship.createSimple());
 				break;
 			}
 			case 12:

@@ -4,13 +4,13 @@ import java.util.*;
 
 public class MapManager
 {
-	public final static enum sectorType{ASTEROID_BELT,ASTEROID_CLUSTER,STATION,EMPTY,RANDOM,EVENT;
+    public enum sectorType{ASTEROID_BELT,ASTEROID_CLUSTER,STATION,EMPTY,RANDOM,EVENT;
 		public static sectorType getRandomType() {
             Random random = new Random();
             return values()[random.nextInt(values().length)];}
 	}
 	
-	public final static enum sectorAgr{PEACEFUL,HOSTILE,NEUTRAL;
+	public enum sectorAgr{PEACEFUL,HOSTILE,NEUTRAL;
 		public static sectorAgr getRandomAgr() {
             Random random = new Random();
             return values()[random.nextInt(values().length)];}
@@ -19,11 +19,11 @@ public class MapManager
 
 	private static final int mapWidth=32;
 	private static final int mapHeight=32;
-	private ArrayList<Sector> sectors=new ArrayList<Sector>();
+	private ArrayList<Sector> sectors=new ArrayList<>();
 	
 	public class Sector
 	{
-		public int x=0,y=0;
+		public int x,y;
 		public sectorType type;
 		public sectorAgr agr;
 		public boolean discovered=false;
@@ -49,12 +49,12 @@ public class MapManager
 	public int getMapWidth()
 	{
 		return mapWidth;
-	};
+	}
 	
 	public int getMapHeight()
 	{
 		return mapHeight;
-	};
+	}
 	
 	public Sector getSector(int x,int y)
 	{

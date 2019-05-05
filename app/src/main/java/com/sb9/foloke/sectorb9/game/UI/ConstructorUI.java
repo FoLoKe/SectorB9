@@ -7,20 +7,18 @@ import com.sb9.foloke.sectorb9.game.DataSheets.*;
 import android.content.*;
 import com.sb9.foloke.sectorb9.game.Entities.Buildings.*;
 import android.view.View.*;
-import android.graphics.drawable.*;
-import com.sb9.foloke.sectorb9.game.Entities.Ships.*;
-
 
 public class ConstructorUI
 {
-	
-    public static ModulesDataSheet.HullModule selectedHull;
-	public static ModulesDataSheet.EngineModule selectedEngine;
-	public static ModulesDataSheet.TurretModule selectedTurrets[];
-	public static ModulesDataSheet.WeaponModule selectedWeapons[];
-	public static ModulesDataSheet.GeneratorModule selectedGenerator;
-	public static ModulesDataSheet.Module selectedShield;
+    private static ModulesDataSheet.HullModule selectedHull;
+	private static ModulesDataSheet.EngineModule selectedEngine;
+	private static ModulesDataSheet.TurretModule[] selectedTurrets;
+	private static ModulesDataSheet.WeaponModule[] selectedWeapons;
+	private static ModulesDataSheet.GeneratorModule selectedGenerator;
+	private static ModulesDataSheet.ShieldModule selectedShield;
+	private static ModulesDataSheet.GyrosModule selectedGyroscopes;
 	private static float scaleX,scaleY;
+    static MainActivity MA;
 	
 	private static class CustomAdapter extends ArrayAdapter
 	{
@@ -35,7 +33,7 @@ public class ConstructorUI
 			TextView mInfo;
 		}
 		
-		public CustomAdapter(Context context, ModulesDataSheet.Module[] modules) 
+		private CustomAdapter(Context context, ModulesDataSheet.Module[] modules)
 		{
 			super(context, R.layout.spinner_row_for_constructor_ui);
 			this.modules = modules;
@@ -57,9 +55,9 @@ public class ConstructorUI
 			{
 				LayoutInflater mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				convertView = mInflater.inflate(R.layout.spinner_row_for_constructor_ui, parent, false);
-				mViewHolder.mImage = (ImageView) convertView.findViewById(R.id.sr_iv_image);
-				mViewHolder.mName = (TextView) convertView.findViewById(R.id.sr_tv_name);
-				mViewHolder.mInfo = (TextView) convertView.findViewById(R.id.sr_tv_info);
+				mViewHolder.mImage =  convertView.findViewById(R.id.sr_iv_image);
+				mViewHolder.mName =  convertView.findViewById(R.id.sr_tv_name);
+				mViewHolder.mInfo =  convertView.findViewById(R.id.sr_tv_info);
 				convertView.setTag(mViewHolder);
 			} 
 			else 
@@ -79,8 +77,7 @@ public class ConstructorUI
 			return getView(position, convertView, parent);
 		}
 	}
-	
-	static MainActivity MA;
+
 	public static void init(MainActivity in_MA)
 	{
 		MA=in_MA;
@@ -102,7 +99,7 @@ public class ConstructorUI
 		{
 			public void onClick(View v)
 			{
-				caller.setToProduce(selectedHull,selectedEngine,selectedGenerator,selectedShield,selectedTurrets,selectedWeapons);
+				caller.setToProduce(selectedHull,selectedEngine,selectedGenerator,selectedShield,selectedGyroscopes,selectedTurrets,selectedWeapons);
 			}
 		}
 		);
@@ -115,7 +112,7 @@ public class ConstructorUI
 		//adapters
 		CustomAdapter hullSpinnerAdp = new CustomAdapter(MA,ModulesDataSheet.getOfType(ModulesDataSheet.type.HULL));
 		CustomAdapter engineSpinnerAdp = new CustomAdapter(MA,ModulesDataSheet.getOfType(ModulesDataSheet.type.ENGINE));
-		CustomAdapter shieldsSpinnerAdp = new CustomAdapter(MA,ModulesDataSheet.getOfType(ModulesDataSheet.type.SHILED));
+		CustomAdapter shieldsSpinnerAdp = new CustomAdapter(MA,ModulesDataSheet.getOfType(ModulesDataSheet.type.SHIELD));
 		CustomAdapter generatorSpinnerAdp = new CustomAdapter(MA,ModulesDataSheet.getOfType(ModulesDataSheet.type.GENERATOR));
 		
 		//adapters set
@@ -136,7 +133,7 @@ public class ConstructorUI
 			public void onItemSelected(AdapterView<?> parent,View itemSelected, int selectedItemPosition, long selectedId) 
 			{
 				selectedHull=(ModulesDataSheet.HullModule)ModulesDataSheet.getOfType(ModulesDataSheet.type.HULL)[selectedItemPosition];
-				organaizeWeaponsSpinners();
+				organizeWeaponsSpinners();
 				updatePreview(null,null);
 			}
 			
@@ -167,7 +164,7 @@ public class ConstructorUI
 		{
 			public void onItemSelected(AdapterView<?> parent,View itemSelected, int selectedItemPosition, long selectedId) 
 			{
-				selectedShield=ModulesDataSheet.getOfType(ModulesDataSheet.type.SHILED)[selectedItemPosition];
+				selectedShield=(ModulesDataSheet.ShieldModule) ModulesDataSheet.getOfType(ModulesDataSheet.type.SHIELD)[selectedItemPosition];
 			}
 
 			public void onNothingSelected(AdapterView<?> parent){}
@@ -190,27 +187,26 @@ public class ConstructorUI
 		canvas.drawBitmap(hull, 0,0, null);
 		//Bitmap hulBM=selectedHull.image;
 		if(f!=null)
-		canvas.drawCircle(f.x+hull.getWidth()/2,f.y+hull.getHeight()/2,3,p);
+		canvas.drawCircle(f.x+hull.getWidth()/2f,f.y+hull.getHeight()/2f,3,p);
 		
-		if(gf!=null)
+		if(gf!=null&&f!=null)
 		{
 			p.setStrokeWidth(2);
-			canvas.drawLine(f.x+hull.getWidth()/2,f.y+hull.getHeight()/2,f.x+hull.getWidth()/2,f.y+hull.getHeight()/2-5,p);
+			canvas.drawLine(f.x+hull.getWidth()/2f,f.y+hull.getHeight()/2f,f.x+hull.getWidth()/2f,f.y+hull.getHeight()/2f-5,p);
 		}
-		//((ImageView)MA.findViewById(R.id.ship_constructor_ui_image)).setBackgroundDrawable(new BitmapDrawable(Bitmap.createScaledBitmap(selectedHull.image,(int)(640*scaleX),(int)(640*scaleY),false)))
 		((ImageView)MA.findViewById(R.id.ship_constructor_ui_image)).setImageBitmap(Bitmap.createScaledBitmap(bmOverlay,(int)(320*scaleX),(int)(320*scaleY),false));
 		
 	}
 	
-	private static void organaizeWeaponsSpinners()
+	private static void organizeWeaponsSpinners()
 	{
 		
-		selectedWeapons=new ModulesDataSheet.WeaponModule[((ModulesDataSheet.HullModule)selectedHull).gunMounts.length];
-		selectedTurrets=new ModulesDataSheet.TurretModule[((ModulesDataSheet.HullModule)selectedHull).gunMounts.length];
+		selectedWeapons=new ModulesDataSheet.WeaponModule[(selectedHull).gunMounts.length];
+		selectedTurrets=new ModulesDataSheet.TurretModule[(selectedHull).gunMounts.length];
 		
 		((LinearLayout)MA.findViewById(R.id.ship_constructor_ui_MainRightLinearLayout)).removeAllViews();
 		int turretNumber=0;
-		for(ModulesDataSheet.HullModule.GunMount g:((ModulesDataSheet.HullModule)selectedHull).gunMounts)
+		for(ModulesDataSheet.HullModule.GunMount g:(selectedHull).gunMounts)
 		{
 			
 			final ModulesDataSheet.HullModule.GunMount fg=g;
@@ -285,22 +281,10 @@ public class ConstructorUI
 			super(c);
 			this.number=number;
 		}
-		/**
-		 * An interface which a client of this Spinner could use to receive
-		 * open/closed events for this Spinner. 
-		 */
-		 
-		 
 		public interface OnSpinnerEventsListener {
 
-			/**
-			 * Callback triggered when the spinner was opened.
-			 */
 			void onSpinnerOpened(Spinner spinner);
 
-			/**
-			 * Callback triggered when the spinner was closed.
-			 */
 			void onSpinnerClosed(Spinner spinner);
 
 		}
@@ -308,12 +292,8 @@ public class ConstructorUI
 		private OnSpinnerEventsListener mListener;
 		private boolean mOpenInitiated = false;
 
-		// implement the Spinner constructors that you need
-
 		@Override
 		public boolean performClick() {
-			// register that the Spinner was opened so we have a status
-			// indicator for when the container holding this Spinner may lose focus
 			mOpenInitiated = true;
 			if (mListener != null) {
 				mListener.onSpinnerOpened(this);
@@ -328,17 +308,11 @@ public class ConstructorUI
 			}
 		}
 
-		/**
-		 * Register the listener which will listen for events.
-		 */
 		public void setOnSpinnerEventsListener(
             OnSpinnerEventsListener onSpinnerEventsListener) {
 			mListener = onSpinnerEventsListener;
 		}
 
-		/**
-		 * Propagate the closed Spinner event to the listener from outside if needed.
-		 */
 		public void performClosedEvent() {
 			mOpenInitiated = false;
 			if (mListener != null) {
@@ -346,11 +320,6 @@ public class ConstructorUI
 			}
 		}
 
-		/**
-		 * A boolean flag indicating that the Spinner triggered an open event.
-		 * 
-		 * @return true for opened Spinner 
-		 */
 		public boolean hasBeenOpened() {
 			return mOpenInitiated;
 		}

@@ -32,7 +32,7 @@ public class Player extends DynamicEntity
         drawHp=false;
 
 		TEAM=1;
-		this.ship=new Ship(1,this);
+		this.ship=Ship.createSimple();
         this.dx=this.dy=0;
         this.movable=false;
 		this.renderable=true;
@@ -56,7 +56,10 @@ public class Player extends DynamicEntity
 			return;
 	    super.tick();
 		Shoot();
-		ship.tick();	
+		ship.tick();
+
+		///DEBUG
+        this.applyDamage(0.1f);
     }
 
     @Override
@@ -86,7 +89,7 @@ public class Player extends DynamicEntity
     @Override
     public CustomCollisionObject getCollisionObject()
     {
-		return ship.getCollisonObject();
+		return ship.getCollisionObject();
 	}
 	
     public void setMovable(boolean movable) 
@@ -112,20 +115,9 @@ public class Player extends DynamicEntity
 		canvas.drawCircle(getCenterX(),getCenterY(),interactionRadius,tPaint);
 	}
 	
-	public void setShip(int i)
+	public void setShip(Ship in_ship)
 	{
-	    switch(i) 
-		{
-            case 1:
-                ship = new Ship(1,this);
-                break;
-            case 2:
-                ship = new Ship(2,this);
-                break;
-            case 3:
-                ship = new Ship(3,this);
-                break;
-        }
+                ship = in_ship;
 	}
 
 	protected void onDestroy()
@@ -148,7 +140,7 @@ public class Player extends DynamicEntity
 		//x=90;y=90;
 		gameManager.getGamePanel().pointOfTouch=getWorldLocation();
 		TEAM=1;
-		this.ship=new Ship(1,this);
+		this.ship=Ship.createSimple();
 		
         this.dx=this.dy=0;
         this.movable=false;
@@ -166,10 +158,10 @@ public class Player extends DynamicEntity
 	{
 		x=90;
 		y=90;
-		//x=90;y=90;
+
 		gameManager.getGamePanel().pointOfTouch=getWorldLocation();
 		TEAM=1;
-		this.ship=new Ship(1,this);
+		this.ship=Ship.createSimple();
 
         this.dx=this.dy=0;
         this.movable=false;

@@ -3,23 +3,23 @@ import android.widget.*;
 import android.view.View.*;
 import com.sb9.foloke.sectorb9.*;
 import android.view.*;
-import android.widget.CompoundButton.*;
 import android.app.*;
 import android.content.*;
 import android.graphics.*;
 import com.sb9.foloke.sectorb9.game.Assets.*;
+import com.sb9.foloke.sectorb9.game.Entities.Ships.Ship;
 import android.graphics.drawable.*;
 
 public class MenuUI
 {
 	private static int prevViewID=0;
-	public static float scaleX=1;
-	public static float scaleY=1;
+	private static float scaleX=1;
+	private static float scaleY=1;
 	public static final int size=64;
 	public static void init(final MainActivity MA,final int view)
 	{
         final ViewFlipper VF = MA.findViewById(R.id.UIFlipper);
-		scaleY=MA.getGameManager().getScreenSize().y/1600;
+		scaleY=MA.getGameManager().getScreenSize().y/1600f;
 		if(scaleX>2)
 			scaleX=2;
 		if(scaleX<0.5f)
@@ -124,7 +124,7 @@ public class MenuUI
             @Override
             public void onClick(View v)
             {
-                MA.getGameManager().getPlayer().setShip(1);
+                MA.getGameManager().getPlayer().setShip(Ship.createSimple());
             }});
 
         Button sh2=MA.findViewById(R.id.menu_ui_set_second_ship);
@@ -132,7 +132,7 @@ public class MenuUI
             @Override
             public void onClick(View v)
             {
-                MA.getGameManager().getPlayer().setShip(2);
+                MA.getGameManager().getPlayer().setShip(Ship.createSimple());
             }});
 
         Button sh3=MA.findViewById(R.id.menu_ui_set_third_ship);
@@ -140,7 +140,7 @@ public class MenuUI
             @Override
             public void onClick(View v)
             {
-                MA.getGameManager().getPlayer().setShip(3);
+                MA.getGameManager().getPlayer().setShip(Ship.createSimple());
             }});
 	}
 	

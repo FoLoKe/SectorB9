@@ -7,6 +7,8 @@ import java.util.*;
 
 import android.graphics.*;
 import java.io.*;
+
+import com.sb9.foloke.sectorb9.game.Entities.Ships.Ship;
 import com.sb9.foloke.sectorb9.game.Funtions.*;
 import com.sb9.foloke.sectorb9.game.UI.*;
 import com.sb9.foloke.sectorb9.game.UI.CustomViews.GameLog;
@@ -63,7 +65,7 @@ public class WorldManager
 		entityManager.addObject(new Crusher(700,900,rand.nextInt(180), gameManager));
 		entityManager.addObject(new SmallCargoContainer(600,900,rand.nextInt(180), gameManager));
         entityManager.addObject(gameManager.getPlayer());
-		entityManager.addObject(new ControlledShip(700,900,0,gameManager,0,1));
+		entityManager.addObject(new ControlledShip(700,900,0,gameManager,0,Ship.createSimple()));
 		for (int i=0;i<50;i++)
 			entityManager.addObject(new Asteroid(50*rand.nextInt(50)+25*rand.nextInt(20),100*rand.nextInt(20)+20*rand.nextInt(50),rand.nextInt(180), gameManager,rand.nextInt(10)));
 	}

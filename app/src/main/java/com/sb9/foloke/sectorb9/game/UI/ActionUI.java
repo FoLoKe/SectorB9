@@ -104,15 +104,15 @@ public class ActionUI
 	
 	public static void update(final boolean collectButtonState)
 	{
-		
+		if(MA!=null)
 		MA.runOnUiThread(new Runnable()
 		{
 			public void run()
 			{
 				if (collectButtonState)
-					collectAllButton.setVisibility(View.VISIBLE);
+                    MA.findViewById(R.id.action_u_collectAllButton).setVisibility(View.VISIBLE);
 				else
-					collectAllButton.setVisibility(View.GONE);
+                    MA.findViewById(R.id.action_u_collectAllButton).setVisibility(View.GONE);
 			}
 		});
 	}

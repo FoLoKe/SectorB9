@@ -19,18 +19,16 @@ import com.sb9.foloke.sectorb9.game.UI.Inventory.*;
 import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
 
 public abstract class Entity {
-	///TODO: NEW CLASS PRUDCTION BUILDING OR ENTITY TO HANDLE ITRMS CREATION
-	///MARKERS WITH NAMES AND RADIO OPTIONS                 '''''
-	///REFACTOR ALL PRODUCTION OBJECTS                      '''''
+	///TODO:
 	///LOADING SCREEN                                       '''''
     ///FIX SHIELDS                                          '''''
 	protected float width=2,height=2;
 	protected float relativeCentreX,relativeCenterY;
     protected float x,y;
 	protected float maxHP=100;
-	protected float HP=0;
-	protected float maxSH=0;
-	protected float SH=0;
+	protected float SP;
+	protected float maxSP=0;
+	protected float HP;
 	protected float rotation;
 	protected int TEAM=0;
 	private int ID=0;
@@ -46,7 +44,7 @@ public abstract class Entity {
 	protected boolean isInteractable=true;
 	protected boolean drawHp=true;
 	public boolean toRemove=false;
-	private Paint debugPaint=new Paint();
+	protected Paint debugPaint=new Paint();
 	protected CustomCollisionObject collisionObject;
 	protected ProgressBarUI uIhp;
     protected ProgressBarUI uIsh;
@@ -57,8 +55,8 @@ public abstract class Entity {
 	protected RectF renderBox=new RectF();
 	protected Bitmap image,shieldImg;
     protected Timer shieldShow=new Timer(0);
-    protected Paint shieldpaint=new Paint();
-    private float shildShowTime=2;
+    protected Paint shieldPaint=new Paint();
+    private float shieldShowTime=2;
     private float regainSH=0.2f;
 
     public Entity(float x, float y, float rotation, GameManager gameManager, int ID)
@@ -68,10 +66,10 @@ public abstract class Entity {
         this.debugPaint.setStrokeWidth(2);
 		this.ID=ID;
 
-		applyStandartOptions();
+		applyStandardOptions();
 
 		this.HP=maxHP;
-		this.SH=maxSH;
+		this.SP=maxSP;
         this.x=x;
         this.y=y;
 		this.gameManager = gameManager;
@@ -89,7 +87,7 @@ public abstract class Entity {
 		createCollision();
     }
 	
-	private void applyStandartOptions()
+	private void applyStandardOptions()
 	{
 		enabled					= ObjectsDataSheet.findById(ID).enabledByDefault;
 		inventoryMaxCapacity	= ObjectsDataSheet.findById(ID).inventoryCapacity;
@@ -130,7 +128,7 @@ public abstract class Entity {
 	public String getSaveString()
 	{
 			String s=getInvSaveString();
-		    return "["+ID+" "+name+" "+x+" "+y+" "+rotation+" "+HP+" "+SH+" "+TEAM+" "+s+"] ";
+		    return "["+ID+" "+name+" "+x+" "+y+" "+rotation+" "+HP+" "+SP+" "+TEAM+" "+s+"] ";
 	}
 
 	//**********SYNTAX***********
@@ -146,11 +144,11 @@ public abstract class Entity {
 			y=Float.parseFloat(words[3]);
 			rotation= Float.parseFloat(words[4]);
 			HP=Float.parseFloat(words[5]);
-			SH=Float.parseFloat(words[6]);
+			SP=Float.parseFloat(words[6]);
 			TEAM=Integer.parseInt(words[7]);
 			LoadInvFromString(words[8]);
 			
-			uIsh.set(SH/maxSH*100);
+			uIsh.set(SP/maxSP*100);
 			uIhp.set(HP/maxHP*100);
 			setCollisionObject();
 		}
@@ -201,10 +199,10 @@ public abstract class Entity {
     public void tick()
     {
         if(shieldShow.tick())
-            SH+=regainSH;
-        if(SH>maxSH)
-            SH=maxSH;
-        shieldpaint.setAlpha((int)(255*shieldShow.getSecond()/shildShowTime));
+            SP+=regainSH;
+        if(SP>maxSP)
+            SP=maxSP;
+        shieldPaint.setAlpha((int)(255*shieldShow.getSecond()/shieldShowTime));
         renderBox.set(getCenterX()-32,getCenterY()-32,getCenterX()+32,getCenterY()+32);
     }
 
@@ -283,26 +281,26 @@ public abstract class Entity {
 
 	public void applyDamage(float damage)
 	{
-        if(SH>maxSH)
-            SH=maxSH;
+        if(SP>maxSP)
+            SP=maxSP;
         if(HP>maxHP)
             HP=maxHP;
-	    float sum=HP+SH-damage;
+	    float sum=HP+SP-damage;
 
-        shieldShow.setTimer(shildShowTime);
+        shieldShow.setTimer(shieldShowTime);
 		
 	    if(sum-maxHP>0)
 	    {
-            SH = sum - maxHP;
+            SP = sum - maxHP;
         }
         else
         {
-            SH = 0;
+            SP = 0;
             HP = sum;
         }
 		
 		uIhp.set(HP/maxHP*100);
-        uIsh.set(SH/maxSH*100);
+        uIsh.set(SP/maxSP*100);
 		if(HP<=0)
 			onDestroy();			
 	}
@@ -396,8 +394,8 @@ public abstract class Entity {
 
     public void setMaxSH(float msh)
     {
-        maxSH=msh;
-        SH=msh;
+        maxSP=msh;
+        SP=msh;
     }
 
     public float getMaxHP()
@@ -407,12 +405,12 @@ public abstract class Entity {
 
     public float getMaxSH()
     {
-        return maxSH;
+        return maxSP;
     }
 
     public float getSH()
     {
-        return SH;
+        return SP;
     }
 	public void setHP(float HP)
 	{
@@ -420,6 +418,6 @@ public abstract class Entity {
 	}
 	public void setSH(float SH)
 	{
-		this.SH=SH;
+		this.SP=SH;
 	}
 }

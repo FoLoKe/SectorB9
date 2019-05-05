@@ -62,9 +62,15 @@ public class MainThread extends Thread
             timeMillis=(System.nanoTime()-startTime)/1000000;
             waitTime=targetTime-timeMillis;
 
-            try{
-                this.sleep(waitTime);
-            }catch(Exception e){}
+            try
+            {
+                if(waitTime>0)
+                sleep(waitTime);
+            }
+            catch(Exception e)
+            {
+                GameLog.update("Main Thread: "+e.toString(),1);
+            }
 
             totalTime += System.nanoTime()-startTime;
             frameCount++;
