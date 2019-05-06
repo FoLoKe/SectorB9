@@ -3,15 +3,28 @@ import android.widget.*;
 import android.view.View.*;
 import com.sb9.foloke.sectorb9.*;
 import android.view.*;
-import android.widget.CompoundButton.*;
 import android.app.*;
 import android.content.*;
+import android.graphics.*;
+import com.sb9.foloke.sectorb9.game.Assets.*;
+import com.sb9.foloke.sectorb9.game.Entities.Ships.Ship;
+import android.graphics.drawable.*;
 
 public class MenuUI
 {
 	private static int prevViewID=0;
-	public static void init(final MainActivity MA,final ViewFlipper VF,final int view)
+	private static float scaleX=1;
+	private static float scaleY=1;
+	public static final int size=64;
+	public static void init(final MainActivity MA,final int view)
 	{
+        final ViewFlipper VF = MA.findViewById(R.id.UIFlipper);
+		scaleY=MA.getGameManager().getScreenSize().y/1600f;
+		if(scaleX>2)
+			scaleX=2;
+		if(scaleX<0.5f)
+			scaleX=0.5f;
+		scaleX=scaleY;
 		prevViewID=view;
 		Button closeMenuButton=MA.findViewById(R.id.closeMenu);
 		closeMenuButton.setOnClickListener
@@ -26,45 +39,57 @@ public class MenuUI
 					MA.findViewById(R.id.Menu).setVisibility(View.VISIBLE);
 				}
 			});
+		//optimal 50=32
+		
+		
+		BitmapFactory.Options bitmapOptions=new BitmapFactory.Options();
+        bitmapOptions.inScaled=false;
+		///2500 screenW
+		///100 normal size for 32 px
+		//so button size is scaled 3.125 for 2500 it is 100%
 
-		Button openHelpButton=MA.findViewById(R.id.menu_uiOpenHelpButton);
+		//for 1800 scale =(int) 3.125*1800/2500
+
+
+		
+		ImageButton openHelpButton=MA.findViewById(R.id.menu_uiOpenHelpButton);
+		openHelpButton.setBackgroundDrawable(new BitmapDrawable(MA.getResources(),Bitmap.createScaledBitmap(UIAsset.helpButton,(int)(size*3*scaleX),(int)(size*scaleY),false)));
 		openHelpButton.setOnClickListener
 		(new OnClickListener() 
 			{
 				@Override
 				public void onClick(View v) 
 				{
-					MA.helpui.init(MA,VF,view);
+					HelpUI.init(MA,view);
 					VF.setDisplayedChild(VF.indexOfChild(MA.findViewById(R.id.help_sectionUI)));
 				}
 			});
-		Button openMapButton=MA.findViewById(R.id.menu_openMapButton);
+			
+		ImageButton openOptionsButton=MA.findViewById(R.id.menu_ui_open_options);
+		openOptionsButton.setBackgroundDrawable(new BitmapDrawable(MA.getResources(),Bitmap.createScaledBitmap(UIAsset.optionsButton,(int)(size*3*scaleX),(int)(size*scaleY),false)));
+		openOptionsButton.setOnClickListener
+		(new OnClickListener() 
+			{
+				@Override
+				public void onClick(View v) 
+				{
+					OptionsUI.init(MA);
+					VF.setDisplayedChild(VF.indexOfChild(MA.findViewById(R.id.options_ui)));
+				}
+			});
+		ImageButton openMapButton=MA.findViewById(R.id.menu_openMapButton);
+		openMapButton.setBackgroundDrawable(new BitmapDrawable(MA.getResources(),Bitmap.createScaledBitmap(UIAsset.mapButton,(int)(size*3*scaleX),(int)(size*scaleY),false)));
 		openMapButton.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v)
 			{
-				MA.mapUI.init(MA,VF);
+				MapUI.init(MA);
 				VF.setDisplayedChild(VF.indexOfChild(MA.findViewById(R.id.map_ui)));
 			}
 		});
 		
-		Switch menuDebugSwitch = MA.findViewById(R.id.debug_switch);
-
-		menuDebugSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener()
-			{
-				@Override
-				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-					MA.getGameManager().drawDebugInfo=isChecked;
-				}
-			});
-		Switch frameLimmiterSwitch=MA.findViewById(R.id.framelimiter_switch);
-		frameLimmiterSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener(){
-				@Override
-				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-					MA.getGameManager().getGamePanel().setFrameLimiter(isChecked);
-					}
-		});
-		Button saveButton=MA.findViewById(R.id.menu_save);
+		ImageButton saveButton=MA.findViewById(R.id.menu_save);
+		saveButton.setBackgroundDrawable(new BitmapDrawable(MA.getResources(),Bitmap.createScaledBitmap(UIAsset.saveButton,(int)(size*3*scaleX),(int)(size*scaleY),false)));
 		saveButton.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v)
@@ -72,7 +97,8 @@ public class MenuUI
 				makeSaveQuestionDilaog(MA,"save");
 			}});
 			
-		Button loadButton=MA.findViewById(R.id.menu_load);
+		ImageButton loadButton=MA.findViewById(R.id.menu_load);
+		loadButton.setBackgroundDrawable(new BitmapDrawable(MA.getResources(),Bitmap.createScaledBitmap(UIAsset.loadButton,(int)(size*3*scaleX),(int)(size*scaleY),false)));
 		loadButton.setOnClickListener(new OnClickListener(){
 				@Override
 				public void onClick(View v)
@@ -80,13 +106,42 @@ public class MenuUI
 					makeSaveQuestionDilaog(MA,"load");
 				}});
 	
-		Button mainMenuButton=MA.findViewById(R.id.menu_ToMainMenu);
-		mainMenuButton.setOnClickListener(new OnClickListener(){
+		ImageButton exitMenuButton=MA.findViewById(R.id.menu_ToMainMenu);
+		exitMenuButton.setBackgroundDrawable(new BitmapDrawable(MA.getResources(),Bitmap.createScaledBitmap(UIAsset.exitButton,(int)(size*3*scaleX),(int)(size*scaleY),false)));
+		exitMenuButton.setOnClickListener(new OnClickListener(){
 				@Override
 				public void onClick(View v)
 				{
-					makeSaveQuestionDilaog(MA,"menu");
+					makeSaveQuestionDilaog(MA,"exit");
 				}});
+
+
+
+
+
+        Button sh1=MA.findViewById(R.id.menu_ui_set_first_ship);
+        sh1.setOnClickListener(new OnClickListener(){
+            @Override
+            public void onClick(View v)
+            {
+                MA.getGameManager().getPlayer().setShip(Ship.createSimple());
+            }});
+
+        Button sh2=MA.findViewById(R.id.menu_ui_set_second_ship);
+        sh2.setOnClickListener(new OnClickListener(){
+            @Override
+            public void onClick(View v)
+            {
+                MA.getGameManager().getPlayer().setShip(Ship.createSimple());
+            }});
+
+        Button sh3=MA.findViewById(R.id.menu_ui_set_third_ship);
+       sh3.setOnClickListener(new OnClickListener(){
+            @Override
+            public void onClick(View v)
+            {
+                MA.getGameManager().getPlayer().setShip(Ship.createSimple());
+            }});
 	}
 	
 	public int getPrevViewID(){return prevViewID;}
@@ -116,7 +171,7 @@ public class MenuUI
 			case "load":
 				text.setText("Save current game?");
 				break;
-			case "menu":
+			case "exit":
 				text.setText("Save current game?");
 				break;
 		}
@@ -128,7 +183,7 @@ public class MenuUI
 				public void onClick(DialogInterface dialog, int id) {
 					// User clicked OK button
 
-					MA.saveFile("sector-"+MA.getGameManager().getCurrentSector().x+"-"+MA.getGameManager().getCurrentSector().y,MA.getGameManager().getSaveName());
+					MA.getGameManager().saveGame();
 				
 					switch(actionName)
 					{
@@ -138,9 +193,29 @@ public class MenuUI
 						case "load":
 							MA.loadGame();
 							break;
-						case "menu":
+						case "exit":
 							MA.prepareMenu();
 							break;
+							/*
+							MainThread mainThread=MA.getGameManager().getGamePanel().getMainThread();
+							boolean retry = true;
+							while(retry)
+							{
+								try{mainThread.setRunning(false);
+									mainThread.join();
+									retry=false;
+								}catch(InterruptedException e)
+								{MA.makeToast(""+e,1);}
+							}
+							MA.prepareMenu();
+							Intent homeIntent = new Intent(Intent.ACTION_MAIN);
+							homeIntent.addCategory( Intent.CATEGORY_HOME );
+							homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+							
+							android.os.Process.killProcess(android.os.Process.myPid());
+							//MA.finish();
+							MA.startActivity(homeIntent); 
+							break;*/
 					}
 				}
 			});
@@ -212,7 +287,7 @@ public class MenuUI
 						case "load":
 							MA.loadGame();
 							break;
-						case "menu":
+						case "exit":
 							MA.prepareMenu();
 							break;
 					}

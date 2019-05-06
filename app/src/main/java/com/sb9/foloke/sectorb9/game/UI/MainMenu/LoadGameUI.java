@@ -9,6 +9,8 @@ import android.widget.AbsListView.*;
 import java.text.*;
 import android.graphics.drawable.*;
 import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
+import android.app.*;
+import android.content.*;
 
 public class LoadGameUI
 {
@@ -25,7 +27,7 @@ public class LoadGameUI
 			myDir.mkdir();
 		}
 
-		MA.findViewById(R.id.back_from_load).setOnClickListener(new OnClickListener()
+		MA.findViewById(R.id.back_from_load).setOnClickListener(new View.OnClickListener()
 		{
 			public void onClick(View v)
 			{
@@ -33,11 +35,19 @@ public class LoadGameUI
 			}
 		});
 		
-		MA.findViewById(R.id.load_menu_load_game).setOnClickListener(new OnClickListener()
+		MA.findViewById(R.id.load_menu_load_game).setOnClickListener(new View.OnClickListener()
 			{
 				public void onClick(View v)
 				{
 					MA.prepareNewLoad(saveName);
+				}
+			});
+			
+		MA.findViewById(R.id.load_menu_delete_game).setOnClickListener(new View.OnClickListener()
+			{
+				public void onClick(View v)
+				{
+					makeConfirmDilaog(MA);
 				}
 			});
 		
@@ -97,7 +107,7 @@ public class LoadGameUI
 				
 					TR.setLayoutParams(TLLP);
 					TR.setGravity(Gravity.CENTER);
-					TR.setOnClickListener(new OnClickListener()
+					TR.setOnClickListener(new View.OnClickListener()
 					{
 						@Override
 						public void onClick(View v)
@@ -119,4 +129,79 @@ public class LoadGameUI
 		v.setBackgroundColor(Color.LTGRAY);
 		saveName=v.getSaveName();
 	}
+	
+	private static void  makeConfirmDilaog(final MainActivity MA)
+	{
+		AlertDialog.Builder builder = new AlertDialog.Builder(MA);
+
+		LinearLayout LL=new LinearLayout(MA);
+		LL.setGravity(Gravity.CENTER);
+
+		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+			LinearLayout.LayoutParams.WRAP_CONTENT,
+			LinearLayout.LayoutParams.WRAP_CONTENT);
+		LL.setLayoutParams(lp);
+		LL.setOrientation(LinearLayout.VERTICAL);
+
+
+		final TextView text = new TextView(MA);  
+		text.setLayoutParams(lp);
+
+
+		text.setText("ARE YOU SURE?");
+
+// Add the buttons
+		builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					// User clicked OK button
+
+					String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString()+File.separator+"sb9";
+					File myDir = new File(root);
+					if (myDir.exists()&&saveName.length()>0) {
+						File save=new File(root+File.separator+saveName);
+						if(save.exists())
+						{
+							try
+							{
+								String[] children = save.list();
+								for (int i = 0; i < children.length; i++)
+								{
+									new File(save, children[i]).delete();
+								}
+							if(save.delete())
+									GameLog.update("Load game UI: "+saveName+" deleted",0);
+							}
+							catch(Throwable t)
+							{
+								GameLog.update("Load game UI: write error"+t,1);
+							}
+						}
+							else
+							GameLog.update("Load game UI: save did not exist",1);
+					}
+					else
+						GameLog.update("Load game UI: dir not exist or name wrong",1);
+					LoadGameUI.init(MA);
+				}
+			});
+		builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					// User cancelled the dialo
+
+				}
+			});
+// Set other dialog properties
+
+
+// Create the AlertDialog
+		AlertDialog dialog = builder.create();
+		LL.addView(text);
+
+
+		dialog.setView(LL);
+		//dialog.setView(input); 
+
+		dialog.show();
+	}
+	
 }

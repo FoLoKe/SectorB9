@@ -3,23 +3,24 @@ package com.sb9.foloke.sectorb9;
 import android.graphics.Canvas;
 import android.view.SurfaceHolder;
 import com.sb9.foloke.sectorb9.game.Display.GamePanel;
+import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
+import com.sb9.foloke.sectorb9.game.Managers.*;
 
 public class MainThread extends Thread
 {
-    private int FPS =60;
+    private final int FPS =60;
     private double averageFPS;
     private SurfaceHolder surfaceHolder;
-    private GamePanel mapPanel;
+    private GameManager gameManager;
     private boolean running;
     private static Canvas canvas;
 
 
-    public MainThread(SurfaceHolder surfaceHolder, GamePanel mapPanel)
+    public MainThread(GameManager gameManager)
     {
         super();
-        this.surfaceHolder=surfaceHolder;
-        this.mapPanel=mapPanel;
-		mapPanel.linkThread(this);
+        this.surfaceHolder=gameManager.getGamePanel().getHolder();
+        this.gameManager=gameManager;
     }
 
     @Override
@@ -30,10 +31,11 @@ public class MainThread extends Thread
         long waitTime;
         long totalTime =0;
         int frameCount =0;
-        long targetTime =1000/FPS;
+
 
         while(running)
         {
+            long targetTime =1000/FPS;
             startTime=System.nanoTime();
             canvas = null;
 
@@ -42,12 +44,13 @@ public class MainThread extends Thread
                 canvas=this.surfaceHolder.lockCanvas();
                 synchronized(surfaceHolder)
                 {
-                    this.mapPanel.tick();
-                    this.mapPanel.render(canvas);
+                    this.gameManager.tick();
+                    this.gameManager.render(canvas);
                 }
             }
             catch(Exception e){
-                System.out.print(e);
+                
+				GameLog.update("Main Thread: "+e+" "+e.getStackTrace()[0],1);
             }
 
             finally{if(canvas!=null)
@@ -59,9 +62,15 @@ public class MainThread extends Thread
             timeMillis=(System.nanoTime()-startTime)/1000000;
             waitTime=targetTime-timeMillis;
 
-            try{
-                this.sleep(waitTime);
-            }catch(Exception e){}
+            try
+            {
+                if(waitTime>0)
+                sleep(waitTime);
+            }
+            catch(Exception e)
+            {
+                GameLog.update("Main Thread: "+e.toString(),1);
+            }
 
             totalTime += System.nanoTime()-startTime;
             frameCount++;
@@ -70,7 +79,7 @@ public class MainThread extends Thread
                 averageFPS= 1000/((totalTime/frameCount)/1000000);
                 frameCount=0;
                 totalTime=0;
-				mapPanel.textFPS.setString("FPS: "+averageFPS);
+				gameManager.getGamePanel().textFPS.setString("FPS: "+averageFPS);
                 System.out.println(averageFPS);
             }
         }
@@ -79,11 +88,5 @@ public class MainThread extends Thread
     {
         running=b;
     }
-	public void switchFrameLimit(boolean state)
-	{
-		if(state)
-			FPS=30;
-		else
-			FPS=60;
-	}
+
 }

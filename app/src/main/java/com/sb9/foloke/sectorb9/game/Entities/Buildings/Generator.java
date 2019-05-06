@@ -36,8 +36,7 @@ import java.util.*;
 			circlePaint.setStrokeWidth(2);
 			circlePaint.setPathEffect(new DashPathEffect(new float[] { 15, 16}, 0));
 
-			if(enabled)
-				calculateConsumers();
+			calculateConsumers();
 		}
 
 		@Override
@@ -51,8 +50,8 @@ import java.util.*;
 			canvas.rotate(rotation,getCenterX(),getCenterY());
 			canvas.drawBitmap(image,x,y,null);
 			canvas.restore();
-			if(gameManager.drawDebugInfo)
-				drawDebugCollision(canvas);
+			
+				
 			
 			if(gameManager.command== GameManager.commandInteraction)
 			{

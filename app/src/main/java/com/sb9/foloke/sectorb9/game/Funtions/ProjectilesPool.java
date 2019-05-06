@@ -7,15 +7,14 @@ import java.util.*;
 
 public class ProjectilesPool
 {
-	static Bitmap image;
-	ArrayList<Projectile> projectiles;
-	Entity parent;
-	public ProjectilesPool(Bitmap image, float speed, int maxSize, int damage,Entity parent, GameManager gameManager) {
-		this.parent=parent;
-		projectiles=new ArrayList<Projectile>();
+	private ArrayList<Projectile> projectiles;
+
+	public ProjectilesPool(Bitmap image, float speed, int maxSize,float damage,Entity parent, GameManager gameManager) {
+
+		projectiles=new ArrayList<>();
 		for(int i=0;i<maxSize;i++)
 		{
-			Projectile p=new Projectile(0,0,(int)4,speed,0,damage,parent, gameManager);
+			Projectile p=new Projectile(0,0,4,speed,0,damage,parent, gameManager);
 			p.setImage(image);
 			p.recreateCollision();
 			
@@ -51,7 +50,7 @@ public class ProjectilesPool
 		{
 			if(!p.getActive())
 			{
-				p.shoot(point,rotation,((DynamicEntity)parent).getAcceleration());
+				p.shoot(point,rotation);
 				return;
 			}
 		}

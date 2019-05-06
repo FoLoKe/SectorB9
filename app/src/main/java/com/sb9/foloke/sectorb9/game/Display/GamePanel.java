@@ -11,122 +11,115 @@ import com.sb9.foloke.sectorb9.MainThread;
 import com.sb9.foloke.sectorb9.game.Managers.GameManager;
 import com.sb9.foloke.sectorb9.game.UI.Text;
 import com.sb9.foloke.sectorb9.game.Entities.*;
-import android.app.*;
+
 import com.sb9.foloke.sectorb9.*;
 import android.view.ScaleGestureDetector.*;
 import android.view.*;
 import java.io.*;
 import static com.sb9.foloke.sectorb9.game.Managers.GameManager.commandInteraction;
 import static com.sb9.foloke.sectorb9.game.Managers.GameManager.commandMoving;
+import android.graphics.*;
+
+import com.sb9.foloke.sectorb9.game.Funtions.*;
+import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
+
+
+
 
 public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 {
     //thread
-    private MainThread mainThread;
-
+    
+    private GameManager gameManager;
     //camera
     private Camera camera;
 
     //objects
     private Cursor cursor;
 
-    //UI texts
-    private Text textPointOfTouch;
-	private Text textScreenWH;
-	public Text textFPS;
-	public Text textDebug2;
-	public Text textDebug3;
-	public Text textDebug4;
-	public Text textDebug5;
-	public Text textInQueue;
-	public Text debugText;
-	public Text errorText;
-	private Text debugExchange;
-	
 	///camera positioning
-    private float scale=5;
-    public float canvasH,canvasW;
+    private float scale=4;
+    private float canvasH,canvasW;
     public PointF pointOfTouch;
     public PointF screenPointOfTouch;
-
-	private MainActivity MA;
+	private float worldSize=3000;//3km
+	public Text textFPS;
 	public StaticEntity pressedObject;
-	private GameManager gameManager;
-	private MainThread MT;
+	private Paint debugPaint=new Paint();
+
+	private boolean gestureInProgress=false;
+	private Paint borderPaint = new Paint();
+    private boolean touched=false;
+	
+	private Paint speedPaint=new Paint();
 
     public GamePanel(Context context, AttributeSet attributeSet)
     {
         super(context, attributeSet);
-        this.MA=(MainActivity)context;
-		DisplayMetrics displayMetrics = new DisplayMetrics();
-		((Activity) getContext()).getWindowManager()
-			.getDefaultDisplay()
-			.getMetrics(displayMetrics);
-		canvasH = displayMetrics.heightPixels;
-		canvasW = displayMetrics.widthPixels;
+		
+        MainActivity MA=(MainActivity)context;
+		gameManager=MA.getGameManager();
+		WindowManager wm = ((WindowManager) 
+			context.getSystemService(Context.WINDOW_SERVICE));
 
+		Display display = wm.getDefaultDisplay();
 
+                if(display!=null) {
+
+                    Point screenSize = new Point();
+                    display.getRealSize(screenSize);
+                    canvasW = screenSize.x;
+                    canvasH = screenSize.y;
+                }
+
+		
         screenPointOfTouch=new PointF(0,0);
         pointOfTouch=new PointF(0,0);
 
-        textPointOfTouch=new Text(""+0+" "+0,500,400);
-		textScreenWH=new Text("",500,250);
-		debugText=new Text("",500,350);
-		debugExchange=new Text("exchange",500,300);
-		errorText=new Text("",500,450);
+        
 		textFPS=new Text("",0,30);
-		textDebug2=new Text("",500,550);
-		textDebug3=new Text("",500,600);
-		textDebug4=new Text("",500,650);
-		textDebug5=new Text("",500,700);
-		textInQueue=new Text("",500,750);
-		textScreenWH.setString(canvasW+"x"+canvasH);
+		
+		
+		debugPaint.setColor(Color.RED);
+		debugPaint.setStyle(Paint.Style.STROKE);
 
-        gameManager= new GameManager(this, MA);
 
         camera=new Camera(0,0,scale,gameManager.getPlayer());
 
-        //for building and ship leading
         cursor=new Cursor(900,900,"cursor",gameManager);
 
 		getHolder().addCallback(this);
 
-        mainThread= new MainThread(getHolder(),this);
+        
         setFocusable(false);
 		
 		cursor.setDrawable(true);
-		//buildDrawingCache();
+
+		
+		borderPaint.setColor(Color.RED);
+		borderPaint.setStyle(Paint.Style.STROKE);
+		
+		speedPaint.setColor(Color.GREEN);
+		speedPaint.setTextSize((50));
+		
+		borderPaint.setStrokeWidth(20/camera.getScale());
+		borderPaint.setPathEffect(new DashPathEffect(new float[] { 200/camera.getScale(), 200/camera.getScale()}, 0));
+		
+
 		
     }
 
-	public void linkThread(MainThread MT)
-	{
-		this.MT=MT;
-	}
 	
-	public void setFrameLimiter(boolean state)
-	{
-		MT.switchFrameLimit(state);
-	}
     @Override
     public void surfaceCreated(SurfaceHolder p1)
     {
-        mainThread.setRunning(true);
-        mainThread.start();
+        
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder p1)
     {
-        boolean retry = true;
-        while(retry)
-        {
-            try{mainThread.setRunning(false);
-                mainThread.join();
-                retry=false;
-            }catch(InterruptedException e)
-            {e.printStackTrace();}
-        }
+        gameManager.shutdown();
     }
 
     @Override
@@ -134,68 +127,158 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 
     public void tick()
     {
-            cursor.setWorldLocation(pointOfTouch);
-        	camera.tick(scale,canvasW,canvasH);
-        	gameManager.tick();
-			
+        pointOfTouch.set((screenPointOfTouch.x-canvasW/2)/camera.getScale()+gameManager.getPlayer().getCenterX(),(screenPointOfTouch.y-canvasH/2)/camera.getScale()+gameManager.getPlayer().getCenterY());
+        cursor.setWorldLocation(pointOfTouch);
+        cursor.tick();
+      	camera.tick(scale,canvasW,canvasH);
+       	
+		
     }
 
-    public void render(Canvas canvas)
+    public void preRender(Canvas canvas)
     {
-
-       		super.draw(canvas);
-			
-			camera.setScreenRect(canvasW,canvasH);
-        	canvas.save();
 		
-        	canvas.translate(-camera.getWorldLocation().x+canvas.getWidth()/2,-camera.getWorldLocation().y+canvas.getHeight()/2);
-        	canvas.scale(camera.getScale(),camera.getScale(),camera.getWorldLocation().x,camera.getWorldLocation().y);
-
 			
-        	//objects
-			gameManager.render(canvas);
-
-			cursor.render(canvas);
-
-			//render
+        camera.setScreenRect(canvasW,canvasH);
+		
+        canvas.save();
+        canvas.translate(-camera.getWorldLocation().x+canvasW/2,-camera.getWorldLocation().y+canvasH/2);
+        canvas.scale(camera.getScale(),camera.getScale(),camera.getWorldLocation().x,camera.getWorldLocation().y);
 			
+        //objects
+        
+        cursor.render(canvas);
+
+        if (Options.drawDebugInfo.getBoolean())
+        {
+            camera.render(canvas);
 			
-        	if (gameManager.drawDebugInfo)
-			{
-            	camera.render(canvas);
-        	}
-
-
-			if(pressedObject!=null)
-			{
-				pressedObject.drawDebugCollision(canvas);
-			}
-        	canvas.restore();
-			//UI
+		}
 			
-			if(gameManager.command==commandMoving)
-			gameManager.uIhp.render(canvas);
+        if(pressedObject!=null)
+        {
+            pressedObject.drawDebugCollision(canvas);
+        }
 
+		
+    }
+	
+	public void postRender(Canvas canvas)
+	{
+		cursor.render(canvas);
+		canvas.drawRect(0,0,worldSize,worldSize,borderPaint);
+		canvas.restore();
+	}
+	
+	
+	public void drawWorldBorder()
+	{
+		
+	}
+	public void drawPlayerMovement(Canvas canvas)
+	{
+		Player player=gameManager.getPlayer();
+		String s=(""+(gameManager.getPlayer().getSpeed()));
+		if(s.length()>4)
+			s=s.substring(0,4);
+		s+=(" m/s");
+
+		canvas.drawText(""+s,canvasW/2+128,canvasH/2,speedPaint);
+        if(player.getSpeed()>0) 
+		{
+            Path p = new Path();
+			float size=player.getSpeed()/250+0.5f;
+            p.moveTo(32*size, -160*size - player.getSpeed() * 2);
+            p.lineTo(0, -192*size - player.getSpeed() * 2);
+            p.lineTo(-32*size, -160*size - player.getSpeed() * 2);
+
+            Paint debugPaint2=new Paint();
+            debugPaint2.setColor(Color.parseColor("#ffff00"));
+            Matrix m = new Matrix();
+            m.postRotate((float)Math.toDegrees(Math.atan2(player.getDy(),player.getDx()))+90);
+            m.postTranslate(canvasW / 2, canvasH / 2);
+            p.transform(m);
+            canvas.drawPath(p, debugPaint2);
+        }
+		
+	}
+	
+	public void drawRadioPoints(Canvas canvas)
+	{
+		Player player=gameManager.getPlayer();
+		
+		for(Entity e:gameManager.getEntities())
+		{
+			if(true)
+				if(!(e instanceof Player))
+				{
+					Path p = new Path();
+					float dist=distanceTo(player.getWorldLocation(),e.getWorldLocation());
+					float size=Math.max(1,dist/1000);
+					size=Math.min(4,size);
+
+					size=1/size;
+           		 	p.moveTo(32*size, -64);
+            		p.lineTo(0, -64-32*size);
+            		p.lineTo(-32*size, -64);
+
+            		Paint debugPaint2=new Paint();
+					switch(e.getTeam())
+					{
+						case 0:
+            				debugPaint2.setColor(Color.LTGRAY);
+							break;
+						case 1:
+            				debugPaint2.setColor(Color.GREEN);
+							break;
+						case 2:
+            				debugPaint2.setColor(Color.RED);
+							break;
+					}
+					debugPaint2.setStyle(Paint.Style.STROKE);
+					int saturation=(int)(dist/10);
+					if(saturation>255)
+						saturation=255;
+					debugPaint2.setAlpha(255-saturation);
+					debugPaint2.setStrokeWidth(5);
+            		Matrix m = new Matrix();
+
+            		m.postRotate((float)Math.toDegrees(-Math.atan2(-player.getWorldLocation().x+e.getWorldLocation().x,-player.getWorldLocation().y+e.getWorldLocation().y))+180);
+					m.postTranslate(canvasW / 2, canvasH / 2);
+            		p.transform(m);
+
+					canvas.drawPath(p, debugPaint2);
+
+					float[] f=new float[]{0,-192*size};
+					m.mapPoints(f);
+					debugPaint2.setStrokeWidth(2);
+					debugPaint2.setTextSize(40);
+					debugPaint2.setStyle(Paint.Style.FILL);
+					//debugPaint2.set
+
+					String s;
+					if(dist>1000)
+					{
+						s=(""+(dist/1000));
+						if(s.length()>3)
+							s=s.substring(0,3);
+						s+=(" km");
+					}
+					else
+					{
+						s=(""+(dist));
+						if(s.length()>3)
+							s=s.substring(0,3);
+						s+=(" m");
+					}
+					//canvas.drawText
+					canvas.drawText(""+s,f[0],f[1],debugPaint2);
+
+				}
+		}
 
         textFPS.render(canvas);
-		if(gameManager.drawDebugInfo)
-		{
-			//canvas.drawColor(Color.BLACK);
-			textScreenWH.render(canvas);	
-			textPointOfTouch.render(canvas);
-			debugExchange.render(canvas);
-			debugText.render(canvas);
-			errorText.render(canvas);
-
-			textDebug2.render(canvas);
-			textDebug3.render(canvas);
-			textDebug4.render(canvas);
-			textDebug5.render(canvas);
-			textInQueue.render(canvas);
-		}
-		
-    }
-
+	}
     private SimpleOnScaleGestureListener gestureListener = new SimpleOnScaleGestureListener()
 	{
     	@Override
@@ -209,95 +292,109 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 		{
 			scale *= detector.getScaleFactor();
 			// Don't let the object get too small or too large.
-			scale = Math.max(1f, Math.min(scale, 5.0f));
+			scale = Math.max(0.5f, Math.min(scale, 4.0f));
+			gestureInProgress=true;
 			return true;
 		}
-			
-			
+
+		@Override
+		public void onScaleEnd(ScaleGestureDetector detector)
+		{
+			super.onScaleEnd(detector);
+			gestureInProgress=false;
+		}	
 	};
 
     private ScaleGestureDetector gestureDetector = new ScaleGestureDetector(getContext(), gestureListener);
-
+	
     @Override
 	public boolean onTouchEvent(MotionEvent event)
 	{
 		if(!gameManager.gamePause)
 		{
 			gestureDetector.onTouchEvent(event);
-			//TODO: if gesture in progress ignore input
-			if(true)
+			if(!gestureInProgress)
 			{
-      		  float x=event.getX(),y=event.getY();
-      		  screenPointOfTouch.set(x,y);
-      		  Player player=getPalyer();
-   		      pointOfTouch.set((x-canvasW/2)/camera.getScale()+player.getCenterX(),(y-canvasH/2)/camera.getScale()+player.getCenterY());
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-					
-					switch (gameManager.command)
-					{
-						case commandMoving:
-         		           	player.setMovable(true);
-							break;
+      		  	float x=event.getX(),y=event.getY();
+      		  	screenPointOfTouch.set(x,y);
+      		  	//Player player=gameManager.getPlayer();
+				
+            	switch (event.getAction())
+                {
+                	case MotionEvent.ACTION_DOWN:
+                	    
+						switch (gameManager.command)
+						{
+							case commandMoving:
+							gameManager.checkJoystick(true,new PointF(x,y));
 							
-						case commandInteraction: 
-							break;
-					}
-                    break;
-					
-                case MotionEvent.ACTION_MOVE:
-                    break;
-					
-                case MotionEvent.ACTION_UP:	
-					switch (gameManager.command)
-					{
-						case commandMoving:
-                       		player.setMovable(false);
-							break;
-						case commandInteraction:
-							gameManager.interactionCheck(pointOfTouch.x,pointOfTouch.y);
-							
-							break;
+								break;
+							case commandInteraction:
+								break;
 						}
                     break;
-                default:
-                    break;
-       			 }
+					
+                	case MotionEvent.ACTION_MOVE:
+                    	break;
+
+                	case MotionEvent.ACTION_UP:
+                	    
+						switch (gameManager.command)
+						{
+							case commandMoving:
+								gameManager.checkJoystick(false,new PointF(x,y));
+								break;
+							case commandInteraction:
+								gameManager.interactionCheck(pointOfTouch.x,pointOfTouch.y);
+								break;
+						}
+                        break;
+
+                	default:
+                        break;
+                }
 			}
 		}
-                return true;
+		return true;
     }
 
-	public void save(BufferedWriter w)
+
+	public PointF getPointOfTouch()
 	{
-		gameManager.save(w);
+		return screenPointOfTouch;
 	}
-
-	public void load(BufferedReader r)
-	{
-		gameManager.load(r);
-	}
-
-	private Player getPalyer()
-    {
-        return gameManager.getPlayer();
-    }
-
+	
     public Camera getCamera()
     {
         return camera;
     }
 
-    public GameManager getGameManager() {
-        return gameManager;
-    }
 
-    public MainActivity getMainActivity()
-    {
-        return MA;
-    }
+
 	public Cursor getCursor()
 	{
 		return cursor;
 	}
+
+	public float getWorldSize()
+	{
+		return worldSize;
+	}
+	
+	
+	public boolean getTouched()
+	{
+		return touched;
+	}
+
+	public float distanceTo(PointF a,PointF b)
+	{
+		return (float)Math.sqrt((a.x-b.x)*(a.x-b.x)+(a.y-b.y)*(a.y-b.y));
+	}
+	
+	public void setWorldSize(float ws){
+		worldSize=ws;
+	}
+
+
 }

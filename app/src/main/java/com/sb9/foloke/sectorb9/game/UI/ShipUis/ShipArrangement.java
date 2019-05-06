@@ -31,12 +31,12 @@ public class ShipArrangement
 	int width=10;
 	ShipModule elements[][]=new ShipModule[width][height];
 	MainActivity MA;
-	ShipUI parent;
-	public ShipArrangement(MainActivity MA,ShipUI parent)
+	//ShipUI parent;
+	public ShipArrangement(MainActivity MA)
 	{
 		//this.gameManager =MA.getGameManager();
 		this.MA=MA;
-		this.parent=parent;
+		//this.parent=parent;
 		for(int i=0;i<height;i++)
 			for(int j=0;j<width;j++)
 				elements[i][j]=new ShipModule(0,i*width+j);
@@ -71,7 +71,7 @@ public class ShipArrangement
 							return true;
 						}
 					});
-				parent.setDragAndDrop(sprite,elements[i][j].ID,false);
+				ShipUI.setDragAndDrop(sprite,elements[i][j].ID,false);
 				TR.addView(sprite);
 				sprite.setId(i*width+j);
 				
@@ -102,7 +102,7 @@ public class ShipArrangement
 		itemHolder=null;
 		itemID=0;
 		itemCount=0;
-		MA.shipUI.init();
+		ShipUI.init();
 
 	}
 

@@ -61,6 +61,7 @@ public class ParticleSystem
 	}
 	public void draw(float x,float y,float rotation,PointF rotationPrivot)
 	{
+		if(Options.drawParticles.getBoolean())
 		if(delay.tick())
 		for(Particle p:particles)
 		{

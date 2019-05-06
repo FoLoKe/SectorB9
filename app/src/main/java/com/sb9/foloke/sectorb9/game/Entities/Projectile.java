@@ -3,98 +3,81 @@ import android.graphics.*;
 
 import com.sb9.foloke.sectorb9.game.Managers.GameManager;
 import com.sb9.foloke.sectorb9.game.Funtions.*;
-import com.sb9.foloke.sectorb9.game.ParticleSystem.*;
+
 
 public class Projectile extends DynamicEntity
 {
 	private int lifetime;
 	private Timer lifeTimer;
-	private int damage;
-	//private float effectDelay;
+	private float damage;
 	
 	private boolean active=false;
-	//private SmallDustPuff dustPuff;
+
 	private boolean collided=false;
-	//private Timer dustDelay;
+
 	private Entity parent;
-	private float addedAcceleration;
+	private float adx=1,ady=1;
+
 	
-	public Projectile(float x, float y, int lifetime, float speed, float rotation, int damage,Entity parent, GameManager gameManager)
+	public Projectile(float x, float y, int lifetime, float speed, float rotation, float damage,Entity parent, GameManager gameManager)
 	{
 		super(x,y,0, gameManager,0);
-		
+		this.inBounds=false;
+		this.movable=true;
 		this.parent=parent;
 		this.rotation=rotation;
-		this.speed=speed;
+		this.frontImpulse=0.1f;
 		this.lifetime=lifetime;
 		this.damage=damage;
 		this.lifeTimer=new Timer(0);
-		//this.dustDelay=new Timer(0);
-		//this.dustPuff=new SmallDustPuff(gameManager);
-		//this.effectDelay=1f;
-		
+		this.maxSpeed=speed;
 	}
 	
 	public void recreateCollision()
 	{
-		this.relativeCenterY=image.getHeight()/2;
-		this.relativeCentreX=image.getWidth()/2;
+		this.relativeCenterY=(float)image.getHeight()/2;
+		this.relativeCentreX=(float)image.getWidth()/2;
 		this.width=image.getWidth();
 		this.height=image.getHeight();
 		createCollision();
 	}
+	
 	@Override
 	public void render(Canvas canvas)
 	{
-		if(collided)
-		{
-
-			//dustPuff.render(canvas,x,y);
-		}
-		else
 			if(active)
 			{
 				canvas.save();
 				canvas.rotate(rotation,getCenterX(),getCenterY());	
 				canvas.drawBitmap(image,x,y,null);
 				canvas.restore();
-
-   		        if(gameManager.drawDebugInfo)
-               		drawDebugCollision(canvas);
 			}
 
 	}
+
 
 	@Override
 	public void tick()
 	{
 		if(active) 
 		{
-			targetAcceleration=1f+addedAcceleration;
-			acceleration=targetAcceleration;
+			
             super.tick();
 			
             if (lifeTimer.tick())
 			{
-				//if(!collided)
                	active = false;
 				return;
 			}
 			
-			gameManager.getGamePanel().textDebug2.setString(targetAcceleration+"");
-			//dustPuff.tick();
+			
 			if(collided)
 			{
-		    //if (dustDelay.tick())
-		    	{
-			    	collided=false;
-			    	active=false;
-		    	}
-		    return;
+			    collided=false;
+			    active=false;
+
 			}	
         }
-			
-		
 	}
 
     @Override
@@ -102,21 +85,30 @@ public class Projectile extends DynamicEntity
 		if(e.getTeam()!=parent.getTeam())
 		{
        		e.applyDamage((damage));
-        //dustDelay.setTimer(effectDelay);
         	collided=true;
        	 	this.lifeTimer.setTimer(0);
 		}
     }
-
+	
+	@Override
+	protected void calculateMovement()
+	{
+			acceleration=2;
+			this.dy = (acceleration* this.frontPoint.y)+ady;
+			this.dx = (acceleration*this.frontPoint.x)+adx;
+	}
+	
     public void setActive(boolean condition)
 	{
 		active=condition;
 	}
+	
 	public boolean getActive()
 	{
 		return active;
 	}
-	public void shoot(PointF point,float rotation,float acceleration)
+	
+	public void shoot(PointF point,float rotation)
 	{
 		active=false;
 		collided=false;
@@ -125,8 +117,12 @@ public class Projectile extends DynamicEntity
 		setCenterY(point.y);
 		this.rotation=rotation;
 		this.lifeTimer.setTimer(lifetime);
-		addedAcceleration=acceleration;
 
+		if(parent instanceof DynamicEntity)
+		{
+			adx=((DynamicEntity)parent).getDx();
+			ady=((DynamicEntity)parent).getDy();
+		}
 		renderable=true;
 		active=true;
 	}

@@ -42,6 +42,11 @@
 			android:layout_height="wrap_content"
 
 		>
+		<LinearLayout
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:orientation="vertical"
+			>
 			<Button
 				android:id="@+id/load_menu_load_game"
 				android:layout_width="wrap_content"
@@ -49,6 +54,15 @@
 				android:layout_gravity="bottom"
 				android:textColor="#ffffff"
 				android:text="Load"/>
+			
+			<Button
+				android:id="@+id/load_menu_delete_game"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="bottom"
+				android:textColor="#ffffff"
+				android:text="delete save"/>
+		</LinearLayout>
 		</FrameLayout>
 		<FrameLayout
 			android:layout_width="match_parent"

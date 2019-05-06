@@ -28,5 +28,9 @@ public class Timer
 	{
 		timerLenght=sec*maxFrames;
 	}
-	
+
+	public float getSecond()
+    {
+        return timerLenght/maxFrames;
+    }
 }

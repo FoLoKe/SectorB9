@@ -7,116 +7,170 @@ import android.graphics.*;
 import android.graphics.drawable.*;
 
 import com.sb9.foloke.sectorb9.game.Assets.UIAsset;
-import com.sb9.foloke.sectorb9.game.DataSheets.BuildingsDataSheet;
+import com.sb9.foloke.sectorb9.game.DataSheets.ObjectsDataSheet;
 import com.sb9.foloke.sectorb9.game.Entities.*;
-import com.sb9.foloke.sectorb9.game.Entities.Buildings.*;
-import com.sb9.foloke.sectorb9.game.Managers.*;
+import com.sb9.foloke.sectorb9.game.Assets.*;
+
+import java.util.Random;
+import com.sb9.foloke.sectorb9.game.DataSheets.*;
 
 
 public class BuildUI
 {
-	private static int ObjectID;
-	private View prevPressed;
-	public void init(final MainActivity MA,final ViewFlipper VF)
+	private static int ObjectID=0;
+	private static View prevPressed;
+
+	public static void init(final MainActivity MA)
 	{
-		
+        final ViewFlipper VF = MA.findViewById(R.id.UIFlipper);
 		ScrollView.LayoutParams lp= new ScrollView.LayoutParams(ScrollView.LayoutParams.WRAP_CONTENT,MA.getResources().getDisplayMetrics().heightPixels);
 		lp.setMargins(10,10,10,10);
 		MA.findViewById(R.id.buildTableLayout).setVisibility(View.VISIBLE);
 		TableLayout table=MA.findViewById(R.id.buildTableLayout);
+		int count = table.getChildCount();
+		for (int i = 0; i < count; i++) {
+			View child = table.getChildAt(i);
+			if (child instanceof TableRow) ((ViewGroup) child).removeAllViews();
+		}
 		table.removeAllViews();
+		table.removeAllViewsInLayout();
 		BitmapFactory.Options options=new BitmapFactory.Options();
         options.inScaled=false;
 		table.setBackground(new BitmapDrawable(MA.getResources(),UIAsset.uiBgBlur));
-		for(int i = 1; i< BuildingsDataSheet.getLenght()+1; i++)
+		for(int i = 1; i< ObjectsDataSheet.getLength(); i++)
 		{
-				TableRow row=new TableRow(MA);
+			if(!ObjectsDataSheet.findById(i).buildable)
+				continue;
+			TableRow row=new TableRow(MA);
+			ImageView sprite=new ImageView(MA);
+			TextView testText=new TextView(MA);
 				
+			TableRow.LayoutParams trp=new TableRow.LayoutParams();
+			trp.setMargins(10,10,10,10);
 				
-				ImageView sprite=new ImageView(MA);
-				TextView testText=new TextView(MA);
+			testText.setTextColor(Color.parseColor("#ffffffff"));
 				
-				TableRow.LayoutParams trp=new TableRow.LayoutParams();
-				trp.setMargins(10,10,10,10);
+			testText.setLayoutParams(trp);
+			ObjectID=i;
 				
-				testText.setTextColor(Color.parseColor("#ffffffff"));
-				
-				testText.setLayoutParams(trp);
-				ObjectID=i;
-				testText.setText(ObjectID+"");
-				
-				BitmapDrawable bdrawable;
-				bdrawable = new BitmapDrawable(MA.getResources(),BuildingsDataSheet.findById(ObjectID).image);
+			BitmapDrawable bdrawable;
+			bdrawable = new BitmapDrawable(MA.getResources(),ObjectsDataSheet.findById(ObjectID).image);
 
-				sprite.setImageDrawable(bdrawable);
+			sprite.setImageDrawable(bdrawable);
 				
-				row.setOnClickListener(new OnClickListener()
-					{
-						@Override
-						public void onClick(View v)
-						{
-							ObjectID=(v).getId();
-							
-							v.setBackgroundColor(Color.RED);
-							if(prevPressed!=null)
-							{
-								prevPressed.setBackgroundColor(Color.parseColor("#00000000"));
-							}
-							prevPressed=v;
-							MA.getGameManager().getGamePanel().getCursor().setImage(BuildingsDataSheet.findById(ObjectID).image);
-						}
-					});
-				row.setId(ObjectID);
-			
-				row.addView(sprite);
-				row.addView(testText);
-				table.addView(row);
-		ObjectID=0;
-	}
-		
-	
-	Button closeButton=MA.findViewById(R.id.closeBuildButton);
-	closeButton.setOnClickListener
-	(new OnClickListener() 
-	{
-	@Override
-	public void onClick(View v) 
-	{
-		VF.setDisplayedChild(VF.indexOfChild(MA.findViewById(R.id.interactionUI)));
-	}
-	});
-	
-		Button buildBotton=MA.findViewById(R.id.buildObject);
-		buildBotton.setOnClickListener
-		(new OnClickListener() 
+			row.setOnClickListener(new OnClickListener()
 			{
 				@Override
-				public void onClick(View v) 
+				public void onClick(View v)
 				{
-					switch (ObjectID)
+					ObjectID=(v).getId();
+					v.setBackgroundColor(Color.RED);
+					if(prevPressed!=null&&prevPressed!=v)
 					{
-						case 0:
-							break;
-						case 1:
-							MA.getGameManager().addObject(new SmallCargoContainer(MA.getGameManager().getTouchPoint().x-16,MA.getGameManager().getTouchPoint().y-16,10,MA.getGameManager()));
-							break;
-						case 2:
-							MA.getGameManager().addObject(new Crusher(MA.getGameManager().getTouchPoint().x-16,MA.getGameManager().getTouchPoint().y-16,10,MA.getGameManager()));
-							break;
-						case 3:
-							MA.getGameManager().addObject(new SolarPanel(MA.getGameManager().getTouchPoint().x-16,MA.getGameManager().getTouchPoint().y-16,10,MA.getGameManager()));
-							break;
-						case 4:
-							MA.getGameManager().addObject(new FuelGenerator(MA.getGameManager().getTouchPoint().x-16,MA.getGameManager().getTouchPoint().y-16,10,MA.getGameManager()));
-							break;
-						case 5:
-							MA.getGameManager().addObject(new BigSmelter(MA.getGameManager().getTouchPoint().x-16,MA.getGameManager().getTouchPoint().y-16,10,MA.getGameManager()));
-							break;
-						case 6:
-							MA.getGameManager().addObject(new Assembler(MA.getGameManager().getTouchPoint().x-16,MA.getGameManager().getTouchPoint().y-16,10,MA.getGameManager()));
-							break;
+						prevPressed.setBackgroundColor(Color.parseColor("#00000000"));
+						
 					}
+					initInfo(MA);
+					prevPressed=v;
+					MA.getGameManager().getGamePanel().getCursor().setImage(ObjectsDataSheet.findById(ObjectID).image);
 				}
 			});
+
+			row.setId(ObjectID);
+			
+			row.addView(sprite);
+			row.addView(testText);
+			
+			table.addView(row);
+			ObjectID=0;
+		}
+		
+		Button closeButton=MA.findViewById(R.id.closeBuildButton);
+		closeButton.setOnClickListener(new OnClickListener() 
+		{
+			@Override
+			public void onClick(View v) 
+			{
+				deinit(MA);
+				VF.setDisplayedChild(VF.indexOfChild(MA.findViewById(R.id.interactionUI)));
+			}
+		});
+	
+		Button buildBotton=MA.findViewById(R.id.buildObject);
+		buildBotton.setOnClickListener(new OnClickListener() 
+		{
+			@Override
+			public void onClick(View v) 
+			{
+			    if(MA.getGameManager().getGamePanel().getCursor().onBuild())
+			    {
+                    Entity e = MA.getGameManager().createBuildable(ObjectID, MA.getGameManager().getPlayer());
+					if(e!=null)
+					{
+						initInfo(MA);
+                    	MA.getGameManager().getWorldManager().getEntityManager().addObject(e);
+                    	e.setCenterX(MA.getGameManager().getGamePanel().pointOfTouch.x);
+                    	e.setCenterY(MA.getGameManager().getGamePanel().pointOfTouch.y);
+                    	e.setWorldRotation(new Random().nextInt(360));
+                    	e.calculateCollisionObject();
+					}
+                }
+			}
+		});
+	}
+	public static void deinit(MainActivity MA)
+	{
+		TableLayout table=MA.findViewById(R.id.buildTableLayout);
+		if(table==null)
+			return;
+			
+		MA.getGameManager().getGamePanel().getCursor().setImage(ShipAsset.cursor);
+		int count = table.getChildCount();
+
+		for (int i = 0; i < count; i++) {
+			
+			TableRow child = (TableRow)table.getChildAt(i);
+
+			child.removeAllViews();
+			child.removeAllViewsInLayout();
+		}
+		table.removeAllViews();
+		table.removeAllViewsInLayout();
+
+	}
+	
+	private static void initInfo(MainActivity MA)
+	{
+		
+		TableLayout TL=MA.findViewById(R.id.buildInfoTableLayout);
+		TL.setBackground(new BitmapDrawable(MA.getResources(),UIAsset.uiBgBlur));
+		TL.removeAllViews();
+		int i=0;
+		for(int id:ObjectsDataSheet.findById(ObjectID).resToBuild)
+		{
+			TableRow row=new TableRow(MA);
+			ImageView IV=new ImageView(MA);
+			TextView TV=new TextView(MA);
+
+			TableRow.LayoutParams trp=new TableRow.LayoutParams();
+			trp.setMargins(10,10,10,10);
+
+			TV.setTextColor(Color.parseColor("#ffffffff"));
+
+			TV.setLayoutParams(trp);
+			
+
+			BitmapDrawable bdrawable;
+			bdrawable = new BitmapDrawable(MA.getResources(),ItemsDataSheet.findById(id).image);
+
+			IV.setImageDrawable(bdrawable);
+			row.addView(IV);
+			
+			TV.setText(ItemsDataSheet.findById(id).name+" "+ObjectsDataSheet.findById(ObjectID).countToBuild[i]+"/"+MA.getGameManager().getPlayer().getInventory().countItem(ObjectsDataSheet.findById(ObjectID).resToBuild[i]));
+			row.addView(TV);
+			TL.addView(row);
+			i++;
+		}
+		
 	}
 }

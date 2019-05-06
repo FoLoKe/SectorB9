@@ -3,7 +3,7 @@ package com.sb9.foloke.sectorb9.game.Entities.Buildings;
 import com.sb9.foloke.sectorb9.game.Managers.GameManager;
 import com.sb9.foloke.sectorb9.game.UI.*;
 import com.sb9.foloke.sectorb9.game.Assets.*;
-import com.sb9.foloke.sectorb9.game.DataSheets.BuildingsDataSheet;
+import com.sb9.foloke.sectorb9.game.DataSheets.ObjectsDataSheet;
 import com.sb9.foloke.sectorb9.game.DataSheets.ItemsDataSheet;
 import com.sb9.foloke.sectorb9.game.Funtions.*;
 import android.graphics.*;
@@ -12,18 +12,13 @@ import java.util.Map;
 import com.sb9.foloke.sectorb9.game.Entities.Buildings.Components.*;
 import java.util.ArrayList;
 import com.sb9.foloke.sectorb9.game.UI.Inventory.*;
+import com.sb9.foloke.sectorb9.game.UI.Inventory.Inventory.*;
 
-public class Assembler extends StaticEntity
+public class Assembler extends ProductionBuilding
 {
 	private final static int ID=6;
-	private ProgressBarUI prgBar;
-	private CustomImageUI statusImage;
-	private CustomImageUI statusImage2;
-	private int prodTimeLength=10;
-	private int inProduction=0;
-	private Timer prodTimer;
-	private boolean assembling=false;
-	private ArrayList<Integer> productionQueue=new ArrayList<Integer>();
+	
+	
 
 	private Animation assemblerAnim;
 
@@ -34,16 +29,14 @@ public class Assembler extends StaticEntity
 	public Assembler(float x, float y, float rotation, GameManager gameManager)
 	{
 		super(x,y,rotation, gameManager,ID);
-		assemblerAnim=new Animation( BuildingsDataSheet.findById(ID).animation,30);
+		assemblerAnim=new Animation( ObjectsDataSheet.findById(ID).animation,5);
 		
-		inProduction=0;
-		prodTimer=new Timer(0);
-		prgBar=new ProgressBarUI(this,50,8,-25,-20,UIAsset.stunBackground,UIAsset.stunLine,UIAsset.progressBarBorder,prodTimer.getTick());
+		
+		
 
 
 
-		statusImage=new CustomImageUI(UIAsset.noEnergySign);
-		statusImage2=new CustomImageUI(UIAsset.invFullSign);
+		
 
 		arms[0]=new EntitySocket(this,new AssemblerArm(x,y,0,"", gameManager),90,new PointF(10,0));
 		arms[1]=new EntitySocket(this,new AssemblerArm(x,y,25,"", gameManager),-90,new PointF(-10,-23));
@@ -64,20 +57,14 @@ public class Assembler extends StaticEntity
 		canvas.save();
 		canvas.rotate(rotation,getCenterX(),getCenterY());
 		
-		if(!assembling)
-		canvas.drawBitmap(image,x,y,null);
-		else
+		
 			canvas.drawBitmap(assemblerAnim.getImage(),x,y,null);
-		prgBar.render(canvas);
+		
 		
 		canvas.restore();
 
-		if(!energy)
-			statusImage.render(canvas,new PointF(x,y));
-		if(!enabled)
-			statusImage2.render(canvas,new PointF(x+16,y));
-		if(gameManager.drawDebugInfo)
-			drawDebugCollision(canvas);
+		
+		
 		
 		for(EntitySocket arm:arms)
 		arm.render(canvas);
@@ -88,68 +75,45 @@ public class Assembler extends StaticEntity
 	public void tick()
 	{
 	    super.tick();
-		try
-		{
-			if(energy)
-			{
-				//if not working
-				if(!assembling)
-				{
-				for(EntitySocket arm:arms)
-					arm.setRotation(0);
-					if(productionQueue.size()>0)
-					{
-						//not every tick!
-						//make flag for update button
-						if(true)
-						{
-						int tProduction=productionQueue.get(0);
-						ArrayList<Inventory.InventoryItem> tItems=new ArrayList<Inventory.InventoryItem>();
-							for(Map.Entry<Integer,Integer> e : ItemsDataSheet.findById(tProduction).madeFrom.entrySet())
-							{
-								tItems.add(new Inventory.InventoryItem(0,0,e.getKey(),e.getValue()));
-							}
-							if(inventory.takeArrayItemFromAllInventory(tItems))
-							{
-								
-								gameManager.updateInventory(this);
-								assembling=true;
-								prodTimer.setTimer(prodTimeLength);
-								inProduction=tProduction;
-								productionQueue.remove(0);
-							
-								if(AssemblerUI.getOpened())
-									gameManager.initAssemblerUI(this);
-							}
-						}
-					}
-				}
-				
-				//if in work
-				if(assembling)
-				{
-					if(prodTimer.tick())
-					{
-						inventory.addToExistingOrNull(inProduction,1);
-						gameManager.updateInventory(this);
-						assembling=false;
-						inProduction=0;
-						if(AssemblerUI.getOpened())
-							gameManager.initAssemblerUI(this);
-					}
-					for(EntitySocket arm:arms)
-						arm.tick();
-					assemblerAnim.tick();
-				}
-				if(prodTimer.getTick()>0)
-					prgBar.set(prodTimer.getTick()/(prodTimeLength*0.6f));
-			}
-
+		production();
+		if(inProgress)
+		{	
+			for(EntitySocket arm:arms)
+				arm.tick();
+			assemblerAnim.tick();
 		}
-		catch(Exception e){System.out.println(e);}
+		else
+		{
+			for(EntitySocket arm:arms)
+				arm.setRotation(0);
+		}
+				
+
+	}
+
+	@Override
+	protected int chooseItemToProduce(ArrayList<Inventory.InventoryItem> items)
+	{
+		// TODO: Implement this method
+		int toProduction=-1;
+		if(productionQueue.size()>0)
+		{
+			//not every tick!
+			//make flag for update button
+			
+				toProduction=productionQueue.get(0);
+				
+				for(Map.Entry<Integer,Integer> e : ItemsDataSheet.findById(toProduction).madeFrom.entrySet())
+				{
+					items.add(new Inventory.InventoryItem(0,0,e.getKey(),e.getValue()));
+				}
+		}		
+		return toProduction;
 	}
 
 
+	
+	
 	@Override
 	public void onAndOff()
 	{
@@ -168,18 +132,23 @@ public class Assembler extends StaticEntity
 			///error
 			{}
 		if(AssemblerUI.getOpened())
-			gameManager.initAssemblerUI(this);
+			AssemblerUI.updateQueue(this);
 	}
-	public ArrayList<Integer> getQueue()
+
+	@Override
+	protected void onProductionEnded()
 	{
-		return productionQueue;
-	}
-	public int getInProduction()
-	{
-		return inProduction;
+		// TODO: Implement this method
+		productionQueue.remove(0);
+		if(AssemblerUI.getOpened())
+		{
+			AssemblerUI.updateQueue(this);
+		}
 	}
 
 	
+
+
 	
 	
 }

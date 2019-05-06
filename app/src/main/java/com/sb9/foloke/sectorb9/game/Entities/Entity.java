@@ -8,23 +8,29 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.RectF;
 
+import com.sb9.foloke.sectorb9.game.Assets.ShipAsset;
 import com.sb9.foloke.sectorb9.game.Assets.UIAsset;
 import com.sb9.foloke.sectorb9.game.Managers.GameManager;
 import com.sb9.foloke.sectorb9.game.UI.*;
-import com.sb9.foloke.sectorb9.game.DataSheets.BuildingsDataSheet;
+import com.sb9.foloke.sectorb9.game.DataSheets.ObjectsDataSheet;
 import com.sb9.foloke.sectorb9.game.Funtions.*;
 import java.io.*;
 import com.sb9.foloke.sectorb9.game.UI.Inventory.*;
+import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
 
 public abstract class Entity {
-	
+	///TODO:
+	///LOADING SCREEN                                       '''''
+    ///FIX SHIELDS                                          '''''
 	protected float width=2,height=2;
 	protected float relativeCentreX,relativeCenterY;
     protected float x,y;
-	protected float maxHp=100;
+	protected float maxHP=100;
+	protected float SP;
+	protected float maxSP=0;
 	protected float HP;
 	protected float rotation;
-	public int TEAM=0;
+	protected int TEAM=0;
 	private int ID=0;
 	private int frameTimer;
 	protected int inventoryMaxCapacity=0;
@@ -36,49 +42,76 @@ public abstract class Entity {
 	protected boolean energy=false;
 	protected boolean enabled=true;
 	protected boolean isInteractable=true;
-	
-	private Paint debugPaint=new Paint();
-	private CustomCollisionObject collisionObject;
+	protected boolean drawHp=true;
+	public boolean toRemove=false;
+	protected Paint debugPaint=new Paint();
+	protected CustomCollisionObject collisionObject;
 	protected ProgressBarUI uIhp;
+    protected ProgressBarUI uIsh;
 	protected String name;
 	protected GameManager gameManager;
     protected Matrix transformMatrix=new Matrix();
 	protected Inventory inventory;
 	protected RectF renderBox=new RectF();
-	protected Bitmap image;
-	
+	protected Bitmap image,shieldImg;
+    protected Timer shieldShow=new Timer(0);
+    protected Paint shieldPaint=new Paint();
+    private float shieldShowTime=2;
+    protected float regainSH=0.2f;
+
     public Entity(float x, float y, float rotation, GameManager gameManager, int ID)
     {
         this.debugPaint.setColor(Color.RED);
         this.debugPaint.setStyle(Paint.Style.STROKE);
         this.debugPaint.setStrokeWidth(2);
 		this.ID=ID;
-		
-		applyStandartOptions();
-		this.HP=maxHp;
+
+		applyStandardOptions();
+
+		this.HP=maxHP;
+		this.SP=maxSP;
         this.x=x;
         this.y=y;
 		this.gameManager = gameManager;
         
-		this.relativeCenterY=image.getHeight()/2;
-		this.relativeCentreX=image.getWidth()/2;
-		;
-		this.inventory=new Inventory(this, inventoryMaxCapacity,4);
+		this.relativeCenterY=(float)image.getHeight()/2;
+		this.relativeCentreX=(float)image.getWidth()/2;
+
+		this.inventory=new Inventory(this, inventoryMaxCapacity,1);
 		this.rotation=rotation;
-		this.uIhp=new ProgressBarUI(this,50,8,-25,-20,UIAsset.hpBackground,UIAsset.hpLine,UIAsset.progressBarBorder,getHp());
-		
+        shieldImg= ShipAsset.shield;
+
+		this.uIhp=new ProgressBarUI(this,50,8,-25,-64,UIAsset.hpBackground,UIAsset.hpLine,UIAsset.progressBarBorder,getHp());
+        this.uIsh=new ProgressBarUI(this,50,8,-25,-56,UIAsset.stunBackground,UIAsset.stunLine,UIAsset.progressBarBorder,getSH());
+
 		createCollision();
     }
-	private void applyStandartOptions()
+	
+	private void applyStandardOptions()
 	{
-		enabled					= BuildingsDataSheet.findById(ID).enabledByDefault;
-		inventoryMaxCapacity	= BuildingsDataSheet.findById(ID).inventoryCapacity;
-		isInteractable			= BuildingsDataSheet.findById(ID).interactableByDefault;
-		opened					= BuildingsDataSheet.findById(ID).openByDefault;
-		image					= BuildingsDataSheet.findById(ID).image;
-		name					= BuildingsDataSheet.findById(ID).name;
-		
+		enabled					= ObjectsDataSheet.findById(ID).enabledByDefault;
+		inventoryMaxCapacity	= ObjectsDataSheet.findById(ID).inventoryCapacity;
+		isInteractable			= ObjectsDataSheet.findById(ID).interactableByDefault;
+		opened					= ObjectsDataSheet.findById(ID).openByDefault;
+		image					= ObjectsDataSheet.findById(ID).image;
+		name					= ObjectsDataSheet.findById(ID).name;
+		collidable				= ObjectsDataSheet.findById(ID).collidable;
 	}
+
+	public void setShieldSize(int i)
+    {
+        switch (i) {
+            case 1:
+                shieldImg=ShipAsset.shield;
+                break;
+            case 2:
+                shieldImg=ShipAsset.largeShield;
+                break;
+            default:
+                shieldImg=ShipAsset.shield;
+                break;
+        }
+    }
 
     protected void createCollision()
     {
@@ -92,21 +125,17 @@ public abstract class Entity {
         setCollisionObject();
     }
 
-	public void save(BufferedWriter writer)
+	public String getSaveString()
 	{
-		try
-        {
-			String s=invSave();
-		    writer.write(ID+" "+name+" "+x+" "+y+" "+rotation+" "+HP+" "+s);
-		    writer.newLine();
-		}
-		catch(Throwable t)
-		{
-			System.out.println(t);
-		}
+			String s=getInvSaveString();
+		    return "["+ID+" "+name+" "+x+" "+y+" "+rotation+" "+HP+" "+SP+" "+TEAM+" "+s+"] ";
 	}
 
-	public void load(String[] words)
+	//**********SYNTAX***********
+	//WORDS: ID NAME X Y ROTATION 
+	//       HP SH TEAM INVENTORY
+	//***************************
+	public void loadFromStrings(String[] words)
 	{
 		try
 		{		
@@ -115,27 +144,40 @@ public abstract class Entity {
 			y=Float.parseFloat(words[3]);
 			rotation= Float.parseFloat(words[4]);
 			HP=Float.parseFloat(words[5]);
-			String[] invWords;
-			if((invWords = words[6].split(":")).length>0)
-			{
-				for(String s: invWords)
-				{
-					if(s.length()>0)
-					{
-						String elemWords[]=s.split("=");
-						inventory.addNewItem(Integer.parseInt(elemWords[0]),Integer.parseInt(elemWords[1]));
-					}
-				}
-			}
+			SP=Float.parseFloat(words[6]);
+			TEAM=Integer.parseInt(words[7]);
+			LoadInvFromString(words[8]);
+			
+
 			setCollisionObject();
 		}
 		catch(Throwable t)
 		{
-			System.out.println(t);
+            GameLog.update("Entity: "+t.toString(),1);
 		}
 	}
 
-	private String invSave()
+	public void LoadInvFromString(String saveString)
+	{
+		inventory.clear();
+		String[] invWords;
+		if((invWords = saveString.split(":")).length>0)
+		{
+			for(String s: invWords)
+			{
+				if(s.length()>0)
+				{
+					String elemWords[]=s.split("=");
+					inventory.addNewItem(Integer.parseInt(elemWords[0]),Integer.parseInt(elemWords[1]));
+				}
+			}
+		}
+	}
+	
+	//*************SYNTAX***************
+	// :(FIRST)ITEM ID=ITEM COUNT:(NEXT)
+	//**********************************
+	public String getInvSaveString()
 	{
 		String s=":";
 		for (Inventory.InventoryItem i: inventory.getArray())
@@ -151,9 +193,19 @@ public abstract class Entity {
 	{
 		image=i;
 	}
+
     public void tick()
     {
+        if(shieldShow.tick())
+            SP+=regainSH;
+        if(SP>maxSP)
+            SP=maxSP;
+        shieldPaint.setAlpha((int)(255*shieldShow.getSecond()/shieldShowTime));
         renderBox.set(getCenterX()-32,getCenterY()-32,getCenterX()+32,getCenterY()+32);
+
+
+        uIsh.tick(SP/maxSP*100);
+        uIhp.tick(HP/maxHP*100);
     }
 
     public float getX() {
@@ -212,7 +264,7 @@ public abstract class Entity {
 		frameTimer=delay*60;
 	}
 
-	public void timerTick()
+	protected void timerTick()
 	{
 		if((frameTimer-=1)<0)
 			frameTimer=0;	
@@ -229,16 +281,38 @@ public abstract class Entity {
 
 	public float getWorldRotation(){return rotation;}
 
-	public void applyDamage(int damage)
+	public void applyDamage(float damage)
 	{
-		HP-=damage;
-		uIhp.set(HP);
+        if(SP>maxSP)
+            SP=maxSP;
+        if(HP>maxHP)
+            HP=maxHP;
+	    float sum=HP+SP-damage;
+
+        shieldShow.setTimer(shieldShowTime);
+		
+	    if(sum-maxHP>0)
+	    {
+            SP = sum - maxHP;
+        }
+        else
+        {
+            SP = 0;
+            HP = sum;
+        }
+		
+
 		if(HP<=0)
 			onDestroy();			
 	}
 	
-	private void onDestroy(){active=false;
-	gameManager.spawnDestroyed(this);}
+	protected void onDestroy()
+	{
+		active=false;
+		if(!(this instanceof Player))
+            toRemove=true;
+		gameManager.spawnDestroyed(this);
+	}
 	
 	public void setCenterX(float x){this.x=x-relativeCentreX;}
 
@@ -266,7 +340,7 @@ public abstract class Entity {
 		return collisionObject;
 	}
 
-	private void setCollisionObject()
+	protected void setCollisionObject()
 	{
 		collisionObject=new CustomCollisionObject(width,height,gameManager);
         calculateCollisionObject();
@@ -301,5 +375,52 @@ public abstract class Entity {
 	public int getTeam()
 	{
 		return TEAM;
+	}
+	
+	public boolean getCollidable()
+	{
+		return collidable;
+	}
+	
+	public void setTeam(int team)
+	{
+		TEAM=team;
+	}
+
+	public void setMaxHP(float mhp)
+    {
+        maxHP=mhp;
+        HP=mhp;
+    }
+
+    public void setMaxSH(float msh)
+    {
+        maxSP=msh;
+        SP=msh;
+    }
+
+    public float getMaxHP()
+    {
+        return  maxHP;
+    }
+
+    public float getMaxSH()
+    {
+        return maxSP;
+    }
+
+    public float getSH()
+    {
+        return SP;
+    }
+
+	public void setHP(float HP)
+	{
+		this.HP=HP;
+	}
+
+	public void setSH(float SH)
+	{
+		this.SP=SH;
 	}
 }

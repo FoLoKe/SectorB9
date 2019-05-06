@@ -7,8 +7,11 @@ import java.util.*;
 
 import android.graphics.*;
 import java.io.*;
+
+import com.sb9.foloke.sectorb9.game.Entities.Ships.Ship;
 import com.sb9.foloke.sectorb9.game.Funtions.*;
 import com.sb9.foloke.sectorb9.game.UI.*;
+import com.sb9.foloke.sectorb9.game.UI.CustomViews.GameLog;
 
 public class WorldManager
 {
@@ -22,34 +25,27 @@ public class WorldManager
 	////current sector
 	private int sectorX=0,sectorY=0;
 
-	public WorldManager(MainActivity MA, GameManager gameManager)
+	WorldManager(MainActivity MA, GameManager gameManager)
 	{
+        GameLog.update("WorldManager: preparing manager",0);
 		this.MA=MA;
 		this.gameManager = gameManager;
 		this.entityManager=new EntityManager(gameManager);
 		interObject=new CustomCollisionObject(2,2,gameManager);
-		
+        GameLog.update("WorldManager: READY",0);
 	}
 	
-	public void lodEmptyWorld()
+	void loadEmptyWorld()
 	{
 		sectorX=1;
 		sectorY=1;
 		BitmapFactory.Options bitmapOptions=new BitmapFactory.Options();
 		bitmapOptions.inScaled=false;
 		background=Bitmap.createBitmap(BitmapFactory.decodeResource(MA.getResources(),R.drawable.galactic_outflow,bitmapOptions));
-		entityManager.addObject(new EnemyShip(910,2000,0,gameManager));
-		//entityManager.addObject(new EnemyShip(2000,900,0,"",gameManager));
-		//entityManager.addObject(new EnemyShip(200,200,45,"",gameManager));
-		//entityManager.addObject(new EnemyShip(400,400,90, "debug enemy",gameManager));
-		//entityManager.addObject(new EnemyShip(3000,3000,315, "debug enemy",gameManager));
-		entityManager.addObject(gameManager.getPlayer());
+
+		//entityManager.addObject(gameManager.getPlayer());
 		
-		Random rand=new Random();
-		
-		for (int i=0;i<50;i++)
-			entityManager.addObject(new Asteroid(50*rand.nextInt(50)+25*rand.nextInt(20),100*rand.nextInt(20)+20*rand.nextInt(50),rand.nextInt(180), gameManager,rand.nextInt(10)));
-	}
+		}
 	
 	public void loadDebugWorld()
 	{
@@ -69,12 +65,12 @@ public class WorldManager
 		entityManager.addObject(new Crusher(700,900,rand.nextInt(180), gameManager));
 		entityManager.addObject(new SmallCargoContainer(600,900,rand.nextInt(180), gameManager));
         entityManager.addObject(gameManager.getPlayer());
-		entityManager.addObject(new EnemyShip(700,900,0,gameManager));
+		entityManager.addObject(new ControlledShip(700,900,0,gameManager,0,Ship.createSimple()));
 		for (int i=0;i<50;i++)
 			entityManager.addObject(new Asteroid(50*rand.nextInt(50)+25*rand.nextInt(20),100*rand.nextInt(20)+20*rand.nextInt(50),rand.nextInt(180), gameManager,rand.nextInt(10)));
 	}
 	
-	public void updateWorld()
+	void updateWorld()
 	{
 		int i=0;
 		for(Entity e : entityManager.getArray())
@@ -95,18 +91,19 @@ public class WorldManager
 		}
 		
 		//objects ticks
-		gameManager.gamePanel.debugText.setString("objects in render:"+ i);
+		
 		entityManager.tick();
 	}
 	
-	public void renderWorld(Canvas canvas)
+	void renderWorld(Canvas canvas)
 	{
 		//if(background!=null)
-		canvas.drawBitmap(background,0,0,null);
+		//canvas.drawBitmap(background,0,0,null);
+		canvas.drawColor(Color.BLACK);
 		entityManager.render(canvas);
 	}
 	
-	public void interactionCheck(float x,float y)
+	void interactionCheck(float x,float y)
 	{
 		interObject.calculateCollisionObject(x,y);
 		Player player=gameManager.getPlayer();
@@ -121,27 +118,24 @@ public class WorldManager
 					if(e instanceof StaticEntity)
 					{
 						gameManager.setPressedObject((StaticEntity)e);
-						InteractionUI.init(MA,MA.getViewFlipper(),(StaticEntity)e);
+						InteractionUI.init(MA,(StaticEntity)e);
 					}
 
 				}							
 			}
 		}
 	}
-	
-	public void addObject(Entity e)
-	{
-		entityManager.addObject(e);
-	}
-	
+
 	public EntityManager getEntityManager()
 	{
 		return entityManager;
 	}
+
 	public GameManager getGameManager()
 	{
 		return gameManager;
 	}
+
 	public void save(BufferedWriter w)
 	{
 		entityManager.save(w);
@@ -153,28 +147,35 @@ public class WorldManager
 		entityManager.addObject(gameManager.getPlayer());
 	}
 
-	public Point getSector()
+	Point getSector()
 	{
 		return new Point(sectorX,sectorY);
 	}
 
-	
-
-    public void warpToSector(int x,int y)
-    {
-		MA.saveFile("sector-"+sectorX+"-"+sectorY,gameManager.getSaveName());
+	void setSector(int x,int y)
+	{
 		sectorX=x;
 		sectorY=y;
-        if(MA.loadFile("sector-"+x+"-"+y,gameManager.getSaveName())==1)
+	}
+	
+    void warpToSector(int x,int y)
+    {
+		gameManager.saveGame();
+		sectorX=x;
+		sectorY=y;
+        if(!gameManager.loadSector(x,y))
         {
-           WorldGenerator.makeRandomSector(this);
-			MA.saveFile("sector-"+x+"-"+y,gameManager.getSaveName());
+           WorldGenerator.makeSector(gameManager,gameManager.getMapManager().getSector(x,y));
+			gameManager.saveGame();
         }
+		gameManager.getMapManager().getSector(x,y).explored=true;
     }
 	
-	public void spawnDestroyed(Entity e)
+	void spawnDestroyed(Entity e)
 	{
+        
 		entityManager.addObject(new DroppedItems(e));
-		entityManager.deleteObject(e);
+        
+        
 	}
 }

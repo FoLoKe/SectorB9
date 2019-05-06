@@ -41,7 +41,23 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:textColor="#ffffff"
-			android:text="Close"
+			android:text="Constructor"
+			android:id="@+id/openConstructor"
+			android:layout_gravity="bottom|center"
+		/>
+		<Button
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textColor="#ffffff"
+			android:text="Tech Tree"
+			android:id="@+id/openTechTree"
+			android:layout_gravity="bottom|center"
+		/>
+		<ImageButton
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textColor="#ffffff"
+			
 			android:id="@+id/closeInteraction"
 
 			android:layout_gravity="bottom|center"
@@ -73,18 +89,36 @@
 			android:id="@+id/assemblerUI"
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"/>
+		<include layout="@layout/tech_ui"
+			android:id="@+id/tech_ui"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"/>
+		<include layout="@layout/ship_constructor_ui"
+			android:id="@+id/ship_constructor_ui"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"/>
+		
 	</ViewFlipper>
 </FrameLayout>
 	</LinearLayout>
 	<LinearLayout
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_gravity="bottom|center_horizontal">
-	<Button
+		android:orientation="vertical"
+		android:layout_gravity="bottom|center_horizontal"
+		>
+		<ImageView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:id="@+id/interaction_uiImageSign"/>
+	<LinearLayout
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:textColor="#ffffff"
-		android:text="BuildMode"
+		android:layout_gravity="bottom|center_horizontal">
+	<ImageButton
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		
 		android:id="@+id/openBuildUI"
 
 		android:layout_gravity="bottom|center"
@@ -98,5 +132,6 @@
 
 		android:layout_gravity="bottom|center"
 	/>
+	</LinearLayout>
 	</LinearLayout>
 </FrameLayout>

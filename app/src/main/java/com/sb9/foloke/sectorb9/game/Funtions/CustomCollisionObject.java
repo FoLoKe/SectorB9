@@ -13,11 +13,11 @@ public class CustomCollisionObject
 	private GameManager GM;
 	
 	
-	public CustomCollisionObject(float widht,float heigth,GameManager GM)
+	public CustomCollisionObject(float width,float height,GameManager GM)
 	{
-		radius=widht>heigth?widht/2:heigth/2;
-		this.width=widht;
-		this.height=heigth;
+		radius=width>height?width/2:height/2;
+		this.width=width;
+		this.height=height;
 		
 		this.GM=GM;
 		collisionBox=new RectF();
@@ -57,5 +57,6 @@ public class CustomCollisionObject
 	}
 	public float getCenterY(){return centerY;}
 	public float getRadius(){return radius;}
+    public void setRadius(float width,float height){radius=width>height?width/2:height/2;}
 	
 }

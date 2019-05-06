@@ -13,23 +13,25 @@ public class Minigun extends Weapon
 	private Timer fireDelay=new Timer(0);
 	private int fireRate= 200;
 	public  ProjectilesPool projectiles;
-	private int damage=2;
+	
 	private float projectileSpeed=3;
 	
 	public Minigun(TurretSystem turret, GameManager gameManager)
 	{
 		super(turret, gameManager);
+		name="minigun";
+		damage=2;
 		this.projectiles=new ProjectilesPool(WeaponsAsset.shell,projectileSpeed,300,damage,turret.getParent().getHolder(), gameManager);
 	}
 	public void shoot()
 	{
+		if(enabled)		
 		if(fireDelay.getTick()<=1)
+				if(turret.getParent().getHolder().getInventory().takeOneItemFromAllInventory(18,1))
 		{
-		float mathRotation=(float)(Math.PI/180*turret.getParent().getHolder().getWorldRotation());
-		PointF tpointOfShooting =new PointF((float)(turret.getPointOfShooting().x * Math.cos(mathRotation) - turret.getPointOfShooting().y * Math.sin(mathRotation))
-											,(float)(turret.getPointOfShooting().x * Math.sin(mathRotation) + turret.getPointOfShooting().y * Math.cos(mathRotation)));
-		tpointOfShooting.set(turret.getParent().getHolder().getCenterX()+tpointOfShooting.x,turret.getParent().getHolder().getCenterY()+tpointOfShooting.y);
-		projectiles.shoot(tpointOfShooting,turret.getParent().getHolder().getWorldRotation());
+		
+		
+		projectiles.shoot(new PointF(turret.getPointOfShooting()[0],turret.getPointOfShooting()[1]),turret.getRotation());
 		fireDelay.setTimer(60f/fireRate);
 		//boolean shootFlag=false;
 		}

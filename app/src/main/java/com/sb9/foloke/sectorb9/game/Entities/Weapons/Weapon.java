@@ -6,8 +6,13 @@ import android.graphics.*;
 
 abstract public class Weapon
 {
+	protected String name="debug";
+	protected boolean enabled=true;
 	protected TurretSystem turret;
 	protected GameManager gameManager;
+	protected float damage=0;
+	
+	///TODO: USE AMMO
 	public Weapon(TurretSystem turret, GameManager gameManager)
 	{
 		this.turret=turret;
@@ -17,5 +22,18 @@ abstract public class Weapon
 	abstract public void shoot();
 	abstract public void render(Canvas canvas);
 	
+	public boolean getEnabled()
+	{
+		return enabled;
+	}
 	
+	public void setEnabled(boolean state)
+	{
+		 enabled=state;
+	}
+	
+	public String getName()
+	{
+		return name;
+	}
 }

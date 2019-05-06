@@ -6,25 +6,15 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Environment;
-//import android.support.v4.app.ActivityCompat;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.Button;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-
-
 import android.widget.*;
 import android.view.*;
 
-
+import com.sb9.foloke.sectorb9.game.Funtions.WorldGenerator;
 import com.sb9.foloke.sectorb9.game.Managers.GameManager;
 import com.sb9.foloke.sectorb9.game.UI.*;
 import com.sb9.foloke.sectorb9.game.Assets.*;
@@ -34,39 +24,92 @@ import android.content.pm.*;
 import android.os.*;
 import com.sb9.foloke.sectorb9.game.UI.MainMenu.*;
 import android.graphics.*;
-import android.view.View.*;
 import android.app.*;
 import android.content.*;
+import com.sb9.foloke.sectorb9.game.Funtions.*;
+import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
+import com.sb9.foloke.sectorb9.game.UI.Inventory.*;
+import com.sb9.foloke.sectorb9.game.UI.TechUIs.*;
 
 public class MainActivity extends Activity {
 
-    private static GamePanel gamePanel;
-
+    private GameManager gameManager;
+    //private static GamePanel gamePanel;
 	
-
 	private ViewFlipper VF;
-	private BuildUI buildUI=new BuildUI();
 	
-	public MenuUI menuUI=new MenuUI();
-	
-	public HelpUI helpui=new HelpUI();
-	public ShipUI shipUI;
-	public MapUI mapUI;
 	private static final int PERMISSION_REQUEST_CODE = 123;
+	private InventoryExchangeInterface excInterface;
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+		
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 		if(!hasPermissions())
 			requestPerms();
+		
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		
+		int currentApiVersion;
+
+
+		currentApiVersion = android.os.Build.VERSION.SDK_INT;
+
+		final int flags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+			| View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+			| View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+			| View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+			| View.SYSTEM_UI_FLAG_FULLSCREEN
+			| View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+
+		if(currentApiVersion >= Build.VERSION_CODES.KITKAT)
+		{
+
+			getWindow().getDecorView().setSystemUiVisibility(flags);
+			final View decorView = getWindow().getDecorView();
+			decorView
+				.setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener()
+				{
+
+					@Override
+					public void onSystemUiVisibilityChange(int visibility)
+					{
+						if((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0)
+						{
+							decorView.setSystemUiVisibility(flags);
+						}
+					}
+				});
+		}
+
+        setContentView(R.layout.main_menu);
+		GameLog.delete();
+		GameLog.update(" ",0);
+		GameLog.update("Activity: Starting",0);
+        gameManager=new GameManager(this);
 		prepareMenu();
+	}
+
+	@Override
+	protected void onResume()
+	{
+		// TODO: Implement this method
+		super.onResume();
+		gameManager.resume();
+	}
+
+	@Override
+	protected void onPause()
+	{
+		// TODO: Implement this method
+		super.onPause();
+		gameManager.shutdown();
 	}
 	
 	public void prepareMenu()
 	{
 		setContentView(R.layout.main_menu);
-		
+		GameLog.update("Activity: preparing menu",0);
 		Button startNewGameButton= findViewById(R.id.new_game_button);
 	
 		startNewGameButton.setOnClickListener(new OnClickListener()
@@ -86,10 +129,23 @@ public class MainActivity extends Activity {
 					loadGame();
 				}
 			});
+			
+		Button continueGameButton= findViewById(R.id.continue_game_button);
+
+		continueGameButton.setOnClickListener(new OnClickListener()
+			{
+				public void onClick(View v)
+				{
+					continueGame();
+				}
+			});
+		GameLog.update("Activity: menu created",0);
+
 	}
 	
 	private void makeOnNewGameDialog()
 	{
+		GameLog.update("Activity: preparing new game alert Dialog",0);
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		
 		LinearLayout LL=new LinearLayout(this);
@@ -109,7 +165,8 @@ public class MainActivity extends Activity {
 		builder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int id) {
 					
-					prepareNewGame(input.getText().toString());
+					prepareNewGame(input.getText().toString(),true);
+                    
 				}
 			});
 		builder.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
@@ -126,96 +183,123 @@ public class MainActivity extends Activity {
 		
 		dialog.setView(LL);
 		dialog.show();
+		GameLog.update("Activity: preparing new game dialog successful",0);
 	}
 	
-	private void prepareNewGame(String s)
+	private void prepareNewGame(String s,boolean state)
 	{
-		if(s==""||s==null||s==" "||s.length()==0)
+	try{
+		GameLog.update("Activity: preparing new game",0);
+		if(s.equals("")||s.equals(" ")||s.length()==0||s.contains(" "))
 		{
-			makeToast("wrong savename");
+			GameLog.update("Activity: wrong save name",1);
 			return;
 		}
-		
-        setContentView(R.layout.main_activity);
-        gamePanel =findViewById(R.id.Game);
-		gamePanel.getGameManager().setSaveName(s);
-        BitmapFactory.Options options=new BitmapFactory.Options();
-		
-        options.inScaled=false;
-		helpui.init(this,VF,1);
-		
-		TableLayout playerTable=findViewById(R.id.PlayerTableLayout);
-		TableLayout objectTable=findViewById(R.id.ObjectTableLayout);
 
-		gamePanel.getGameManager().makeInventoryUI(playerTable,objectTable,this);
+		if(state)
+		{
+			GameLog.update("Activity: checking for existing" ,0);
+			String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString()+File.separator+"sb9";
+			File myDir = new File(root);
+			if (!myDir.exists()) 
+			{
+				if(!myDir.mkdir()) {
+                    GameLog.update("Activity: cant't create folder:" + myDir.getName(), 1);
+                    return;
+                }
+			}
+
+			File[] files = myDir.listFiles();
+
+			if (files.length>0)
+			{
+				for(File f:files)
+				{
+					if(f.getName().equals(s))
+						if (f.isDirectory())
+						{
+							GameLog.update("Activity: save name already used" ,0);
+							return;
+						}
+				}
+			}
+
+			GameLog.update("Activity: creating folder",0);
+			File saveDir=new File(myDir,s);
+
+			if(saveDir.mkdir())
+			{
+				GameLog.update("Activity: folder created",0);
+			}
+			else
+			{
+                GameLog.update("Activity: folder creating error", 1);
+                return;
+            }
+		}
+
+		////ONLY PLACE TO START GAME THREAD
 		
-		VF = findViewById(R.id.UIFlipper);
-		VF.setDisplayedChild(VF.indexOfChild(findViewById(R.id.actionUI)));
-		
-		buildUI.init(this,VF);
-		ActionUI.init(this,VF);
-		InteractionUI.init(this,VF,null);
-			
-		findViewById(R.id.menuUILinearLayout).setBackground(new BitmapDrawable(this.getResources(),UIAsset.uiBgBlur));
-		
-		final FrameLayout menuUIFrame=findViewById(R.id.menuUI);
+		GameLog.update("Activity: preparing GameManager",0);
+        gameManager.init(state,s);
+		GameLog.update("Activity: preparing UIs",0);
+        TableLayout playerTable=findViewById(R.id.PlayerTableLayout);
+        TableLayout objectTable=findViewById(R.id.ObjectTableLayout);
+
+        makeInventoryUI(playerTable,objectTable,this);
+
+        
+        BuildUI.init( this);
+        ActionUI.init( this);
+        InteractionUI.init( this,null);
+        HelpUI.init( this,1);
+        MapUI.init( this);
+		TechUI.init(this);
+		ConstructorUI.init(this);
+        VF = findViewById(R.id.UIFlipper);
+        VF.setDisplayedChild(VF.indexOfChild(findViewById(R.id.actionUI)));
+
+        findViewById(R.id.menuUILinearLayout).setBackground(new BitmapDrawable(this.getResources(),UIAsset.uiBgBlur));
+
+        final FrameLayout menuUIFrame=findViewById(R.id.menuUI);
 		final MainActivity MA=this;
 		
-		mapUI=new MapUI(this);
-		mapUI.init(this,VF);
+		
+		
 		Button menuButton=findViewById(R.id.Menu);
+
 		menuButton.setOnClickListener(new OnClickListener() 
 		{
 			@Override
 			public void onClick(View v) 
 			{
 				final int a=VF.getDisplayedChild();
-				menuUI.init(MA,VF,a);
+				MenuUI.init(MA,a);
 				VF.setDisplayedChild(VF.indexOfChild(menuUIFrame));
-				gamePanel.getGameManager().setPause(true);
+				gameManager.setPause(true);
 				v.setVisibility(View.GONE);
 			}
 		});
+
+
+
+		GameLog.update("Activity: preparing new game successful",0);
+		}catch(Exception e){GameLog.update("Activity: "+e.toString(),1);}
 	}
 	
-	public int prepareNewLoad(String s)
+	public void prepareNewLoad(String s)
 	{
-		prepareNewGame(s);
-		String fileName="";
-		String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString()+File.separator+"sb9"+File.separator+s;
-		File myDir = new File(root);
-		if (!myDir.exists()) {
-			makeToast("Error: no directory");
-			return -1;
-		}
-		String metaFileName="meta.txt";
-		File metaFile = new File (myDir, metaFileName);
-		if (!metaFile.exists ())
-		{makeToast("Error: no metaFile");
-			return -4;}
-		else
-		{
-			try
-			{
-				FileInputStream inputStream = new FileInputStream(metaFile);	
-				if (inputStream != null)
-				{
-					InputStreamReader isr = new InputStreamReader(inputStream);
-					BufferedReader reader = new BufferedReader(isr);
-					fileName=reader.readLine();
-					inputStream.close();
-					reader.close();
-					isr.close();
-				}
-			}
-			catch(Exception e){
-				makeToast(e.toString());
-				return -5;}
-		}
-		gamePanel.getGameManager().getPlayer().initShip();
-		loadFile(fileName,s);
-		makeToast("Successfully loaded");
-		return 0;
+
+		///ProgressDialog dialog = ProgressDialog.show(this,"loading","Loading. Please wait...");
+		///dialog.show();
+
+		GameLog.update("Activity: preparing load for save - "+s,0);
+		
+		prepareNewGame(s,false);
+
+
+		GameLog.update("Activity: successfully loaded: "+s,0);
+		//dialog.hide();
 	}
     
 	public void loadGame()
@@ -225,114 +309,66 @@ public class MainActivity extends Activity {
 		
 	}
 	
+	private void continueGame()
+	{
+		GameLog.update("Activity: preparing for continue" ,0);
+		String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString()+File.separator+"sb9";
+		File myDir = new File(root);
+		if (!myDir.exists()) {
+            if (!myDir.mkdir())
+            {
+                GameLog.update("Activity: can't create directory:" + myDir.getName(), 1);
+                return;
+            }
+		}
+
+		File[] files = myDir.listFiles();
+		File target=null;
+		if (files.length>0)
+		{
+			
+			for(File f:files)
+			{
+				GameLog.update("Activity: checking folder: "+f.getName(),0); 
+				if (f.isDirectory())
+				{
+					if(target!=null)
+					{
+						if(f.lastModified()>target.lastModified())
+							target=f;
+					}
+					else
+					{
+						target=f;
+					}
+				}
+			}
+		}
+	
+		if(target==null)
+		{
+			GameLog.update("Activity: no saves",0);
+			return;
+		}
+		GameLog.update("Activity: file selected to continue: "+target.getName(),0);
+		prepareNewLoad(target.getName());
+		GameLog.update("Activity: continue successful",0);
+	}
+	
 	public ViewFlipper getViewFlipper()
 	{
 		return VF;
 	}
-	
-	public void saveFile(String fileName,String saveName) {
-        try {
-			String fname = "save"+fileName+".txt";
-            String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString()+File.separator+"sb9"+File.separator+saveName;
-            File myDir = new File(root);
-            if (!myDir.exists()) {
-                myDir.mkdir();
-            }
-			
-			String metaFileName="meta.txt";
-			File metaFile = new File (myDir, metaFileName);
-				if (metaFile.exists ())
-					metaFile.delete ();
-			FileOutputStream mout = new FileOutputStream(metaFile);
-            OutputStreamWriter mosw = new OutputStreamWriter(mout);
-            BufferedWriter mwriter = new BufferedWriter(mosw);
-
-            mwriter.write(fname);
-			mwriter.newLine();
-            
-
-            mwriter.close();
-            mosw.close();
-					
-            
-            File file = new File (myDir, fname);
-            if (file.exists ())
-                file.delete ();
-			Bitmap image=getBitmapFromView(findViewById(R.id.Game));
-			image.compress(Bitmap.CompressFormat.JPEG, 100, new FileOutputStream(new File(root,"image.jpg")));
-            FileOutputStream out = new FileOutputStream(file);
-            OutputStreamWriter osw = new OutputStreamWriter(out);
-            BufferedWriter writer = new BufferedWriter(osw);
-		
-            writer.write("SB9 debug save");
-			writer.newLine();
-            gamePanel.save(writer);
-            
-            writer.close();
-            osw.close();
-			makeToast("Successfully saved");
-        } catch (Throwable e) {
-			makeToast(e.toString());
-           System.err.print(e);
-        }
-    }
-	
-	public int loadFile(String fileName,String SaveName) {
-        
-        try {
-			String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString()+File.separator+"sb9"+File.separator+SaveName;
-			File myDir = new File(root);
-			if (!myDir.exists()) {
-				makeToast("Error: no directory");
-				return -1;
-			}
-               
-            File file = new File (myDir, fileName);
-            if (file.exists ())
-            {
-               
-                FileInputStream inputStream = new FileInputStream(file);
-
-                if (inputStream != null)
-                {
-                    InputStreamReader isr = new InputStreamReader(inputStream);
-                    BufferedReader reader = new BufferedReader(isr);
-                    gamePanel.load(reader);
-                    inputStream.close();
-                    reader.close();
-                    isr.close();
-					makeToast("Successfully loaded file");
-                    return 0;
-                }
-            }
-            else
-            {
-				makeToast("Error: no such file from meta");
-                return 1;
-            }
-        } catch (Throwable t)
-        {
-			makeToast(t.toString());
-            return -2;
-        }
-		makeToast("Cant reach that!");
-        return -3;
-    }
-
-    public GameManager getGameManager()
-    {
-        return gamePanel.getGameManager();
-    }
 
     public void toActionFast()
     {
-        getGameManager().setPause(false);
-        findViewById(R.id.Menu).setVisibility(View.VISIBLE);
-        VF.setDisplayedChild(VF.indexOfChild(findViewById(R.id.actionUI)));
+       gameManager.setPause(false);
+       findViewById(R.id.Menu).setVisibility(View.VISIBLE);
+       VF.setDisplayedChild(VF.indexOfChild(findViewById(R.id.actionUI)));
     }
 	
 	private boolean hasPermissions(){
-        int res = 0;
+        int res;
         String[] permissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
         for (String perms : permissions){
@@ -351,24 +387,32 @@ public class MainActivity extends Activity {
         }
     }
 	
-	public static Bitmap getBitmapFromView(View view) {
+	public Bitmap getBitmapFromView(View view) {
 		
-		view.setDrawingCacheEnabled(true);
-		view.buildDrawingCache(true);	
+		GameLog.update("Activity: taking screen shoot",0);
+        gameManager.getGamePanel().setDrawingCacheEnabled(true);
+        gameManager.getGamePanel().buildDrawingCache(true);
 		final Bitmap bitmap = Bitmap.createBitmap( view.getDrawingCache() );
 		Canvas c=new Canvas(bitmap);
-		gamePanel.render(c);
-		view.setDrawingCacheEnabled(false);
-		view.destroyDrawingCache();
+        gameManager.getGamePanel().tick();
+        gameManager.getGamePanel().preRender(c);
+        gameManager.getGamePanel().setDrawingCacheEnabled(false);
+        gameManager.getGamePanel().destroyDrawingCache();
+		GameLog.update("Activity: screen shoot created",0);
+		
+		
 		return bitmap;
 		
 	}
+
+	public GameManager getGameManager()
+    {
+        return gameManager;
+    }
 	
-	public void makeToast(String toastText)
-	{
-		Context context = getApplicationContext();
-		int duration = Toast.LENGTH_SHORT;
-		Toast toast = Toast.makeText(context, toastText, duration);
-		toast.show();
-	}
+	private void makeInventoryUI(TableLayout playerTable, TableLayout objectTable, MainActivity context)
+    {
+		excInterface=new InventoryExchangeInterface(gameManager);
+        InventoryUI.set(playerTable,gameManager.getPlayer(),objectTable,null,excInterface,context);
+    }
 }

@@ -1,0 +1,36 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:id="@+id/options_ui"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+	
+	
+	
+	
+	<Button
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:textColor="#ffffff"
+		android:text="Close Options"
+		android:id="@+id/options_ui_close_button"
+		android:layout_gravity="top|center"/>
+	
+	<LinearLayout
+		android:layout_width="wrap_content"
+		android:layout_height="fill_parent"
+		android:orientation="vertical"
+		android:layout_gravity="center"
+		android:id="@+id/option_ui_linear_layout"
+		android:layout_margin="5dp"
+		android:layout_marginTop="100dp"
+		android:gravity="center">
+
+		<TextView
+			android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+			android:text="Options"
+			android:layout_gravity="center_horizontal|top"
+			android:textColor="#ffffff"/>
+	</LinearLayout>
+	
+</FrameLayout>

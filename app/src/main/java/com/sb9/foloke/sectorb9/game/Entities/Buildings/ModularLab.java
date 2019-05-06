@@ -1,6 +1,6 @@
 package com.sb9.foloke.sectorb9.game.Entities.Buildings;
 import com.sb9.foloke.sectorb9.game.Managers.GameManager;
-import com.sb9.foloke.sectorb9.game.DataSheets.BuildingsDataSheet;
+import com.sb9.foloke.sectorb9.game.DataSheets.ObjectsDataSheet;
 import com.sb9.foloke.sectorb9.game.Entities.*;
 import android.graphics.*;
 
@@ -27,8 +27,7 @@ public class ModularLab extends StaticEntity
 		canvas.drawBitmap(image,x,y,null);
 		//floatingReader.render(canvas,getCenterX(),getCenterY(),rotation);
 
-        if(gameManager.drawDebugInfo)
-            drawDebugCollision(canvas);
+        
 	}
 
 	@Override

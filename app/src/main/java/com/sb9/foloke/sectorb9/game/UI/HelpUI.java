@@ -17,13 +17,14 @@ import android.util.*;
 
 public class HelpUI
 {
-	private View prevPressed;
+	private static View prevPressed;
 	private static int pressedID;
 	
 	
-	public void init(final MainActivity MA,final ViewFlipper VF,final int view)
+	public static void init(final MainActivity MA,final int view)
 	{
 		///list init
+        final ViewFlipper VF = MA.findViewById(R.id.UIFlipper);
 		BitmapFactory.Options options=new BitmapFactory.Options();
         options.inScaled=false;
 		MA.findViewById(R.id.HelpSectionFrameLayout).setBackground(new BitmapDrawable(MA.getResources(),UIAsset.uiBgBlur));
@@ -45,7 +46,7 @@ public class HelpUI
 			});
 
 		//list containment
-		for(int i = 1; i<ItemsDataSheet.getLenght(); i++)
+		for(int i = 1; i<ItemsDataSheet.getLength(); i++)
 		{
 			TextView text= new TextView(MA);
 			text.setText(
@@ -74,7 +75,7 @@ public class HelpUI
 	}
 	
 	//on row click - display info:
-	public void setInfo(final MainActivity MA)
+	private static void setInfo(final MainActivity MA)
 	{
 		//standart text color
 		int textC=Color.WHITE;
@@ -326,7 +327,7 @@ public class HelpUI
 			}
 	}
 
-	public void onSearch(View v,final MainActivity MA)
+	private static void onSearch(View v,final MainActivity MA)
 	{
 		//lister for image
 		v.setOnClickListener(new OnClickListener()
@@ -342,4 +343,6 @@ public class HelpUI
 			}
 		});
 	}
+
+
 }

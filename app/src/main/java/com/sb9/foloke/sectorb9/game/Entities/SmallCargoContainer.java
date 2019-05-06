@@ -2,7 +2,7 @@ package com.sb9.foloke.sectorb9.game.Entities;
 import android.graphics.*;
 
 import com.sb9.foloke.sectorb9.game.Managers.GameManager;
-import com.sb9.foloke.sectorb9.game.DataSheets.BuildingsDataSheet;
+import com.sb9.foloke.sectorb9.game.DataSheets.ObjectsDataSheet;
 
 public class SmallCargoContainer extends CargoContainer
 {
@@ -23,19 +23,14 @@ public class SmallCargoContainer extends CargoContainer
 			return;
 		super.render(canvas);
 		canvas.drawBitmap(image,x,y,null);
-		if(gameManager.drawDebugInfo)
-			drawDebugCollision(canvas);
+		
 	}
 
 	@Override
 	public void tick()
 	{
 		super.tick();
-		if(getHp()<=0)
-		{
-			active=false;
-			return;
-		}
+		
 
 
 	}

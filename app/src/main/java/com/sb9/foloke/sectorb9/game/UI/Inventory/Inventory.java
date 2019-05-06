@@ -2,12 +2,14 @@ package com.sb9.foloke.sectorb9.game.UI.Inventory;
 import android.graphics.*;
 import java.util.*;
 import com.sb9.foloke.sectorb9.game.Entities.*;
+import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
 
 public class Inventory
 {
 	int height=0;
 	Entity parent;
 	int width=4;
+	int capacity=0;
 	ArrayList<InventoryItem> items=new ArrayList<InventoryItem>();
 	public static class InventoryItem
 	{
@@ -43,15 +45,42 @@ public class Inventory
 		public void setID(int ID){this.ID=ID;}
 	}
 	
+	public void clear()
+	{
+		for(InventoryItem invI:items)
+		{
+			invI.set(0,0);
+		}
+	}
+	
+	public Inventory copy(Entity caller)
+    {
+        Inventory inv=new Inventory(caller,this.height,this.width);
+        for(InventoryItem invI:inv.items)
+                invI.set(this.getItemIdOnPos(invI.pos,invI.row),this.getItemCountOnPos(invI.pos,invI.row));
+        return inv;
+    }
+
+	public int getCapacity()
+	{
+		return capacity;
+	}
+	
 	public Inventory(Entity parent,int height,int width)
 	{
 		this.parent=parent;
-		this.height=height;
-		this.width=width;
-		for(int i=0;i<height;i++)
-		for(int j=0;j<width;j++)
+		this.capacity=height;
+		this.height=(int)height/this.width+1;
+		if(this.height<1)
+			this.height=1;
+		//this.width=width;
+		int c=0;
+		for(int i=0;i<this.height;i++)
+		for(int j=0;j<this.width;j++)
 		{
+			if(c<capacity)
 			items.add(new InventoryItem(j,i,0,0));
+			c++;
 		}
 	}
 	public int getWidth(){return width;}
@@ -63,6 +92,7 @@ public class Inventory
 		{
 			if(i.ID==0)
 			{
+				GameLog.update("Inventory "+parent.toString()+": Added"+ID+" "+count,2);
 				i.ID=ID;
 				i.count=count;
 				return true;
@@ -160,10 +190,12 @@ public class Inventory
 		}
 		return false;
 	}
+	
 	public ArrayList<InventoryItem> getArray()
 	{
 		return items;
 	}
+	
 	public Point getItemOnPos(int x,int y)
 	{
 		for(InventoryItem i: items)
@@ -173,6 +205,7 @@ public class Inventory
 		}
 		return new Point(0,0);
 	}
+	
 	public boolean equalOnPosByID(int x,int y,int ID)
 	{
 		if(ID!=0)
@@ -183,6 +216,7 @@ public class Inventory
 		}
 		return false;
 	}
+	
 	public boolean equaOrNullOnPosByID(int x,int y,int ID)
 	{
 		if(ID!=0)
@@ -204,6 +238,7 @@ public class Inventory
 		return 0;
 	
 	}
+	
 	public int getItemCountOnPos(int x,int y)
 	{
 		for(InventoryItem i: items)
@@ -214,6 +249,7 @@ public class Inventory
 		return 0;
 
 	}
+	
 	public boolean containsOneItemInAllInventory(int ID,int count)
 	{
 		if (ID==0||count==0)
@@ -229,6 +265,7 @@ public class Inventory
 			return true;
 		return false;
 	}
+	
 	public boolean takeOneItemFromAllInventory(int ID,int count)
 	{
 		if(ID!=0&&count!=0)
@@ -275,6 +312,7 @@ public class Inventory
 		}
 		return true;
 	}
+	
 	public boolean addToExistingOrNull(int ID,int count)
 	{
 		if(ID!=0&&count!=0)
@@ -290,9 +328,11 @@ public class Inventory
 		}
 		return addNewItem(ID,count);
 	}
+	
 	public boolean addToExistingOrNull(InventoryItem item)
 	{
 		if(item.ID!=0&&item.count!=0)
+		{
 		for(InventoryItem i: items)
 		{
 			if(i.ID==item.ID)
@@ -304,5 +344,62 @@ public class Inventory
 
 		}
 		return addNewItem(item.ID,item.count);
+		}
+		return false;
 	}
+	
+	public float count()
+	{
+		float c=0;
+		for(InventoryItem i: items)
+		{
+			if(i.ID!=0&&i.count!=0)
+			{
+				c++;
+			}
+
+		}
+		return c;
+	}
+	
+	public int countItem(int ID)
+	{
+		int c=0;
+		for(InventoryItem i: items)
+		{
+			if(i.ID==ID&&i.count!=0)
+			{
+				c+=i.count;
+			}
+
+		}
+		return c;
+	}
+	
+	public boolean collectFromInventory(Entity scr)
+    {
+		if(scr==null)
+			return false;
+		boolean overCapacity=false;
+        Iterator<InventoryItem> iter=scr.getInventory().items.iterator();
+        while(iter.hasNext())
+			{
+                InventoryItem invI=iter.next();
+				if(invI!=null)
+					if(invI.ID!=0&&invI.count!=0)
+				{
+					if((this.addToExistingOrNull(invI)))
+					{
+						invI.ID=0;
+						invI.count=0;
+					}
+					else
+					{
+						overCapacity=true;
+					}
+				}
+			}
+		return !overCapacity;
+    }
+		
 }

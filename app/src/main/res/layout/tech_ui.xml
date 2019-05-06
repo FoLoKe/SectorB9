@@ -1,0 +1,13 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:clickable="true"
+>
+	<AbsoluteLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:orientation="horizontal"
+		android:id="@+id/tech_ui_AbsoluteLayout"
+	/>
+</FrameLayout>

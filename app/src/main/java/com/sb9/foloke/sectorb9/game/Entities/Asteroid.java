@@ -8,7 +8,7 @@ package com.sb9.foloke.sectorb9.game.Entities;
 	import static java.lang.Math.sin;
 
 	import com.sb9.foloke.sectorb9.game.Managers.GameManager;
-	import com.sb9.foloke.sectorb9.game.DataSheets.BuildingsDataSheet;
+	import com.sb9.foloke.sectorb9.game.DataSheets.ObjectsDataSheet;
 
 public class Asteroid extends StaticEntity {
 
@@ -37,8 +37,7 @@ public class Asteroid extends StaticEntity {
 				canvas.rotate(rotation,getCenterX(),getCenterY());
 				canvas.drawBitmap(image,x,y,null);
 				canvas.restore();
-				if(gameManager.drawDebugInfo)
-					drawDebugCollision(canvas);
+				
 			}
 		}
 	

@@ -6,6 +6,7 @@ import com.sb9.foloke.sectorb9.game.Entities.Entity;
 import com.sb9.foloke.sectorb9.game.Entities.Player;
 
 import android.graphics.*;
+import com.sb9.foloke.sectorb9.game.Funtions.*;
 
 public class Camera {
     private PointF location;
@@ -26,22 +27,21 @@ public class Camera {
     {
         this.scale=scale;
         this.location.x= ((Player) pointOfLook).getCenterX();
-		if((this.location.x-screenW/(2*scale))<0)
-			this.location.x=screenW/(2*scale);
-			
+//		if((this.location.x-screenW/(2*scale))<0)
+//			this.location.x=screenW/(2*scale);
+//			
         this.location.y= ((Player) pointOfLook).getCenterY();
-		if((this.location.y-screenH/(2*scale))<0)
-			this.location.y=screenH/(2*scale);
+//		if((this.location.y-screenH/(2*scale))<0)
+//			this.location.y=screenH/(2*scale);
 			
 		
     }
 	
 	public void render(Canvas canvas)
 	{
-		if(pointOfLook.getGameManager().drawDebugInfo)
+		if(Options.drawDebugInfo.getBoolean())
 		{
-			if(pointOfLook.getGameManager().drawDebugInfo)
-				screenRect.set(pointOfLook.getCenterX()-canvasW/(2*scale)+10,pointOfLook.getCenterY()-canvasH/(2*scale)+10,pointOfLook.getCenterX()+canvasW/(2*scale)-10,pointOfLook.getCenterY()+canvasH/(2*scale)-10);
+			screenRect.set(pointOfLook.getCenterX()-canvasW/(2*scale)+10,pointOfLook.getCenterY()-canvasH/(2*scale)+10,pointOfLook.getCenterX()+canvasW/(2*scale)-10,pointOfLook.getCenterY()+canvasH/(2*scale)-10);
 			Paint tPaint=new Paint();
 			tPaint.setStyle(Paint.Style.STROKE);
 			tPaint.setColor(Color.rgb(0,255,0));

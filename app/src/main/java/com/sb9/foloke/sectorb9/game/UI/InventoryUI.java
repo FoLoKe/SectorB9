@@ -24,23 +24,23 @@ import com.sb9.foloke.sectorb9.game.UI.Inventory.*;
 //import java.util.*;
 public class InventoryUI
 {
-	private TableLayout playerTable,objectTable;
-	final private MainActivity context;
-	private Entity playerTarget,objectTarget;
-	private InventoryExchangeInterface excInterface;
-	private int countToTransfer=1;
-	private MainActivity MA;
+	private static TableLayout playerTable,objectTable;
+	//final private MainActivity context;
+	private static Entity playerTarget,objectTarget;
+	private static InventoryExchangeInterface excInterface;
+	private static int countToTransfer=1;
+	private static MainActivity MA;
 	
 
-	public InventoryUI(TableLayout playerTable, Entity playerTarget, TableLayout objectTable, Entity objectTarget, InventoryExchangeInterface excInterface, MainActivity MA)
+	public static void set(TableLayout pTable, Entity pTarget, TableLayout oTable, Entity oTarget, InventoryExchangeInterface eInterface, MainActivity mainActivity)
 	{
-		this.MA=MA;
-		this.playerTarget=playerTarget;	
-		this.playerTable=playerTable;
-		this.objectTable=objectTable;
-		this.objectTarget=objectTarget;
-		this.context=MA;
-		this.excInterface=excInterface;
+		MA=mainActivity;
+		playerTarget=pTarget;	
+		playerTable=pTable;
+		objectTable=oTable;
+		objectTarget=oTarget;
+		
+		excInterface=eInterface;
 		
 		
 		update(null);
@@ -63,7 +63,7 @@ public class InventoryUI
 					resetButtonColor(v);
 				}});
 	}
-	public void update(Entity caller)
+	public static void update(Entity caller)
 	{
 		if(caller==null||caller==playerTarget||caller==objectTarget)
 		{
@@ -75,11 +75,11 @@ public class InventoryUI
 		}
 	}
 	
-	public void resetButtonColor(View v)
+	public static void resetButtonColor(View v)
 	{
-		context.findViewById(R.id.InventoryUI_halfItemButton).setBackgroundColor(Color.parseColor("#22ffffff"));
-		context.findViewById(R.id.InventoryUI_allItemButton).setBackgroundColor(Color.parseColor("#22ffffff"));
-		context.findViewById(R.id.InventoryUI_oneItemButton).setBackgroundColor(Color.parseColor("#22ffffff"));
+		MA.findViewById(R.id.InventoryUI_halfItemButton).setBackgroundColor(Color.parseColor("#22ffffff"));
+		MA.findViewById(R.id.InventoryUI_allItemButton).setBackgroundColor(Color.parseColor("#22ffffff"));
+		MA.findViewById(R.id.InventoryUI_oneItemButton).setBackgroundColor(Color.parseColor("#22ffffff"));
 		if(v!=null)
 		v.setBackgroundColor(Color.parseColor("#55ffffff"));
 		else
@@ -87,19 +87,19 @@ public class InventoryUI
 		{
 			case 1:
 				
-				context.findViewById(R.id.InventoryUI_oneItemButton).setBackgroundColor(Color.parseColor("#55ffffff"));
+				MA.findViewById(R.id.InventoryUI_oneItemButton).setBackgroundColor(Color.parseColor("#55ffffff"));
 				break;
 			case 2:
-				context.findViewById(R.id.InventoryUI_halfItemButton).setBackgroundColor(Color.parseColor("#55ffffff"));
+				MA.findViewById(R.id.InventoryUI_halfItemButton).setBackgroundColor(Color.parseColor("#55ffffff"));
 				break;
 			default:
-				context.findViewById(R.id.InventoryUI_allItemButton).setBackgroundColor(Color.parseColor("#55ffffff"));
+				MA.findViewById(R.id.InventoryUI_allItemButton).setBackgroundColor(Color.parseColor("#55ffffff"));
 				break;
 		}
 		
 		}
 	///UNDER REFACTORING
-	public void init(TableLayout table,Entity target)
+	public static void init(TableLayout table,Entity target)
 	{
 		try
 		{
@@ -115,29 +115,35 @@ public class InventoryUI
 		
 			int height=target.getInventory().getHeight();
 			int width=target.getInventory().getWidth();
+			int c=0;
+			int maxC=target.getInventory().getCapacity();
 			
 		for(int i=0;i<height;i++)
 		{
-			final TableRow row=new TableRow(context);
+			if(c>=maxC)
+				break;
+			final TableRow row=new TableRow(MA);
 			TableLayout.LayoutParams tableRowParams=new TableLayout.LayoutParams(TableLayout.LayoutParams.WRAP_CONTENT,TableLayout.LayoutParams.FILL_PARENT);
 			row.setLayoutParams(tableRowParams);
 			
 			for(int j=0;j<width;j++)
 			{
+				if(c<maxC)
+				{
 				final int x=j;
 				final int y=i;
 				final Inventory inventory=target.getInventory();
 				
-				ImageView sprite=new ImageView(context);
-				TextView itemCountText=new TextView(context);
+				ImageView sprite=new ImageView(MA);
+				TextView itemCountText=new TextView(MA);
 				itemCountText.setTextColor(Color.parseColor("#ffffffff"));
 				int itemcount=target.getInventory().getItemOnPos(j,i).y;
 				if(itemcount!=0)
 					itemCountText.setText(itemcount+"");
 				itemCountText.setTextSize(10);
 					
-				sprite.setImageDrawable(new BitmapDrawable(context.getResources(), ItemsDataSheet.findById(target.getInventory().getItemOnPos(j,i).x).image));
-				InventoryFrameLayout IFL=new InventoryFrameLayout(context);
+				sprite.setImageDrawable(new BitmapDrawable(MA.getResources(), ItemsDataSheet.findById(target.getInventory().getItemOnPos(j,i).x).image));
+				InventoryFrameLayout IFL=new InventoryFrameLayout(MA);
 				IFL.setX(j);
 				IFL.setY(i);
 				row.addView(IFL);
@@ -162,6 +168,8 @@ public class InventoryUI
 						
 					IFL.addView(sprite);
 					IFL.addView(itemCountText);
+					}
+					c++;
 				}
 			table.addView(row);
 			}
@@ -175,7 +183,7 @@ public class InventoryUI
 		}
 	}
 	
-	private int calculateCountToTransfer(int count)
+	private static int calculateCountToTransfer(int count)
 	{
 		switch(countToTransfer)
 		{
@@ -193,34 +201,34 @@ public class InventoryUI
 		}
 		return count;
 	}
-	public int getCountToTransfer()
+	public static int getCountToTransfer()
 	{
 		
 		return countToTransfer;
 	}
-	public TableLayout getTableOfPlayer()
+	public static TableLayout getTableOfPlayer()
 	{
 		return playerTable;
 	}
-	public void setPlayerTarget(Entity target)
+	public static void setPlayerTarget(Entity target)
 	{
-		this.playerTarget=target;
+		playerTarget=target;
 	}
-	public Entity getPlayerTarget()
+	public static Entity getPlayerTarget()
 	{
 		return playerTarget;
 	}
 	
-	public void setObjectTarget(Entity target)
+	public static void setObjectTarget(Entity target)
 	{
-		this.objectTarget=target;
+		objectTarget=target;
 	}
-	public Entity getObjectTarget()
+	public static Entity getObjectTarget()
 	{
 		return objectTarget;
 	}
 	
-	private void setDragAndDrop(final InventoryFrameLayout IFL,final Entity target)
+	private static void setDragAndDrop(final InventoryFrameLayout IFL,final Entity target)
 	{
 		final int ID=target.getInventory().getItemOnPos(IFL.x,IFL.y).x;
 		

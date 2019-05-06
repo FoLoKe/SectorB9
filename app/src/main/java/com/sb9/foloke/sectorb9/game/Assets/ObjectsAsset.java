@@ -3,8 +3,8 @@ import android.graphics.*;
 
 public class ObjectsAsset
 {
-	public static Bitmap smallCargoContainer,asteroidDust_1,asteroidDust_2,asteroidDust_3,crusher,solarPanel,
-	fuelGenerator,smelterCold,smelterHot[],assembler,assembler_arm1,lab_mk1,labreader_mk1,smallAsteroid;
+	public static Bitmap smallCargoContainer,asteroidDust_1,asteroidDust_2,asteroidDust_3,crusher,solarPanel,smallShipDock,
+	fuelGenerator,smelterCold,smelterHot[],assembler,assembler_arm1,lab_mk1,labreader_mk1,smallAsteroid,nullItem;
 	public static Bitmap crusherAnim[];
 	public static Bitmap fuelGeneratorAnim[];
 	public static Bitmap assemblerAnim[];
@@ -12,6 +12,7 @@ public class ObjectsAsset
     public static void init(Bitmap sheet)
     {
         SpriteSheet tsheet=new SpriteSheet(sheet);
+		nullItem=tsheet.crop(7,4);
         smallCargoContainer=tsheet.crop(0,0);
 		asteroidDust_1=tsheet.crop(0,1);
 		asteroidDust_2=tsheet.crop(1,0);
@@ -40,5 +41,6 @@ public class ObjectsAsset
 		lab_mk1=Bitmap.createBitmap(sheet,3*32,2*32,64,64);
 		labreader_mk1=Bitmap.createBitmap(sheet,5*32,2*32,32,32);
 		smallAsteroid=Bitmap.createBitmap(sheet,5*32,3*32,32,32);
+		smallShipDock=Bitmap.createBitmap(sheet,5*32,5*32,64,96);
     }
 }
