@@ -50,7 +50,7 @@ public class MainThread extends Thread
             }
             catch(Exception e){
                 
-				GameLog.update("Main Thread: "+e,1);
+				GameLog.update("Main Thread: "+e+" "+e.getStackTrace()[0],1);
             }
 
             finally{if(canvas!=null)

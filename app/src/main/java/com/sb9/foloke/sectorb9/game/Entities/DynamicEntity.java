@@ -6,6 +6,7 @@ import android.graphics.*;
 import com.sb9.foloke.sectorb9.game.Managers.GameManager;
 import com.sb9.foloke.sectorb9.game.Funtions.*;
 import java.util.*;
+import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
 
 public abstract class DynamicEntity extends Entity {
 
@@ -19,7 +20,7 @@ public abstract class DynamicEntity extends Entity {
 	protected float  frontImpulse;
 	private float backwardImpulse;
 	protected PointF frontPoint=new PointF(1,0);
-
+	private PointF debugPoint=new PointF();
 	protected boolean inBounds=true;
 	public ArrayList<DynamicEntity> collidedWith=new ArrayList<DynamicEntity>();
 	
@@ -164,13 +165,7 @@ public abstract class DynamicEntity extends Entity {
 	
 	private void impulse(Entity e)
 	{
-		if(e instanceof DynamicEntity)
-		{
-			collidedWith.add((DynamicEntity)e);
-			if(((DynamicEntity)e).collidedWith.contains(this))
-				return;
-			((DynamicEntity) e).collidedWith.add(this);
-		}
+		
 
 		float midpointx = (e.getCollisionObject().getCenterX() +getCollisionObject().getCenterX()) / 2; 
 		float midpointy = (e.getCollisionObject().getCenterY() +getCollisionObject().getCenterY()) / 2;
@@ -180,11 +175,65 @@ public abstract class DynamicEntity extends Entity {
 		//dist=(float)Math.max(0.1,dist);
 
 		float rad=(getCollisionObject().getRadius()+ e.getCollisionObject().getRadius())/2;
-		float newcenterX=(midpointx + rad * (getCollisionObject().getCenterX() - e.getCollisionObject().getCenterX())/ dist);
-		float newcenterY=(midpointy + rad * (getCollisionObject().getCenterY() - e.getCollisionObject().getCenterY())/ dist);
-
-
-
+		float newcenterX,newcenterY;
+		
+		
+		if(e instanceof DynamicEntity)
+		{
+			DynamicEntity dE=(DynamicEntity)e;
+			
+			collidedWith.add(dE);
+			if(dE.collidedWith.contains(this))
+				return;
+			dE.collidedWith.add(this);
+			
+			float sumMass=mass+dE.mass;
+			
+			newcenterX=(midpointx + rad * (getCollisionObject().getCenterX() - e.getCollisionObject().getCenterX())/ dist);//*mass/sumMass;
+			newcenterY=(midpointy + rad * (getCollisionObject().getCenterY() - e.getCollisionObject().getCenterY())/ dist);//*mass/sumMass;
+			
+			float newcenterXE=(midpointx + rad * (getCollisionObject().getCenterX() - e.getCollisionObject().getCenterX())/ dist);
+			float newcenterYE=(midpointy + rad * (getCollisionObject().getCenterY() - e.getCollisionObject().getCenterY())/ dist);
+			
+			debugPoint.set(newcenterXE,newcenterYE);
+			dE.dx += (-dE.getCenterX() + newcenterXE)*dE.mass/sumMass;
+           	dE.dy += (-dE.getCenterY() + newcenterYE)*dE.mass/sumMass;
+			GameLog.update("dE: "+ (-dE.getCenterX() + newcenterXE)+"",2);
+			GameLog.update((-getCenterX() + newcenterX)+"",2);
+			
+            float dEspeed=(float)Math.sqrt(dE.dx*dE.dx+dE.dy*dE.dy)*60;
+            if(dEspeed>dE.maxSpeed)
+            {
+                dE.dx *= dE.maxSpeed / dEspeed;
+                dE.dy *= dE.maxSpeed / dEspeed;
+            }
+			
+			dx += (-getCenterX() + newcenterX)*mass/sumMass;
+            dy += (-getCenterY() + newcenterY)*mass/sumMass;
+			
+            float speed=(float)Math.sqrt(dx*dx+dy*dy)*60;
+            if(speed>maxSpeed)
+            {
+                dx *= maxSpeed / speed;
+                dy *= maxSpeed / speed;
+            }
+			
+		}
+		else
+		{
+			newcenterX=(midpointx + rad * (getCollisionObject().getCenterX() - e.getCollisionObject().getCenterX())/ dist);
+			newcenterY=(midpointy + rad * (getCollisionObject().getCenterY() - e.getCollisionObject().getCenterY())/ dist);
+			dx += -getCenterX() + newcenterX;
+            dy += -getCenterY() + newcenterY;
+            float speed=(float)Math.sqrt(dx*dx+dy*dy)*60;
+            if(speed>maxSpeed)
+            {
+                dx *= maxSpeed / speed;
+                dy *= maxSpeed / speed;
+            }
+			
+		}
+		
 
 			/*float cx=getCenterX();
 			float cy=getCenterY();
@@ -205,14 +254,7 @@ public abstract class DynamicEntity extends Entity {
 			dx = (f-f2)/mass* (float)Math.cos(d1+d2 - ang);
 			dy = (f-f2)/mass * (float)Math.sin(d1+d2 - ang);*/
 
-            dx += -getCenterX() + newcenterX;
-            dy += -getCenterY() + newcenterY;
-            float speed=(float)Math.sqrt(dx*dx+dy*dy)*60;
-            if(speed>maxSpeed)
-            {
-                dx *= maxSpeed / speed;
-                dy *= maxSpeed / speed;
-            }
+         
 	}
 	
     public boolean rotationToPoint(PointF point)
@@ -285,6 +327,7 @@ public abstract class DynamicEntity extends Entity {
             canvas.drawText("HP: "+HP+"/"+maxHP,x-100,y+128,debugPaint);
             canvas.drawText("HP: "+SP+"/"+maxSP,x-100,y+160,debugPaint);
             //canvas.drawBitmap(image,new Rect(0,0,32,20),new RectF(x,y,x+32,y+32),null);
+			canvas.drawCircle(debugPoint.x,debugPoint.y,4,debugPaint);
 
 		}
 	}

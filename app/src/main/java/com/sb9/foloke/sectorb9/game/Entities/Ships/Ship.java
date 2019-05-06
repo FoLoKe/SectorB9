@@ -1,7 +1,5 @@
 package com.sb9.foloke.sectorb9.game.Entities.Ships;
 import android.graphics.*;
-import android.telephony.mbms.MbmsErrors;
-
 import com.sb9.foloke.sectorb9.game.Assets.EffectsAsset;
 import com.sb9.foloke.sectorb9.game.Assets.ShipAsset;
 import com.sb9.foloke.sectorb9.game.Entities.DynamicEntity;
@@ -88,7 +86,8 @@ public class Ship
 
         //SHIELDS
         maxSP=shields.SP;
-
+		shieldSize=(int)hull.image.getHeight()/32;
+		
         //ENGINE SMOKE
         pointOfEngine=new PointF(0,0);
         engineSmoke=new ParticleSystem(EffectsAsset.yellow_pixel,holder.getWorldLocation().x,holder.getWorldLocation().y,1f,new PointF(0.2f,0),true,120,holder.getGameManager());

@@ -30,6 +30,7 @@ public class ControlledShip extends DynamicEntity {
     {
         super(x,y,rotation,gameManager,ID);
         this.ship=ship;
+		ship.init(this);
 		switch (AIType)
 		{
 			case 0:
