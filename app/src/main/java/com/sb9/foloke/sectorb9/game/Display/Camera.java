@@ -3,53 +3,46 @@ package com.sb9.foloke.sectorb9.game.Display;
 import android.graphics.PointF;
 
 import com.sb9.foloke.sectorb9.game.Entities.Entity;
-import com.sb9.foloke.sectorb9.game.Entities.Player;
+
 
 import android.graphics.*;
 import com.sb9.foloke.sectorb9.game.Funtions.*;
 
 public class Camera {
     private PointF location;
-    private Entity pointOfLook;
+    
     private float screenXcenter,screenYcenter;
     private float scale;
 	private RectF screenRect;
 	private float canvasW,canvasH;
-    public Camera(float x,float y,float scale,Entity target)
+    public Camera(float x,float y,float scale)
     {
-        this.pointOfLook=target;
+        
         this.location=new PointF(x,y);
         this.scale=scale;
 		this.screenRect=new RectF(0,0,1,1);
     }
 
-    public void tick(float scale,float screenW,float screenH)
+    public void tick(float scale,PointF point)
     {
         this.scale=scale;
-        this.location.x= ((Player) pointOfLook).getCenterX();
-//		if((this.location.x-screenW/(2*scale))<0)
-//			this.location.x=screenW/(2*scale);
-//			
-        this.location.y= ((Player) pointOfLook).getCenterY();
-//		if((this.location.y-screenH/(2*scale))<0)
-//			this.location.y=screenH/(2*scale);
-			
-		
+        this.location.x= point.x;
+		this.location.y= point.y;	
     }
 	
 	public void render(Canvas canvas)
 	{
 		if(Options.drawDebugInfo.getBoolean())
 		{
-			screenRect.set(pointOfLook.getCenterX()-canvasW/(2*scale)+10,pointOfLook.getCenterY()-canvasH/(2*scale)+10,pointOfLook.getCenterX()+canvasW/(2*scale)-10,pointOfLook.getCenterY()+canvasH/(2*scale)-10);
+			
+			screenRect.set(location.x-canvasW/(2*scale)+10,location.y-canvasH/(2*scale)+10,location.x+canvasW/(2*scale)-10,location.y+canvasH/(2*scale)-10);
 			Paint tPaint=new Paint();
 			tPaint.setStyle(Paint.Style.STROKE);
 			tPaint.setColor(Color.rgb(0,255,0));
 		
 			canvas.drawRect(screenRect,tPaint);
-			canvas.drawCircle(((Player)pointOfLook).getCenterX(),((Player)pointOfLook).getCenterY(),canvas.getHeight()/(8*scale),tPaint);
-			canvas.drawCircle(((Player)pointOfLook).getCenterX(),((Player)pointOfLook).getCenterY(),canvas.getHeight()/(2*scale),tPaint);
-		}
+			canvas.drawCircle(location.x,location.y,canvas.getHeight()/(8*scale),tPaint);
+			}
 	}
     public float getxOffset()
     {
@@ -61,9 +54,7 @@ public class Camera {
         return location.y;
     }
 
-    public void setPointOfLook(Entity pointOfLook) {
-        this.pointOfLook = pointOfLook;
-    }
+    
 
     public void setScreenXcenter(float screenXcenter) {
         this.screenXcenter = screenXcenter;
@@ -95,7 +86,8 @@ public class Camera {
 	{
 		canvasH=screenH;
 		canvasW=screenW;
-			screenRect.set(pointOfLook.getCenterX()-screenW/(2*scale),pointOfLook.getCenterY()-screenH/(2*scale),pointOfLook.getCenterX()+screenW/(2*scale),pointOfLook.getCenterY()+screenH/(2*scale));
+		
+		screenRect.set(location.x-screenW/(2*scale),location.y-screenH/(2*scale),location.x+screenW/(2*scale),location.y+screenH/(2*scale));
 	}
 	public RectF getScreenRect()
 	{

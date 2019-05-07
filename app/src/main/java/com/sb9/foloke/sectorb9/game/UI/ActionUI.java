@@ -59,11 +59,11 @@ public class ActionUI
 					switch(e.getAction())
 					{
 						case MotionEvent.ACTION_DOWN:
-							MA.getGameManager().getPlayer().shootFlag=true;
+							MA.getGameManager().getController().shoot(true);
 
 							break;
 						case MotionEvent.ACTION_UP:
-							MA.getGameManager().getPlayer().shootFlag=false;
+							MA.getGameManager().getController().shoot(false);
 							break;
 					}
 					return false;

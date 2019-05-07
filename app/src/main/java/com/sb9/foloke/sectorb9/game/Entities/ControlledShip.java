@@ -19,34 +19,40 @@ import static java.lang.Math.sin;
 import com.sb9.foloke.sectorb9.game.Entities.Ships.*;
 import com.sb9.foloke.sectorb9.game.AI.*;
 import com.sb9.foloke.sectorb9.game.DataSheets.*;
+import com.sb9.foloke.sectorb9.game.Funtions.*;
 
 public class ControlledShip extends DynamicEntity {
 
-    private AI AI;
+    private Controller controller;
     private Ship ship;
 	private static final int ID=10;
 
-	public ControlledShip(int x, int y, int rotation, GameManager gameManager,int AIType,Ship ship)
+	public ControlledShip(int x, int y, int rotation, GameManager gameManager,Ship ship)
     {
         super(x,y,rotation,gameManager,ID);
         this.ship=ship;
 		ship.init(this);
-		switch (AIType)
-		{
-			case 0:
-        		AI=new CombatAI(this);
-				break;
-			case 1:
-				AI=new MinerAI(this);
-				break;
-			default:
-				AI=new CombatAI(this);
-				break;
-		}
+		
 		movable=true;
 
 		TEAM=2;
+		
     }
+	
+	public Ship getShip()
+	{
+		return ship;
+	}
+	
+	public Controller getController()
+	{
+		return controller;
+	}
+	
+	public void setController(Controller c)
+	{
+		controller=c;
+	}
 	
     @Override
     public void render(Canvas canvas) {
@@ -54,7 +60,9 @@ public class ControlledShip extends DynamicEntity {
 			return;
         ship.render(canvas);
         super.render(canvas);
-		AI.render(canvas);
+		
+		if(controller!=null)
+		controller.render(canvas);
 
     }
 
@@ -63,7 +71,9 @@ public class ControlledShip extends DynamicEntity {
 		if(!active)
 			return;
         super.tick();
-        AI.tick();
+		
+		if(controller!=null)
+        controller.tick();
 
         ship.tick();
     }

@@ -196,10 +196,10 @@ public abstract class DynamicEntity extends Entity {
 			float newcenterYE=(midpointy + rad * (getCollisionObject().getCenterY() - e.getCollisionObject().getCenterY())/ dist);
 			
 			debugPoint.set(newcenterXE,newcenterYE);
-			dE.dx += (-dE.getCenterX() + newcenterXE)*dE.mass/sumMass;
-           	dE.dy += (-dE.getCenterY() + newcenterYE)*dE.mass/sumMass;
-			GameLog.update("dE: "+ (-dE.getCenterX() + newcenterXE)+"",2);
-			GameLog.update((-getCenterX() + newcenterX)+"",2);
+			//dE.dx += (-dE.getCenterX() + newcenterXE)*dE.mass/sumMass;
+           //	dE.dy += (-dE.getCenterY() + newcenterYE)*dE.mass/sumMass;
+			//GameLog.update("dE: "+ (-dE.getCenterX() + newcenterXE)+"",2);
+			//GameLog.update((-getCenterX() + newcenterX)+"",2);
 			
             float dEspeed=(float)Math.sqrt(dE.dx*dE.dx+dE.dy*dE.dy)*60;
             if(dEspeed>dE.maxSpeed)

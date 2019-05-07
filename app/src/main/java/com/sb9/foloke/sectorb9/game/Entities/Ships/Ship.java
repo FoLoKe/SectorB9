@@ -9,6 +9,7 @@ import com.sb9.foloke.sectorb9.game.Entities.Weapons.*;
 import com.sb9.foloke.sectorb9.game.Assets.*;
 import com.sb9.foloke.sectorb9.game.DataSheets.*;
 import com.sb9.foloke.sectorb9.game.Entities.*;
+import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
 
 public class Ship
 {
@@ -82,6 +83,7 @@ public class Ship
 			mass+=turretsMods[i].mass;
 			mass+=weapons[i].mass;
 			turrets[i]=new TurretSystem(hull.gunMounts[i].mountPoints,weapons[i].type,holder.getGameManager(),this);
+			GameLog.update(weapons[i].name+"",2);
 		}
 
         //SHIELDS

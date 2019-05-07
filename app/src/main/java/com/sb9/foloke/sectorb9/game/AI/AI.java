@@ -11,7 +11,7 @@ import com.sb9.foloke.sectorb9.game.Managers.*;
 import com.sb9.foloke.sectorb9.game.Entities.*;
 import com.sb9.foloke.sectorb9.game.Funtions.*;
 
-public abstract class AI {
+public abstract class AI extends Controller {
 
     protected final float acceptableDistance=200;
     protected ControlledShip child;

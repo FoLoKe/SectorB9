@@ -47,29 +47,6 @@ public class WorldManager
 		
 		}
 	
-	public void loadDebugWorld()
-	{
-		sectorX=2;
-		sectorY=9;
-		BitmapFactory.Options bitmapOptions=new BitmapFactory.Options();
-		bitmapOptions.inScaled=false;
-		background=Bitmap.createBitmap(BitmapFactory.decodeResource(MA.getResources(),R.drawable.galactic_outflow,bitmapOptions));
-
-		Random rand=new Random();
-        
-		entityManager.addObject(new FuelGenerator(1200,900,rand.nextInt(180), gameManager));
-		entityManager.addObject(new BigSmelter(1100,900,rand.nextInt(180), gameManager));
-		entityManager.addObject(new ModularLab(1000,900,rand.nextInt(180), gameManager));
-		entityManager.addObject(new Assembler(900,900,rand.nextInt(180), gameManager));
-		entityManager.addObject(new SolarPanel(800,900,rand.nextInt(180), gameManager));
-		entityManager.addObject(new Crusher(700,900,rand.nextInt(180), gameManager));
-		entityManager.addObject(new SmallCargoContainer(600,900,rand.nextInt(180), gameManager));
-        entityManager.addObject(gameManager.getPlayer());
-		entityManager.addObject(new ControlledShip(700,900,0,gameManager,0,Ship.createSimple()));
-		for (int i=0;i<50;i++)
-			entityManager.addObject(new Asteroid(50*rand.nextInt(50)+25*rand.nextInt(20),100*rand.nextInt(20)+20*rand.nextInt(50),rand.nextInt(180), gameManager,rand.nextInt(10)));
-	}
-	
 	void updateWorld()
 	{
 		int i=0;
@@ -106,21 +83,22 @@ public class WorldManager
 	void interactionCheck(float x,float y)
 	{
 		interObject.calculateCollisionObject(x,y);
-		Player player=gameManager.getPlayer();
+		DynamicEntity player=gameManager.getPlayer();
 		for(Entity e: entityManager.getArray())
 		{
 			if(e.getCollisionObject().intersects(interObject))
 			{
 				if(Math.sqrt(
 					   (e.getCenterX()-player.getCenterX())*(e.getCenterX()-player.getCenterX())
-					   +(e.getCenterY()-player.getCenterY())*(e.getCenterY()-player.getCenterY()))-32<player.getRadius())											 
+					   +(e.getCenterY()-player.getCenterY())*(e.getCenterY()-player.getCenterY()))-32<PlayerController.interactionRadius)											 
 				{								
 					if(e instanceof StaticEntity)
 					{
 						gameManager.setPressedObject((StaticEntity)e);
 						InteractionUI.init(MA,(StaticEntity)e);
 					}
-
+					if(e instanceof ControlledShip)
+						gameManager.getController().setControlledEntity((ControlledShip)e);
 				}							
 			}
 		}

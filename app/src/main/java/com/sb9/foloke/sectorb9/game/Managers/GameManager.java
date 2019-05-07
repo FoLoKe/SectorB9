@@ -28,7 +28,7 @@ import com.sb9.foloke.sectorb9.game.Display.Camera;
 import com.sb9.foloke.sectorb9.game.Display.GamePanel;
 import com.sb9.foloke.sectorb9.game.Entities.Buildings.Assembler;
 import com.sb9.foloke.sectorb9.game.Entities.Entity;
-import com.sb9.foloke.sectorb9.game.Entities.Player;
+
 import com.sb9.foloke.sectorb9.game.Entities.StaticEntity;
 import com.sb9.foloke.sectorb9.game.Funtions.Timer;
 
@@ -50,6 +50,7 @@ import com.sb9.foloke.sectorb9.game.Funtions.*;
 import com.sb9.foloke.sectorb9.game.Entities.Buildings.*;
 import com.sb9.foloke.sectorb9.game.UI.TechUIs.*;
 import com.sb9.foloke.sectorb9.game.DataSheets.*;
+import com.sb9.foloke.sectorb9.game.Entities.Ships.*;
 
 
 public class GameManager {
@@ -60,8 +61,8 @@ public class GameManager {
 
     //UIs not views 
     
-    public ProgressBarUI uIhp;
-    public ProgressBarUI uIsh;
+    public static ProgressBarUI uIhp;
+    public static ProgressBarUI uIsh;
 
     //world manager
     private WorldManager worldManager;
@@ -74,16 +75,17 @@ public class GameManager {
     private boolean warpReady=false;
 
     private Timer destroyedTimer;
-    private Player player;
-
-
+   // private ControlledShip player;
+	private PlayerController playerController;
+	public static Joystick joystick;
+	public static PointF joystickTouchPoint=new PointF();
+	
     public int command;
     public static final int commandInteraction=1,commandMoving=0;
 	private Point sectorToWarp=new Point();
 	private PointF warpingLocation=new PointF();
     private  Point screenSize=new Point();
-	public Joystick joystick;
-	private PointF joystickTouchPoint=new PointF();
+	
 	
     public GameManager( MainActivity MA)
     {
@@ -123,14 +125,17 @@ public class GameManager {
             screenSize = new Point();
             display.getRealSize(screenSize);
         }
-
+		joystick=new Joystick(new RectF(screenSize.x/2f,screenSize.y/2f,screenSize.x,screenSize.y));
+		
         GameLog.update("GameManager: preparing action UI",0);
         uIhp=new ProgressBarUI(this,screenSize.x/3f,screenSize.y/20f,50,50,UIAsset.hpBackground,UIAsset.hpLine,UIAsset.progressBarBorder,100);
         uIsh=new ProgressBarUI(this,screenSize.x/3f,screenSize.y/40f,50,50+screenSize.y/20f,UIAsset.stunBackground,UIAsset.stunLine,UIAsset.progressBarBorder,100);
 
-        GameLog.update("GameManager: preparing player",0);
-        player=new Player(900,900,0,this);
-
+        GameLog.update("GameManager: preparing player controller",0);    
+		playerController=new PlayerController();
+		//player=new ControlledShip(0,0,0,this,Ship.createSimple());
+		//player.setController(new PlayerController(player));
+		
         GameLog.update("GameManager: preparing managers",0);
         mapManager=new MapManager();
         worldManager=new WorldManager(MA,this);
@@ -155,7 +160,7 @@ public class GameManager {
         else
             ///load state
             loadGame();
-		joystick=new Joystick(new RectF(screenSize.x/1.5f,screenSize.y/2,screenSize.x,screenSize.y));
+		
         GameLog.update("GameManager: READY",0);
 		mainThread= new MainThread(this);
 		mainThread.setRunning(true);
@@ -181,26 +186,8 @@ public class GameManager {
             return;
         }
 		
-		if(player!=null)
-		{
-		    uIhp.tick(player.getHp()/player.getMaxHP()*100);
-            uIsh.tick(player.getSH()/player.getMaxSH()*100);
-			player.setMovable(joystick.getTouched());
+		playerController.tick();
 			
-			if(joystick.getTouched())
-			{
-				
-				player.rotationToPoint(joystickTouchPoint);
-				float targetAcceleration=joystick.getAcceleration();
-				
-				if(targetAcceleration>1)
-					targetAcceleration=1;
-				if(targetAcceleration<0)
-					targetAcceleration=0;
-     			player.addMovement(targetAcceleration);
-       		}
-
-		}
 		
 		Iterator<Entity> iterUi = getEntities().iterator();
 		boolean exist=false;
@@ -208,7 +195,7 @@ public class GameManager {
 		{
 			Entity e =  iterUi.next();
 			if (e instanceof DroppedItems)
-				if (distanceTo(player.getWorldLocation(), e.getWorldLocation()) < 200) 
+				if (distanceTo(playerController.getControlledEntity().getWorldLocation(), e.getWorldLocation()) < 200) 
 				{
 					exist=true;
 					break;
@@ -225,9 +212,9 @@ public class GameManager {
 			{
                 Entity e = iter.next();
                 if (e instanceof DroppedItems)
-                    if (distanceTo(player.getWorldLocation(), e.getWorldLocation()) < 200) 
+                    if (distanceTo(playerController.getControlledEntity().getWorldLocation(), e.getWorldLocation()) < 200) 
 					{
-                        boolean b = player.getInventory().collectFromInventory(e);
+                        boolean b = playerController.getControlledEntity().getInventory().collectFromInventory(e);
                         if(!b)
                             collected=false;
                     }
@@ -245,7 +232,7 @@ public class GameManager {
         worldManager.updateWorld();
 		
 		if(warpReady)
-			if(distanceTo(player.getWorldLocation(),warpingLocation)<200)
+			if(distanceTo(playerController.getControlledEntity().getWorldLocation(),warpingLocation)<200)
 				warp();
     }
 
@@ -255,7 +242,7 @@ public class GameManager {
 			return;
 		gamePanel.preRender(canvas);
         worldManager.renderWorld(canvas);
-        player.render(canvas);
+       // player.render(canvas);
 		Paint debugPaint= new Paint();
 		debugPaint.setColor(Color.CYAN);
 		debugPaint.setStyle(Paint.Style.STROKE);
@@ -300,11 +287,12 @@ public class GameManager {
 
     private void createNewPlayer()
     {
-        player=null;
-        gamePanel.getCamera().setPointOfLook(null);
-        player=new Player(900,900,0,this);
+        
+        
+      	ControlledShip  player=new ControlledShip(900,900,0,this,Ship.createSimple());
+		playerController.setControlledEntity(player);
         playerDestroyed=false;
-        getCamera().setPointOfLook(player);
+        
         gamePause=false;
     }
 
@@ -313,10 +301,15 @@ public class GameManager {
         return worldManager.getEntityManager().getArray();
     }
 
-    public Player getPlayer()
+    public ControlledShip getPlayer()
     {
-        return player;
+        return playerController.getControlledEntity();
     }
+	
+	public PlayerController getController()
+	{
+		return playerController;
+	}
 
     public void updateInventory(final Entity caller)
     {GameLog.update("GameManager: update Inventory UI",0);
@@ -396,7 +389,7 @@ public class GameManager {
 	{
 		warpReady=false;
 		worldManager.warpToSector(sectorToWarp.x,sectorToWarp.y);
-		player.setWorldLocation(new PointF(3000-warpingLocation.x,3000-warpingLocation.y));
+		playerController.getControlledEntity().setWorldLocation(new PointF(3000-warpingLocation.x,3000-warpingLocation.y));
 	}
 	
 	private String getSaveName()
@@ -422,24 +415,45 @@ public class GameManager {
 	public void onPlayerDestroyed()
 	{
 		destroyedTimer.setTimer(5);
-		SpaceDock sd=(SpaceDock)worldManager.getEntityManager().findRespawnPoint(player.getTeam());
+		SpaceDock sd=(SpaceDock)worldManager.getEntityManager().findRespawnPoint(playerController.team);
 		if(sd!=null)
-		player.respawn(sd);
+		respawn(sd);
 		else
 		{
 			GameLog.update("respawning in homeworld",2);
 			loadSector(1,1);
-			sd=(SpaceDock)worldManager.getEntityManager().findRespawnPoint(player.getTeam());
+			sd=(SpaceDock)worldManager.getEntityManager().findRespawnPoint(playerController.team);
 			if(sd!=null)
-			player.respawn(sd);
+			respawn(sd);
 			else
 			{
 				GameLog.update("no respawn point",2);
-				player.forceRespawn();
+				respawn(null);
 			}
 		}
-		gamePanel.getCamera().setPointOfLook(player);
 		
+		
+	}
+	
+	public void respawn(SpaceDock sd)
+	{
+		ControlledShip player=new ControlledShip(0,0,0,this,Ship.createSimple());
+		
+		if(sd!=null)
+		{
+			player.setX(sd.getX());
+			player.setY(sd.getY());
+		}
+		else
+		{
+			player.setX(90);
+			player.setY(90);
+		}	
+
+		getGamePanel().pointOfTouch=player.getWorldLocation();
+		player.setTeam(1);
+
+		ShipUI.setUI(playerController.getControlledEntity(),getMainActivity());
 	}
 	
 	public void collectDebris()
@@ -535,12 +549,17 @@ public class GameManager {
                 int y = Integer.parseInt(metareader.readLine());
 				worldManager.setSector(x, y);
 				
+				ControlledShip player=new ControlledShip(0,0,0,this,Ship.createSimple());
                 player.setHP(Float.parseFloat(metareader.readLine()));
                 player.setSH(Float.parseFloat(metareader.readLine()));
                 
                 player.setWorldLocation(new PointF(Float.parseFloat(metareader.readLine()),Float.parseFloat(metareader.readLine())));
 				player.setWorldRotation(Float.parseFloat(metareader.readLine()));
 				player.LoadInvFromString(metareader.readLine());
+				
+				getEntityManager().addObject(player);
+				
+				playerController.setControlledEntity(player);
                 metareader.close();
                 mis.close();
                 mits.close();
@@ -561,7 +580,7 @@ public class GameManager {
 			GameLog.update("GameManager: starting game load",0);
 
 			getEntityManager().reload();
-			getEntityManager().addObject(player);
+			
 			File saveFolder=checkSaveFolder();
             if(saveFolder!=null)
             {
@@ -631,7 +650,7 @@ public class GameManager {
 					ins.close();
 					isr.close();
 					reader.close();
-                    getPlayer().initShip();
+                    
 					GameLog.update("GameMnager: successfully loaded game",0);
 					return true;
 				}

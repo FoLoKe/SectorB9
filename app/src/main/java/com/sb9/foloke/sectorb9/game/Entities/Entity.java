@@ -309,8 +309,7 @@ public abstract class Entity {
 	protected void onDestroy()
 	{
 		active=false;
-		if(!(this instanceof Player))
-            toRemove=true;
+        toRemove=true;
 		gameManager.spawnDestroyed(this);
 	}
 	
