@@ -10,27 +10,324 @@ import android.graphics.*;
 import com.sb9.foloke.sectorb9.game.Managers.*;
 import com.sb9.foloke.sectorb9.game.Entities.*;
 import com.sb9.foloke.sectorb9.game.Funtions.*;
+import com.sb9.foloke.sectorb9.game.Entities.Buildings.*;
 
-public abstract class AI extends Controller {
+public class AI extends Controller {
 
-    protected final float acceptableDistance=200;
+    protected final float acceptableDistance=100;
+	protected final float acceptableShootDistance=200;
     protected ControlledShip child;
-	protected final float sightRadius=500;
+	protected final float sightRadius=300;
 	//private PointF pickedRandomPoint;
-	protected PointF wayPoint=new PointF(0,0);
-	protected Entity enemy;
-	protected Paint p=new Paint();
+	//protected PointF wayPoint=new PointF(0,0);
+	protected Paint debugPathPaint=new Paint();
+	protected Paint debugOrderPaint=new Paint();
+	protected Paint debugBehaviourPaint=new Paint();
+	protected Paint debugPreBehaviourOrderPaint=new Paint();
+	
+	
+	
+	public enum behaviour{AGRESSIVE,DEFENSIVE,PEACEFUL,RETREAT}
+	public enum order{MOVETO,ATTACK,FOLLOW,MINE,STAY,REPAIR,PATROL}
+	
+	protected behaviour currentBehaviour=behaviour.PEACEFUL;
+	protected order currentOrder=order.STAY;
+	protected order preBehaviourOrder=order.STAY;
+	
+	protected Entity targetToFollow;
+	protected Entity targetToMine;
+	protected Entity targetToAttack;
+	protected Entity targetToRepairYourself;
+	protected PointF destination;
+	
 	
     public AI(ControlledShip child)
     {
         this.child=child;
-		p.setColor(Color.RED);
-		wayPoint=pickRandomPoint((int)child.getGameManager().getGamePanel().getWorldSize(),(int)child.getGameManager().getGamePanel().getWorldSize());
+		debugPathPaint.setColor(Color.GREEN);
+		destination=pickRandomPoint((int)child.getGameManager().getGamePanel().getWorldSize(),(int)child.getGameManager().getGamePanel().getWorldSize());
     }
 	
-    public abstract void tick();
+    public void tick()
+	{
+		switch(currentOrder)
+		{
+			case STAY:
+				orderStay();
+				break;
+			case MOVETO:
+				orderMoveTo();
+				break;
+			case ATTACK:
+				orderAttack();
+				break;
+			case MINE:
+				orderMine();
+				break;
+			case FOLLOW:
+				orderFollow();
+				break;
+			case REPAIR:
+				orderRepair();
+				break;
+			case PATROL:
+				orderPatrol();
+				break;
+				
+		}
+		
+		switch(currentBehaviour)
+		{
+			case AGRESSIVE:
+				orderAgressive();
+				break;
+		}
+	}
+	
+	///DEBUG
+	public void render(Canvas canvas)
+	{
+		if(!Options.drawDebugInfo.getBoolean())
+			return;
+		canvas.drawLine(child.getCenterX(),child.getCenterY(),destination.x,destination.y,debugPathPaint);
+		switch(currentOrder)
+		{
+			case STAY:
+				debugOrderPaint.setColor(Color.YELLOW);
+				
+				break;
+			case MOVETO:
+				debugOrderPaint.setColor(Color.BLUE);
+				break;
+				
+			case ATTACK:
+				debugOrderPaint.setColor(Color.RED);
+				break;
+				
+			case FOLLOW:
+				debugOrderPaint.setColor(Color.GREEN);
+				break;
+				
+			case REPAIR:
+				debugOrderPaint.setColor(Color.MAGENTA);
+				break;
+
+			case MINE:
+				debugOrderPaint.setColor(Color.GRAY);
+				break;	
+				
+			case PATROL:
+				debugOrderPaint.setColor(Color.WHITE);
+				break;	
+		}
+		
+		switch(currentBehaviour)
+		{
+			case AGRESSIVE:
+				debugBehaviourPaint.setColor(Color.RED);
+				break;
+				
+			case DEFENSIVE:
+				debugBehaviourPaint.setColor(Color.YELLOW);
+				break;
+
+			case PEACEFUL:
+				debugBehaviourPaint.setColor(Color.GREEN);
+				break;
+				
+			case RETREAT:
+				debugBehaviourPaint.setColor(Color.WHITE);
+				break;
+
+		}
+		switch(preBehaviourOrder)
+		{
+			case STAY:
+				debugPreBehaviourOrderPaint.setColor(Color.YELLOW);
+
+				break;
+			case MOVETO:
+				debugPreBehaviourOrderPaint.setColor(Color.BLUE);
+				break;
+
+			case ATTACK:
+				debugPreBehaviourOrderPaint.setColor(Color.RED);
+				break;
+
+			case FOLLOW:
+				debugPreBehaviourOrderPaint.setColor(Color.GREEN);
+				break;
+
+			case REPAIR:
+				debugPreBehaviourOrderPaint.setColor(Color.MAGENTA);
+				break;
+
+			case MINE:
+				debugPreBehaviourOrderPaint.setColor(Color.GRAY);
+				break;	
+
+			case PATROL:
+				debugPreBehaviourOrderPaint.setColor(Color.WHITE);
+				break;	
+
+		}
+		//state
+		canvas.drawCircle(child.getX()-10,child.getY(),5,debugBehaviourPaint);
+		canvas.drawCircle(child.getX()-10,child.getY()-10,5,debugOrderPaint);
+		canvas.drawCircle(child.getX()-20,child.getY()-10,4,debugOrderPaint);
+	}
 
 	
+	
+	//orders
+	private void orderAgressive()
+	{
+		if(currentOrder!=order.ATTACK)
+		{
+			if(findEnemy()!=null)
+			{
+				targetToAttack=findEnemy();
+				preBehaviourOrder=currentOrder;
+				currentOrder=order.ATTACK;
+			}
+			else
+			{
+					currentOrder=preBehaviourOrder;
+			}
+		}
+		
+	}
+	
+	
+	private void orderPatrol()
+	{
+		if(taskRotateToPoint(destination))
+		{
+			if(!isInAcceptableRadius(destination))
+				taskAddMovement(1);
+			else
+				destination=pickRandomPoint((int)child.getGameManager().getGamePanel().getWorldSize(),(int)child.getGameManager().getGamePanel().getWorldSize());
+		}
+		else
+			taskStop();
+	}
+	
+	private void orderRepair()
+	{
+		if(targetToRepairYourself!=null)
+		{
+			if(targetToRepairYourself.getActive())
+			{
+				destination=targetToRepairYourself.getCenterWorldLocation();
+
+				if(taskRotateToPoint(destination))
+				{
+					if(!isInAcceptableShootRadius(destination))
+						taskAddMovement(1);
+					
+				}
+				else
+					taskStop();
+
+				return;
+			}
+		}
+
+		targetToRepairYourself=findRepair();
+	}
+	
+	private void orderFollow()
+	{
+		if(targetToFollow!=null)
+		{
+			if(targetToFollow.getActive())
+			{
+				destination=targetToFollow.getCenterWorldLocation();
+
+				if(taskRotateToPoint(destination))
+				{
+					if(!isInAcceptableShootRadius(destination))
+						taskAddMovement(1);
+					
+				}
+				else
+					taskStop();
+
+				return;
+			}
+		}
+
+		currentOrder=order.STAY;
+	}
+	
+	public void orderMine()
+	{
+		if(targetToMine!=null)
+		{
+			if(targetToMine.getActive())
+			{
+				destination=targetToMine.getCenterWorldLocation();
+
+				if(taskRotateToPoint(destination))
+				{
+					if(!isInAcceptableShootRadius(destination))
+						taskAddMovement(1);
+					else
+						child.shoot();
+				}
+				else
+					taskStop();
+
+				return;
+			}
+		}
+	
+			targetToMine=findMinable();
+		
+	}
+	
+	protected void orderAttack()
+	{
+		if(targetToAttack!=null)
+		{
+			if(targetToAttack.getActive())
+			{
+				destination=targetToAttack.getCenterWorldLocation();
+				
+				if(taskRotateToPoint(destination))
+				{
+					if(!isInAcceptableShootRadius(destination))
+						taskAddMovement(1);
+					else
+						child.shoot();
+				}
+				else
+					taskStop();
+				
+				return;
+			}
+		}
+		
+		currentOrder=order.STAY;
+	}
+	
+	private void orderMoveTo()
+	{
+		if(taskRotateToPoint(destination))
+		{
+			if(!isInAcceptableRadius(destination))
+				taskAddMovement(1);
+			else
+				currentOrder=order.STAY;
+		}
+	}
+	
+	private void orderStay()
+	{
+		taskStop();
+	}
+	
+	//tasks
 	protected Entity findEnemy()
 	{
 		for(Entity e:child.getGameManager().getWorldManager().getEntityManager().getArray())
@@ -38,12 +335,71 @@ public abstract class AI extends Controller {
 			if(e.getTeam()!=child.getTeam()&&e.getTeam()!=0)
 			if(isInSightRadius(e)&&e.getActive())
 			{
-				enemy=e;
+				//enemy=e;
 				return e;
 			}
 		}
 		return null;
 	}
+	
+	private Entity findMinable()
+	{
+		Entity asteroid=null;
+		for(Entity e:child.getGameManager().getWorldManager().getEntityManager().getArray())
+		{
+			if(e instanceof Asteroid)
+				if(e.getActive())
+				{
+					//enemy=e;
+					asteroid=e;
+					break;
+				}
+		}
+
+		for(Entity e:child.getGameManager().getWorldManager().getEntityManager().getArray())
+		{
+			if(e instanceof Asteroid)
+				if(e.getActive()&&distanceTo(e.getCenterWorldLocation())<distanceTo(asteroid.getCenterWorldLocation()))
+				{
+					//enemy=e;
+					asteroid=e;
+					
+				}
+		}
+		
+		
+		return asteroid;
+	}
+	
+	private Entity findRepair()
+	{
+		Entity asteroid=null;
+		for(Entity e:child.getGameManager().getWorldManager().getEntityManager().getArray())
+		{
+			if(e instanceof SpaceDock)
+				if(e.getActive())
+				{
+					//enemy=e;
+					asteroid=e;
+					break;
+				}
+		}
+
+		for(Entity e:child.getGameManager().getWorldManager().getEntityManager().getArray())
+		{
+			if(e instanceof SpaceDock)
+				if(e.getActive()&&distanceTo(e.getCenterWorldLocation())<distanceTo(asteroid.getCenterWorldLocation()))
+				{
+					//enemy=e;
+					asteroid=e;
+
+				}
+		}
+
+
+		return asteroid;
+	}
+	
 	protected boolean taskRotateToPoint(PointF p)
 	{
 		return child.rotationToPoint(p);
@@ -64,6 +420,11 @@ public abstract class AI extends Controller {
 		return distanceTo(p)<acceptableDistance;
 	}
 	
+	protected boolean isInAcceptableShootRadius(PointF p)
+	{
+		return distanceTo(p)<acceptableShootDistance;
+	}
+	
 	protected boolean isInSightRadius(PointF p)
 	{
 		return distanceTo(p)<sightRadius;
@@ -72,19 +433,6 @@ public abstract class AI extends Controller {
 	protected boolean isInSightRadius(Entity e)
 	{
 		return distanceTo(e.getCenterWorldLocation())<sightRadius;
-	}
-	
-	public void render(Canvas c)
-	{
-		if(!Options.drawDebugInfo.drawDebugInfo.getBoolean())
-			return;
-		
-		
-		if(!isInAcceptableRadius(wayPoint))
-			p.setColor(Color.GREEN);
-			else
-				p.setColor(Color.RED);
-		c.drawLine(child.getCenterX(),child.getCenterY(),wayPoint.x,wayPoint.y,p);
 	}
 	
     protected float distanceTo(PointF p)
@@ -98,4 +446,56 @@ public abstract class AI extends Controller {
 		Random rnd=new Random();
 		return new PointF(rnd.nextInt(mx),rnd.nextInt(my));
 	}
+	
+	public void setCurrentOrder(order currentOrder)
+	{
+		this.currentOrder = currentOrder;
+		this.preBehaviourOrder=currentOrder;
+	}
+
+	public order getCurrentOrder()
+	{
+		return currentOrder;
+	}
+
+	public void setCurrentBehaviour(behaviour currentBehaviour)
+	{
+		this.currentBehaviour = currentBehaviour;
+	}
+
+	public behaviour getCurrentBehaviour()
+	{
+		return currentBehaviour;
+	}
+	public void setTargetToAttack(Entity targetToAttack)
+	{
+		this.targetToAttack = targetToAttack;
+	}
+
+	public Entity getTargetToAttack()
+	{
+		return targetToAttack;
+	}
+	
+	public void setDestination(PointF destination)
+	{
+		this.destination = destination;
+	}
+
+	public PointF getDestination()
+	{
+		return destination;
+	}
+	
+	public void setTargetToFollow(Entity targetToFollow)
+	{
+		this.targetToFollow = targetToFollow;
+	}
+
+	public Entity getTargetToFollow()
+	{
+		return targetToFollow;
+	}
+
+	
 }

@@ -65,7 +65,7 @@ public class PlayerController extends Controller
 	
 	public void render(Canvas canvas)
 	{
-		if(controlledEntity.getGameManager().command== GameManager.commandInteraction)
+		if(controlledEntity.getGameManager().currentCommand== GameManager.command.INTERACTION)
 			drawInteractionCircle(canvas);
 	}
 	

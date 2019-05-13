@@ -53,7 +53,7 @@ import java.util.*;
 			
 				
 			
-			if(gameManager.command== GameManager.commandInteraction)
+			if(gameManager.currentCommand== GameManager.command.INTERACTION)
 			{
 				canvas.drawCircle(getCenterX(),getCenterY(),radius,circlePaint);
 				for(Entity e:consumers)

@@ -40,7 +40,7 @@ public class Laser extends Weapon
 		initLineEnd=new float[]{0,-lenght};
 		this.heatBar=new ProgressBarUI(this,20,2,-10,-2,UIAsset.hpBackground,UIAsset.hpLine,UIAsset.progressBarBorder,heat/maxHeat*100);
 		
-		damage=0.1f;
+		damage=1f;
 		lenght=100;
 		line=new Line2D(0,0,1,1);
 		line.setThickness(3);

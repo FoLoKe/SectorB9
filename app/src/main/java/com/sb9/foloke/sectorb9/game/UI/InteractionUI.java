@@ -12,12 +12,17 @@ import com.sb9.foloke.sectorb9.game.Managers.GameManager;
 import android.graphics.drawable.*;
 import com.sb9.foloke.sectorb9.game.Funtions.*;
 import com.sb9.foloke.sectorb9.game.UI.TechUIs.*;
+import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
+import com.sb9.foloke.sectorb9.game.AI.*;
 
 public class InteractionUI
 {
 	private static float scaleX=1,scaleY=1;
-	public static void init(final MainActivity MA,final StaticEntity target)
+	public static AI.order currentOrder;
+	
+	public static void init(final MainActivity MA,final Entity target)
 	{
+		GameLog.update("InteractionUI: init by "+target,0);
         final ViewFlipper VF = MA.findViewById(R.id.UIFlipper);
 		scaleY=MA.getGameManager().getScreenSize().y/1600f;
 		if(scaleX>2)
@@ -26,6 +31,7 @@ public class InteractionUI
 			scaleX=0.5f;
 		scaleX=scaleY;
 		
+		GameLog.update("InteractionUI: buttons set",0);
 		final ViewFlipper IVF=MA.findViewById(R.id.interaction_uiViewFlipper);
 		IVF.setDisplayedChild(0);
 		ImageButton closeButton = MA.findViewById(R.id.closeInteraction);
@@ -44,6 +50,8 @@ public class InteractionUI
 		openProduction.setVisibility(View.GONE);
 		openConstructor.setVisibility(View.GONE);
 		
+		
+		GameLog.update("InteractionUI: spaceDockUI set",0);
 		if(target!=null)
 		if(target instanceof SpaceDock)
 		{
@@ -61,6 +69,8 @@ public class InteractionUI
 				}
 			});
 		}
+		
+		GameLog.update("InteractionUI: techTreeUI set",0);
 		openTechTree.setOnClickListener(new OnClickListener()
 		{
 			public void onClick(View v)
@@ -74,6 +84,7 @@ public class InteractionUI
 			}
 		});
 		
+		GameLog.update("InteractionUI: inventoryUI set"+target,0);
 		if(target!=null)
 		{
 			if (target.getOpened())
@@ -99,7 +110,9 @@ public class InteractionUI
 			{
 				openInventoryButton.setVisibility(View.GONE);
 			}
-			if (target.getInteractable())
+			
+			GameLog.update("InteractionUI: optionsUI set",0);
+			if (target.getInteractable()&&(target instanceof StaticEntity))
 			{
 				openInteraction.setVisibility(View.VISIBLE);
 				openInteraction.setOnClickListener(new OnClickListener()
@@ -111,7 +124,7 @@ public class InteractionUI
 						openProduction.setBackgroundColor(Color.parseColor("#22ffffff"));
 						openInventoryButton.setBackgroundColor(Color.parseColor("#22ffffff"));
 						v.setBackgroundColor(Color.parseColor("#55ffffff"));
-						ObjectOptionsUI.init(target,IVF,MA);
+						ObjectOptionsUI.init((StaticEntity)target,IVF,MA);
 						IVF.setDisplayedChild(IVF.indexOfChild(MA.findViewById(R.id.obj_optionsUI)));
 					}
 				});
@@ -121,6 +134,7 @@ public class InteractionUI
 				openInteraction.setVisibility(View.GONE);
 			}
 			
+			GameLog.update("InteractionUI: assemblerUI set",0);
 			if (target instanceof Assembler)
 			{
 				
@@ -146,6 +160,8 @@ public class InteractionUI
 			}
 		}
 		//32x32==160x160 1:5
+		
+		GameLog.update("InteractionUI: close button set",0);
 		closeButton.setBackgroundDrawable(new BitmapDrawable(Bitmap.createScaledBitmap(UIAsset.cancelButton,(int)(160*scaleX),(int)(160*scaleY),false)));
 		//closeButton.getLayoutParams().width=(int)(1000*scaleX);
 		closeButton.setOnClickListener
@@ -156,11 +172,12 @@ public class InteractionUI
 				{
 					AssemblerUI.setOpened(false);				
 					MA.getGameManager().nullPressedObject();
-					MA.getGameManager().command= GameManager.commandMoving;
+					MA.getGameManager().currentCommand= GameManager.command.CONTROL;
 					VF.setDisplayedChild(VF.indexOfChild(MA.findViewById(R.id.actionUI)));
 				}
 			});
 			
+		GameLog.update("InteractionUI: build button set",0);
 		ImageButton buildButton = MA.findViewById(R.id.openBuildUI);
 		buildButton.setBackgroundDrawable(new BitmapDrawable(Bitmap.createScaledBitmap(UIAsset.buildModeButton,(int)(320*scaleX),(int)(160*scaleY),false)));
 		
@@ -176,6 +193,8 @@ public class InteractionUI
 					VF.setDisplayedChild(VF.indexOfChild(MA.findViewById(R.id.buildUI)));
 				}
 			});
+			
+			
 		Button openShipButton=MA.findViewById(R.id.openShip);
 		openShipButton.setOnClickListener(new OnClickListener(){
 			@Override
@@ -198,6 +217,121 @@ public class InteractionUI
 
 		img.setImageBitmap(Bitmap.createScaledBitmap(BitmapFactory.decodeResource(MA.getResources(),R.drawable.ui_interaction_sign,bitmapOptions),(int)(200*scaleX),(int)(50*scaleY),false));
 		//weaponsButton.getLayoutParams().width=(int)(150*scaleX);
+		setAICommands(target,MA);
+		GameLog.update("InteractionUI: ready",0);
+	}
+	
+	public static void setAICommands(final Entity e,final MainActivity MA)
+	{
+		if(e instanceof ControlledShip)
+			if(((ControlledShip)e).getController() instanceof AI)
+			{
+				MA.findViewById(R.id.interaction_ui_LL_AIOptions).setVisibility(View.VISIBLE);
+				MA.findViewById(R.id.interaction_ui_LL_buildOptions).setVisibility(View.GONE);
+				
+				//buttons
+				Button buttonAgressiveBehaviout=MA.findViewById(R.id.interaction_ui_b_behaviour_agressive);
+				Button buttonDefensiveBehaviout=MA.findViewById(R.id.interaction_ui_b_behaviour_defensive);
+				Button buttonPeacefulBehaviout=MA.findViewById(R.id.interaction_ui_b_behaviour_peaceful);
+				Button buttonRetreatBehaviout=MA.findViewById(R.id.interaction_ui_b_behaviour_retreat);
+				
+				Button buttonMoveToCommand=MA.findViewById(R.id.interaction_ui_b_order_move_to);
+				Button buttonAttackCommand=MA.findViewById(R.id.interaction_ui_b_order_attack);
+				Button buttonFollowCommand=MA.findViewById(R.id.interaction_ui_b_order_follow);
+				Button buttonRepairCommand=MA.findViewById(R.id.interaction_ui_b_order_repair);
+				Button buttonMineCommand=MA.findViewById(R.id.interaction_ui_b_order_mine);
+				Button buttoHoldCommand=MA.findViewById(R.id.interaction_ui_b_order_stay);
+				Button buttonPatrolCommand=MA.findViewById(R.id.interaction_ui_b_behaviour_patrol);
+				
+				
+				//actions for behaviour
+				buttonAgressiveBehaviout.setOnClickListener(new OnClickListener(){
+						public void onClick(View v)
+						{
+							((AI)((ControlledShip)e).getController()).setCurrentBehaviour(AI.behaviour.AGRESSIVE);
+						}
+					});
+				
+				buttonDefensiveBehaviout.setOnClickListener(new OnClickListener(){
+						public void onClick(View v)
+						{
+							((AI)((ControlledShip)e).getController()).setCurrentBehaviour(AI.behaviour.DEFENSIVE);
+						}
+					});
+					
+				buttonPeacefulBehaviout.setOnClickListener(new OnClickListener(){
+						public void onClick(View v)
+						{
+							((AI)((ControlledShip)e).getController()).setCurrentBehaviour(AI.behaviour.PEACEFUL);
+						}
+					});
+				
+				buttonRetreatBehaviout.setOnClickListener(new OnClickListener(){
+						public void onClick(View v)
+						{
+							((AI)((ControlledShip)e).getController()).setCurrentBehaviour(AI.behaviour.RETREAT);
+						}
+					});
+					
+				//actions for orders
+				buttonMoveToCommand.setOnClickListener(new OnClickListener(){
+						public void onClick(View v)
+						{
+							MA.getGameManager().currentCommand= GameManager.command.ORDER;
+							currentOrder=AI.order.MOVETO;
+						}
+					});
+					
+				buttonAttackCommand.setOnClickListener(new OnClickListener(){
+						public void onClick(View v)
+						{
+							MA.getGameManager().currentCommand= GameManager.command.ORDER;
+							currentOrder=AI.order.ATTACK;
+						}
+					});
+					
+				buttoHoldCommand.setOnClickListener(new OnClickListener(){
+						public void onClick(View v)
+						{
+							((AI)((ControlledShip)e).getController()).setCurrentOrder(AI.order.STAY);
+						}
+					});
+				buttonPatrolCommand.setOnClickListener(new OnClickListener(){
+						public void onClick(View v)
+						{
+							((AI)((ControlledShip)e).getController()).setCurrentOrder(AI.order.PATROL);
+						}
+					});
+					
+				buttonFollowCommand.setOnClickListener(new OnClickListener(){
+						public void onClick(View v)
+						{
+							MA.getGameManager().currentCommand= GameManager.command.ORDER;
+							currentOrder=AI.order.FOLLOW;
+						}
+					});
+					
+				buttonMineCommand.setOnClickListener(new OnClickListener(){
+						public void onClick(View v)
+						{
+							((AI)((ControlledShip)e).getController()).setCurrentOrder(AI.order.MINE);
+						}
+					});
+					
+				buttonRepairCommand.setOnClickListener(new OnClickListener(){
+						public void onClick(View v)
+						{
+							((AI)((ControlledShip)e).getController()).setCurrentOrder(AI.order.REPAIR);
+						}
+					});
+				
+				
+				
+				return;
+			}
+			
+		MA.findViewById(R.id.interaction_ui_LL_buildOptions).setVisibility(View.VISIBLE);
+		MA.findViewById(R.id.interaction_ui_LL_AIOptions).setVisibility(View.GONE);
 	}
 	
 }

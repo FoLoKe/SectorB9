@@ -422,4 +422,9 @@ public abstract class Entity {
 	{
 		this.SP=SH;
 	}
+	
+	public boolean getInteractable()
+    {
+        return isInteractable;
+    }
 }

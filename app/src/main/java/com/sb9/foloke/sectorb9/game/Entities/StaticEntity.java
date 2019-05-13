@@ -57,10 +57,7 @@ public abstract class StaticEntity extends Entity
         return enabled;
     }
 	
-    public boolean getInteractable()
-    {
-        return isInteractable;
-    }
+    
 	
     public void setPowerSupplier(StaticEntity entity)
     {

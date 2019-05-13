@@ -92,16 +92,12 @@ public class WorldManager
 					   (e.getCenterX()-player.getCenterX())*(e.getCenterX()-player.getCenterX())
 					   +(e.getCenterY()-player.getCenterY())*(e.getCenterY()-player.getCenterY()))-32<PlayerController.interactionRadius)											 
 				{								
-					if(e instanceof StaticEntity)
-					{
-						gameManager.setPressedObject((StaticEntity)e);
-						InteractionUI.init(MA,(StaticEntity)e);
-					}
-					if(e instanceof ControlledShip)
-						gameManager.getController().setControlledEntity((ControlledShip)e);
+					gameManager.interactionTouch(e,e.getCenterWorldLocation());
+					return;
 				}							
 			}
 		}
+		gameManager.interactionTouch(null,new PointF(x,y));
 	}
 
 	public EntityManager getEntityManager()

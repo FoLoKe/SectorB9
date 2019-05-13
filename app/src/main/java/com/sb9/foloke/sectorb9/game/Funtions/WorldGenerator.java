@@ -42,7 +42,7 @@ public class WorldGenerator
 		for(int i=0;i<3;i++)
 		{
 			ControlledShip e=new ControlledShip(50*rand.nextInt(50)+25*rand.nextInt(20),1000,0,gameManager,Ship.createSimple());
-			e.setController(new CombatAI(e));
+			e.setController(new AI(e));
 			entityManager.addObject(e);
 			
 		}
@@ -83,7 +83,7 @@ public class WorldGenerator
 			for(int i=0;i<5;i++)
 			{
 					ControlledShip e=new ControlledShip(50*rand.nextInt(50)+25*rand.nextInt(20),1000,0,gameManager,Ship.createSimple());
-				e.setController(new CombatAI(e));
+				e.setController(new AI(e));
 				entityManager.addObject(e);
 			}
 			break;
@@ -91,7 +91,7 @@ public class WorldGenerator
 				for(int i=0;i<5;i++)
 				{
 					ControlledShip e=new ControlledShip(50*rand.nextInt(50)+25*rand.nextInt(20),1000,0,gameManager,Ship.createSimple());
-					e.setController(new CombatAI(e));
+					e.setController(new AI(e));
 					entityManager.addObject(e);
 				}
 						break;

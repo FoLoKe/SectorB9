@@ -41,7 +41,7 @@ public class ActionUI
 				@Override
 				public void onClick(View v) 
 				{
-					MA.getGameManager().command= GameManager.commandInteraction;
+					MA.getGameManager().currentCommand= GameManager.command.INTERACTION;
 					VF.setDisplayedChild(VF.indexOfChild(MA.findViewById(R.id.interactionUI)));
 					InteractionUI.init(MA,null);
 				}

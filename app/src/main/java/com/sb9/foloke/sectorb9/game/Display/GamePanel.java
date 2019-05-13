@@ -16,8 +16,8 @@ import com.sb9.foloke.sectorb9.*;
 import android.view.ScaleGestureDetector.*;
 import android.view.*;
 import java.io.*;
-import static com.sb9.foloke.sectorb9.game.Managers.GameManager.commandInteraction;
-import static com.sb9.foloke.sectorb9.game.Managers.GameManager.commandMoving;
+
+import static com.sb9.foloke.sectorb9.game.Managers.GameManager.command;
 import android.graphics.*;
 
 import com.sb9.foloke.sectorb9.game.Funtions.*;
@@ -44,7 +44,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
     public PointF screenPointOfTouch;
 	private float worldSize=3000;//3km
 	public Text textFPS;
-	public StaticEntity pressedObject;
+	public Entity pressedObject;
 	private Paint debugPaint=new Paint();
 	
 	private PointF cameraPoint=new PointF();
@@ -135,7 +135,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
         pointOfTouch.set((screenPointOfTouch.x-canvasW/2)/camera.getScale()+cameraPoint.x,(screenPointOfTouch.y-canvasH/2)/camera.getScale()+cameraPoint.y);
         cursor.setWorldLocation(pointOfTouch);
         cursor.tick();
-		if(gameManager.getPlayer()!=null&&gameManager.command!=commandInteraction)
+		if(gameManager.getPlayer()!=null&&gameManager.currentCommand!=command.INTERACTION)
 			cameraPoint.set(gameManager.getPlayer().getCenterX(),gameManager.getPlayer().getCenterY());
 		else
 		{
@@ -339,13 +339,13 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                 {
                 	case MotionEvent.ACTION_DOWN:
                 	    
-						switch (gameManager.command)
+						switch (gameManager.currentCommand)
 						{
-							case commandMoving:
+							case CONTROL:
 								gameManager.checkJoystick(true,new PointF(x,y));
 								break;
 								
-							case commandInteraction:
+							case INTERACTION:
 								if(event.getPointerCount()==1)
 								{
 									pressed=true;
@@ -365,12 +365,17 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 
                 	case MotionEvent.ACTION_UP:
                 	    
-						switch (gameManager.command)
+						switch (gameManager.currentCommand)
 						{
-							case commandMoving:
+							case CONTROL:
 								gameManager.checkJoystick(false,new PointF(x,y));
 								break;
-							case commandInteraction:
+							case INTERACTION:
+								pressed=false;
+								cameraToOffset.set(0,0);
+								gameManager.interactionCheck(pointOfTouch.x,pointOfTouch.y);
+								break;
+							case ORDER:
 								pressed=false;
 								cameraToOffset.set(0,0);
 								gameManager.interactionCheck(pointOfTouch.x,pointOfTouch.y);

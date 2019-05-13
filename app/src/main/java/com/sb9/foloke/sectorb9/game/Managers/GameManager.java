@@ -51,6 +51,7 @@ import com.sb9.foloke.sectorb9.game.Entities.Buildings.*;
 import com.sb9.foloke.sectorb9.game.UI.TechUIs.*;
 import com.sb9.foloke.sectorb9.game.DataSheets.*;
 import com.sb9.foloke.sectorb9.game.Entities.Ships.*;
+import com.sb9.foloke.sectorb9.game.AI.*;
 
 
 public class GameManager {
@@ -80,8 +81,11 @@ public class GameManager {
 	public static Joystick joystick;
 	public static PointF joystickTouchPoint=new PointF();
 	
-    public int command;
-    public static final int commandInteraction=1,commandMoving=0;
+	
+    
+    public enum command{INTERACTION,CONTROL,ORDER};
+	public  command currentCommand;
+	
 	private Point sectorToWarp=new Point();
 	private PointF warpingLocation=new PointF();
     private  Point screenSize=new Point();
@@ -97,7 +101,7 @@ public class GameManager {
     {
         GameLog.update("GameManager: preparing game",0);
         setSaveName(saveName);
-        command=0;
+        currentCommand=command.CONTROL;
         destroyedTimer=new Timer(0);
         BitmapFactory.Options bitmapOptions=new BitmapFactory.Options();
         bitmapOptions.inScaled=false;
@@ -259,7 +263,7 @@ public class GameManager {
 		if(Options.drawRadio.getValue()==1)
 		gamePanel.drawRadioPoints(canvas);
 		
-		if(command==commandMoving) 
+		if(currentCommand==command.CONTROL) 
 		{
             uIhp.render(canvas);
             uIsh.render(canvas);
@@ -342,10 +346,7 @@ public class GameManager {
         gamePanel.pressedObject=null;
     }
 
-    void setPressedObject(StaticEntity pressedObject)
-    {
-        gamePanel.pressedObject=pressedObject;
-    }
+    
 
     public void initAssemblerUI(final Assembler assembler)
     {
@@ -879,5 +880,34 @@ public class GameManager {
 	public void checkJoystick(boolean touched,PointF screenPoint)
 	{
 		joystick.setTouched(touched,screenPoint);
+	}
+	
+	public void interactionTouch(Entity e,PointF p)
+	{
+		switch(currentCommand)
+		{
+			case INTERACTION:
+				getGamePanel().pressedObject=e;
+				InteractionUI.init(MA,e);
+				break;
+			case ORDER:
+				switch(InteractionUI.currentOrder)
+				{
+					case MOVETO:
+						((AI)((ControlledShip)getGamePanel().pressedObject).getController()).setDestination(p);
+						((AI)((ControlledShip)getGamePanel().pressedObject).getController()).setCurrentOrder(AI.order.MOVETO);
+						break;
+					case ATTACK:
+						((AI)((ControlledShip)getGamePanel().pressedObject).getController()).setTargetToAttack(e);
+						((AI)((ControlledShip)getGamePanel().pressedObject).getController()).setCurrentOrder(AI.order.ATTACK);
+						break;
+					case FOLLOW:
+						((AI)((ControlledShip)getGamePanel().pressedObject).getController()).setTargetToFollow(e);
+						((AI)((ControlledShip)getGamePanel().pressedObject).getController()).setCurrentOrder(AI.order.FOLLOW);
+						break;
+				}
+				currentCommand=command.INTERACTION;
+				break;
+		}
 	}
 }

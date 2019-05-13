@@ -45,7 +45,7 @@ public class SpaceDock extends StaticEntity
 	{
 		Ship ship=new Ship(hull,engine,generator,shields,gyroscope,turrets,weapons);
 		toSpawn=new ControlledShip((int)this.x,(int)this.y,0,gameManager,ship);
-		toSpawn.setController(new CombatAI(toSpawn));
+		toSpawn.setController(new AI(toSpawn));
 		ship.init(toSpawn);
 		inProduction=true;
 	}

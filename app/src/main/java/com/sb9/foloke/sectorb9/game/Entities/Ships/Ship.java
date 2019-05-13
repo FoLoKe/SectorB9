@@ -197,7 +197,7 @@ public class Ship
 
         ModulesDataSheet.WeaponModule[] w=new ModulesDataSheet.WeaponModule[h.gunMounts.length];
         for(int i=0;i<w.length;i++)
-            w[i]= (ModulesDataSheet.WeaponModule) ModulesDataSheet.getOfType(ModulesDataSheet.type.WEAPON)[0];
+            w[i]= (ModulesDataSheet.WeaponModule) ModulesDataSheet.getOfType(ModulesDataSheet.type.WEAPON)[3];
 
         ship=new Ship(h,e,g,s,gy,t,w);
         return ship;

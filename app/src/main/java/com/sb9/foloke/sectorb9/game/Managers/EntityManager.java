@@ -186,7 +186,7 @@ public class EntityManager
 			case 10:
 			{
 				e=new ControlledShip(0,0,0,gameManager, Ship.createSimple());
-				((ControlledShip)e).setController(new CombatAI((ControlledShip)e));
+				((ControlledShip)e).setController(new AI((ControlledShip)e));
 			
 				break;
 			}
