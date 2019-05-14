@@ -38,6 +38,7 @@ public class AI extends Controller {
 	protected Entity targetToMine;
 	protected Entity targetToAttack;
 	protected Entity targetToRepairYourself;
+	protected Entity targetToRetreatFrom;
 	protected PointF destination;
 	
 	
@@ -84,6 +85,13 @@ public class AI extends Controller {
 			case DEFENSIVE:
 				orderDefensive();
 				break;
+			case PEACEFUL:
+				
+				break;
+			case RETREAT:
+				orderRetreat();
+				break;
+			
 		}
 	}
 	
@@ -183,6 +191,38 @@ public class AI extends Controller {
 	
 	
 	//orders
+	private void orderRetreat()
+	{
+		if(targetToRetreatFrom==null)
+		{
+			Entity e=findEnemy();
+			if(e!=null)
+			{
+				targetToRetreatFrom=e;	
+				preBehaviourOrder=currentOrder;
+				currentOrder=order.MOVETO;
+			}
+		}
+		else
+		{
+			if(isInSightRadius(targetToRetreatFrom))
+			{
+				PointF vector=new PointF(targetToRetreatFrom.getCenterX()-child.getCenterX(),targetToRetreatFrom.getCenterY()-child.getCenterY());
+				float lengh=(float)Math.sqrt(vector.x*vector.x+vector.y*vector.y);
+				vector.set(vector.x/lengh*sightRadius,vector.y/lengh*sightRadius);
+				destination=new PointF(child.getCenterX()-vector.x,child.getCenterY()-vector.y);
+			}
+			else
+				targetToRetreatFrom=null;
+			
+		}
+
+		if(targetToRetreatFrom==null||!targetToRetreatFrom.getActive())
+		{
+			currentOrder=preBehaviourOrder;
+		}
+	}
+	
 	private void orderAgressive()
 	{
 		if(targetToAttack==null)
@@ -211,10 +251,11 @@ public class AI extends Controller {
 	{
 		if(targetToAttack==null)
 		{
-			Entity e=findEnemy();
-			if(e!=null)
+			Damage damage=child.getLastDamage();
+			if(damage!=null)
 			{
-				targetToAttack=e;	
+				targetToAttack=damage.instignator;
+				child.setLastDamage(null);
 			}
 		}
 
