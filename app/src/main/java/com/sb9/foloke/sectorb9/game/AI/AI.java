@@ -81,6 +81,9 @@ public class AI extends Controller {
 			case AGGRESSIVE:
 				orderAgressive();
 				break;
+			case DEFENSIVE:
+				orderDefensive();
+				break;
 		}
 	}
 	
@@ -182,23 +185,50 @@ public class AI extends Controller {
 	//orders
 	private void orderAgressive()
 	{
-		if(currentOrder!=order.ATTACK)
+		if(targetToAttack==null)
 		{
 			Entity e=findEnemy();
 			if(e!=null)
 			{
-				targetToAttack=e;
-				preBehaviourOrder=currentOrder;
-				currentOrder=order.ATTACK;
+				targetToAttack=e;	
 			}
-			else
-			{
-					currentOrder=preBehaviourOrder;
-			}
+		}
+			
+		if(currentOrder!=order.ATTACK&&targetToAttack!=null)
+		{
+			preBehaviourOrder=currentOrder;
+			currentOrder=order.ATTACK;
+		}
+		
+		if(targetToAttack==null)
+		{
+			currentOrder=preBehaviourOrder;
 		}
 		
 	}
 	
+	private void orderDefensive()
+	{
+		if(targetToAttack==null)
+		{
+			Entity e=findEnemy();
+			if(e!=null)
+			{
+				targetToAttack=e;	
+			}
+		}
+
+		if(currentOrder!=order.ATTACK&&targetToAttack!=null)
+		{
+			preBehaviourOrder=currentOrder;
+			currentOrder=order.ATTACK;
+		}
+
+		if(targetToAttack==null)
+		{
+			currentOrder=preBehaviourOrder;
+		}
+	}
 	
 	private void orderPatrol()
 	{
@@ -307,10 +337,11 @@ public class AI extends Controller {
 				
 				return;
 			}
+			else
+				targetToAttack=null;
 		}
 		
-		if(preBehaviourOrder!=currentOrder)
-		currentOrder=preBehaviourOrder;
+		
 	}
 	
 	private void orderMoveTo()
