@@ -84,7 +84,7 @@ public class Projectile extends DynamicEntity
     public void onCollide(Entity e){
 		if(e.getTeam()!=parent.getTeam())
 		{
-       		e.applyDamage((damage));
+       		e.applyDamage(new Damage(damage,parent,Damage.type.PROJECTILE));
         	collided=true;
        	 	this.lifeTimer.setTimer(0);
 		}

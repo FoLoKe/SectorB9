@@ -128,7 +128,7 @@ public class Laser extends Weapon
 						}
             if (hitedEntity!=null) 
 			{
-                hitedEntity.applyDamage(damage);
+                hitedEntity.applyDamage(new Damage(damage,turret.getParent().getHolder(),Damage.type.LASER));
                 laserDamageEffect.draw(hitPoint.x, hitPoint.y, rnd.nextInt(360), new PointF(0, 0));
                 line.set(turret.getPointOfShooting()[0],
 						 turret.getInitPointOfShooting()[1],hitPoint.x, hitPoint.y);

@@ -326,8 +326,9 @@ public abstract class DynamicEntity extends Entity {
             canvas.drawText("SI: "+sidewaysImpulse,x-100,y+96,debugPaint);
             canvas.drawText("HP: "+HP+"/"+maxHP,x-100,y+128,debugPaint);
             canvas.drawText("HP: "+SP+"/"+maxSP,x-100,y+160,debugPaint);
+			canvas.drawText("TEAM: "+TEAM,x-100,y+192,debugPaint);
             //canvas.drawBitmap(image,new Rect(0,0,32,20),new RectF(x,y,x+32,y+32),null);
-			canvas.drawCircle(debugPoint.x,debugPoint.y,4,debugPaint);
+			//canvas.drawCircle(debugPoint.x,debugPoint.y,4,debugPaint);
 
 		}
 	}

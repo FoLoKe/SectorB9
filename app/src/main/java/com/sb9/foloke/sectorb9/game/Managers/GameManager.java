@@ -295,6 +295,7 @@ public class GameManager {
         
       	ControlledShip  player=new ControlledShip(900,900,0,this,Ship.createSimple());
 		playerController.setControlledEntity(player);
+		player.setTeam(playerController.team);
         playerDestroyed=false;
         
         gamePause=false;
@@ -561,6 +562,7 @@ public class GameManager {
 				getEntityManager().addObject(player);
 				
 				playerController.setControlledEntity(player);
+				player.setTeam(playerController.team);
                 metareader.close();
                 mis.close();
                 mits.close();

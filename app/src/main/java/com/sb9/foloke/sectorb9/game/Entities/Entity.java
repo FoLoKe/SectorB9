@@ -58,7 +58,8 @@ public abstract class Entity {
     protected Paint shieldPaint=new Paint();
     private float shieldShowTime=2;
     protected float regainSH=0.2f;
-
+	protected Damage lastDamage;
+	
     public Entity(float x, float y, float rotation, GameManager gameManager, int ID)
     {
         this.debugPaint.setColor(Color.RED);
@@ -86,6 +87,8 @@ public abstract class Entity {
 
 		createCollision();
     }
+
+	
 	
 	private void applyStandardOptions()
 	{
@@ -281,13 +284,14 @@ public abstract class Entity {
 
 	public float getWorldRotation(){return rotation;}
 
-	public void applyDamage(float damage)
+	public void applyDamage(Damage damage)
 	{
+		lastDamage=damage;
         if(SP>maxSP)
             SP=maxSP;
         if(HP>maxHP)
             HP=maxHP;
-	    float sum=HP+SP-damage;
+	    float sum=HP+SP-damage.amount;
 
         shieldShow.setTimer(shieldShowTime);
 		
@@ -427,4 +431,14 @@ public abstract class Entity {
     {
         return isInteractable;
     }
+	
+	public void setLastDamage(Damage lastDamage)
+	{
+		this.lastDamage = lastDamage;
+	}
+
+	public Damage getLastDamage()
+	{
+		return lastDamage;
+	}
 }

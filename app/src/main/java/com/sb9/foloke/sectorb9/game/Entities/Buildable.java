@@ -6,6 +6,7 @@ import com.sb9.foloke.sectorb9.game.Funtions.CustomCollisionObject;
 import com.sb9.foloke.sectorb9.game.Managers.*;
 import java.util.*;
 import com.sb9.foloke.sectorb9.game.UI.Inventory.*;
+import com.sb9.foloke.sectorb9.game.Funtions.*;
 
 public class Buildable extends StaticEntity
 {
@@ -52,9 +53,9 @@ public class Buildable extends StaticEntity
 	}
 
 	@Override
-	public void applyDamage(float damage)
+	public void applyDamage(Damage damage)
 	{
-		progress+=damage;
+		progress+=damage.amount;
 
 		if(progress>=maxProgress)
 		{
