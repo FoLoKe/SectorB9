@@ -248,7 +248,7 @@ public class InteractionUI
 				buttonAgressiveBehaviout.setOnClickListener(new OnClickListener(){
 						public void onClick(View v)
 						{
-							((AI)((ControlledShip)e).getController()).setCurrentBehaviour(AI.behaviour.AGRESSIVE);
+							((AI)((ControlledShip)e).getController()).setCurrentBehaviour(AI.behaviour.AGGRESSIVE);
 						}
 					});
 				

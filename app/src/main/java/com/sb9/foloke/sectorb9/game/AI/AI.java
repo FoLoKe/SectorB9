@@ -27,7 +27,7 @@ public class AI extends Controller {
 	
 	
 	
-	public enum behaviour{AGRESSIVE,DEFENSIVE,PEACEFUL,RETREAT}
+	public enum behaviour{AGGRESSIVE,DEFENSIVE,PEACEFUL,RETREAT}
 	public enum order{MOVETO,ATTACK,FOLLOW,MINE,STAY,REPAIR,PATROL}
 	
 	protected behaviour currentBehaviour=behaviour.PEACEFUL;
@@ -78,7 +78,7 @@ public class AI extends Controller {
 		
 		switch(currentBehaviour)
 		{
-			case AGRESSIVE:
+			case AGGRESSIVE:
 				orderAgressive();
 				break;
 		}
@@ -123,7 +123,7 @@ public class AI extends Controller {
 		
 		switch(currentBehaviour)
 		{
-			case AGRESSIVE:
+			case AGGRESSIVE:
 				debugBehaviourPaint.setColor(Color.RED);
 				break;
 				
@@ -174,7 +174,7 @@ public class AI extends Controller {
 		//state
 		canvas.drawCircle(child.getX()-10,child.getY(),5,debugBehaviourPaint);
 		canvas.drawCircle(child.getX()-10,child.getY()-10,5,debugOrderPaint);
-		canvas.drawCircle(child.getX()-20,child.getY()-10,4,debugOrderPaint);
+		canvas.drawCircle(child.getX()-20,child.getY()-10,4,debugPreBehaviourOrderPaint);
 	}
 
 	
@@ -184,9 +184,10 @@ public class AI extends Controller {
 	{
 		if(currentOrder!=order.ATTACK)
 		{
-			if(findEnemy()!=null)
+			Entity e=findEnemy();
+			if(e!=null)
 			{
-				targetToAttack=findEnemy();
+				targetToAttack=e;
 				preBehaviourOrder=currentOrder;
 				currentOrder=order.ATTACK;
 			}
@@ -308,7 +309,8 @@ public class AI extends Controller {
 			}
 		}
 		
-		currentOrder=order.STAY;
+		if(preBehaviourOrder!=currentOrder)
+		currentOrder=preBehaviourOrder;
 	}
 	
 	private void orderMoveTo()
