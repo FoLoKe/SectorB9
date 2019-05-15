@@ -74,7 +74,7 @@ public class ControlledShip extends DynamicEntity {
 		
 		if(controller!=null)
         controller.tick();
-
+		lastDamage=null;
         ship.tick();
     }
 	
