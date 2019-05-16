@@ -243,7 +243,14 @@
 					android:layout_height="wrap_content"
 					android:textColor="#ffffff"
 					android:text="Patrol"
-					android:id="@+id/interaction_ui_b_behaviour_patrol"
+					android:id="@+id/interaction_ui_b_order_patrol"
+					android:layout_gravity="bottom|right"/>
+				<Button
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:textColor="#ffffff"
+					android:text="CONTROL"
+					android:id="@+id/interaction_ui_b_order_control"
 					android:layout_gravity="bottom|right"/>
 			</LinearLayout>
 		</LinearLayout>

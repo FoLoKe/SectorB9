@@ -130,8 +130,8 @@ public abstract class Entity {
 
 	public String getSaveString()
 	{
-			String s=getInvSaveString();
-		    return "["+ID+" "+name+" "+x+" "+y+" "+rotation+" "+HP+" "+SP+" "+TEAM+" "+s+"] ";
+			String inv=getInvSaveString();
+		    return "["+ID+" "+name+" "+x+" "+y+" "+rotation+" "+HP+" "+SP+" "+TEAM+" "+inv+" "+getSpecialSaveLine()+"] ";
 	}
 
 	//**********SYNTAX***********
@@ -150,7 +150,7 @@ public abstract class Entity {
 			SP=Float.parseFloat(words[6]);
 			TEAM=Integer.parseInt(words[7]);
 			LoadInvFromString(words[8]);
-			
+			decodeSpecialSaveLine(words[9]);
 
 			setCollisionObject();
 		}
@@ -160,6 +160,16 @@ public abstract class Entity {
 		}
 	}
 
+	protected String getSpecialSaveLine()
+	{
+		return "null";
+	}
+	
+	protected void decodeSpecialSaveLine(String special)
+	{
+		
+	}
+	
 	public void LoadInvFromString(String saveString)
 	{
 		inventory.clear();

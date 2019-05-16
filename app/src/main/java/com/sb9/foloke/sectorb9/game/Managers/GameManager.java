@@ -71,7 +71,7 @@ public class GameManager {
 
     //booleans
     public boolean gamePause=true;
-    private boolean playerDestroyed=false;
+    
     private boolean collect=false;
     private boolean warpReady=false;
 
@@ -160,6 +160,14 @@ public class GameManager {
             GameLog.update("GameManager: creating saves",0);
             createSaveFile();
             WorldGenerator.makeRandomSector(getWorldManager());
+			ControlledShip startShip=new ControlledShip(0,0,0,this,Ship.createSimple());
+			getEntityManager().addObject(startShip);
+			playerController.setControlledEntity(startShip);
+			startShip.setController(playerController);
+			for(int i=0;i<startShip.getInventory().getCapacity();i++)
+			{
+				startShip.getInventory().addNewItem(i,64);
+			}
         }
         else
             ///load state
@@ -180,19 +188,12 @@ public class GameManager {
 		joystickTouchPoint.set(joystick.getPoint().x+gamePanel.getCamera().getWorldLocation().x,joystick.getPoint().y+gamePanel.getCamera().getWorldLocation().y);
 		joystick.tick(gamePanel.getPointOfTouch());
 		
-        if(playerDestroyed)
-        {
-            if(destroyedTimer.tick())
-            {
-                destroyedTimer=null;
-                createNewPlayer();
-            }
-            return;
-        }
-		
 		playerController.tick();
-			
 		
+		
+			
+		if(playerController.getControlledEntity()!=null)
+		{
 		Iterator<Entity> iterUi = getEntities().iterator();
 		boolean exist=false;
 		while (iterUi.hasNext()) 
@@ -232,7 +233,8 @@ public class GameManager {
                 GameLog.update("GameManager: inventory full" ,0);
     	}
 	
-        collect=false;
+        	collect=false;
+		}
         worldManager.updateWorld();
 		
 		if(warpReady)
@@ -246,7 +248,7 @@ public class GameManager {
 			return;
 		gamePanel.preRender(canvas);
         worldManager.renderWorld(canvas);
-       // player.render(canvas);
+     
 		Paint debugPaint= new Paint();
 		debugPaint.setColor(Color.CYAN);
 		debugPaint.setStyle(Paint.Style.STROKE);
@@ -286,19 +288,14 @@ public class GameManager {
 
     public void interactionCheck(float x, float y)
     {
-        worldManager.interactionCheck(x,y);
-    }
-
-    private void createNewPlayer()
-    {
-        
-        
-      	ControlledShip  player=new ControlledShip(900,900,0,this,Ship.createSimple());
-		playerController.setControlledEntity(player);
-		player.setTeam(playerController.team);
-        playerDestroyed=false;
-        
-        gamePause=false;
+		try
+		{
+        	worldManager.interactionCheck(x,y);
+		}
+		catch(Exception e)
+		{
+			GameLog.update(e.toString(),1);
+		}
     }
 
     public ArrayList<Entity> getEntities()
@@ -414,49 +411,7 @@ public class GameManager {
 		return worldManager.getEntityManager().createBuildable(id,initiator);
 	}
 	
-	public void onPlayerDestroyed()
-	{
-		destroyedTimer.setTimer(5);
-		SpaceDock sd=(SpaceDock)worldManager.getEntityManager().findRespawnPoint(playerController.team);
-		if(sd!=null)
-		respawn(sd);
-		else
-		{
-			GameLog.update("respawning in homeworld",2);
-			loadSector(1,1);
-			sd=(SpaceDock)worldManager.getEntityManager().findRespawnPoint(playerController.team);
-			if(sd!=null)
-			respawn(sd);
-			else
-			{
-				GameLog.update("no respawn point",2);
-				respawn(null);
-			}
-		}
-		
-		
-	}
 	
-	public void respawn(SpaceDock sd)
-	{
-		ControlledShip player=new ControlledShip(0,0,0,this,Ship.createSimple());
-		
-		if(sd!=null)
-		{
-			player.setX(sd.getX());
-			player.setY(sd.getY());
-		}
-		else
-		{
-			player.setX(90);
-			player.setY(90);
-		}	
-
-		getGamePanel().pointOfTouch=player.getWorldLocation();
-		player.setTeam(1);
-
-		ShipUI.setUI(playerController.getControlledEntity(),getMainActivity());
-	}
 	
 	public void collectDebris()
 	{
@@ -508,18 +463,11 @@ public class GameManager {
                 metaWriter.newLine();
                 metaWriter.write("" + worldManager.getSector().y);
                 metaWriter.newLine();
-                metaWriter.write("" + getPlayer().getHp());
+                
+                metaWriter.write("" + gamePanel.cameraPoint.x);
                 metaWriter.newLine();
-                metaWriter.write("" + getPlayer().getSH());
+                metaWriter.write("" + gamePanel.cameraPoint.y);
                 metaWriter.newLine();
-                metaWriter.write("" + getPlayer().getCenterX());
-                metaWriter.newLine();
-                metaWriter.write("" + getPlayer().getCenterY());
-                metaWriter.newLine();
-				metaWriter.write("" + getPlayer().getWorldRotation());
-                metaWriter.newLine();
-				metaWriter.write("" + getPlayer().getInvSaveString());
-				metaWriter.newLine();
                 metaWriter.close();
                 mos.close();
                 mots.close();
@@ -551,18 +499,14 @@ public class GameManager {
                 int y = Integer.parseInt(metareader.readLine());
 				worldManager.setSector(x, y);
 				
-				ControlledShip player=new ControlledShip(0,0,0,this,Ship.createSimple());
-                player.setHP(Float.parseFloat(metareader.readLine()));
-                player.setSH(Float.parseFloat(metareader.readLine()));
-                
-                player.setWorldLocation(new PointF(Float.parseFloat(metareader.readLine()),Float.parseFloat(metareader.readLine())));
-				player.setWorldRotation(Float.parseFloat(metareader.readLine()));
-				player.LoadInvFromString(metareader.readLine());
+//				
+            	
+//                
+               	gamePanel.cameraPoint.x=(Float.parseFloat(metareader.readLine()));
+			   	gamePanel.cameraPoint.y=(Float.parseFloat(metareader.readLine()));
+			   
+				playerController.setControlledEntity(null);
 				
-				getEntityManager().addObject(player);
-				
-				playerController.setControlledEntity(player);
-				player.setTeam(playerController.team);
                 metareader.close();
                 mis.close();
                 mits.close();
@@ -886,13 +830,16 @@ public class GameManager {
 	
 	public void interactionTouch(Entity e,PointF p)
 	{
+		
 		switch(currentCommand)
 		{
 			case INTERACTION:
 				getGamePanel().pressedObject=e;
 				InteractionUI.init(MA,e);
+				GameLog.update("interaction touch",2);
 				break;
 			case ORDER:
+				GameLog.update("order touch",2);
 				switch(InteractionUI.currentOrder)
 				{
 					case MOVETO:

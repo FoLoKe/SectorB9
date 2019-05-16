@@ -2,6 +2,7 @@ package com.sb9.foloke.sectorb9.game.Funtions;
 import android.graphics.*;
 import com.sb9.foloke.sectorb9.game.Entities.*;
 import com.sb9.foloke.sectorb9.game.Managers.*;
+import com.sb9.foloke.sectorb9.game.UI.*;
 
 public class PlayerController extends Controller
 {
@@ -21,6 +22,7 @@ public class PlayerController extends Controller
 		if(controlledEntity!=null)
 		controlledEntity.setController(null);
 		controlledEntity=cs;
+		if(controlledEntity!=null)
 		cs.setController(this);
 	}
 	
@@ -33,6 +35,14 @@ public class PlayerController extends Controller
 	{
 		if(controlledEntity!=null)
 		{
+			if(!controlledEntity.getActive())
+			{
+				
+				controlledEntity=null;
+				ActionUI.toInteracrion();
+				return;
+			}
+			
 		    GameManager.uIhp.tick(controlledEntity.getHp()/controlledEntity.getMaxHP()*100);
             GameManager.uIsh.tick(controlledEntity.getSH()/controlledEntity.getMaxSH()*100);
 			controlledEntity.setMovable(GameManager.joystick.getTouched());

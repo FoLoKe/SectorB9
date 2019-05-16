@@ -1,14 +1,11 @@
 package com.sb9.foloke.sectorb9.game.Entities.Ships;
 import android.graphics.*;
-import com.sb9.foloke.sectorb9.game.Assets.EffectsAsset;
-import com.sb9.foloke.sectorb9.game.Assets.ShipAsset;
-import com.sb9.foloke.sectorb9.game.Entities.DynamicEntity;
-import com.sb9.foloke.sectorb9.game.Funtions.*;
-import com.sb9.foloke.sectorb9.game.ParticleSystem.*;
-import com.sb9.foloke.sectorb9.game.Entities.Weapons.*;
 import com.sb9.foloke.sectorb9.game.Assets.*;
 import com.sb9.foloke.sectorb9.game.DataSheets.*;
 import com.sb9.foloke.sectorb9.game.Entities.*;
+import com.sb9.foloke.sectorb9.game.Entities.Weapons.*;
+import com.sb9.foloke.sectorb9.game.Funtions.*;
+import com.sb9.foloke.sectorb9.game.ParticleSystem.*;
 import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
 
 public class Ship
@@ -55,6 +52,8 @@ public class Ship
         this.collisionObject=new CustomCollisionObject(1,1,null);
 
 	}
+
+	
 	
 	public void init(DynamicEntity e)
 	{
@@ -202,4 +201,74 @@ public class Ship
         ship=new Ship(h,e,g,s,gy,t,w);
         return ship;
     }
+	
+	public void setGyroscope(ModulesDataSheet.GyrosModule gyroscope)
+	{
+		this.gyroscope = gyroscope;
+	}
+
+	public ModulesDataSheet.GyrosModule getGyroscope()
+	{
+		return gyroscope;
+	}
+
+	public void setWeaponsMods(ModulesDataSheet.WeaponModule[] weapons)
+	{
+		this.weapons = weapons;
+	}
+
+	public ModulesDataSheet.WeaponModule[] getWeaponsMods()
+	{
+		return weapons;
+	}
+
+	public void setTurretsMods(ModulesDataSheet.TurretModule[] turretsMods)
+	{
+		this.turretsMods = turretsMods;
+	}
+
+	public ModulesDataSheet.TurretModule[] getTurretsMods()
+	{
+		return turretsMods;
+	}
+
+	public void setShields(ModulesDataSheet.ShieldModule shields)
+	{
+		this.shields = shields;
+	}
+
+	public ModulesDataSheet.ShieldModule getShields()
+	{
+		return shields;
+	}
+
+	public void setGenerator(ModulesDataSheet.GeneratorModule generator)
+	{
+		this.generator = generator;
+	}
+
+	public ModulesDataSheet.GeneratorModule getGenerator()
+	{
+		return generator;
+	}
+
+	public void setEngine(ModulesDataSheet.EngineModule engine)
+	{
+		this.engine = engine;
+	}
+
+	public ModulesDataSheet.EngineModule getEngine()
+	{
+		return engine;
+	}
+
+	public void setHull(ModulesDataSheet.HullModule hull)
+	{
+		this.hull = hull;
+	}
+
+	public ModulesDataSheet.HullModule getHull()
+	{
+		return hull;
+	}
 }

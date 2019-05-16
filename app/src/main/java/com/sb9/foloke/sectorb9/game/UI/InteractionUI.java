@@ -217,13 +217,18 @@ public class InteractionUI
 
 		img.setImageBitmap(Bitmap.createScaledBitmap(BitmapFactory.decodeResource(MA.getResources(),R.drawable.ui_interaction_sign,bitmapOptions),(int)(200*scaleX),(int)(50*scaleY),false));
 		//weaponsButton.getLayoutParams().width=(int)(150*scaleX);
+		if(target!=null)
 		setAICommands(target,MA);
 		GameLog.update("InteractionUI: ready",0);
 	}
 	
 	public static void setAICommands(final Entity e,final MainActivity MA)
 	{
+		GameLog.update("InteractionUI: orders set by"+e,0);
+		//CONTROLLABLE ONLY 
 		if(e instanceof ControlledShip)
+		{
+			//AI ONLY ORDERS
 			if(((ControlledShip)e).getController() instanceof AI)
 			{
 				MA.findViewById(R.id.interaction_ui_LL_AIOptions).setVisibility(View.VISIBLE);
@@ -241,7 +246,8 @@ public class InteractionUI
 				Button buttonRepairCommand=MA.findViewById(R.id.interaction_ui_b_order_repair);
 				Button buttonMineCommand=MA.findViewById(R.id.interaction_ui_b_order_mine);
 				Button buttoHoldCommand=MA.findViewById(R.id.interaction_ui_b_order_stay);
-				Button buttonPatrolCommand=MA.findViewById(R.id.interaction_ui_b_behaviour_patrol);
+				Button buttonPatrolCommand=MA.findViewById(R.id.interaction_ui_b_order_patrol);
+				
 				
 				
 				//actions for behaviour
@@ -327,11 +333,46 @@ public class InteractionUI
 				
 				
 				
-				return;
+				
 			}
 			
-		MA.findViewById(R.id.interaction_ui_LL_buildOptions).setVisibility(View.VISIBLE);
-		MA.findViewById(R.id.interaction_ui_LL_AIOptions).setVisibility(View.GONE);
+			//CHANGE CONTROLLER MANUAL/AI COMMON ORDER
+			Button buttonControlCommand=MA.findViewById(R.id.interaction_ui_b_order_control);
+			buttonControlCommand.setOnClickListener(new OnClickListener(){
+					public void onClick(View v)
+					{
+						try
+						{
+							PlayerController playerController=MA.getGameManager().getController();
+							ControlledShip controlled=playerController.getControlledEntity();
+							ControlledShip pressed=(ControlledShip)e;
+
+							if(controlled!=null)
+							{
+								playerController.setControlledEntity(null);
+								controlled.setController(new AI(controlled));
+							}
+
+							if(controlled!=pressed)
+							{
+								playerController.setControlledEntity(pressed);
+								pressed.setController(playerController);
+							}
+
+						}
+						catch(Exception e)
+						{
+							GameLog.update(e.toString(),1);
+						}
+					}
+				});
+			
+		}
+		else
+		{
+			MA.findViewById(R.id.interaction_ui_LL_buildOptions).setVisibility(View.VISIBLE);
+			MA.findViewById(R.id.interaction_ui_LL_AIOptions).setVisibility(View.GONE);
+		}
 	}
 	
 }

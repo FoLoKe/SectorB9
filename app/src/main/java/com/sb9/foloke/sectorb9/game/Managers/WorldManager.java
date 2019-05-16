@@ -83,18 +83,18 @@ public class WorldManager
 	void interactionCheck(float x,float y)
 	{
 		interObject.calculateCollisionObject(x,y);
-		DynamicEntity player=gameManager.getPlayer();
+	
 		for(Entity e: entityManager.getArray())
 		{
 			if(e.getCollisionObject().intersects(interObject))
 			{
-				if(Math.sqrt(
-					   (e.getCenterX()-player.getCenterX())*(e.getCenterX()-player.getCenterX())
-					   +(e.getCenterY()-player.getCenterY())*(e.getCenterY()-player.getCenterY()))-32<PlayerController.interactionRadius)											 
-				{								
+//				if(Math.sqrt(
+//					   (e.getCenterX()-player.getCenterX())*(e.getCenterX()-player.getCenterX())
+//					   +(e.getCenterY()-player.getCenterY())*(e.getCenterY()-player.getCenterY()))-32<PlayerController.interactionRadius)											 
+//				{								
 					gameManager.interactionTouch(e,e.getCenterWorldLocation());
 					return;
-				}							
+				
 			}
 		}
 		gameManager.interactionTouch(null,new PointF(x,y));

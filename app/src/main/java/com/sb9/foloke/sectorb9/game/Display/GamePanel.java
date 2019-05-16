@@ -47,7 +47,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 	public Entity pressedObject;
 	private Paint debugPaint=new Paint();
 	
-	private PointF cameraPoint=new PointF();
+	public PointF cameraPoint=new PointF();
 	private PointF lastTouchPoint=new PointF();
 	private PointF cameraToOffset=new PointF();
 	private boolean pressed=false;
@@ -135,7 +135,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
         pointOfTouch.set((screenPointOfTouch.x-canvasW/2)/camera.getScale()+cameraPoint.x,(screenPointOfTouch.y-canvasH/2)/camera.getScale()+cameraPoint.y);
         cursor.setWorldLocation(pointOfTouch);
         cursor.tick();
-		if(gameManager.getPlayer()!=null&&gameManager.currentCommand!=command.INTERACTION)
+		if(gameManager.getPlayer()!=null&&gameManager.currentCommand==command.CONTROL)
 			cameraPoint.set(gameManager.getPlayer().getCenterX(),gameManager.getPlayer().getCenterY());
 		else
 		{
@@ -189,6 +189,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 	public void drawPlayerMovement(Canvas canvas)
 	{
 		DynamicEntity player=gameManager.getPlayer();
+		if(player==null)
+			return;
 		String s=(""+(gameManager.getPlayer().getSpeed()));
 		if(s.length()>4)
 			s=s.substring(0,4);

@@ -571,5 +571,55 @@ public class AI extends Controller {
 		return targetToFollow;
 	}
 
+	public String getAISaveLine()
+	{
+		String saveString="";
+		saveString+=currentBehaviour+"=";
+		saveString+=preBehaviourOrder+"=";
+		saveString+=currentOrder+"=";
+		
+		if(targetToAttack!=null)
+			saveString+=targetToAttack.getCenterX()+":"+targetToAttack.getCenterY()+"=";
+		else
+			saveString+=(-1)+":"+(-1);
+			
+		if(targetToFollow!=null)
+			saveString+=targetToFollow.getCenterX()+":"+targetToFollow.getCenterY()+"=";
+		else
+			saveString+=(-1)+":"+(-1);
+			
+		if(targetToRetreatFrom!=null)
+			saveString+=targetToRetreatFrom.getCenterX()+":"+targetToRetreatFrom.getCenterY()+"=";
+		else
+			saveString+=(-1)+":"+(-1);
+			
+		if(targetToMine!=null)
+			saveString+=targetToMine.getCenterX()+":"+targetToMine.getCenterY()+"=";
+		else
+			saveString+=(-1f)+":"+(-1f);
+			
+		if(targetToRepairYourself!=null)
+			saveString+=targetToRepairYourself.getCenterX()+":"+targetToRepairYourself.getCenterY()+"=";
+		else
+			saveString+=(-1f)+":"+(-1f);
+			
+		return saveString;
+	}
 	
+	public void decodeSaveLine(String saveLine)
+	{
+		String aiWords[]=saveLine.split("=");
+		PointF loadedTargetToAttackPoint=new PointF();
+		PointF loadedTargetToFollowPoint=new PointF();
+		PointF loadedTargetToRetreatFromPoint=new PointF();
+		PointF loadedTargetToMinePoint=new PointF();
+		PointF loadedTargetToRepairYouselfPoint=new PointF();
+		
+		if(aiWords.length>0)
+		{
+			currentBehaviour=behaviour.valueOf(aiWords[0]);
+			preBehaviourOrder=order.valueOf(aiWords[1]);
+			currentOrder=order.valueOf(aiWords[2]);
+		}
+	}
 }
