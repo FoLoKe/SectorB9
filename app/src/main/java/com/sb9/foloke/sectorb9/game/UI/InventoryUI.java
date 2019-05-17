@@ -24,23 +24,24 @@ import com.sb9.foloke.sectorb9.game.UI.Inventory.*;
 //import java.util.*;
 public class InventoryUI
 {
-	private static TableLayout playerTable,objectTable;
+	private static TableLayout leftTable,rightTable;
 	//final private MainActivity context;
-	private static Entity playerTarget,objectTarget;
+	private static Entity leftObject,rightObject;
 	private static InventoryExchangeInterface excInterface;
 	private static int countToTransfer=1;
 	private static MainActivity MA;
 	
 
-	public static void set(TableLayout pTable, Entity pTarget, TableLayout oTable, Entity oTarget, InventoryExchangeInterface eInterface, MainActivity mainActivity)
+	public static void init(MainActivity mainActivity)
 	{
 		MA=mainActivity;
-		playerTarget=pTarget;	
-		playerTable=pTable;
-		objectTable=oTable;
-		objectTarget=oTarget;
 		
-		excInterface=eInterface;
+		leftTable=MA.findViewById(R.id.PlayerTableLayout);
+        rightTable=MA.findViewById(R.id.ObjectTableLayout);
+		
+		excInterface=new InventoryExchangeInterface(MA.getGameManager());
+		
+		
 		
 		
 		update(null);
@@ -65,12 +66,12 @@ public class InventoryUI
 	}
 	public static void update(Entity caller)
 	{
-		if(caller==null||caller==playerTarget||caller==objectTarget)
+		if(caller==null||caller==leftObject||caller==rightObject)
 		{
-			if(playerTarget!=null||playerTable!=null)
-			init(playerTable,playerTarget);
-			if(objectTable!=null||objectTarget!=null)
-			init(objectTable,objectTarget);
+			if(leftObject!=null||leftTable!=null)
+			uptadeTable(leftTable,leftObject);
+			if(rightTable!=null||rightObject!=null)
+			uptadeTable(rightTable,rightObject);
 			resetButtonColor(null);
 		}
 	}
@@ -99,7 +100,7 @@ public class InventoryUI
 		
 		}
 	///UNDER REFACTORING
-	public static void init(TableLayout table,Entity target)
+	public static void uptadeTable(TableLayout table,Entity target)
 	{
 		try
 		{
@@ -208,24 +209,24 @@ public class InventoryUI
 	}
 	public static TableLayout getTableOfPlayer()
 	{
-		return playerTable;
+		return leftTable;
 	}
 	public static void setPlayerTarget(Entity target)
 	{
-		playerTarget=target;
+		leftObject=target;
 	}
 	public static Entity getPlayerTarget()
 	{
-		return playerTarget;
+		return leftObject;
 	}
 	
 	public static void setObjectTarget(Entity target)
 	{
-		objectTarget=target;
+		rightObject=target;
 	}
 	public static Entity getObjectTarget()
 	{
-		return objectTarget;
+		return rightObject;
 	}
 	
 	private static void setDragAndDrop(final InventoryFrameLayout IFL,final Entity target)
