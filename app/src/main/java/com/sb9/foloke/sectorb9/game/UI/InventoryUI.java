@@ -41,12 +41,7 @@ public class InventoryUI
 		
 		excInterface=new InventoryExchangeInterface(MA.getGameManager());
 		
-		
-		
-		
-		update(null);
-		Button but1=MA.findViewById(R.id.InventoryUI_oneItemButton);
-		but1.setOnClickListener(new OnClickListener(){
+		MA.findViewById(R.id.InventoryUI_oneItemButton).setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v){countToTransfer=1;
 			resetButtonColor(v);
@@ -64,43 +59,48 @@ public class InventoryUI
 					resetButtonColor(v);
 				}});
 	}
+	
 	public static void update(Entity caller)
 	{
 		if(caller==null||caller==leftObject||caller==rightObject)
 		{
-			if(leftObject!=null||leftTable!=null)
-			uptadeTable(leftTable,leftObject);
-			if(rightTable!=null||rightObject!=null)
-			uptadeTable(rightTable,rightObject);
+			if(leftObject!=null)
+				update(leftTable,leftObject);
+			else
+				leftTable.setVisibility(View.GONE);
+				
+			if(rightObject!=null)
+				update(rightTable,rightObject);
+			else
+				rightTable.setVisibility(View.GONE);
 			resetButtonColor(null);
 		}
 	}
 	
-	public static void resetButtonColor(View v)
+	private static void resetButtonColor(View v)
 	{
 		MA.findViewById(R.id.InventoryUI_halfItemButton).setBackgroundColor(Color.parseColor("#22ffffff"));
 		MA.findViewById(R.id.InventoryUI_allItemButton).setBackgroundColor(Color.parseColor("#22ffffff"));
 		MA.findViewById(R.id.InventoryUI_oneItemButton).setBackgroundColor(Color.parseColor("#22ffffff"));
 		if(v!=null)
-		v.setBackgroundColor(Color.parseColor("#55ffffff"));
+			v.setBackgroundColor(Color.parseColor("#55ffffff"));
 		else
-		switch (countToTransfer)
-		{
-			case 1:
-				
-				MA.findViewById(R.id.InventoryUI_oneItemButton).setBackgroundColor(Color.parseColor("#55ffffff"));
-				break;
-			case 2:
-				MA.findViewById(R.id.InventoryUI_halfItemButton).setBackgroundColor(Color.parseColor("#55ffffff"));
-				break;
-			default:
-				MA.findViewById(R.id.InventoryUI_allItemButton).setBackgroundColor(Color.parseColor("#55ffffff"));
-				break;
-		}
+			switch (countToTransfer)
+			{
+				case 1:
+					MA.findViewById(R.id.InventoryUI_oneItemButton).setBackgroundColor(Color.parseColor("#55ffffff"));
+					break;
+				case 2:
+					MA.findViewById(R.id.InventoryUI_halfItemButton).setBackgroundColor(Color.parseColor("#55ffffff"));
+					break;
+				default:
+					MA.findViewById(R.id.InventoryUI_allItemButton).setBackgroundColor(Color.parseColor("#55ffffff"));
+					break;
+			}
 		
-		}
-	///UNDER REFACTORING
-	public static void uptadeTable(TableLayout table,Entity target)
+	}
+	
+	private static void update(TableLayout table,Entity target)
 	{
 		try
 		{
@@ -113,11 +113,10 @@ public class InventoryUI
         options.inScaled=false;
 		table.setBackground(new BitmapDrawable(MA.getResources(),UIAsset.uiBgBlur));
 		
-		
-			int height=target.getInventory().getHeight();
-			int width=target.getInventory().getWidth();
-			int c=0;
-			int maxC=target.getInventory().getCapacity();
+		int height=target.getInventory().getHeight();
+		int width=target.getInventory().getWidth();
+		int c=0;
+		int maxC=target.getInventory().getCapacity();
 			
 		for(int i=0;i<height;i++)
 		{
@@ -207,26 +206,18 @@ public class InventoryUI
 		
 		return countToTransfer;
 	}
-	public static TableLayout getTableOfPlayer()
+	
+	public static void setRightSide(Entity side)
 	{
-		return leftTable;
-	}
-	public static void setPlayerTarget(Entity target)
-	{
-		leftObject=target;
-	}
-	public static Entity getPlayerTarget()
-	{
-		return leftObject;
+		rightObject=side;
+		update(null);
 	}
 	
-	public static void setObjectTarget(Entity target)
+	public static void setLeftSide(Entity side)
 	{
-		rightObject=target;
-	}
-	public static Entity getObjectTarget()
-	{
-		return rightObject;
+			leftObject=side;
+			rightObject=null;
+			update(null);
 	}
 	
 	private static void setDragAndDrop(final InventoryFrameLayout IFL,final Entity target)

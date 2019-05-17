@@ -83,7 +83,7 @@ public class GameManager {
 	
 	
     
-    public enum command{INTERACTION,CONTROL,ORDER};
+    public enum command{INTERACTION,CONTROL,ORDER,EXCHANGE};
 	public  command currentCommand;
 	
 	private Point sectorToWarp=new Point();
@@ -837,6 +837,10 @@ public class GameManager {
 				getGamePanel().pressedObject=e;
 				InteractionUI.init(MA,e);
 				GameLog.update("interaction touch",2);
+				break;
+			case EXCHANGE:
+				GameLog.update("exhange touch",2);
+				InventoryUI.setRightSide(e);
 				break;
 			case ORDER:
 				GameLog.update("order touch",2);

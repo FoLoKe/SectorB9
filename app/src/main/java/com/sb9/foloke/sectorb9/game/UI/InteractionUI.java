@@ -60,6 +60,7 @@ public class InteractionUI
 			{
 				public void onClick(View v)
 				{
+					MA.getGameManager().currentCommand=GameManager.command.INTERACTION;
 					AssemblerUI.setOpened(false);
 					openInteraction.setBackgroundColor(Color.parseColor("#22ffffff"));
 					openProduction.setBackgroundColor(Color.parseColor("#22ffffff"));
@@ -75,6 +76,7 @@ public class InteractionUI
 		{
 			public void onClick(View v)
 			{
+				MA.getGameManager().currentCommand=GameManager.command.INTERACTION;
 				AssemblerUI.setOpened(false);
 				openInteraction.setBackgroundColor(Color.parseColor("#22ffffff"));
 				openProduction.setBackgroundColor(Color.parseColor("#22ffffff"));
@@ -89,7 +91,8 @@ public class InteractionUI
 		{
 			if (target.getOpened())
 			{
-				InventoryUI.setObjectTarget(target);
+				MA.getGameManager().currentCommand=GameManager.command.EXCHANGE;
+				InventoryUI.setLeftSide(target);
 				MA.getGameManager().updateInventory(null);
 				openInventoryButton.setVisibility(View.VISIBLE);
       			openInventoryButton.setOnClickListener(new OnClickListener() 
@@ -114,6 +117,7 @@ public class InteractionUI
 			GameLog.update("InteractionUI: optionsUI set",0);
 			if (target.getInteractable()&&(target instanceof StaticEntity))
 			{
+				MA.getGameManager().currentCommand=GameManager.command.INTERACTION;
 				openInteraction.setVisibility(View.VISIBLE);
 				openInteraction.setOnClickListener(new OnClickListener()
 				{
@@ -137,7 +141,7 @@ public class InteractionUI
 			GameLog.update("InteractionUI: assemblerUI set",0);
 			if (target instanceof Assembler)
 			{
-				
+				MA.getGameManager().currentCommand=GameManager.command.INTERACTION;
 				AssemblerUI.init(MA,(Assembler)target);
 				openProduction.setVisibility(View.VISIBLE);
       			openProduction.setOnClickListener(new OnClickListener() 
@@ -170,6 +174,7 @@ public class InteractionUI
 				@Override
 				public void onClick(View v) 
 				{
+					MA.getGameManager().currentCommand=GameManager.command.INTERACTION;
 					AssemblerUI.setOpened(false);				
 					MA.getGameManager().nullPressedObject();
 					MA.getGameManager().currentCommand= GameManager.command.CONTROL;
@@ -187,6 +192,7 @@ public class InteractionUI
 				@Override
 				public void onClick(View v) 
 				{
+					MA.getGameManager().currentCommand=GameManager.command.INTERACTION;
 					BuildUI.init(MA);
 					MA.getGameManager().nullPressedObject();
 					AssemblerUI.setOpened(false);
@@ -200,6 +206,7 @@ public class InteractionUI
 			@Override
 			public void onClick(View v)
 			{
+				MA.getGameManager().currentCommand=GameManager.command.INTERACTION;
 				ShipUI.init();
 				VF.setDisplayedChild(VF.indexOfChild(MA.findViewById(R.id.shipui)));
 			}
@@ -217,14 +224,17 @@ public class InteractionUI
 
 		img.setImageBitmap(Bitmap.createScaledBitmap(BitmapFactory.decodeResource(MA.getResources(),R.drawable.ui_interaction_sign,bitmapOptions),(int)(200*scaleX),(int)(50*scaleY),false));
 		//weaponsButton.getLayoutParams().width=(int)(150*scaleX);
-		if(target!=null)
+		
 		setAICommands(target,MA);
 		GameLog.update("InteractionUI: ready",0);
 	}
 	
 	public static void setAICommands(final Entity e,final MainActivity MA)
 	{
+		if(e!=null)
 		GameLog.update("InteractionUI: orders set by"+e,0);
+		else
+			GameLog.update("InteractionUI: orders hide",0);
 		//CONTROLLABLE ONLY 
 		if(e instanceof ControlledShip)
 		{

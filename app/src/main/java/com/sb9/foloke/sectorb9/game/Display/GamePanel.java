@@ -377,6 +377,11 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 								cameraToOffset.set(0,0);
 								gameManager.interactionCheck(pointOfTouch.x,pointOfTouch.y);
 								break;
+							case EXCHANGE:
+								pressed=false;
+								cameraToOffset.set(0,0);
+								gameManager.interactionCheck(pointOfTouch.x,pointOfTouch.y);
+								break;
 							case ORDER:
 								pressed=false;
 								cameraToOffset.set(0,0);

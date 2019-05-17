@@ -409,9 +409,5 @@ public class MainActivity extends Activity {
         return gameManager;
     }
 	
-	private void makeInventoryUI(TableLayout playerTable, TableLayout objectTable, MainActivity context)
-    {
-		
-		
-    }
+	
 }

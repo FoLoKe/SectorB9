@@ -27,6 +27,7 @@ public class AI extends Controller {
 	
 	
 	
+	
 	public enum behaviour{AGGRESSIVE,DEFENSIVE,PEACEFUL,RETREAT}
 	public enum order{MOVETO,ATTACK,FOLLOW,MINE,STAY,REPAIR,PATROL}
 	
@@ -46,8 +47,11 @@ public class AI extends Controller {
     {
         this.child=child;
 		debugPathPaint.setColor(Color.GREEN);
+		
+		debugPathPaint.setStrokeWidth(1);
+		debugPathPaint.setStyle(Paint.Style.FILL);
 		destination=pickRandomPoint((int)child.getGameManager().getGamePanel().getWorldSize(),(int)child.getGameManager().getGamePanel().getWorldSize());
-    }
+	}
 	
     public void tick()
 	{
