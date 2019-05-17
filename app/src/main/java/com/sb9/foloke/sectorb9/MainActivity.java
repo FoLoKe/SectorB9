@@ -39,7 +39,7 @@ public class MainActivity extends Activity {
 	private ViewFlipper VF;
 	
 	private static final int PERMISSION_REQUEST_CODE = 123;
-	private InventoryExchangeInterface excInterface;
+	
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
@@ -243,12 +243,11 @@ public class MainActivity extends Activity {
 		GameLog.update("Activity: preparing GameManager",0);
         gameManager.init(state,s);
 		GameLog.update("Activity: preparing UIs",0);
-        TableLayout playerTable=findViewById(R.id.PlayerTableLayout);
-        TableLayout objectTable=findViewById(R.id.ObjectTableLayout);
-
-        makeInventoryUI(playerTable,objectTable,this);
+        
 
         
+		
+        InventoryUI.init(this);
         BuildUI.init( this);
         ActionUI.init( this);
         InteractionUI.init( this,null);
@@ -410,9 +409,5 @@ public class MainActivity extends Activity {
         return gameManager;
     }
 	
-	private void makeInventoryUI(TableLayout playerTable, TableLayout objectTable, MainActivity context)
-    {
-		excInterface=new InventoryExchangeInterface(gameManager);
-        InventoryUI.set(playerTable,gameManager.getPlayer(),objectTable,null,excInterface,context);
-    }
+	
 }

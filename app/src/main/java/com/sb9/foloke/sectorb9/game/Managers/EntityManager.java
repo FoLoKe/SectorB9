@@ -14,6 +14,7 @@ import com.sb9.foloke.sectorb9.game.Entities.Buildings.*;
 import com.sb9.foloke.sectorb9.game.Entities.*;
 import com.sb9.foloke.sectorb9.game.DataSheets.*;
 import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
+import com.sb9.foloke.sectorb9.game.AI.*;
 
 
 public class EntityManager
@@ -102,8 +103,7 @@ public class EntityManager
 		{
 			for (Entity e:entityArray)
 			{
-				if (!(e instanceof Player))
-					writer.write(e.getSaveString());
+				writer.write(e.getSaveString());
 			}
 		}
 		catch (IOException e)
@@ -185,7 +185,9 @@ public class EntityManager
             }
 			case 10:
 			{
-				e=new ControlledShip(0,0,0,gameManager,2, Ship.createSimple());
+				e=new ControlledShip(0,0,0,gameManager, Ship.createSimple());
+				((ControlledShip)e).setController(new AI((ControlledShip)e));
+			
 				break;
 			}
 			case 12:

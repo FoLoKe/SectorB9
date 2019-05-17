@@ -58,7 +58,8 @@ public abstract class Entity {
     protected Paint shieldPaint=new Paint();
     private float shieldShowTime=2;
     protected float regainSH=0.2f;
-
+	protected Damage lastDamage;
+	
     public Entity(float x, float y, float rotation, GameManager gameManager, int ID)
     {
         this.debugPaint.setColor(Color.RED);
@@ -86,6 +87,8 @@ public abstract class Entity {
 
 		createCollision();
     }
+
+	
 	
 	private void applyStandardOptions()
 	{
@@ -127,8 +130,8 @@ public abstract class Entity {
 
 	public String getSaveString()
 	{
-			String s=getInvSaveString();
-		    return "["+ID+" "+name+" "+x+" "+y+" "+rotation+" "+HP+" "+SP+" "+TEAM+" "+s+"] ";
+			String inv=getInvSaveString();
+		    return "["+ID+" "+name+" "+x+" "+y+" "+rotation+" "+HP+" "+SP+" "+TEAM+" "+inv+" "+getSpecialSaveLine()+"] ";
 	}
 
 	//**********SYNTAX***********
@@ -147,7 +150,7 @@ public abstract class Entity {
 			SP=Float.parseFloat(words[6]);
 			TEAM=Integer.parseInt(words[7]);
 			LoadInvFromString(words[8]);
-			
+			decodeSpecialSaveLine(words[9]);
 
 			setCollisionObject();
 		}
@@ -157,6 +160,16 @@ public abstract class Entity {
 		}
 	}
 
+	protected String getSpecialSaveLine()
+	{
+		return "null";
+	}
+	
+	protected void decodeSpecialSaveLine(String special)
+	{
+		
+	}
+	
 	public void LoadInvFromString(String saveString)
 	{
 		inventory.clear();
@@ -281,13 +294,14 @@ public abstract class Entity {
 
 	public float getWorldRotation(){return rotation;}
 
-	public void applyDamage(float damage)
+	public void applyDamage(Damage damage)
 	{
+		lastDamage=damage;
         if(SP>maxSP)
             SP=maxSP;
         if(HP>maxHP)
             HP=maxHP;
-	    float sum=HP+SP-damage;
+	    float sum=HP+SP-damage.amount;
 
         shieldShow.setTimer(shieldShowTime);
 		
@@ -309,8 +323,7 @@ public abstract class Entity {
 	protected void onDestroy()
 	{
 		active=false;
-		if(!(this instanceof Player))
-            toRemove=true;
+        toRemove=true;
 		gameManager.spawnDestroyed(this);
 	}
 	
@@ -422,5 +435,20 @@ public abstract class Entity {
 	public void setSH(float SH)
 	{
 		this.SP=SH;
+	}
+	
+	public boolean getInteractable()
+    {
+        return isInteractable;
+    }
+	
+	public void setLastDamage(Damage lastDamage)
+	{
+		this.lastDamage = lastDamage;
+	}
+
+	public Damage getLastDamage()
+	{
+		return lastDamage;
 	}
 }

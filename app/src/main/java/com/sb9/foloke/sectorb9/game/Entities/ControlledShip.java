@@ -19,34 +19,40 @@ import static java.lang.Math.sin;
 import com.sb9.foloke.sectorb9.game.Entities.Ships.*;
 import com.sb9.foloke.sectorb9.game.AI.*;
 import com.sb9.foloke.sectorb9.game.DataSheets.*;
+import com.sb9.foloke.sectorb9.game.Funtions.*;
 
 public class ControlledShip extends DynamicEntity {
 
-    private AI AI;
+    private Controller controller;
     private Ship ship;
 	private static final int ID=10;
 
-	public ControlledShip(int x, int y, int rotation, GameManager gameManager,int AIType,Ship ship)
+	public ControlledShip(int x, int y, int rotation, GameManager gameManager,Ship ship)
     {
         super(x,y,rotation,gameManager,ID);
         this.ship=ship;
 		ship.init(this);
-		switch (AIType)
-		{
-			case 0:
-        		AI=new CombatAI(this);
-				break;
-			case 1:
-				AI=new MinerAI(this);
-				break;
-			default:
-				AI=new CombatAI(this);
-				break;
-		}
+		
 		movable=true;
 
 		TEAM=2;
+		
     }
+	
+	public Ship getShip()
+	{
+		return ship;
+	}
+	
+	public Controller getController()
+	{
+		return controller;
+	}
+	
+	public void setController(Controller c)
+	{
+		controller=c;
+	}
 	
     @Override
     public void render(Canvas canvas) {
@@ -54,7 +60,12 @@ public class ControlledShip extends DynamicEntity {
 			return;
         ship.render(canvas);
         super.render(canvas);
-		AI.render(canvas);
+		
+		if(controller!=null)
+		controller.render(canvas);
+		
+		if(Options.drawDebugInfo.getBoolean())
+			canvas.drawText(controller+"",getCenterX(),getCenterY(),debugPaint);
 
     }
 
@@ -63,8 +74,10 @@ public class ControlledShip extends DynamicEntity {
 		if(!active)
 			return;
         super.tick();
-        AI.tick();
-
+		
+		if(controller!=null)
+        controller.tick();
+		lastDamage=null;
         ship.tick();
     }
 	
@@ -87,9 +100,73 @@ public class ControlledShip extends DynamicEntity {
         ship.shoot();
     }
 	
-	public void serTarget(Entity e)
+	public void setTarget(Entity e)
 	{
 		if(ship!=null)
 	    ship.target=e;
 	}
+
+	@Override
+	protected String getSpecialSaveLine()
+	{
+		// TODO: Implement this method
+		String line="(";
+		line+=ship.getHull().ID+";";
+		//for(ModulesDataSheet:((ModulesDataSheet.HullModule)ModulesDataSheet.getByID(ship.getHull().ID)).gunMounts)
+		for(int i=0;i<ship.getTurretsMods().length;i++)
+		{
+			line+=ship.getTurretsMods()[i].ID+"="+ship.getWeaponsMods()[i].ID+";";
+			
+		}
+		
+		line+=ship.getEngine().ID+";";
+		line+=ship.getGenerator().ID+";";
+		line+=ship.getShields().ID+";";
+		line+=ship.getGyroscope().ID;
+		if(controller instanceof AI)
+		{
+			line+=";"+((AI)controller).getAISaveLine();
+		}
+		line+=")";
+		return line;
+	}
+
+	@Override
+	protected void decodeSpecialSaveLine(String special)
+	{
+		// TODO: Implement this method
+		special=special.replace("(","");
+		special=special.replace(")","");
+		String[] modsWords;
+		modsWords = special.split(";");
+		int i=0;
+		ship.setHull((ModulesDataSheet.HullModule)ModulesDataSheet.getByID(Integer.parseInt(modsWords[i])));
+		i++;
+		ModulesDataSheet.TurretModule[] tms=new ModulesDataSheet.TurretModule[ship.getHull().gunMounts.length];
+		ModulesDataSheet.WeaponModule[] wms=new ModulesDataSheet.WeaponModule[ship.getHull().gunMounts.length];
+		for(int j=0;j<ship.getHull().gunMounts.length;j++)
+		{
+			String[] twLine=modsWords[i].split("=");
+			tms[j]=(ModulesDataSheet.TurretModule)ModulesDataSheet.getByID(Integer.parseInt(twLine[0]));
+			wms[j]=(ModulesDataSheet.WeaponModule)ModulesDataSheet.getByID(Integer.parseInt(twLine[1]));
+			i++;
+		}
+		ship.setTurretsMods(tms);
+		ship.setWeaponsMods(wms);
+		
+		ship.setEngine((ModulesDataSheet.EngineModule)ModulesDataSheet.getByID(Integer.parseInt(modsWords[i])));
+		i++;
+		ship.setGenerator((ModulesDataSheet.GeneratorModule)ModulesDataSheet.getByID(Integer.parseInt(modsWords[i])));
+		i++;
+		ship.setShields((ModulesDataSheet.ShieldModule)ModulesDataSheet.getByID(Integer.parseInt(modsWords[i])));
+		i++;
+		ship.setGyroscope((ModulesDataSheet.GyrosModule)ModulesDataSheet.getByID(Integer.parseInt(modsWords[i])));
+		i++;
+		if(controller instanceof AI)
+		((AI)controller).decodeSaveLine(modsWords[i]);
+		ship.init(this);
+	}
+	
+	
+	
 }

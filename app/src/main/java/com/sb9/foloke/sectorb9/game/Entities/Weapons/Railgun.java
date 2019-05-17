@@ -17,6 +17,7 @@ import com.sb9.foloke.sectorb9.game.UI.ProgressBarUI;
 import java.util.Random;
 import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
 import android.graphics.*;
+import com.sb9.foloke.sectorb9.game.Funtions.*;
 
 public class Railgun extends Weapon
 {
@@ -126,7 +127,7 @@ public class Railgun extends Weapon
                                         }
                     if (hittedEntity != null) {
 
-                        hittedEntity.applyDamage(damage);
+                        hittedEntity.applyDamage(new Damage(damage,turret.getParent().getHolder(),Damage.type.PHYSICAL));
                         laserDamageEffect.draw(hitPoint.x, hitPoint.y, rnd.nextInt(360), new PointF(0, 0));
                         line.set(turret.getPointOfShooting()[0],
                                 turret.getInitPointOfShooting()[1],hitPoint.x, hitPoint.y);

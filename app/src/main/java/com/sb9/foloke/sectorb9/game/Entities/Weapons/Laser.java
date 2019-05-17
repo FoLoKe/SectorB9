@@ -40,7 +40,7 @@ public class Laser extends Weapon
 		initLineEnd=new float[]{0,-lenght};
 		this.heatBar=new ProgressBarUI(this,20,2,-10,-2,UIAsset.hpBackground,UIAsset.hpLine,UIAsset.progressBarBorder,heat/maxHeat*100);
 		
-		damage=0.1f;
+		damage=1f;
 		lenght=100;
 		line=new Line2D(0,0,1,1);
 		line.setThickness(3);
@@ -128,7 +128,7 @@ public class Laser extends Weapon
 						}
             if (hitedEntity!=null) 
 			{
-                hitedEntity.applyDamage(damage);
+                hitedEntity.applyDamage(new Damage(damage,turret.getParent().getHolder(),Damage.type.LASER));
                 laserDamageEffect.draw(hitPoint.x, hitPoint.y, rnd.nextInt(360), new PointF(0, 0));
                 line.set(turret.getPointOfShooting()[0],
 						 turret.getInitPointOfShooting()[1],hitPoint.x, hitPoint.y);

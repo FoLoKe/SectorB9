@@ -4,6 +4,7 @@ import com.sb9.foloke.sectorb9.game.DataSheets.ObjectsDataSheet;
 
 import java.util.*;
 import android.graphics.*;
+import com.sb9.foloke.sectorb9.game.Funtions.*;
 
 public class DroppedItems extends StaticEntity
 {
@@ -66,7 +67,7 @@ public class DroppedItems extends StaticEntity
 	}
 
 	@Override
-	public void applyDamage(float damage)
+	public void applyDamage(Damage damage)
 	{
 
 		//super.applyDamage(damage);

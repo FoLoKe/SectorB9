@@ -1,137 +1,260 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
+	
 	<LinearLayout
 		android:layout_gravity="top|left"
 		android:orientation="vertical"
 		android:gravity="top|left"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content">
-    <LinearLayout
-		android:layout_gravity="top|left"
-		android:orientation="horizontal"
-		android:gravity="top|left"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content">
-		<Button
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:textColor="#ffffff"
-			android:text="Inventory"
-			android:id="@+id/openInventory"
-			android:layout_gravity="bottom|center"
-		/>
-		<Button
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:textColor="#ffffff"
-			android:text="Config"
-			android:id="@+id/openInteraction"
-			android:layout_gravity="bottom|center"
-		/>
-		<Button
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:textColor="#ffffff"
-			android:text="Production"
-			android:id="@+id/openProduction"
-			android:layout_gravity="bottom|center"
-		/>
-		<Button
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:textColor="#ffffff"
-			android:text="Constructor"
-			android:id="@+id/openConstructor"
-			android:layout_gravity="bottom|center"
-		/>
-		<Button
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:textColor="#ffffff"
-			android:text="Tech Tree"
-			android:id="@+id/openTechTree"
-			android:layout_gravity="bottom|center"
-		/>
-		<ImageButton
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:textColor="#ffffff"
-			
-			android:id="@+id/closeInteraction"
-
-			android:layout_gravity="bottom|center"
-		/>
-	</LinearLayout>
-<FrameLayout
-	android:layout_width="match_parent"
-	android:layout_height="wrap_content"
-	
-	>
-	<ViewFlipper
-		android:id="@+id/interaction_uiViewFlipper"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		>
-		<FrameLayout
-			android:id="@+id/interaction_uiEmptyFrame"
-			android:layout_width="fill_parent"
-			android:layout_height="fill_parent"/>
-		<include layout="@layout/object_options_ui"
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-			android:id="@+id/obj_optionsUI"/>
-		<include layout="@layout/object_inventory"
-			android:id="@+id/inventoryUI"
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"/>
-		<include layout="@layout/assembler_ui"
-			android:id="@+id/assemblerUI"
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"/>
-		<include layout="@layout/tech_ui"
-			android:id="@+id/tech_ui"
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"/>
-		<include layout="@layout/ship_constructor_ui"
-			android:id="@+id/ship_constructor_ui"
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"/>
 		
-	</ViewFlipper>
-</FrameLayout>
+    	<LinearLayout
+			android:layout_gravity="top|left"
+			android:orientation="horizontal"
+			android:gravity="top|left"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content">
+			
+			<Button
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textColor="#ffffff"
+				android:text="Inventory"
+				android:id="@+id/openInventory"
+				android:layout_gravity="bottom|center"/>
+			
+			<Button
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textColor="#ffffff"
+				android:text="Config"
+				android:id="@+id/openInteraction"
+				android:layout_gravity="bottom|center"/>
+			
+			<Button
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textColor="#ffffff"
+				android:text="Production"
+				android:id="@+id/openProduction"
+				android:layout_gravity="bottom|center"/>
+			
+			<Button
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textColor="#ffffff"
+				android:text="Constructor"
+				android:id="@+id/openConstructor"
+				android:layout_gravity="bottom|center"/>
+			
+			<Button
+					android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textColor="#ffffff"
+				android:text="Tech Tree"
+				android:id="@+id/openTechTree"
+				android:layout_gravity="bottom|center"/>
+			
+			<ImageButton
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textColor="#ffffff"
+				android:id="@+id/closeInteraction"
+				android:layout_gravity="bottom|center"/>
+			
+		</LinearLayout>
+		
+		<FrameLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content">
+		
+			<ViewFlipper
+				android:id="@+id/interaction_uiViewFlipper"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content">
+			
+				<FrameLayout
+					android:id="@+id/interaction_uiEmptyFrame"
+					android:layout_width="fill_parent"
+					android:layout_height="fill_parent"/>
+			
+				<include layout="@layout/object_options_ui"
+					android:layout_width="match_parent"
+					android:layout_height="match_parent"
+					android:id="@+id/obj_optionsUI"/>
+			
+				<include layout="@layout/object_inventory"
+					android:id="@+id/inventoryUI"
+					android:layout_width="match_parent"
+					android:layout_height="match_parent"/>
+			
+				<include layout="@layout/assembler_ui"
+					android:id="@+id/assemblerUI"
+					android:layout_width="match_parent"
+					android:layout_height="match_parent"/>
+			
+				<include layout="@layout/tech_ui"
+					android:id="@+id/tech_ui"
+					android:layout_width="match_parent"
+					android:layout_height="match_parent"/>
+			
+				<include layout="@layout/ship_constructor_ui"
+					android:id="@+id/ship_constructor_ui"
+					android:layout_width="match_parent"
+					android:layout_height="match_parent"/>
+		
+			</ViewFlipper>
+			
+		</FrameLayout>
+		
 	</LinearLayout>
+	
 	<LinearLayout
-		android:layout_width="wrap_content"
+		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:orientation="vertical"
 		android:layout_gravity="bottom|center_horizontal"
-		>
+		android:gravity="center_horizontal">
+		
 		<ImageView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:id="@+id/interaction_uiImageSign"/>
-	<LinearLayout
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_gravity="bottom|center_horizontal">
-	<ImageButton
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
 		
-		android:id="@+id/openBuildUI"
-
-		android:layout_gravity="bottom|center"
-	/>
-	<Button
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:textColor="#ffffff"
-		android:text="Ship"
-		android:id="@+id/openShip"
-
-		android:layout_gravity="bottom|center"
-	/>
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/interaction_ui_LL_buildOptions"
+			android:layout_gravity="bottom|center_horizontal">
+			
+			<ImageButton
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:id="@+id/openBuildUI"
+				android:layout_gravity="bottom|center"/>
+		
+			<Button
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textColor="#ffffff"
+				android:text="Ship"
+				android:id="@+id/openShip"
+				android:layout_gravity="bottom|center"/>
+			
+		</LinearLayout>
+		
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/interaction_ui_LL_AIOptions"
+			android:visibility="gone"
+			android:orientation="vertical"
+			android:background="#55ffffff"
+			android:layout_gravity="bottom|center_horizontal">
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:background="#ffff0000"
+			android:orientation="horizontal">
+			<Button
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textColor="#ffffff"
+				android:text="Stay"
+				android:id="@+id/interaction_ui_b_order_stay"
+				android:layout_gravity="bottom|left"/>
+			<Button
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textColor="#ffffff"
+				android:text="Move to"
+				android:id="@+id/interaction_ui_b_order_move_to"
+				android:layout_gravity="bottom|left"/>
+			<Button
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textColor="#ffffff"
+				android:text="Attack"
+				android:id="@+id/interaction_ui_b_order_attack"
+				android:layout_gravity="bottom|left"/>
+			<Button
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textColor="#ffffff"
+				android:text="Mine"
+				android:id="@+id/interaction_ui_b_order_mine"
+				android:layout_gravity="bottom|right"/>
+		</LinearLayout>
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal">
+			<Button
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textColor="#ffffff"
+				android:text="Repair"
+				android:id="@+id/interaction_ui_b_order_repair"
+				android:layout_gravity="bottom|left"/>
+			<Button
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textColor="#ffffff"
+				android:text="Follow"
+				android:id="@+id/interaction_ui_b_order_follow"
+				android:layout_gravity="bottom|left"/>
+			<Button
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textColor="#ffffff"
+				android:text="Agressive"
+				android:id="@+id/interaction_ui_b_behaviour_agressive"
+				android:layout_gravity="bottom|right"/>
+			<Button
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textColor="#ffffff"
+				android:text="Defensive"
+				android:id="@+id/interaction_ui_b_behaviour_defensive"
+				android:layout_gravity="bottom|right"/>
+			</LinearLayout>
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal">
+			<Button
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textColor="#ffffff"
+				android:text="Peaceful"
+				android:id="@+id/interaction_ui_b_behaviour_peaceful"
+				android:layout_gravity="bottom|right"/>
+			
+			<Button
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textColor="#ffffff"
+				android:text="Retreat"
+				android:id="@+id/interaction_ui_b_behaviour_retreat"
+				android:layout_gravity="bottom|right"/>
+				<Button
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:textColor="#ffffff"
+					android:text="Patrol"
+					android:id="@+id/interaction_ui_b_order_patrol"
+					android:layout_gravity="bottom|right"/>
+				<Button
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:textColor="#ffffff"
+					android:text="CONTROL"
+					android:id="@+id/interaction_ui_b_order_control"
+					android:layout_gravity="bottom|right"/>
+			</LinearLayout>
+		</LinearLayout>
+		
 	</LinearLayout>
-	</LinearLayout>
+	
 </FrameLayout>

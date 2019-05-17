@@ -4,12 +4,13 @@ import com.sb9.foloke.sectorb9.game.Managers.*;
 import android.graphics.*;
 import com.sb9.foloke.sectorb9.game.DataSheets.*;
 import com.sb9.foloke.sectorb9.game.Entities.Ships.*;
+import com.sb9.foloke.sectorb9.game.AI.*;
 
 public class SpaceDock extends StaticEntity
 {
 	final static int ID=12;
 	private boolean inProduction=false;
-	private DynamicEntity toSpawn;
+	private ControlledShip toSpawn;
 
 	public SpaceDock(float x,float y,float rotation,GameManager gm)
 	{
@@ -43,7 +44,9 @@ public class SpaceDock extends StaticEntity
 							 ModulesDataSheet.TurretModule[] turrets, ModulesDataSheet.WeaponModule[] weapons)
 	{
 		Ship ship=new Ship(hull,engine,generator,shields,gyroscope,turrets,weapons);
-		toSpawn=new ControlledShip((int)this.x,(int)this.y,0,gameManager,1,ship);
+		toSpawn=new ControlledShip((int)this.x,(int)this.y,0,gameManager,ship);
+		toSpawn.setController(new AI(toSpawn));
+		toSpawn.setTeam(TEAM);
 		ship.init(toSpawn);
 		inProduction=true;
 	}

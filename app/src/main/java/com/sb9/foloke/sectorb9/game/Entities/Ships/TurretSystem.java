@@ -5,6 +5,7 @@ import com.sb9.foloke.sectorb9.game.Managers.GameManager;
 import com.sb9.foloke.sectorb9.game.Entities.Weapons.*;
 import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
 import com.sb9.foloke.sectorb9.game.Entities.*;
+import com.sb9.foloke.sectorb9.game.Funtions.*;
 //import java.util.*;
 
 public class TurretSystem
@@ -123,6 +124,8 @@ public class TurretSystem
 	}
 	public void render(Canvas canvas)
 	{
+		if(!Options.drawDebugInfo.getBoolean())
+			return;
 		weapon.render(canvas);
 		Paint p=new Paint();
 		p.setColor(Color.RED);

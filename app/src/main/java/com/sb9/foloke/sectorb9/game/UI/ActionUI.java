@@ -19,11 +19,12 @@ public class ActionUI
 	private static float scaleX=1;
 	private static float scaleY=1;
 	private static MainActivity MA;
+	public static ViewFlipper VF;
 	public static void init(final MainActivity MA_in)
 	{
         //
 	    MA=MA_in;
-        final ViewFlipper VF = MA.findViewById(R.id.UIFlipper);
+       VF = MA.findViewById(R.id.UIFlipper);
 		//to prevent texture overblurring scale by one axis scaleX=MA.getGameManager().getGamePanel().canvasW/2500;
 		scaleY=MA.getGameManager().getScreenSize().y/1600f;
 		if(scaleX>2)
@@ -41,9 +42,8 @@ public class ActionUI
 				@Override
 				public void onClick(View v) 
 				{
-					MA.getGameManager().command= GameManager.commandInteraction;
-					VF.setDisplayedChild(VF.indexOfChild(MA.findViewById(R.id.interactionUI)));
-					InteractionUI.init(MA,null);
+					toInteracrion();
+					
 				}
 			});
 		ImageButton shootButton = MA.findViewById(R.id.shootButton);
@@ -59,11 +59,11 @@ public class ActionUI
 					switch(e.getAction())
 					{
 						case MotionEvent.ACTION_DOWN:
-							MA.getGameManager().getPlayer().shootFlag=true;
+							MA.getGameManager().getController().shoot(true);
 
 							break;
 						case MotionEvent.ACTION_UP:
-							MA.getGameManager().getPlayer().shootFlag=false;
+							MA.getGameManager().getController().shoot(false);
 							break;
 					}
 					return false;
@@ -153,6 +153,18 @@ public class ActionUI
 				LL.addView(wb);
 			}
 		}
+	}
+	
+	public static void toInteracrion()
+	{
+		MA.runOnUiThread(new Runnable()
+		{
+			public void run(){
+				MA.getGameManager().currentCommand= GameManager.command.INTERACTION;
+				VF.setDisplayedChild(VF.indexOfChild(MA.findViewById(R.id.interactionUI)));
+				InteractionUI.init(MA,null);
+			}
+		});
 	}
 	
 	private static void setWeaponButtonState(WeaponButton wb,MainActivity MA)
