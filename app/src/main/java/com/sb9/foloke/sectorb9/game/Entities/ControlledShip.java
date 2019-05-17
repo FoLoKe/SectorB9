@@ -111,21 +111,21 @@ public class ControlledShip extends DynamicEntity {
 	{
 		// TODO: Implement this method
 		String line="(";
-		line+=ship.getHull().ID+"-";
+		line+=ship.getHull().ID+";";
 		//for(ModulesDataSheet:((ModulesDataSheet.HullModule)ModulesDataSheet.getByID(ship.getHull().ID)).gunMounts)
 		for(int i=0;i<ship.getTurretsMods().length;i++)
 		{
-			line+=ship.getTurretsMods()[i].ID+"="+ship.getWeaponsMods()[i].ID+"-";
+			line+=ship.getTurretsMods()[i].ID+"="+ship.getWeaponsMods()[i].ID+";";
 			
 		}
 		
-		line+=ship.getEngine().ID+"-";
-		line+=ship.getGenerator().ID+"-";
-		line+=ship.getShields().ID+"-";
+		line+=ship.getEngine().ID+";";
+		line+=ship.getGenerator().ID+";";
+		line+=ship.getShields().ID+";";
 		line+=ship.getGyroscope().ID;
 		if(controller instanceof AI)
 		{
-			line+="-"+((AI)controller).getAISaveLine();
+			line+=";"+((AI)controller).getAISaveLine();
 		}
 		line+=")";
 		return line;
@@ -138,7 +138,7 @@ public class ControlledShip extends DynamicEntity {
 		special=special.replace("(","");
 		special=special.replace(")","");
 		String[] modsWords;
-		modsWords = special.split("-");
+		modsWords = special.split(";");
 		int i=0;
 		ship.setHull((ModulesDataSheet.HullModule)ModulesDataSheet.getByID(Integer.parseInt(modsWords[i])));
 		i++;

@@ -581,33 +581,34 @@ public class AI extends Controller {
 		if(targetToAttack!=null)
 			saveString+=targetToAttack.getCenterX()+":"+targetToAttack.getCenterY()+"=";
 		else
-			saveString+=(-1)+":"+(-1);
+			saveString+=(-1f)+":"+(-1f)+"=";
 			
 		if(targetToFollow!=null)
 			saveString+=targetToFollow.getCenterX()+":"+targetToFollow.getCenterY()+"=";
 		else
-			saveString+=(-1)+":"+(-1);
+			saveString+=(-1f)+":"+(-1f)+"=";
 			
 		if(targetToRetreatFrom!=null)
 			saveString+=targetToRetreatFrom.getCenterX()+":"+targetToRetreatFrom.getCenterY()+"=";
 		else
-			saveString+=(-1)+":"+(-1);
+			saveString+=(-1f)+":"+(-1f)+"=";
 			
 		if(targetToMine!=null)
 			saveString+=targetToMine.getCenterX()+":"+targetToMine.getCenterY()+"=";
 		else
-			saveString+=(-1f)+":"+(-1f);
+			saveString+=(-1f)+":"+(-1f)+"=";
 			
 		if(targetToRepairYourself!=null)
 			saveString+=targetToRepairYourself.getCenterX()+":"+targetToRepairYourself.getCenterY()+"=";
 		else
-			saveString+=(-1f)+":"+(-1f);
+			saveString+=(-1f)+":"+(-1f)+"=";
 			
 		return saveString;
 	}
 	
 	public void decodeSaveLine(String saveLine)
 	{
+		///TODO: AFTER LOAD TARGETS SETS, LOAD SYSTEM IN MAINTHREAD ISTEAD OF UI THREAD
 		String aiWords[]=saveLine.split("=");
 		PointF loadedTargetToAttackPoint=new PointF();
 		PointF loadedTargetToFollowPoint=new PointF();
@@ -620,6 +621,31 @@ public class AI extends Controller {
 			currentBehaviour=behaviour.valueOf(aiWords[0]);
 			preBehaviourOrder=order.valueOf(aiWords[1]);
 			currentOrder=order.valueOf(aiWords[2]);
+		}
+		
+		String pointWords[]=aiWords[3].split(":");
+		loadedTargetToAttackPoint.set(Float.parseFloat(pointWords[0]),Float.parseFloat(pointWords[1]));
+		pointWords=aiWords[4].split(":");
+		loadedTargetToFollowPoint.set(Float.parseFloat(pointWords[0]),Float.parseFloat(pointWords[1]));
+		pointWords=aiWords[5].split(":");
+		loadedTargetToRetreatFromPoint.set(Float.parseFloat(pointWords[0]),Float.parseFloat(pointWords[1]));
+		pointWords=aiWords[6].split(":");
+		loadedTargetToMinePoint.set(Float.parseFloat(pointWords[0]),Float.parseFloat(pointWords[1]));
+		pointWords=aiWords[7].split(":");
+		loadedTargetToRepairYouselfPoint.set(Float.parseFloat(pointWords[0]),Float.parseFloat(pointWords[1]));
+		
+		for(Entity e:child.getGameManager().getEntityManager().getArray())
+		{
+			if(e.getCenterX()==loadedTargetToAttackPoint.x&&e.getCenterY()==loadedTargetToAttackPoint.y)
+				targetToAttack=e;
+			if(e.getCenterX()==loadedTargetToFollowPoint.x&&e.getCenterY()==loadedTargetToFollowPoint.y)
+				targetToFollow=e;
+			if(e.getCenterX()==loadedTargetToRetreatFromPoint.x&&e.getCenterY()==loadedTargetToRetreatFromPoint.y)
+				targetToRetreatFrom=e;
+			if(e.getCenterX()==loadedTargetToMinePoint.x&&e.getCenterY()==loadedTargetToMinePoint.y)
+				targetToMine=e;
+			if(e.getCenterX()==loadedTargetToRepairYouselfPoint.x&&e.getCenterY()==loadedTargetToRepairYouselfPoint.y)
+				targetToMine=e;
 		}
 	}
 }
