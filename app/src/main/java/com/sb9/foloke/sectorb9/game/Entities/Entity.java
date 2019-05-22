@@ -153,6 +153,8 @@ public abstract class Entity {
 			decodeSpecialSaveLine(words[9]);
 
 			setCollisionObject();
+			renderBox.set(getCenterX()-32,getCenterY()-32,getCenterX()+32,getCenterY()+32);
+			
 		}
 		catch(Throwable t)
 		{

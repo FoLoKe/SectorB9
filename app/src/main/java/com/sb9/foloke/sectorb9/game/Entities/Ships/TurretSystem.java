@@ -124,9 +124,11 @@ public class TurretSystem
 	}
 	public void render(Canvas canvas)
 	{
+		
+		weapon.render(canvas);
+		
 		if(!Options.drawDebugInfo.getBoolean())
 			return;
-		weapon.render(canvas);
 		Paint p=new Paint();
 		p.setColor(Color.RED);
 		p.setStrokeWidth(3);
