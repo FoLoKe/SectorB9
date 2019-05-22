@@ -53,12 +53,7 @@ public class SaveManager
 			super.run();
 			gm.setPause(true);
 			saveGame();
-			try
-			{
-				sleep(500);
-			}
-			catch (InterruptedException e)
-			{}
+			
 			gm.setPause(false);
 
 		}
@@ -155,7 +150,7 @@ public class SaveManager
 					
 					while((s=reader.readLine())!=null)
 					{
-						loadThread.sleep(5);
+						
 						//if new sector
 						if(s.startsWith("<"))
 						{
@@ -178,7 +173,7 @@ public class SaveManager
 								MapManager.Sector sector=mapManager.getSector(worldManager.getSector().x,worldManager.getSector().y);
 								GameLog.update("GameManger: "+sector.x+" "+sector.y+"loading objects",0);
 								String toLoadEntity="";
-
+								loadThread.sleep(5);
 								for(String object:words)
 								{
 									if (object.contains("["))

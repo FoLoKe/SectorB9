@@ -156,7 +156,10 @@ public class GameManager {
 		worldManager.updateWorld();
 		
         if(gamePause)
+		{
+			LoadingScreen.tick();
             return;
+		}
 		joystickTouchPoint.set(joystick.getPoint().x+gamePanel.getCamera().getWorldLocation().x,joystick.getPoint().y+gamePanel.getCamera().getWorldLocation().y);
 		joystick.tick(gamePanel.getPointOfTouch());
 		
@@ -253,7 +256,10 @@ public class GameManager {
 		p.setColor(Color.GREEN);
 		p.setTextSize(90);
 		if(gamePause)
+		{
+			LoadingScreen.render(canvas);
 			canvas.drawText("PAUSE...",screenSize.x/2,screenSize.y/2,p);
+		}
     }
 
 	public void spawnDestroyed(Entity e)
