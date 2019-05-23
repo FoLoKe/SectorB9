@@ -37,7 +37,6 @@ public class PlayerController extends Controller
 		{
 			if(!controlledEntity.getActive())
 			{
-				
 				controlledEntity=null;
 				ActionUI.toInteracrion();
 				return;

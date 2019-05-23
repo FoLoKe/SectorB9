@@ -1,57 +1,26 @@
 package com.sb9.foloke.sectorb9.game.Managers;
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Point;
-import android.graphics.PointF;
-import android.view.Display;
-import android.view.WindowManager;
-import android.widget.TableLayout;
-
-import com.sb9.foloke.sectorb9.MainActivity;
-import com.sb9.foloke.sectorb9.R;
-import com.sb9.foloke.sectorb9.game.Assets.EffectsAsset;
-import com.sb9.foloke.sectorb9.game.Assets.InventoryAsset;
-import com.sb9.foloke.sectorb9.game.Assets.ShipAsset;
-import com.sb9.foloke.sectorb9.game.Assets.UIAsset;
-import com.sb9.foloke.sectorb9.game.Assets.WeaponsAsset;
-import com.sb9.foloke.sectorb9.game.Funtions.Options;
-import com.sb9.foloke.sectorb9.game.Funtions.WorldGenerator;
-import com.sb9.foloke.sectorb9.game.UI.Inventory.InventoryExchangeInterface;
-import com.sb9.foloke.sectorb9.game.UI.ProgressBarUI;
-import com.sb9.foloke.sectorb9.game.UI.InventoryUI;
-import com.sb9.foloke.sectorb9.game.DataSheets.ObjectsDataSheet;
-import com.sb9.foloke.sectorb9.game.DataSheets.ItemsDataSheet;
-import com.sb9.foloke.sectorb9.game.Display.Camera;
-import com.sb9.foloke.sectorb9.game.Display.GamePanel;
-import com.sb9.foloke.sectorb9.game.Entities.Buildings.Assembler;
-import com.sb9.foloke.sectorb9.game.Entities.Entity;
-
-import com.sb9.foloke.sectorb9.game.Entities.StaticEntity;
-import com.sb9.foloke.sectorb9.game.Funtions.Timer;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.util.ArrayList;
-import java.util.Iterator;
-
-import com.sb9.foloke.sectorb9.game.UI.*;
-import com.sb9.foloke.sectorb9.game.Entities.*;
+import android.content.*;
 import android.graphics.*;
-import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
 import android.os.*;
-import android.widget.ViewFlipper;
-
-import java.io.*;
+import android.view.*;
 import com.sb9.foloke.sectorb9.*;
-import com.sb9.foloke.sectorb9.game.Funtions.*;
-import com.sb9.foloke.sectorb9.game.Entities.Buildings.*;
-import com.sb9.foloke.sectorb9.game.UI.TechUIs.*;
-import com.sb9.foloke.sectorb9.game.DataSheets.*;
-import com.sb9.foloke.sectorb9.game.Entities.Ships.*;
 import com.sb9.foloke.sectorb9.game.AI.*;
+import com.sb9.foloke.sectorb9.game.Assets.*;
+import com.sb9.foloke.sectorb9.game.DataSheets.*;
+import com.sb9.foloke.sectorb9.game.Display.*;
+import com.sb9.foloke.sectorb9.game.Entities.*;
+import com.sb9.foloke.sectorb9.game.Entities.Buildings.*;
+import com.sb9.foloke.sectorb9.game.Entities.Ships.*;
+import com.sb9.foloke.sectorb9.game.Funtions.*;
+import com.sb9.foloke.sectorb9.game.UI.*;
+import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
+import java.io.*;
+import java.util.*;
+
+import com.sb9.foloke.sectorb9.game.Display.Camera;
+import com.sb9.foloke.sectorb9.game.Entities.Entity;
+import com.sb9.foloke.sectorb9.game.Funtions.Timer;
 
 
 public class GameManager {
@@ -70,13 +39,15 @@ public class GameManager {
 	private MapManager mapManager;
 
     //booleans
-    public boolean gamePause=true;
-    
+    public boolean isPaused=true;
+    public boolean isLoading=false;
+	public boolean isInMenu=false;
+	
     private boolean collect=false;
     private boolean warpReady=false;
 
     private Timer destroyedTimer;
-   // private ControlledShip player;
+   
 	private PlayerController playerController;
 	public static Joystick joystick;
 	public static PointF joystickTouchPoint=new PointF();
@@ -112,7 +83,7 @@ public class GameManager {
         UIAsset.init(Bitmap.createBitmap(BitmapFactory.decodeResource(MA.getResources(),R.drawable.ui_asset_sheet,bitmapOptions)));
         WeaponsAsset.init(Bitmap.createBitmap(BitmapFactory.decodeResource(MA.getResources(),R.drawable.ships_sheet,bitmapOptions)));
         EffectsAsset.init(Bitmap.createBitmap(BitmapFactory.decodeResource(MA.getResources(),R.drawable.ships_sheet,bitmapOptions)));
-
+		
         GameLog.update("GameManager: preparing datasheets",0);
         ObjectsDataSheet.init(MA);
         ItemsDataSheet.init(MA);
@@ -144,6 +115,7 @@ public class GameManager {
         mapManager=new MapManager();
         worldManager=new WorldManager(MA,this);
         worldManager.loadEmptyWorld();
+		SaveManager.init(this);
 
         GameLog.update("GameManager: preparing canvas",0);
         
@@ -158,7 +130,7 @@ public class GameManager {
         {
             ///new game state
             GameLog.update("GameManager: creating saves",0);
-            createSaveFile();
+            SaveManager.createSaveFile();
             WorldGenerator.makeRandomSector(getWorldManager());
 			ControlledShip startShip=new ControlledShip(0,0,0,this,Ship.createSimple());
 			getEntityManager().addObject(startShip);
@@ -171,20 +143,31 @@ public class GameManager {
         }
         else
             ///load state
-            loadGame();
+            SaveManager.load();
 		
         GameLog.update("GameManager: READY",0);
 		mainThread= new MainThread(this);
 		mainThread.setRunning(true);
         mainThread.start();
-        setPause(false);
+        
     }
 
     public void tick()
     {
 		gamePanel.tick();
-        if(gamePause)
+		worldManager.updateWorld();
+		
+        if(isLoading)
+		{
+			isPaused=true;
+			LoadingScreen.tick();
             return;
+		}
+		
+		if(isInMenu)
+		{
+			isPaused=true;
+		}
 		joystickTouchPoint.set(joystick.getPoint().x+gamePanel.getCamera().getWorldLocation().x,joystick.getPoint().y+gamePanel.getCamera().getWorldLocation().y);
 		joystick.tick(gamePanel.getPointOfTouch());
 		
@@ -235,7 +218,7 @@ public class GameManager {
 	
         	collect=false;
 		}
-        worldManager.updateWorld();
+        
 		
 		if(warpReady)
 			if(distanceTo(playerController.getControlledEntity().getWorldLocation(),warpingLocation)<200)
@@ -249,6 +232,7 @@ public class GameManager {
 		gamePanel.preRender(canvas);
         worldManager.renderWorld(canvas);
      
+		
 		Paint debugPaint= new Paint();
 		debugPaint.setColor(Color.CYAN);
 		debugPaint.setStyle(Paint.Style.STROKE);
@@ -275,6 +259,19 @@ public class GameManager {
 		
 		if(Options.drawDebugInfo.getBoolean())
 		canvas.drawRect(joystick.getActionZone(),debugPaint);
+		
+		Paint p=new Paint();
+		p.setColor(Color.GREEN);
+		p.setTextSize(90);
+		if(isPaused)
+		{
+			
+			canvas.drawText("PAUSE...",screenSize.x/2,screenSize.y/2,p);
+		}
+		if(isLoading)
+		{
+			LoadingScreen.render(canvas);
+		}
     }
 
 	public void spawnDestroyed(Entity e)
@@ -325,19 +322,14 @@ public class GameManager {
 
     public void setPause(boolean state)
     {
-        gamePause=state;
+        isPaused=state;
     }
 
-    public void save(BufferedWriter w)
-    {
-        worldManager.save(w);
-    }
-
-    public void load(BufferedReader r)
-    {
-        worldManager.load(r);
-		
-    }
+	public boolean getPause()
+	{
+		return	isPaused;
+	}
+   
 
     public void nullPressedObject()
     {
@@ -391,7 +383,7 @@ public class GameManager {
 		playerController.getControlledEntity().setWorldLocation(new PointF(3000-warpingLocation.x,3000-warpingLocation.y));
 	}
 	
-	private String getSaveName()
+	public String getSaveName()
 	{
 		return saveName;
 	}
@@ -433,363 +425,18 @@ public class GameManager {
 		return mapManager;
 	}
 	
-	boolean loadSector(int x,int y) {
-
-        worldManager.setSector(x,y);
-        //set new sector in meta
-        saveMeta();
-
-        //load sector with new meta
-        boolean state=loadGame();
-        return state;
-    }
-
-    private  void saveMeta()
-    {
-        try {
-            File saveFolder = checkSaveFolder();
-            if (saveFolder != null) {
-                File meta = new File(saveFolder, "meta.txt");
-                if (meta.exists())
-                    if (!meta.delete()) {
-                        GameLog.update("GameManager: meta deleting error", 1);
-                        return;
-                    }
-                FileOutputStream mots = new FileOutputStream(meta);
-                OutputStreamWriter mos = new OutputStreamWriter(mots);
-                BufferedWriter metaWriter = new BufferedWriter(mos);
-
-                metaWriter.write("" + worldManager.getSector().x);
-                metaWriter.newLine();
-                metaWriter.write("" + worldManager.getSector().y);
-                metaWriter.newLine();
-                
-                metaWriter.write("" + gamePanel.cameraPoint.x);
-                metaWriter.newLine();
-                metaWriter.write("" + gamePanel.cameraPoint.y);
-                metaWriter.newLine();
-                metaWriter.close();
-                mos.close();
-                mots.close();
-            }
-        }
-        catch (Exception e)
-        {
-            GameLog.update("GameManager: "+e.toString(),1);
-        }
-    }
-
-    private void loadMeta()
-    {
-        try {
-            File saveFolder = checkSaveFolder();
-            if (saveFolder != null) {
-                //TO Read meta
-                File meta = new File(saveFolder, "meta.txt");
-                if (!meta.exists()) {
-                    GameLog.update("GameManger: meta did not exist", 1);
-                    return;
-                }
-
-                FileInputStream mits = new FileInputStream(meta);
-                InputStreamReader mis = new InputStreamReader(mits);
-                BufferedReader metareader = new BufferedReader(mis);
-
-                int x = Integer.parseInt(metareader.readLine());
-                int y = Integer.parseInt(metareader.readLine());
-				worldManager.setSector(x, y);
-				
-//				
-            	
-//                
-               	gamePanel.cameraPoint.x=(Float.parseFloat(metareader.readLine()));
-			   	gamePanel.cameraPoint.y=(Float.parseFloat(metareader.readLine()));
-			   
-				playerController.setControlledEntity(null);
-				
-                metareader.close();
-                mis.close();
-                mits.close();
-                //Meta readed
-				GameLog.update("GameManager: meta loaded",0);
-            }
-        }
-        catch (Exception e)
-        {
-            GameLog.update("GameManager: "+e.toString(),1);
-        }
-    }
-		
-	private boolean loadGame()
+	public static boolean loadSector(int x,int y)
 	{
-		try
-		{
-			GameLog.update("GameManager: starting game load",0);
-
-			getEntityManager().reload();
-			
-			File saveFolder=checkSaveFolder();
-            if(saveFolder!=null)
-            {
-                File mapFile = new File (saveFolder,"map.txt");
-                if (mapFile.exists ())
-                {GameLog.update("GameManager: starting load meta",0);
-					
-					loadMeta();
-					//TO read map
-					FileInputStream ins=new FileInputStream(mapFile);
-					InputStreamReader isr=new InputStreamReader(ins);
-					BufferedReader reader=new BufferedReader(isr);
-
-					String s;
-
-					//while there rows
-					GameLog.update("GameManager: reading lines for "+worldManager.getSector(),0);
-					while((s=reader.readLine())!=null)
-					{
-						//if new sector
-						if(s.startsWith("<"))
-						{
-							String[] words;
-							s=s.replace("<","");
-							s=s.replace(">","");
-							words=s.split(" ");
-							int sX=Integer.parseInt(words[1]);
-							int sY=Integer.parseInt(words[2]);
-							mapManager.getSector(sX,sY).discovered=Boolean.parseBoolean(words[3]);
-							mapManager.getSector(sX,sY).explored=Boolean.parseBoolean(words[4]);
-							//equals loading one?
-							if(Integer.parseInt(words[1])==worldManager.getSector().x &&
-							   Integer.parseInt(words[2])==worldManager.getSector().y)
-							{
-							//explored?
-								GameLog.update("GameManager: sector founded "+worldManager.getSector(),0);
-                                if(!Boolean.parseBoolean(words[4]))
-                                    return false;
-								MapManager.Sector sector=mapManager.getSector(worldManager.getSector().x,worldManager.getSector().y);
-								GameLog.update("GameManger: "+sector.x+" "+sector.y+"loading objects",0);
-								String toLoadEntity="";
-
-								for(String object:words)
-								{
-									if (object.contains("["))
-									{
-										toLoadEntity="";
-									}
-									
-									toLoadEntity+=object+" ";
-									if(object.contains("]"))
-									{
-										toLoadEntity=toLoadEntity.replace("[","");
-										toLoadEntity=toLoadEntity.replace("]","");
-									
-										String[] entityParams=toLoadEntity.split(" ");
-										Entity createdEntity=getEntityManager().createObject(Integer.parseInt(entityParams[0]));
-										createdEntity.loadFromStrings(entityParams);
-										getEntityManager().addObject(createdEntity);
-
-									}
-								}
-							}
-						}
-					}
-				
-					ins.close();
-					isr.close();
-					reader.close();
-                    
-					GameLog.update("GameMnager: successfully loaded game",0);
-					return true;
-				}
-				else
-				{
-					GameLog.update("GameManger: save file did not exist",1);
-				}
-			}
-			else
-			{
-				GameLog.update("GameManager: save folder did not exist",1);
-			}
-		}
-		catch(Exception e)
-		{
-			GameLog.update("GameManager: "+e.toString(),1);
-		}
-		return false;
+		return SaveManager.loadSector(x,y);
 	}
-	
-	public void saveGame()
+
+    public void saveGame()
 	{
-		shutdown();
-		try
-		{
-			GameLog.update("GameManager: starting game save",0);
-			File saveFolder=checkSaveFolder();
-			if(saveFolder!=null)
-			{
-				File mapFile = new File (saveFolder,"map.txt");
-				if (mapFile.exists ())
-				{
-					//TO WRITE
-					File tempMapFile = new File (saveFolder,"tempMap.txt");
-					FileOutputStream out = new FileOutputStream(tempMapFile);
-					OutputStreamWriter osw = new OutputStreamWriter(out);
-					BufferedWriter writer = new BufferedWriter(osw);
-
-					//TO COPY
-					FileInputStream ins=new FileInputStream(mapFile);
-					InputStreamReader isr=new InputStreamReader(ins);
-					BufferedReader reader=new BufferedReader(isr);
-
-					String s;
-
-					//while there rows
-					while((s=reader.readLine())!=null)
-					{
-						//if new sector
-						if(s.startsWith("<"))
-						{
-							String[] head;
-
-							head=s.split(" ");
-							
-							//equals saving one?
-							if(Integer.parseInt(head[1])==worldManager.getSector().x &&
-							   Integer.parseInt(head[2])==worldManager.getSector().y)
-							{
-								MapManager.Sector sector=mapManager.getSector(worldManager.getSector().x,worldManager.getSector().y);
-					
-								writer.write("< "+sector.x+" "+sector.y+" "+sector.discovered+" "+sector.explored+" ");
-								getEntityManager().save(writer);
-								writer.write(">");
-								writer.newLine();
-							}
-							else
-							{
-								writer.write(s);
-								writer.newLine();
-							}
-						}
-					}
-
-                    ins.close();
-                    isr.close();
-                    reader.close();
-
-                    writer.close();
-                    osw.close();
-                    out.close();
-
-                    saveMeta();
-
-					Bitmap img=MA.getBitmapFromView(gamePanel);
-					String imgName="image.jpg";
-					FileOutputStream imgOut = new FileOutputStream(saveFolder+File.separator+imgName);
-					img.compress(Bitmap.CompressFormat.JPEG, 100, imgOut);
-
-					if(!mapFile.delete())
-					{
-                        GameLog.update("GameManager: map deleting error",1);
-                        return;
-                    }
-
-					if(!tempMapFile.renameTo(mapFile))
-                    {
-                        GameLog.update("GameManager: temp map renaming error",1);
-                        return;
-                    }
-
-					GameLog.update("GameManger: successfully saved game",0);
-				}
-				else
-				{
-					GameLog.update("GameManager: save file did not exist",1);
-				}
-			}
-			else
-			GameLog.update("GameManager: save folder did not exist",0);
-		}
-		catch(Exception e)
-		{
-			GameLog.update("GameManager: "+e.toString(),1);
-		}
-		resume();
-	}
-	
-	private void createSaveFile()
-	{
-		try
-		{
-			GameLog.update("GameManger: creating files",0);
-			File saveFolder=checkSaveFolder();
-			if(saveFolder!=null)
-			{
-				File mapFile = new File (saveFolder,"map.txt");
-				if (!mapFile.exists ())
-				{
-					FileOutputStream out = new FileOutputStream(mapFile);
-					OutputStreamWriter osw = new OutputStreamWriter(out);
-					BufferedWriter writer = new BufferedWriter(osw);
-					
-					for(MapManager.Sector s:mapManager.getSectors())
-					{
-						writer.write("< "+s.x+" "+s.y+" "+s.discovered+" "+s.explored+" >");
-						writer.newLine();
-					}
-					
-					writer.close();
-					osw.close();
-					out.close();
-					GameLog.update("GameMnager: successfully created saves for map",0);
-				}
-				else
-				{
-					GameLog.update("GameMnager: "+mapFile.getName()+" already exists",1);
-					return;
-				}
-
-				GameLog.update("GameManager: files created",0);
-			}
-			else
-			{
-				GameLog.update("GameManager: permissions not granted or folder has been deleted",1);
-			}
-		}
-		catch(Exception e)
-		{
-			GameLog.update(e.toString(),1);
-		}
+		SaveManager.save();
 		
 	}
 	
-	private File checkSaveFolder()
-	{
-		String documentsFolderPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString();
-		File documentsFolder  = new File(documentsFolderPath);
-
-		if(!documentsFolder.exists())
-		{
-			GameLog.update("GameManager: no DOCUMENTS WRITE PERMISSION",1);
-			return null;
-		}
-
-		String gameFolderPath=documentsFolderPath+File.separator+"sb9";
-		File gameFolder=new File(gameFolderPath);
-
-		if(!gameFolder.exists())
-		{
-			GameLog.update("GameManager: no inside DOCUMENTS WRITE PERMISSION",1);
-			return null;
-		}
-		File saveFolder=new File(gameFolderPath,getSaveName());
-		if(!saveFolder.exists())
-		{
-			GameLog.update("GameManager: no inside DOCUMENTS WRITE PERMISSION",1);
-			return null;
-		}
-	    return saveFolder;
-	}
-
+	
     public Point getScreenSize()
     {
         return screenSize;

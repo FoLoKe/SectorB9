@@ -66,7 +66,8 @@ public class EntityManager
 			entityToAdd.clear();
 			addedFlag=true;
 		}
-	    
+	    if(gameManager.isPaused)
+			return;
 	   Iterator<Entity> it=entityArray.iterator();
 
 		
