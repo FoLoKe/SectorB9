@@ -328,7 +328,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 	public boolean onTouchEvent(MotionEvent event)
 	{
 		
-		if(!gameManager.gamePause)
+		if(!gameManager.isPaused)
 		{
 			gestureDetector.onTouchEvent(event);
 			if(!gestureInProgress)
@@ -397,6 +397,11 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                         break;
                 }
 			}
+		}
+		else
+		{
+			if(!gameManager.isInMenu&&!gameManager.isLoading)
+			gameManager.isPaused=false;
 		}
 		
 		GameLog.update(pressed+"",3);

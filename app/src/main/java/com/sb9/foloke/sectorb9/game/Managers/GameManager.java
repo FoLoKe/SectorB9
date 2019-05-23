@@ -39,8 +39,10 @@ public class GameManager {
 	private MapManager mapManager;
 
     //booleans
-    public boolean gamePause=true;
-    
+    public boolean isPaused=true;
+    public boolean isLoading=false;
+	public boolean isInMenu=false;
+	
     private boolean collect=false;
     private boolean warpReady=false;
 
@@ -155,10 +157,16 @@ public class GameManager {
 		gamePanel.tick();
 		worldManager.updateWorld();
 		
-        if(gamePause)
+        if(isLoading)
 		{
+			isPaused=true;
 			LoadingScreen.tick();
             return;
+		}
+		
+		if(isInMenu)
+		{
+			isPaused=true;
 		}
 		joystickTouchPoint.set(joystick.getPoint().x+gamePanel.getCamera().getWorldLocation().x,joystick.getPoint().y+gamePanel.getCamera().getWorldLocation().y);
 		joystick.tick(gamePanel.getPointOfTouch());
@@ -255,10 +263,14 @@ public class GameManager {
 		Paint p=new Paint();
 		p.setColor(Color.GREEN);
 		p.setTextSize(90);
-		if(gamePause)
+		if(isPaused)
+		{
+			
+			canvas.drawText("PAUSE...",screenSize.x/2,screenSize.y/2,p);
+		}
+		if(isLoading)
 		{
 			LoadingScreen.render(canvas);
-			canvas.drawText("PAUSE...",screenSize.x/2,screenSize.y/2,p);
 		}
     }
 
@@ -310,12 +322,12 @@ public class GameManager {
 
     public void setPause(boolean state)
     {
-        gamePause=state;
+        isPaused=state;
     }
 
 	public boolean getPause()
 	{
-		return	gamePause;
+		return	isPaused;
 	}
    
 

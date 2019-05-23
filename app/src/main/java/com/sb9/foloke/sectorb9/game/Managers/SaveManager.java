@@ -30,10 +30,10 @@ public class SaveManager
 		{
 			// TODO: Implement this method
 			super.run();
-			gm.setPause(true);
+			gm.isLoading=true;
 			loadGame();
 			
-			gm.setPause(false);
+			gm.isLoading=false;
 			
 		}
 	}
@@ -51,10 +51,10 @@ public class SaveManager
 		{
 			// TODO: Implement this method
 			super.run();
-			gm.setPause(true);
+			gm.isLoading=true;
 			saveGame();
 			
-			gm.setPause(false);
+			gm.isLoading=false;
 
 		}
 	}
@@ -137,6 +137,7 @@ public class SaveManager
                 if (mapFile.exists ())
                 {GameLog.update("GameManager: starting load meta",0);
 
+					
 					loadMeta();
 					//TO read map
 					FileInputStream ins=new FileInputStream(mapFile);
@@ -166,6 +167,7 @@ public class SaveManager
 							if(Integer.parseInt(words[1])==worldManager.getSector().x &&
 							   Integer.parseInt(words[2])==worldManager.getSector().y)
 							{
+								
 								//explored?
 								GameLog.update("GameManager: sector founded "+worldManager.getSector(),0);
                                 if(!Boolean.parseBoolean(words[4]))
@@ -173,9 +175,10 @@ public class SaveManager
 								MapManager.Sector sector=mapManager.getSector(worldManager.getSector().x,worldManager.getSector().y);
 								GameLog.update("GameManger: "+sector.x+" "+sector.y+"loading objects",0);
 								String toLoadEntity="";
-								loadThread.sleep(5);
+								
 								for(String object:words)
 								{
+									loadThread.sleep(5);
 									if (object.contains("["))
 									{
 										toLoadEntity="";
