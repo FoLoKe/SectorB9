@@ -1,16 +1,11 @@
 package com.sb9.foloke.sectorb9.game.AI;
 
-import android.graphics.PointF;
-
-import com.sb9.foloke.sectorb9.game.Entities.DynamicEntity;
-import com.sb9.foloke.sectorb9.game.Entities.ControlledShip;
-import com.sb9.foloke.sectorb9.game.Entities.Entity;
-import java.util.*;
 import android.graphics.*;
-import com.sb9.foloke.sectorb9.game.Managers.*;
 import com.sb9.foloke.sectorb9.game.Entities.*;
-import com.sb9.foloke.sectorb9.game.Funtions.*;
 import com.sb9.foloke.sectorb9.game.Entities.Buildings.*;
+import com.sb9.foloke.sectorb9.game.Funtions.*;
+import java.util.*;
+import com.sb9.foloke.sectorb9.game.Assets.*;
 
 public class AI extends Controller {
 
@@ -22,10 +17,8 @@ public class AI extends Controller {
 	//protected PointF wayPoint=new PointF(0,0);
 	protected Paint debugPathPaint=new Paint();
 	protected Paint debugOrderPaint=new Paint();
-	protected Paint debugBehaviourPaint=new Paint();
+	
 	protected Paint debugPreBehaviourOrderPaint=new Paint();
-	
-	
 	
 	
 	public enum behaviour{AGGRESSIVE,DEFENSIVE,PEACEFUL,RETREAT}
@@ -48,9 +41,13 @@ public class AI extends Controller {
         this.child=child;
 		debugPathPaint.setColor(Color.GREEN);
 		
-		debugPathPaint.setStrokeWidth(1);
+		debugPathPaint.setStrokeWidth(10);
 		debugPathPaint.setStyle(Paint.Style.FILL);
 		destination=pickRandomPoint((int)child.getGameManager().getGamePanel().getWorldSize(),(int)child.getGameManager().getGamePanel().getWorldSize());
+		
+		
+		
+		
 	}
 	
     public void tick()
@@ -102,9 +99,7 @@ public class AI extends Controller {
 	///DEBUG
 	public void render(Canvas canvas)
 	{
-		if(!Options.drawDebugInfo.getBoolean())
-			return;
-		canvas.drawLine(child.getCenterX(),child.getCenterY(),destination.x,destination.y,debugPathPaint);
+		
 		switch(currentOrder)
 		{
 			case STAY:
@@ -139,19 +134,20 @@ public class AI extends Controller {
 		switch(currentBehaviour)
 		{
 			case AGGRESSIVE:
-				debugBehaviourPaint.setColor(Color.RED);
+				canvas.drawBitmap(AIAsset.aggressive,child.getX(),child.getCenterY()+32,null);
 				break;
 				
 			case DEFENSIVE:
-				debugBehaviourPaint.setColor(Color.YELLOW);
+				canvas.drawBitmap(AIAsset.defensive,child.getX(),child.getCenterY()+32,null);
+				
 				break;
 
 			case PEACEFUL:
-				debugBehaviourPaint.setColor(Color.GREEN);
+				canvas.drawBitmap(AIAsset.peaceful,child.getX(),child.getCenterY()+32,null);
 				break;
 				
 			case RETREAT:
-				debugBehaviourPaint.setColor(Color.WHITE);
+				canvas.drawBitmap(AIAsset.retreatful,child.getX(),child.getCenterY()+32,null);
 				break;
 
 		}
@@ -187,9 +183,17 @@ public class AI extends Controller {
 
 		}
 		//state
-		canvas.drawCircle(child.getX()-10,child.getY(),5,debugBehaviourPaint);
+		
 		canvas.drawCircle(child.getX()-10,child.getY()-10,5,debugOrderPaint);
+		
+		
+		
+		if(!Options.drawDebugInfo.getBoolean())
+			return;
+		canvas.drawLine(child.getCenterX(),child.getCenterY(),destination.x,destination.y,debugPathPaint);
 		canvas.drawCircle(child.getX()-20,child.getY()-10,4,debugPreBehaviourOrderPaint);
+		
+		
 	}
 
 	

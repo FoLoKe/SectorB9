@@ -361,14 +361,16 @@ public class InteractionUI
 							{
 								playerController.setControlledEntity(null);
 								controlled.setController(new AI(controlled));
+								GameLog.update("ai set",3);
 							}
 
 							if(controlled!=pressed)
 							{
 								playerController.setControlledEntity(pressed);
 								pressed.setController(playerController);
+								GameLog.update("manual set",3);
 							}
-
+							setAICommands(e,MA);
 						}
 						catch(Exception e)
 						{

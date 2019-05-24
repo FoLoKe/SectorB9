@@ -1,24 +1,17 @@
 package com.sb9.foloke.sectorb9.game.Managers;
+import android.graphics.*;
 import com.sb9.foloke.sectorb9.*;
 import com.sb9.foloke.sectorb9.game.Entities.*;
-import com.sb9.foloke.sectorb9.game.Entities.Buildings.*;
-
-import java.util.*;
-
-import android.graphics.*;
-import java.io.*;
-
-import com.sb9.foloke.sectorb9.game.Entities.Ships.Ship;
 import com.sb9.foloke.sectorb9.game.Funtions.*;
-import com.sb9.foloke.sectorb9.game.UI.*;
-import com.sb9.foloke.sectorb9.game.UI.CustomViews.GameLog;
+import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
+import java.io.*;
 
 public class WorldManager
 {
 	private MainActivity MA;
 	private EntityManager entityManager;
 	private GameManager gameManager;
-	private CustomCollisionObject interObject;
+	
 	//background
 	private Bitmap background;
 
@@ -31,7 +24,7 @@ public class WorldManager
 		this.MA=MA;
 		this.gameManager = gameManager;
 		this.entityManager=new EntityManager(gameManager);
-		interObject=new CustomCollisionObject(2,2,gameManager);
+		
         GameLog.update("WorldManager: READY",0);
 	}
 	
@@ -80,25 +73,7 @@ public class WorldManager
 		entityManager.render(canvas);
 	}
 	
-	void interactionCheck(float x,float y)
-	{
-		interObject.calculateCollisionObject(x,y);
 	
-		for(Entity e: entityManager.getArray())
-		{
-			if(e.getCollisionObject().intersects(interObject))
-			{
-//				if(Math.sqrt(
-//					   (e.getCenterX()-player.getCenterX())*(e.getCenterX()-player.getCenterX())
-//					   +(e.getCenterY()-player.getCenterY())*(e.getCenterY()-player.getCenterY()))-32<PlayerController.interactionRadius)											 
-//				{								
-					gameManager.interactionTouch(e,e.getCenterWorldLocation());
-					return;
-				
-			}
-		}
-		gameManager.interactionTouch(null,new PointF(x,y));
-	}
 
 	public EntityManager getEntityManager()
 	{

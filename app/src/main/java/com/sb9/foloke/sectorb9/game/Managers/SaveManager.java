@@ -178,7 +178,7 @@ public class SaveManager
 								
 								for(String object:words)
 								{
-									loadThread.sleep(5);
+									loadThread.sleep(1);
 									if (object.contains("["))
 									{
 										toLoadEntity="";
