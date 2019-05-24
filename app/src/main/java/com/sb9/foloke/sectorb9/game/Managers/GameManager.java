@@ -21,14 +21,14 @@ import com.sb9.foloke.sectorb9.game.Entities.Entity;
 import com.sb9.foloke.sectorb9.game.Funtions.Timer;
 
 
-public class GameManager {
+public class GameManager 
+{
 	private MainThread mainThread;
     private MainActivity MA;
     private GamePanel gamePanel;
 	private String saveName="0";
 
     //UIs not views 
-    
     public static ProgressBarUI uIhp;
     public static ProgressBarUI uIsh;
 
@@ -108,9 +108,7 @@ public class GameManager {
 
         GameLog.update("GameManager: preparing player controller",0);    
 		playerController=new PlayerController();
-		//player=new ControlledShip(0,0,0,this,Ship.createSimple());
-		//player.setController(new PlayerController(player));
-		
+	
         GameLog.update("GameManager: preparing managers",0);
         mapManager=new MapManager();
         worldManager=new WorldManager(MA,this);
@@ -280,23 +278,17 @@ public class GameManager {
     {
 		try
 		{
-				interObject.calculateCollisionObject(x,y);
+			interObject.calculateCollisionObject(x,y);
 
-				for(Entity e: getEntityManager().getArray())
+			for(Entity e: getEntityManager().getArray())
+			{
+				if(e.getCollisionObject().intersects(interObject))
 				{
-					if(e.getCollisionObject().intersects(interObject))
-					{
-//				if(Math.sqrt(
-//					   (e.getCenterX()-player.getCenterX())*(e.getCenterX()-player.getCenterX())
-//					   +(e.getCenterY()-player.getCenterY())*(e.getCenterY()-player.getCenterY()))-32<PlayerController.interactionRadius)											 
-//				{								
-						interactionTouch(e,e.getCenterWorldLocation());
-						return;
-
-					}
+					interactionTouch(e,e.getCenterWorldLocation());
+					return;
 				}
-				interactionTouch(null,new PointF(x,y));
-			
+			}
+			interactionTouch(null,new PointF(x,y));
 		}
 		catch(Exception e)
 		{
@@ -305,7 +297,8 @@ public class GameManager {
     }
 
     public void updateInventory(final Entity caller)
-    {GameLog.update("GameManager: update Inventory UI",0);
+    {
+		GameLog.update("GameManager: update Inventory UI",0);
         MA.runOnUiThread(new Runnable(){
             public void run()
             {
@@ -317,12 +310,14 @@ public class GameManager {
     public void initAssemblerUI(final Assembler assembler)
     {
 		GameLog.update("GameManager: init. Assembler UI",0);
-        MA.runOnUiThread(new Runnable() {
+        MA.runOnUiThread(new Runnable() 
+		{
             @Override
-            public void run() {
-
+            public void run() 
+			{
                 AssemblerUI.init(MA,assembler);
-            }});
+            }
+		});
     }
 
     public void warpToLocation(int xs,int ys)
@@ -333,7 +328,6 @@ public class GameManager {
 		PointF vector=new PointF(offset.x/dist,offset.y/dist);
 		PointF tvector=new PointF(-vector.x*3000,-vector.y*3000);
 		warpingLocation.set((tvector.x+3000)/2,(tvector.y+3000)/2);
-		
 		warpReady=true;
     }
 	
@@ -350,12 +344,16 @@ public class GameManager {
 		boolean retry = true;
         while(retry)
         {
-            try{mainThread.setRunning(false);
+            try
+			{
+				mainThread.setRunning(false);
                 mainThread.join();
                 retry=false;
-				//mainThread.stop();
-            }catch(InterruptedException e)
-            {GameLog.update("GameManager: "+e.toString(),1);}
+            }
+			catch(InterruptedException e)
+            {
+				GameLog.update("GameManager: "+e.toString(),1);
+			}
         }
 		GameLog.update("GameManager: thread stopped",0);
 	}
