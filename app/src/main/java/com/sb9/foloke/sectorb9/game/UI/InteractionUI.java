@@ -176,7 +176,7 @@ public class InteractionUI
 				{
 					MA.getGameManager().currentCommand=GameManager.command.INTERACTION;
 					AssemblerUI.setOpened(false);				
-					MA.getGameManager().nullPressedObject();
+					MA.getGameManager().nullPressedObjects();
 					MA.getGameManager().currentCommand= GameManager.command.CONTROL;
 					VF.setDisplayedChild(VF.indexOfChild(MA.findViewById(R.id.actionUI)));
 				}
@@ -194,7 +194,7 @@ public class InteractionUI
 				{
 					MA.getGameManager().currentCommand=GameManager.command.INTERACTION;
 					BuildUI.init(MA);
-					MA.getGameManager().nullPressedObject();
+					MA.getGameManager().nullPressedObjects();
 					AssemblerUI.setOpened(false);
 					VF.setDisplayedChild(VF.indexOfChild(MA.findViewById(R.id.buildUI)));
 				}
@@ -250,16 +250,19 @@ public class InteractionUI
 				Button buttonPeacefulBehaviout=MA.findViewById(R.id.interaction_ui_b_behaviour_peaceful);
 				Button buttonRetreatBehaviout=MA.findViewById(R.id.interaction_ui_b_behaviour_retreat);
 				
-				Button buttonMoveToCommand=MA.findViewById(R.id.interaction_ui_b_order_move_to);
-				Button buttonAttackCommand=MA.findViewById(R.id.interaction_ui_b_order_attack);
-				Button buttonFollowCommand=MA.findViewById(R.id.interaction_ui_b_order_follow);
+				ImageButton buttonMoveToCommand=MA.findViewById(R.id.interaction_ui_b_order_move_to);
+				ImageButton buttonAttackCommand=MA.findViewById(R.id.interaction_ui_b_order_attack);
+				ImageButton buttonFollowCommand=MA.findViewById(R.id.interaction_ui_b_order_follow);
 				Button buttonRepairCommand=MA.findViewById(R.id.interaction_ui_b_order_repair);
 				Button buttonMineCommand=MA.findViewById(R.id.interaction_ui_b_order_mine);
-				Button buttoHoldCommand=MA.findViewById(R.id.interaction_ui_b_order_stay);
+				ImageButton buttonHoldCommand=MA.findViewById(R.id.interaction_ui_b_order_stay);
 				Button buttonPatrolCommand=MA.findViewById(R.id.interaction_ui_b_order_patrol);
 				
-				
-				
+				float size=64;
+				buttonMoveToCommand.setBackgroundDrawable(new BitmapDrawable(MA.getResources(),Bitmap.createScaledBitmap(UIAsset.AIMove,(int)(size*scaleX),(int)(size*scaleY),false)));
+				buttonAttackCommand.setBackgroundDrawable(new BitmapDrawable(MA.getResources(),Bitmap.createScaledBitmap(UIAsset.AIAttack,(int)(size*scaleX),(int)(size*scaleY),false)));
+				buttonHoldCommand.setBackgroundDrawable(new BitmapDrawable(MA.getResources(),Bitmap.createScaledBitmap(UIAsset.AIStay,(int)(size*scaleX),(int)(size*scaleY),false)));
+				buttonFollowCommand.setBackgroundDrawable(new BitmapDrawable(MA.getResources(),Bitmap.createScaledBitmap(UIAsset.AIFollow,(int)(size*scaleX),(int)(size*scaleY),false)));
 				//actions for behaviour
 				buttonAgressiveBehaviout.setOnClickListener(new OnClickListener(){
 						public void onClick(View v)
@@ -306,7 +309,7 @@ public class InteractionUI
 						}
 					});
 					
-				buttoHoldCommand.setOnClickListener(new OnClickListener(){
+				buttonHoldCommand.setOnClickListener(new OnClickListener(){
 						public void onClick(View v)
 						{
 							((AI)((ControlledShip)e).getController()).setCurrentOrder(AI.order.STAY);

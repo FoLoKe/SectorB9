@@ -5,7 +5,8 @@ import android.graphics.Bitmap;
 public class UIAsset {
 
         public static Bitmap hpBackground,hpLine,stunBackground,stunLine,progressBarBorder,destroyedText,noEnergySign,
-		invFullSign,shootButton,uiBgBlur,turnedOffSign,cancelButton,buildModeButton,collectDebrisButton,optionsButton,saveButton,loadButton,helpButton,exitButton,mapButton;
+		invFullSign,shootButton,uiBgBlur,turnedOffSign,cancelButton,buildModeButton,collectDebrisButton,optionsButton,saveButton,loadButton,helpButton,exitButton,mapButton,
+		AIStay,AIAttack,AIMove,AIFollow;
 		public static Bitmap indexedImages[]={hpBackground,hpLine,progressBarBorder,destroyedText};
         public static void init(Bitmap sheet)
         {
@@ -34,6 +35,12 @@ public class UIAsset {
 			exitButton=Bitmap.createBitmap(sheet,96,6*32,96,32,null,false);
 			
 			turnedOffSign=Bitmap.createScaledBitmap(tsheet.crop(4,0),20,20,true);
+			
+			AIStay=Bitmap.createBitmap(sheet,8*32,0,32,32,null,false);
+			AIMove=Bitmap.createBitmap(sheet,8*32,32,32,32,null,false);
+			AIAttack=Bitmap.createBitmap(sheet,8*32,64,32,32,null,false);
+			AIFollow=Bitmap.createBitmap(sheet,8*32,96,32,32,null,false);
+			
         }
 		public static Bitmap getByIndex(int index)
 		{

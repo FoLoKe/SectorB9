@@ -58,6 +58,7 @@ public class GameManager
 	private Point sectorToWarp=new Point();
 	private PointF warpingLocation=new PointF();
     private  Point screenSize=new Point();
+	private ArrayList<Entity> selectedEntities=new ArrayList();
 	
 	
     public GameManager( MainActivity MA)
@@ -235,6 +236,13 @@ public class GameManager
 		
 		if(warpReady)
        		canvas.drawCircle(warpingLocation.x,warpingLocation.y,200,debugPaint);
+			
+		Iterator<Entity> iter=selectedEntities.iterator();
+		while(iter.hasNext())
+		{
+			iter.next().drawDebugCollision(canvas);
+		}
+			
 		
 		gamePanel.postRender(canvas);
 		
@@ -279,16 +287,40 @@ public class GameManager
 		try
 		{
 			interObject.calculateCollisionObject(x,y);
-
+			ArrayList<Entity> entities=new ArrayList<>();
 			for(Entity e: getEntityManager().getArray())
 			{
 				if(e.getCollisionObject().intersects(interObject))
 				{
-					interactionTouch(e,e.getCenterWorldLocation());
-					return;
+					entities.add(e);
+					break;
 				}
 			}
-			interactionTouch(null,new PointF(x,y));
+			selectedEntities=entities;
+			interactionTouch(new PointF(x,y));
+		}
+		catch(Exception e)
+		{
+			GameLog.update(e.toString(),1);
+		}
+    }
+	
+	public void interactionCheck(RectF box)
+    {
+		try
+		{
+			ArrayList<Entity> entities=new ArrayList<>();
+
+			for(Entity e: getEntityManager().getArray())
+			{
+				if(box.contains(e.getCenterX(),e.getCenterY()))
+				{
+					entities.add(e);
+				}
+			}
+			
+			selectedEntities=entities;
+			interactionTouch(new PointF(box.right,box.bottom));
 		}
 		catch(Exception e)
 		{
@@ -375,12 +407,22 @@ public class GameManager
 		joystick.setTouched(touched,screenPoint);
 	}
 	
-	public void interactionTouch(Entity e,PointF p)
+	public void groupSelect(ArrayList<Entity> entites)
 	{
+		
+	}
+	
+	public void interactionTouch(PointF p)
+	{
+		Iterator<Entity> iteratot=selectedEntities.iterator();
+		while(iteratot.hasNext())
+		{
+			Entity e=iteratot.next();
+			
 		switch(currentCommand)
 		{
 			case INTERACTION:
-				getGamePanel().pressedObject=e;
+				
 				InteractionUI.init(MA,e);
 				GameLog.update("interaction touch",2);
 				break;
@@ -393,20 +435,21 @@ public class GameManager
 				switch(InteractionUI.currentOrder)
 				{
 					case MOVETO:
-						((AI)((ControlledShip)getGamePanel().pressedObject).getController()).setDestination(p);
-						((AI)((ControlledShip)getGamePanel().pressedObject).getController()).setCurrentOrder(AI.order.MOVETO);
+						((AI)((ControlledShip)e).getController()).setDestination(p);
+						((AI)((ControlledShip)e).getController()).setCurrentOrder(AI.order.MOVETO);
 						break;
 					case ATTACK:
-						((AI)((ControlledShip)getGamePanel().pressedObject).getController()).setTargetToAttack(e);
-						((AI)((ControlledShip)getGamePanel().pressedObject).getController()).setCurrentOrder(AI.order.ATTACK);
+						((AI)((ControlledShip)e).getController()).setTargetToAttack(e);
+						((AI)((ControlledShip)e).getController()).setCurrentOrder(AI.order.ATTACK);
 						break;
 					case FOLLOW:
-						((AI)((ControlledShip)getGamePanel().pressedObject).getController()).setTargetToFollow(e);
-						((AI)((ControlledShip)getGamePanel().pressedObject).getController()).setCurrentOrder(AI.order.FOLLOW);
+						((AI)((ControlledShip)e).getController()).setTargetToFollow(e);
+						((AI)((ControlledShip)e).getController()).setCurrentOrder(AI.order.FOLLOW);
 						break;
 				}
 				currentCommand=command.INTERACTION;
 				break;
+				}
 		}
 	}
 	
@@ -490,9 +533,9 @@ public class GameManager
 		return	isPaused;
 	}
 
-    public void nullPressedObject()
+    public void nullPressedObjects()
     {
-        gamePanel.pressedObject=null;
+        selectedEntities=new ArrayList<>();
     }
 	
 	public GamePanel getGamePanel() 

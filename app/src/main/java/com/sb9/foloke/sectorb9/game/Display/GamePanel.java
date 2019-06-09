@@ -16,6 +16,7 @@ import com.sb9.foloke.sectorb9.game.Entities.Entity;
 
 import static com.sb9.foloke.sectorb9.game.Managers.GameManager.command;
 import android.view.GestureDetector.*;
+import java.util.*;
 
 
 
@@ -35,25 +36,25 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
     private float scale=4;
     private float canvasH,canvasW;
     public PointF pointOfTouch;
-    public PointF screenPointOfTouch;
-	public PointF firstTouchPoint=new PointF();
+    
 	public RectF interactionBox=new RectF();
 	
-	private float worldSize=3000;//3km
+	private float worldSize=3000; //3km
 	public Text textFPS;
-	public Entity pressedObject;
+	//public Entity pressedObject;
 	private Paint debugPaint=new Paint();
 	
 	public PointF cameraPoint=new PointF();
-	private PointF lastTouchPoint=new PointF();
-	private PointF cameraToOffset=new PointF();
-	private boolean pressed=false;
 	
-	private boolean gestureInProgress=false;
+	private PointF cameraToOffset=new PointF();
+	
+	
 	private Paint borderPaint = new Paint();
     private boolean touched=false;
 	
 	private Paint speedPaint=new Paint();
+	
+	private enum touchType{MOVE,TOUCH,GROUP}
 
     public GamePanel(Context context, AttributeSet attributeSet)
     {
@@ -75,7 +76,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                 }
 
 		
-        screenPointOfTouch=new PointF(0,0);
+        
         pointOfTouch=new PointF(0,0);
 
         
@@ -130,7 +131,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 
     public void tick()
     {
-        pointOfTouch.set((screenPointOfTouch.x-canvasW/2)/camera.getScale()+cameraPoint.x,(screenPointOfTouch.y-canvasH/2)/camera.getScale()+cameraPoint.y);
+        pointOfTouch.set((currentTouchPoint.x-canvasW/2)/camera.getScale()+cameraPoint.x,(currentTouchPoint.y-canvasH/2)/camera.getScale()+cameraPoint.y);
         cursor.setWorldLocation(pointOfTouch);
         cursor.tick();
 		if(gameManager.getPlayer()!=null&&gameManager.currentCommand==command.CONTROL)
@@ -163,20 +164,19 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
         if (Options.drawDebugInfo.getBoolean())
         {
             camera.render(canvas);
-			
 		}
-			
-        if(pressedObject!=null)
-        {
-            pressedObject.drawDebugCollision(canvas);
-        }
-
-		
     }
 	
 	public void postRender(Canvas canvas)
 	{
+		Paint p=new Paint();
+		p.setStrokeWidth(3);
+		p.setColor(Color.GREEN);
+		p.setStyle(Paint.Style.STROKE);
 		cursor.render(canvas);
+		
+		if(action==screenAction.select)
+		canvas.drawRect(selectBox,p);
 		canvas.drawRect(interactionBox,debugPaint);
 		canvas.drawRect(0,0,worldSize,worldSize,borderPaint);
 		canvas.restore();
@@ -290,24 +290,22 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 
         textFPS.render(canvas);
 	}
+	
     private SimpleOnScaleGestureListener gestureListener = new SimpleOnScaleGestureListener()
 	{
     	@Override
 		public boolean onScaleBegin(ScaleGestureDetector detector)
 		{
-			pressed=false;
-			gestureInProgress=true;
+			
 			return true;
 		}
 
 		@Override
 		public boolean onScale(ScaleGestureDetector detector)
 		{
-			
 			scale *= detector.getScaleFactor();
-			// Don't let the object get too small or too large.
 			scale = Math.max(0.5f, Math.min(scale, 4.0f));
-			gestureInProgress=true;
+			action=screenAction.scale;
 			return true;
 		}
 
@@ -315,36 +313,139 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 		public void onScaleEnd(ScaleGestureDetector detector)
 		{
 			super.onScaleEnd(detector);
-			gestureInProgress=false;
+			
 		}	
-		
-		public void onDoubleTap(){}
-		
-		
 	};
 
     private ScaleGestureDetector gestureDetector = new ScaleGestureDetector(getContext(), gestureListener);
 	
-	private SimpleOnGestureListener simpleGestureListener=new SimpleOnGestureListener(){
-
-		@Override
-		public void onLongPress(MotionEvent e)
-		{
-			// TODO: Implement this method
-			//super.onLongPress(e);
-			GameLog.update("long press",3);
-		}
-		
-	};
+	/////TODO:
+	// onLongTouch start "select group"
+	// onActionUP on touch type select action
+	
+	
+	private float touchOffset=0;
+	private PointF firstTouchPoint=new PointF();
+	private PointF currentTouchPoint=new PointF();
+	private long firstTouchTime;
+	private long currentTouchTime;
+	private enum screenAction{simple,select,scale,move}
+	private screenAction action=screenAction.simple;
+	private RectF selectBox=new RectF();
 	
     @Override
 	public boolean onTouchEvent(MotionEvent event)
 	{
 		if(!gameManager.isPaused)								//if no pause
 		{
+			float x=event.getX(),y=event.getY();
 			
-			gestureDetector.onTouchEvent(event);				//check gesture
-			//simpleGestureListener.on
+			if(event.getPointerCount()>1)
+			{
+				action=screenAction.scale;
+			}
+			
+			if(action==screenAction.scale)
+				gestureDetector.onTouchEvent(event);		
+			
+			//TODO CHECK TO POINTERS
+			
+			
+				{
+					
+				
+				switch(event.getAction())
+				{
+					case MotionEvent.ACTION_DOWN:
+							GameLog.update("touch"+x+" "+y,3);
+						firstTouchPoint.set(x,y);
+						firstTouchTime=System.nanoTime();
+						action=screenAction.simple;
+						cameraToOffset.set(0,0);
+						currentTouchPoint.set(firstTouchPoint);
+						break;
+						
+					case MotionEvent.ACTION_UP:
+						GameLog.update("unpressed "+action,3);
+						if(action==screenAction.simple)
+					
+							switch (gameManager.currentCommand)
+							{
+								case CONTROL:
+									gameManager.checkJoystick(false,new PointF(x,y));
+									break;
+								case INTERACTION:
+									
+									
+									gameManager.interactionCheck(pointOfTouch.x,pointOfTouch.y);
+									break;
+								case EXCHANGE:
+									
+									
+									gameManager.interactionCheck(pointOfTouch.x,pointOfTouch.y);
+									break;
+								case ORDER:
+									
+									
+									gameManager.interactionCheck(pointOfTouch.x,pointOfTouch.y);
+									break;
+							}
+							if(action==screenAction.select)
+							{
+								switch (gameManager.currentCommand)
+								{
+									case CONTROL:
+										gameManager.checkJoystick(false,new PointF(x,y));
+										break;
+									case INTERACTION:
+
+										
+										gameManager.interactionCheck(selectBox);
+										break;
+									
+									case ORDER:
+
+										
+										gameManager.interactionCheck(selectBox);
+										break;
+								}
+							}
+                        
+						action=screenAction.simple;
+						break;
+						
+					case MotionEvent.ACTION_MOVE:
+						if(action!=screenAction.scale)
+						{
+							touchOffset=distanceTo(firstTouchPoint,currentTouchPoint);
+							if(touchOffset>32&&action!=screenAction.select)
+								action=screenAction.move;
+							else
+							{
+								if(currentTouchTime-firstTouchTime>100000000)
+								{
+									action=screenAction.select;
+								}
+							}
+								
+							if(action==screenAction.move)
+							{
+								cameraToOffset.set((-event.getX()+currentTouchPoint.x)/scale,(-event.getY()+currentTouchPoint.y)/scale);
+							}
+							
+							if(action==screenAction.select)
+							{
+									selectBox.set((firstTouchPoint.x-canvasW/2)/camera.getScale()+cameraPoint.x,(firstTouchPoint.y-canvasH/2)/camera.getScale()+cameraPoint.y,
+												  (currentTouchPoint.x-canvasW/2)/camera.getScale()+cameraPoint.x,(currentTouchPoint.y-canvasH/2)/camera.getScale()+cameraPoint.y);
+								
+							}
+						}
+					break;
+			}
+			currentTouchTime=System.nanoTime();
+			currentTouchPoint.set(x,y);
+			}
+			/*gestureDetector.onTouchEvent(event);				//check gesture
 			if(!gestureInProgress)								//if not a jesture
 			{
       		  	float x=event.getX(),y=event.getY();			//screen touch point
@@ -353,7 +454,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
             	switch (event.getAction())
                 {
                 	case MotionEvent.ACTION_DOWN:
-                	    
+						surfaceTouched=true;
+						touchOffset=0;
+						firstTouchTime=System.nanoTime();
+						
 						switch (gameManager.currentCommand)
 						{
 							case CONTROL:
@@ -366,12 +470,16 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 									pressed=true;
 									lastTouchPoint.set(screenPointOfTouch);
 								}
-								
 								break;
 						}
                     break;
 					
                 	case MotionEvent.ACTION_MOVE:
+						surfaceTouched=true;
+						currentTouchPoint.set(x,y);
+						touchTime=System.nanoTime()-firstTouchTime;
+						touchOffset=distanceTo(firstTouchPoint,currentTouchPoint);
+						
 						if(pressed&&event.getPointerCount()==1)
 						{
 							cameraToOffset.set((lastTouchPoint.x-screenPointOfTouch.x)/scale,(lastTouchPoint.y-screenPointOfTouch.y)/scale);
@@ -382,7 +490,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                     	break;
 
                 	case MotionEvent.ACTION_UP:
-                	    
+						surfaceTouched=false;
 						switch (gameManager.currentCommand)
 						{
 							case CONTROL:
@@ -405,6 +513,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 								break;
 						}
                         break;
+						
 					case MotionEvent.ACTION_POINTER_1_UP:
 						pressed=false;
 						cameraToOffset.set(0,0);
@@ -412,31 +521,26 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                 	default:
                         break;
                 }
-			}
+			}*/
 		}
 		else
 		{
 			if(!gameManager.isInMenu&&!gameManager.isLoading)
 			gameManager.isPaused=false;
 		}
-		
-		
 		return true;
+		
     }
-
-	
 	
 	public PointF getPointOfTouch()
 	{
-		return screenPointOfTouch;
+		return currentTouchPoint;
 	}
 	
     public Camera getCamera()
     {
         return camera;
     }
-
-
 
 	public Cursor getCursor()
 	{
@@ -447,7 +551,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 	{
 		return worldSize;
 	}
-	
 	
 	public boolean getTouched()
 	{
