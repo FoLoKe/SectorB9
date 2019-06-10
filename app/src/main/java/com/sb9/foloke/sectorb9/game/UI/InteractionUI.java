@@ -17,54 +17,66 @@ import com.sb9.foloke.sectorb9.game.AI.*;
 
 public class InteractionUI
 {
+
+    ///////////////REFACTOR: INIT() UPDATE() COMMAND() OPEN()
 	private static float scaleX=1,scaleY=1;
 	public static AI.order currentOrder;
-	
+
 	public static void init(final MainActivity MA,final Entity target)
 	{
 		GameLog.update("InteractionUI: init by "+target,0);
         final ViewFlipper VF = MA.findViewById(R.id.UIFlipper);
 		scaleX=MA.getGameManager().getScreenSize().y/1600f;
+
 		if(scaleX>2)
-			scaleX=2;
+		{
+            scaleX = 2;
+            scaleY = 2;
+        }
 		if(scaleX<0.5f)
-			scaleX=0.5f;
-		scaleY=scaleX;
-		
+		{
+            scaleX = 0.5f;
+            scaleY = 0.5f;
+        }
+
+
+		int sizeX=128;
+		int sizeY=64;
 		GameLog.update("InteractionUI: buttons set",0);
 		final ViewFlipper IVF=MA.findViewById(R.id.interaction_uiViewFlipper);
 		IVF.setDisplayedChild(0);
-		ImageButton closeButton = MA.findViewById(R.id.closeInteraction);
-		final Button openInventoryButton = MA.findViewById(R.id.openInventory);
-		final Button openInteraction=MA.findViewById(R.id.openInteraction);
-		final Button openProduction=MA.findViewById(R.id.openProduction);
-		final Button openTechTree=MA.findViewById(R.id.openTechTree);
-		final Button openConstructor=MA.findViewById(R.id.openConstructor);
-		openInventoryButton.setBackgroundColor(Color.parseColor("#33ffffff"));
-		openInteraction.setBackgroundColor(Color.parseColor("#33ffffff"));
-		openProduction.setBackgroundColor(Color.parseColor("#33ffffff"));
-		openTechTree.setBackgroundColor(Color.parseColor("#33ffffff"));
-		openConstructor.setBackgroundColor(Color.parseColor("#33ffffff"));
-		openInventoryButton.setVisibility(View.GONE);
-		openInteraction.setVisibility(View.GONE);
-		openProduction.setVisibility(View.GONE);
-		openConstructor.setVisibility(View.GONE);
+		ImageButton buttonCloseInteraction = MA.findViewById(R.id.closeInteraction);
+		final ImageButton buttonOpenCargo = MA.findViewById(R.id.openCargo);
+		final ImageButton buttonOpenConfig=MA.findViewById(R.id.openConfig);
+		final ImageButton buttonOpenProduction=MA.findViewById(R.id.openProduction);
+		final ImageButton buttonOpenTechTree=MA.findViewById(R.id.openTechTree);
+		final ImageButton buttonOpenShipsConstructor=MA.findViewById(R.id.openConstructor);
+
+		buttonOpenCargo.setBackground(new BitmapDrawable(MA.getResources(),Bitmap.createScaledBitmap(UIAsset.interactionCargo,(int)(sizeX*scaleX),(int)(sizeY*scaleY),false)));
+		buttonOpenConfig.setBackground(new BitmapDrawable(MA.getResources(),Bitmap.createScaledBitmap(UIAsset.interactionConfig,(int)(sizeX*scaleX),(int)(sizeY*scaleY),false)));
+		buttonOpenProduction.setBackground(new BitmapDrawable(MA.getResources(),Bitmap.createScaledBitmap(UIAsset.interactionProduction,(int)(sizeX*scaleX),(int)(sizeY*scaleY),false)));
+		buttonOpenTechTree.setBackground(new BitmapDrawable(MA.getResources(),Bitmap.createScaledBitmap(UIAsset.interactionTechs,(int)(sizeX*scaleX),(int)(sizeY*scaleY),false)));
+		buttonOpenShipsConstructor.setBackground(new BitmapDrawable(MA.getResources(),Bitmap.createScaledBitmap(UIAsset.interactionShips,(int)(sizeX*scaleX),(int)(sizeY*scaleY),false)));
+        buttonCloseInteraction.setBackground(new BitmapDrawable(MA.getResources(),Bitmap.createScaledBitmap(UIAsset.interactionCancel,(int)(sizeY*scaleX),(int)(sizeY*scaleY),false)));
+
+		buttonOpenCargo.setVisibility(View.GONE);
+		buttonOpenConfig.setVisibility(View.GONE);
+		buttonOpenProduction.setVisibility(View.GONE);
+		buttonOpenShipsConstructor.setVisibility(View.GONE);
 		
 		
 		GameLog.update("InteractionUI: spaceDockUI set",0);
 		if(target!=null)
 		if(target instanceof SpaceDock)
 		{
-			openConstructor.setVisibility(View.VISIBLE);
-			openConstructor.setOnClickListener(new OnClickListener()
+			buttonOpenShipsConstructor.setVisibility(View.VISIBLE);
+			buttonOpenShipsConstructor.setOnClickListener(new OnClickListener()
 			{
 				public void onClick(View v)
 				{
 					MA.getGameManager().currentCommand=GameManager.command.INTERACTION;
 					AssemblerUI.setOpened(false);
-					openInteraction.setBackgroundColor(Color.parseColor("#22ffffff"));
-					openProduction.setBackgroundColor(Color.parseColor("#22ffffff"));
-					v.setBackgroundColor(Color.parseColor("#55ffffff"));
+
 					ConstructorUI.update((SpaceDock)target);
 					IVF.setDisplayedChild(IVF.indexOfChild(MA.findViewById(R.id.ship_constructor_ui)));
 				}
@@ -72,15 +84,13 @@ public class InteractionUI
 		}
 		
 		GameLog.update("InteractionUI: techTreeUI set",0);
-		openTechTree.setOnClickListener(new OnClickListener()
+		buttonOpenTechTree.setOnClickListener(new OnClickListener()
 		{
 			public void onClick(View v)
 			{
 				MA.getGameManager().currentCommand=GameManager.command.INTERACTION;
 				AssemblerUI.setOpened(false);
-				openInteraction.setBackgroundColor(Color.parseColor("#22ffffff"));
-				openProduction.setBackgroundColor(Color.parseColor("#22ffffff"));
-				v.setBackgroundColor(Color.parseColor("#55ffffff"));
+
 				TechUI.updatePositions();
 				IVF.setDisplayedChild(IVF.indexOfChild(MA.findViewById(R.id.tech_ui)));
 			}
@@ -94,16 +104,14 @@ public class InteractionUI
 				MA.getGameManager().currentCommand=GameManager.command.EXCHANGE;
 				InventoryUI.setLeftSide(target);
 				MA.getGameManager().updateInventory(null);
-				openInventoryButton.setVisibility(View.VISIBLE);
-      			openInventoryButton.setOnClickListener(new OnClickListener() 
+				buttonOpenCargo.setVisibility(View.VISIBLE);
+      			buttonOpenCargo.setOnClickListener(new OnClickListener()
 					{
 						@Override
 						public void onClick(View v) 
 						{
 							AssemblerUI.setOpened(false);
-							openInteraction.setBackgroundColor(Color.parseColor("#22ffffff"));
-							openProduction.setBackgroundColor(Color.parseColor("#22ffffff"));
-							v.setBackgroundColor(Color.parseColor("#55ffffff"));
+
 							
 							IVF.setDisplayedChild(IVF.indexOfChild(MA.findViewById(R.id.inventoryUI)));
 						}
@@ -111,23 +119,21 @@ public class InteractionUI
 			}
 			else
 			{
-				openInventoryButton.setVisibility(View.GONE);
+				buttonOpenCargo.setVisibility(View.GONE);
 			}
 			
 			GameLog.update("InteractionUI: optionsUI set",0);
 			if (target.getInteractable()&&(target instanceof StaticEntity))
 			{
 				MA.getGameManager().currentCommand=GameManager.command.INTERACTION;
-				openInteraction.setVisibility(View.VISIBLE);
-				openInteraction.setOnClickListener(new OnClickListener()
+				buttonOpenConfig.setVisibility(View.VISIBLE);
+				buttonOpenConfig.setOnClickListener(new OnClickListener()
 				{
 					@Override
 					public void onClick(View v)
 					{
 						AssemblerUI.setOpened(false);
-						openProduction.setBackgroundColor(Color.parseColor("#22ffffff"));
-						openInventoryButton.setBackgroundColor(Color.parseColor("#22ffffff"));
-						v.setBackgroundColor(Color.parseColor("#55ffffff"));
+
 						ObjectOptionsUI.init((StaticEntity)target,IVF,MA);
 						IVF.setDisplayedChild(IVF.indexOfChild(MA.findViewById(R.id.obj_optionsUI)));
 					}
@@ -135,7 +141,7 @@ public class InteractionUI
 			}
 			else
 			{
-				openInteraction.setVisibility(View.GONE);
+				buttonOpenConfig.setVisibility(View.GONE);
 			}
 			
 			GameLog.update("InteractionUI: assemblerUI set",0);
@@ -143,32 +149,30 @@ public class InteractionUI
 			{
 				MA.getGameManager().currentCommand=GameManager.command.INTERACTION;
 				AssemblerUI.init(MA,(Assembler)target);
-				openProduction.setVisibility(View.VISIBLE);
-      			openProduction.setOnClickListener(new OnClickListener() 
+				buttonOpenProduction.setVisibility(View.VISIBLE);
+      			buttonOpenProduction.setOnClickListener(new OnClickListener()
 					{
 						@Override
 						public void onClick(View v) 
 						{
 							AssemblerUI.setOpened(true);
 							MA.getGameManager().initAssemblerUI((Assembler)target);
-							openInventoryButton.setBackgroundColor(Color.parseColor("#22ffffff"));
-							openInteraction.setBackgroundColor(Color.parseColor("#22ffffff"));
-							v.setBackgroundColor(Color.parseColor("#55ffffff"));
+
 							IVF.setDisplayedChild(IVF.indexOfChild(MA.findViewById(R.id.assemblerUI)));
 						}
 					});
 			}
 			else
 			{
-				openProduction.setVisibility(View.GONE);
+				buttonOpenProduction.setVisibility(View.GONE);
 			}
 		}
 		//32x32==160x160 1:5
 		
 		GameLog.update("InteractionUI: close button set",0);
-		closeButton.setBackground(new BitmapDrawable(null,Bitmap.createScaledBitmap(UIAsset.cancelButton,(int)(160*scaleX),(int)(160*scaleY),false)));
-		//closeButton.getLayoutParams().width=(int)(1000*scaleX);
-		closeButton.setOnClickListener
+
+		//buttonCloseInteraction.getLayoutParams().width=(int)(1000*scaleX);
+		buttonCloseInteraction.setOnClickListener
 		(new OnClickListener() 
 			{
 				@Override

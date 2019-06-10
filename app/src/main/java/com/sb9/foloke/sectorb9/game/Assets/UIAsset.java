@@ -5,8 +5,9 @@ import android.graphics.Bitmap;
 public class UIAsset {
 
         public static Bitmap hpBackground,hpLine,stunBackground,stunLine,progressBarBorder,destroyedText,noEnergySign,
-		invFullSign,shootButton,uiBgBlur,turnedOffSign,cancelButton,buildModeButton,collectDebrisButton,optionsButton,saveButton,loadButton,helpButton,exitButton,mapButton,
-		AIStay,AIAttack,AIMove,AIFollow,AIMine,AIRepair,AIPatrol,AIControl,ToAI,AIAggressive,AIDefensive,AIPeaceful, AIRetreat,weaponOn,weaponOff,weaponsButton,interactionSign;
+		invFullSign,shootButton,uiBgBlur,turnedOffSign, interactionCancel,buildModeButton,collectDebrisButton,optionsButton,saveButton,loadButton,helpButton,exitButton,mapButton,
+		AIStay,AIAttack,AIMove,AIFollow,AIMine,AIRepair,AIPatrol,AIControl,ToAI,AIAggressive,AIDefensive,AIPeaceful, AIRetreat,weaponOn,weaponOff,weaponsButton,interactionSign,
+        interactionCargo,interactionConfig,interactionTechs,interactionShips,interactionProduction;
 
         public static void init(Bitmap sheet)
         {
@@ -23,7 +24,7 @@ public class UIAsset {
 			invFullSign=Bitmap.createScaledBitmap(tSheet.crop(3,1),20,20,true);
 			shootButton=tSheet.crop(1,2);
 			uiBgBlur=tSheet.crop(2,2);
-			cancelButton=tSheet.crop(3,2);
+
 			buildModeButton=Bitmap.createBitmap(sheet,0,3*32,64,32,null,false);
 			collectDebrisButton=Bitmap.createBitmap(sheet,64,3*32,32,32,null,false);
 			
@@ -55,7 +56,14 @@ public class UIAsset {
 			weaponOff= Bitmap.createBitmap(sheet,32,32+16,32,16,null,false);
 			weaponOn=Bitmap.createBitmap(sheet,0,32+16,32,16,null,false);
 			weaponsButton=Bitmap.createBitmap(sheet,64,32,17,32,null,false);
-            interactionSign=Bitmap.createBitmap(sheet,128,32+16,63,16,null,false);
+            interactionSign=Bitmap.createBitmap(sheet,128,32+16,64,16,null,false);
+
+            interactionCargo=Bitmap.createBitmap(sheet,6*32,0,64,32,null,false);
+            interactionTechs=Bitmap.createBitmap(sheet,6*32,32,64,32,null,false);
+            interactionProduction=Bitmap.createBitmap(sheet,6*32,64,64,32,null,false);
+            interactionConfig=Bitmap.createBitmap(sheet,6*32,96,64,32,null,false);
+            interactionShips=Bitmap.createBitmap(sheet,6*32,128,64,32,null,false);
+            interactionCancel =Bitmap.createBitmap(sheet,3*32,2*32,32,32,null,false);
         }
 
         

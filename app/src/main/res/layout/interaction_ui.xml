@@ -16,43 +16,38 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content">
 			
-			<Button
+			<ImageButton
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:textColor="#ffffff"
-				android:text="Inventory"
-				android:id="@+id/openInventory"
+				android:id="@+id/openCargo"
 				android:layout_gravity="bottom|center"/>
 			
-			<Button
+			<ImageButton
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:textColor="#ffffff"
-				android:text="Config"
-				android:id="@+id/openInteraction"
+				android:id="@+id/openConfig"
 				android:layout_gravity="bottom|center"/>
 			
-			<Button
+			<ImageButton
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:textColor="#ffffff"
-				android:text="Production"
 				android:id="@+id/openProduction"
 				android:layout_gravity="bottom|center"/>
 			
-			<Button
+			<ImageButton
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:textColor="#ffffff"
-				android:text="Constructor"
 				android:id="@+id/openConstructor"
 				android:layout_gravity="bottom|center"/>
 			
-			<Button
-					android:layout_width="wrap_content"
+			<ImageButton
+                android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:textColor="#ffffff"
-				android:text="Tech Tree"
 				android:id="@+id/openTechTree"
 				android:layout_gravity="bottom|center"/>
 			
