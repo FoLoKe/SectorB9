@@ -422,8 +422,7 @@ public class GameManager
 		switch(currentCommand)
 		{
 			case INTERACTION:
-				
-				InteractionUI.init(MA,e);
+				InteractionUI.update(MA,e);
 				GameLog.update("interaction touch",2);
 				break;
 			case EXCHANGE:

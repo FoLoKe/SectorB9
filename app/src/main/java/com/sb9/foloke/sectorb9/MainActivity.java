@@ -250,7 +250,7 @@ public class MainActivity extends Activity {
         InventoryUI.init(this);
         BuildUI.init( this);
         ActionUI.init( this);
-        InteractionUI.init( this,null);
+        InteractionUI.init( this);
         HelpUI.init( this,1);
         MapUI.init( this);
 		TechUI.init(this);
