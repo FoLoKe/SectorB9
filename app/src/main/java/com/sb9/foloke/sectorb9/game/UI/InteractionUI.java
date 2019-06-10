@@ -24,12 +24,12 @@ public class InteractionUI
 	{
 		GameLog.update("InteractionUI: init by "+target,0);
         final ViewFlipper VF = MA.findViewById(R.id.UIFlipper);
-		scaleY=MA.getGameManager().getScreenSize().y/1600f;
+		scaleX=MA.getGameManager().getScreenSize().y/1600f;
 		if(scaleX>2)
 			scaleX=2;
 		if(scaleX<0.5f)
 			scaleX=0.5f;
-		scaleX=scaleY;
+		scaleY=scaleX;
 		
 		GameLog.update("InteractionUI: buttons set",0);
 		final ViewFlipper IVF=MA.findViewById(R.id.interaction_uiViewFlipper);
@@ -166,7 +166,7 @@ public class InteractionUI
 		//32x32==160x160 1:5
 		
 		GameLog.update("InteractionUI: close button set",0);
-		closeButton.setBackgroundDrawable(new BitmapDrawable(Bitmap.createScaledBitmap(UIAsset.cancelButton,(int)(160*scaleX),(int)(160*scaleY),false)));
+		closeButton.setBackground(new BitmapDrawable(null,Bitmap.createScaledBitmap(UIAsset.cancelButton,(int)(160*scaleX),(int)(160*scaleY),false)));
 		//closeButton.getLayoutParams().width=(int)(1000*scaleX);
 		closeButton.setOnClickListener
 		(new OnClickListener() 
@@ -184,7 +184,7 @@ public class InteractionUI
 			
 		GameLog.update("InteractionUI: build button set",0);
 		ImageButton buildButton = MA.findViewById(R.id.openBuildUI);
-		buildButton.setBackgroundDrawable(new BitmapDrawable(Bitmap.createScaledBitmap(UIAsset.buildModeButton,(int)(320*scaleX),(int)(160*scaleY),false)));
+		buildButton.setBackground(new BitmapDrawable(null,Bitmap.createScaledBitmap(UIAsset.buildModeButton,(int)(320*scaleX),(int)(160*scaleY),false)));
 		
 		buildButton.setOnClickListener
 		(new OnClickListener() 
@@ -229,7 +229,7 @@ public class InteractionUI
 		GameLog.update("InteractionUI: ready",0);
 	}
 	
-	public static void setAICommands(final Entity e,final MainActivity MA)
+	private static void setAICommands(final Entity e,final MainActivity MA)
 	{
 		if(e!=null)
 		GameLog.update("InteractionUI: orders set by"+e,0);
@@ -245,47 +245,56 @@ public class InteractionUI
 				MA.findViewById(R.id.interaction_ui_LL_buildOptions).setVisibility(View.GONE);
 				
 				//buttons
-				Button buttonAgressiveBehaviout=MA.findViewById(R.id.interaction_ui_b_behaviour_agressive);
-				Button buttonDefensiveBehaviout=MA.findViewById(R.id.interaction_ui_b_behaviour_defensive);
-				Button buttonPeacefulBehaviout=MA.findViewById(R.id.interaction_ui_b_behaviour_peaceful);
-				Button buttonRetreatBehaviout=MA.findViewById(R.id.interaction_ui_b_behaviour_retreat);
+                ImageButton buttonAggressiveBehaviour=MA.findViewById(R.id.interaction_ui_b_behaviour_aggressive);
+                ImageButton buttonDefensiveBehaviour=MA.findViewById(R.id.interaction_ui_b_behaviour_defensive);
+                ImageButton buttonPeacefulBehaviour=MA.findViewById(R.id.interaction_ui_b_behaviour_peaceful);
+                ImageButton buttonRetreatBehaviour=MA.findViewById(R.id.interaction_ui_b_behaviour_retreat);
 				
 				ImageButton buttonMoveToCommand=MA.findViewById(R.id.interaction_ui_b_order_move_to);
 				ImageButton buttonAttackCommand=MA.findViewById(R.id.interaction_ui_b_order_attack);
 				ImageButton buttonFollowCommand=MA.findViewById(R.id.interaction_ui_b_order_follow);
-				Button buttonRepairCommand=MA.findViewById(R.id.interaction_ui_b_order_repair);
-				Button buttonMineCommand=MA.findViewById(R.id.interaction_ui_b_order_mine);
+                ImageButton buttonRepairCommand=MA.findViewById(R.id.interaction_ui_b_order_repair);
+                ImageButton buttonMineCommand=MA.findViewById(R.id.interaction_ui_b_order_mine);
 				ImageButton buttonHoldCommand=MA.findViewById(R.id.interaction_ui_b_order_stay);
-				Button buttonPatrolCommand=MA.findViewById(R.id.interaction_ui_b_order_patrol);
+                ImageButton buttonPatrolCommand=MA.findViewById(R.id.interaction_ui_b_order_patrol);
 				
 				float size=64;
-				buttonMoveToCommand.setBackgroundDrawable(new BitmapDrawable(MA.getResources(),Bitmap.createScaledBitmap(UIAsset.AIMove,(int)(size*scaleX),(int)(size*scaleY),false)));
-				buttonAttackCommand.setBackgroundDrawable(new BitmapDrawable(MA.getResources(),Bitmap.createScaledBitmap(UIAsset.AIAttack,(int)(size*scaleX),(int)(size*scaleY),false)));
-				buttonHoldCommand.setBackgroundDrawable(new BitmapDrawable(MA.getResources(),Bitmap.createScaledBitmap(UIAsset.AIStay,(int)(size*scaleX),(int)(size*scaleY),false)));
-				buttonFollowCommand.setBackgroundDrawable(new BitmapDrawable(MA.getResources(),Bitmap.createScaledBitmap(UIAsset.AIFollow,(int)(size*scaleX),(int)(size*scaleY),false)));
+                buttonAggressiveBehaviour.setBackground(new BitmapDrawable(MA.getResources(),Bitmap.createScaledBitmap(UIAsset.AIAggressive,(int)(size*scaleX),(int)(size*scaleY),false)));
+                buttonDefensiveBehaviour.setBackground(new BitmapDrawable(MA.getResources(),Bitmap.createScaledBitmap(UIAsset.AIDefensive,(int)(size*scaleX),(int)(size*scaleY),false)));
+                buttonPeacefulBehaviour.setBackground(new BitmapDrawable(MA.getResources(),Bitmap.createScaledBitmap(UIAsset.AIPeaceful,(int)(size*scaleX),(int)(size*scaleY),false)));
+                buttonRetreatBehaviour.setBackground(new BitmapDrawable(MA.getResources(),Bitmap.createScaledBitmap(UIAsset.AIRetreat,(int)(size*scaleX),(int)(size*scaleY),false)));
+
+				buttonMoveToCommand.setBackground(new BitmapDrawable(MA.getResources(),Bitmap.createScaledBitmap(UIAsset.AIMove,(int)(size*scaleX),(int)(size*scaleY),false)));
+				buttonAttackCommand.setBackground(new BitmapDrawable(MA.getResources(),Bitmap.createScaledBitmap(UIAsset.AIAttack,(int)(size*scaleX),(int)(size*scaleY),false)));
+                buttonFollowCommand.setBackground(new BitmapDrawable(MA.getResources(),Bitmap.createScaledBitmap(UIAsset.AIFollow,(int)(size*scaleX),(int)(size*scaleY),false)));
+                buttonRepairCommand.setBackground(new BitmapDrawable(MA.getResources(),Bitmap.createScaledBitmap(UIAsset.AIRepair,(int)(size*scaleX),(int)(size*scaleY),false)));
+                buttonMineCommand.setBackground(new BitmapDrawable(MA.getResources(),Bitmap.createScaledBitmap(UIAsset.AIMine,(int)(size*scaleX),(int)(size*scaleY),false)));
+				buttonHoldCommand.setBackground(new BitmapDrawable(MA.getResources(),Bitmap.createScaledBitmap(UIAsset.AIStay,(int)(size*scaleX),(int)(size*scaleY),false)));
+                buttonPatrolCommand.setBackground(new BitmapDrawable(MA.getResources(),Bitmap.createScaledBitmap(UIAsset.AIPatrol,(int)(size*scaleX),(int)(size*scaleY),false)));
+
 				//actions for behaviour
-				buttonAgressiveBehaviout.setOnClickListener(new OnClickListener(){
+                buttonAggressiveBehaviour.setOnClickListener(new OnClickListener(){
 						public void onClick(View v)
 						{
 							((AI)((ControlledShip)e).getController()).setCurrentBehaviour(AI.behaviour.AGGRESSIVE);
 						}
 					});
 				
-				buttonDefensiveBehaviout.setOnClickListener(new OnClickListener(){
+				buttonDefensiveBehaviour.setOnClickListener(new OnClickListener(){
 						public void onClick(View v)
 						{
 							((AI)((ControlledShip)e).getController()).setCurrentBehaviour(AI.behaviour.DEFENSIVE);
 						}
 					});
 					
-				buttonPeacefulBehaviout.setOnClickListener(new OnClickListener(){
+				buttonPeacefulBehaviour.setOnClickListener(new OnClickListener(){
 						public void onClick(View v)
 						{
 							((AI)((ControlledShip)e).getController()).setCurrentBehaviour(AI.behaviour.PEACEFUL);
 						}
 					});
 				
-				buttonRetreatBehaviout.setOnClickListener(new OnClickListener(){
+				buttonRetreatBehaviour.setOnClickListener(new OnClickListener(){
 						public void onClick(View v)
 						{
 							((AI)((ControlledShip)e).getController()).setCurrentBehaviour(AI.behaviour.RETREAT);
@@ -350,7 +359,13 @@ public class InteractionUI
 			}
 			
 			//CHANGE CONTROLLER MANUAL/AI COMMON ORDER
-			Button buttonControlCommand=MA.findViewById(R.id.interaction_ui_b_order_control);
+			ImageButton buttonControlCommand=MA.findViewById(R.id.interaction_ui_b_order_control);
+
+
+            float size=64;
+            buttonControlCommand.setBackground(new BitmapDrawable(MA.getResources(),Bitmap.createScaledBitmap(UIAsset.AIControl,(int)(size*scaleX),(int)(size*scaleY),false)));
+
+
 			buttonControlCommand.setOnClickListener(new OnClickListener(){
 					public void onClick(View v)
 					{

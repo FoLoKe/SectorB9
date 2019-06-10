@@ -3,16 +3,16 @@
     android:layout_height="fill_parent">
 	
 	<LinearLayout
-		android:layout_gravity="top|left"
+		android:layout_gravity="top|start"
 		android:orientation="vertical"
-		android:gravity="top|left"
+		android:gravity="top|start"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content">
 		
     	<LinearLayout
-			android:layout_gravity="top|left"
+			android:layout_gravity="top|start"
 			android:orientation="horizontal"
-			android:gravity="top|left"
+			android:gravity="top|start"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content">
 			
@@ -65,9 +65,7 @@
 			
 		</LinearLayout>
 		
-		<FrameLayout
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content">
+
 		
 			<ViewFlipper
 				android:id="@+id/interaction_uiViewFlipper"
@@ -106,7 +104,7 @@
 		
 			</ViewFlipper>
 			
-		</FrameLayout>
+
 		
 	</LinearLayout>
 	
@@ -144,116 +142,12 @@
 			
 		</LinearLayout>
 		
-		<LinearLayout
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:id="@+id/interaction_ui_LL_AIOptions"
-			android:visibility="gone"
-			android:orientation="vertical"
-			android:background="#55ffffff"
-			android:layout_gravity="bottom|center_horizontal">
-		<LinearLayout
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:background="#ffff0000"
-			android:orientation="horizontal">
-			<ImageButton
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:textColor="#ffffff"
-				android:text="Stay"
-				android:id="@+id/interaction_ui_b_order_stay"
-				android:layout_gravity="bottom|left"/>
-			<ImageButton
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:textColor="#ffffff"
-				android:text="Move to"
-				android:id="@+id/interaction_ui_b_order_move_to"
-				android:layout_gravity="bottom|left"/>
-			<ImageButton
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:textColor="#ffffff"
-				android:text="Attack"
-				android:id="@+id/interaction_ui_b_order_attack"
-				android:layout_gravity="bottom|left"/>
-			<Button
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:textColor="#ffffff"
-				android:text="Mine"
-				android:id="@+id/interaction_ui_b_order_mine"
-				android:layout_gravity="bottom|right"/>
-		</LinearLayout>
-			<LinearLayout
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:orientation="horizontal">
-			<Button
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:textColor="#ffffff"
-				android:text="Repair"
-				android:id="@+id/interaction_ui_b_order_repair"
-				android:layout_gravity="bottom|left"/>
-			<ImageButton
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:textColor="#ffffff"
-				android:text="Follow"
-				android:id="@+id/interaction_ui_b_order_follow"
-				android:layout_gravity="bottom|left"/>
-			<Button
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:textColor="#ffffff"
-				android:text="Agressive"
-				android:id="@+id/interaction_ui_b_behaviour_agressive"
-				android:layout_gravity="bottom|right"/>
-			<Button
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:textColor="#ffffff"
-				android:text="Defensive"
-				android:id="@+id/interaction_ui_b_behaviour_defensive"
-				android:layout_gravity="bottom|right"/>
-			</LinearLayout>
-			<LinearLayout
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:orientation="horizontal">
-			<Button
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:textColor="#ffffff"
-				android:text="Peaceful"
-				android:id="@+id/interaction_ui_b_behaviour_peaceful"
-				android:layout_gravity="bottom|right"/>
-			
-			<Button
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:textColor="#ffffff"
-				android:text="Retreat"
-				android:id="@+id/interaction_ui_b_behaviour_retreat"
-				android:layout_gravity="bottom|right"/>
-				<Button
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:textColor="#ffffff"
-					android:text="Patrol"
-					android:id="@+id/interaction_ui_b_order_patrol"
-					android:layout_gravity="bottom|right"/>
-				<Button
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:textColor="#ffffff"
-					android:text="CONTROL"
-					android:id="@+id/interaction_ui_b_order_control"
-					android:layout_gravity="bottom|right"/>
-			</LinearLayout>
-		</LinearLayout>
+    <include layout="@layout/interaction_ui_bottom_panel"
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#ff0000"/>
+
 		
 	</LinearLayout>
 	
