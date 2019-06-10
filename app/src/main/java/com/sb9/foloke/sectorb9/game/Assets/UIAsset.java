@@ -6,8 +6,8 @@ public class UIAsset {
 
         public static Bitmap hpBackground,hpLine,stunBackground,stunLine,progressBarBorder,destroyedText,noEnergySign,
 		invFullSign,shootButton,uiBgBlur,turnedOffSign,cancelButton,buildModeButton,collectDebrisButton,optionsButton,saveButton,loadButton,helpButton,exitButton,mapButton,
-		AIStay,AIAttack,AIMove,AIFollow;
-		public static Bitmap indexedImages[]={hpBackground,hpLine,progressBarBorder,destroyedText};
+		AIStay,AIAttack,AIMove,AIFollow,weaponOn,weaponOff,weaponsButton,interactionSign;
+
         public static void init(Bitmap sheet)
         {
             SpriteSheet tsheet=new SpriteSheet(sheet);
@@ -40,14 +40,13 @@ public class UIAsset {
 			AIMove=Bitmap.createBitmap(sheet,8*32,32,32,32,null,false);
 			AIAttack=Bitmap.createBitmap(sheet,8*32,64,32,32,null,false);
 			AIFollow=Bitmap.createBitmap(sheet,8*32,96,32,32,null,false);
-			
+
+			weaponOff= Bitmap.createBitmap(sheet,32,32+16,32,16,null,false);
+			weaponOn=Bitmap.createBitmap(sheet,0,32+16,32,16,null,false);
+			weaponsButton=Bitmap.createBitmap(sheet,64,32,17,32,null,false);
+            interactionSign=Bitmap.createBitmap(sheet,128,32+16,63,16,null,false);
         }
-		public static Bitmap getByIndex(int index)
-		{
-			if(index<indexedImages.length)
-			return indexedImages[index];
-			return indexedImages[0];
-		}
+
         
 
 

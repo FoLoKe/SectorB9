@@ -121,7 +121,7 @@ public class MapUI
 						{
 						MapTile tile=new MapTile(MA,i,j,row);
 						mapTiles.add(tile);
-						tile.setImageBitmap(InventoryAsset.inv_empty);
+						tile.setImageBitmap(null);  //////NO BITMAP
 						MapManager.Sector sector=MM.getSector(i,j);
 						if(sector!=null)
 							{

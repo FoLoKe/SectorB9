@@ -10,7 +10,7 @@
         android:id="@+id/icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ui_inv_item_steel" />
+        android:src="@drawable/icon" />
 
     <TextView
         android:id="@+id/weekofday"

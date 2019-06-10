@@ -222,7 +222,7 @@ public class InteractionUI
 		//for 1800 scale =(int) 3.125*1800/2500
 
 
-		img.setImageBitmap(Bitmap.createScaledBitmap(BitmapFactory.decodeResource(MA.getResources(),R.drawable.ui_interaction_sign,bitmapOptions),(int)(200*scaleX),(int)(50*scaleY),false));
+		img.setImageBitmap(Bitmap.createScaledBitmap(UIAsset.interactionSign,(int)(200*scaleX),(int)(50*scaleY),false));
 		//weaponsButton.getLayoutParams().width=(int)(150*scaleX);
 		
 		setAICommands(target,MA);

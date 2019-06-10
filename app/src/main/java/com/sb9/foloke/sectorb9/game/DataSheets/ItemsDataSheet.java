@@ -53,7 +53,7 @@ public class ItemsDataSheet
 	{
 		BitmapFactory.Options options=new BitmapFactory.Options();
         options.inScaled=false;
-		InventoryAsset.init(Bitmap.createBitmap(BitmapFactory.decodeResource(MA.getResources(),R.drawable.ui_inv_sheet_v2,options)));
+
 		///						 NAME				 	ID	IMAGE						            made from items				items count					crushed into		smeltedinto	crushedFrom smeltedFrom info
 		objects.add(new ItemInfo("null item"			,0	,InventoryAsset.inv_empty			    ,new int[]{0}				,new int[]{0}				,0					,0			,0			,0			,"error please contact developer"));
 		objects.add(new ItemInfo("iron ore"				,1	,InventoryAsset.inv_item_fe			    ,new int[]{0}				,new int[]{0}				,4					,0			,0			,0			,"can be mined on asteroids by drilling them or destroying"));

@@ -80,7 +80,7 @@ public class ActionUI
 		//for 1800 scale =(int) 3.125*1800/2500
 		
 		
-		weaponsButton.setBackgroundDrawable(new BitmapDrawable(MA.getResources(),Bitmap.createScaledBitmap(BitmapFactory.decodeResource(MA.getResources(),R.drawable.ui_weaponsbutton,bitmapOptions),(int)(50*scaleX),(int)(100*scaleY),false)));
+		weaponsButton.setBackgroundDrawable(new BitmapDrawable(MA.getResources(),Bitmap.createScaledBitmap(UIAsset.weaponsButton,(int)(50*scaleX),(int)(100*scaleY),false)));
 		//weaponsButton.getLayoutParams().width=(int)(150*scaleX);
 		weaponsButton.setOnClickListener(new OnClickListener()
 		{
@@ -173,9 +173,9 @@ public class ActionUI
         bitmapOptions.inScaled=false;
 		if(!wb.getWeapon().getEnabled())
 		{
-			wb.setBackgroundDrawable(new BitmapDrawable(MA.getResources(),Bitmap.createScaledBitmap(BitmapFactory.decodeResource(MA.getResources(),R.drawable.ui_weapon_enabled,bitmapOptions),(int)(100*scaleX),(int)(50*scaleY),false)));
+			wb.setBackgroundDrawable(new BitmapDrawable(MA.getResources(),Bitmap.createScaledBitmap(UIAsset.weaponOn,(int)(100*scaleX),(int)(50*scaleY),false)));
 		}
 		else
-			wb.setBackgroundDrawable(new BitmapDrawable(MA.getResources(),Bitmap.createScaledBitmap(BitmapFactory.decodeResource(MA.getResources(),R.drawable.ui_weapon_disabled,bitmapOptions),(int)(100*scaleX),(int)(50*scaleY),false)));
+			wb.setBackgroundDrawable(new BitmapDrawable(MA.getResources(),Bitmap.createScaledBitmap(UIAsset.weaponOff,(int)(100*scaleX),(int)(50*scaleY),false)));
 	}
 }

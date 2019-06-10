@@ -151,8 +151,7 @@ public class TechUI
 			if(scaleX<0.5f)
 				scaleX=0.5f;
 			scaleX=scaleY;
-			//ib.setBackgroundDrawable(new BitmapDrawable(MA.getResources(),Bitmap.createScaledBitmap(BitmapFactory.decodeResource(MA.getResources(),R.drawable.ui_weaponsbutton,bitmapOptions),(int)(50*scaleX),(int)(100*scaleY),false)));
-			//weaponsButton.getLayoutParams().width=(int)(150*scaleX);
+
 			existing.add(t.getID());
 			ib.setText(t.getID()+"");
 			ib.setTextSize(15);

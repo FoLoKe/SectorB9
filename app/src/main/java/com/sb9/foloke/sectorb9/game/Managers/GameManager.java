@@ -18,7 +18,7 @@ import java.util.*;
 
 import com.sb9.foloke.sectorb9.game.Display.Camera;
 import com.sb9.foloke.sectorb9.game.Entities.Entity;
-import com.sb9.foloke.sectorb9.game.Funtions.Timer;
+
 
 
 public class GameManager 
@@ -44,7 +44,7 @@ public class GameManager
     private boolean collect=false;
     private boolean warpReady=false;
 
-    private Timer destroyedTimer;
+
    
 	private PlayerController playerController;
 	public static Joystick joystick;
@@ -52,13 +52,13 @@ public class GameManager
 	
 	private CustomCollisionObject interObject;
     
-    public enum command{INTERACTION,CONTROL,ORDER,EXCHANGE};
+    public enum command{INTERACTION,CONTROL,ORDER,EXCHANGE}
 	public  command currentCommand;
 	
 	private Point sectorToWarp=new Point();
 	private PointF warpingLocation=new PointF();
     private  Point screenSize=new Point();
-	private ArrayList<Entity> selectedEntities=new ArrayList();
+	private ArrayList<Entity> selectedEntities=new ArrayList<>();
 	
 	
     public GameManager( MainActivity MA)
@@ -72,13 +72,13 @@ public class GameManager
         GameLog.update("GameManager: preparing game",0);
         setSaveName(saveName);
         currentCommand=command.CONTROL;
-        destroyedTimer=new Timer(0);
+
         BitmapFactory.Options bitmapOptions=new BitmapFactory.Options();
         bitmapOptions.inScaled=false;
 		interObject=new CustomCollisionObject(2,2,this);
 		
         GameLog.update("GameManager: preparing assets",0);
-        InventoryAsset.init(Bitmap.createBitmap(BitmapFactory.decodeResource(MA.getResources(), R.drawable.ui_inventory_sheet,bitmapOptions)));
+        InventoryAsset.init(Bitmap.createBitmap(BitmapFactory.decodeResource(MA.getResources(),R.drawable.ui_inv_sheet,bitmapOptions)));
         ShipAsset.init(Bitmap.createBitmap(BitmapFactory.decodeResource(MA.getResources(),R.drawable.ships_sheet,bitmapOptions)));
         UIAsset.init(Bitmap.createBitmap(BitmapFactory.decodeResource(MA.getResources(),R.drawable.ui_asset_sheet,bitmapOptions)));
         WeaponsAsset.init(Bitmap.createBitmap(BitmapFactory.decodeResource(MA.getResources(),R.drawable.ships_sheet,bitmapOptions)));
