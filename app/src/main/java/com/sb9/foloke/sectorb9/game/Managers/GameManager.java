@@ -112,7 +112,7 @@ public class GameManager
 	
         GameLog.update("GameManager: preparing managers",0);
         mapManager=new MapManager();
-        worldManager=new WorldManager(MA,this);
+        worldManager=new WorldManager(this);
         worldManager.loadEmptyWorld();
 		SaveManager.init(this);
 
@@ -433,9 +433,9 @@ public class GameManager
 				GameLog.update("order touch",2);
 				switch(InteractionUI.currentOrder)
 				{
-					case MOVETO:
+					case MOVE:
 						((AI)((ControlledShip)e).getController()).setDestination(p);
-						((AI)((ControlledShip)e).getController()).setCurrentOrder(AI.order.MOVETO);
+						((AI)((ControlledShip)e).getController()).setCurrentOrder(AI.order.MOVE);
 						break;
 					case ATTACK:
 						((AI)((ControlledShip)e).getController()).setTargetToAttack(e);

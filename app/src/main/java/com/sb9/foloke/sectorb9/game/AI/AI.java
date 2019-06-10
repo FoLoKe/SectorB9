@@ -9,33 +9,28 @@ import com.sb9.foloke.sectorb9.game.Assets.*;
 
 public class AI extends Controller {
 
-    protected final float acceptableDistance=100;
-	protected final float acceptableShootDistance=200;
-    protected ControlledShip child;
-	protected final float sightRadius=300;
-	//private PointF pickedRandomPoint;
-	//protected PointF wayPoint=new PointF(0,0);
-	protected Paint debugPathPaint=new Paint();
-	protected Paint debugOrderPaint=new Paint();
-	
-	protected Paint debugPreBehaviourOrderPaint=new Paint();
-	
-	
+    private final float acceptableDistance=100;
+    private final float acceptableShootDistance=200;
+    private ControlledShip child;
+    private final float sightRadius=300;
+    private Paint debugPathPaint=new Paint();
+    private Paint debugOrderPaint=new Paint();
+    private Paint debugPreBehaviourOrderPaint=new Paint();
+
 	public enum behaviour{AGGRESSIVE,DEFENSIVE,PEACEFUL,RETREAT}
-	public enum order{MOVETO,ATTACK,FOLLOW,MINE,STAY,REPAIR,PATROL}
-	
-	protected behaviour currentBehaviour=behaviour.PEACEFUL;
-	protected order currentOrder=order.STAY;
-	protected order preBehaviourOrder=order.STAY;
-	
-	protected Entity targetToFollow;
-	protected Entity targetToMine;
-	protected Entity targetToAttack;
-	protected Entity targetToRepairYourself;
-	protected Entity targetToRetreatFrom;
-	protected PointF destination;
-	
-	
+	public enum order{MOVE,ATTACK,FOLLOW,MINE,STAY,REPAIR,PATROL}
+
+    private behaviour currentBehaviour=behaviour.PEACEFUL;
+    private order currentOrder=order.STAY;
+    private order preBehaviourOrder=order.STAY;
+
+    private Entity targetToFollow;
+    private Entity targetToMine;
+    private Entity targetToAttack;
+    private Entity targetToRepairYourself;
+    private Entity targetToRetreatFrom;
+    private PointF destination;
+
     public AI(ControlledShip child)
     {
         this.child=child;
@@ -57,7 +52,7 @@ public class AI extends Controller {
 			case STAY:
 				orderStay();
 				break;
-			case MOVETO:
+			case MOVE:
 				orderMoveTo();
 				break;
 			case ATTACK:
@@ -81,7 +76,7 @@ public class AI extends Controller {
 		switch(currentBehaviour)
 		{
 			case AGGRESSIVE:
-				orderAgressive();
+				orderAggressive();
 				break;
 			case DEFENSIVE:
 				orderDefensive();
@@ -95,8 +90,7 @@ public class AI extends Controller {
 			
 		}
 	}
-	
-	///DEBUG
+
 	public void render(Canvas canvas)
 	{
 		
@@ -106,7 +100,7 @@ public class AI extends Controller {
 				debugOrderPaint.setColor(Color.YELLOW);
 				
 				break;
-			case MOVETO:
+			case MOVE:
 				debugOrderPaint.setColor(Color.BLUE);
 				break;
 				
@@ -157,7 +151,7 @@ public class AI extends Controller {
 				debugPreBehaviourOrderPaint.setColor(Color.YELLOW);
 
 				break;
-			case MOVETO:
+			case MOVE:
 				debugPreBehaviourOrderPaint.setColor(Color.BLUE);
 				break;
 
@@ -182,23 +176,15 @@ public class AI extends Controller {
 				break;	
 
 		}
-		//state
-		
+
 		canvas.drawCircle(child.getX()-10,child.getY()-10,5,debugOrderPaint);
-		
-		
 		
 		if(!Options.drawDebugInfo.getBoolean())
 			return;
 		canvas.drawLine(child.getCenterX(),child.getCenterY(),destination.x,destination.y,debugPathPaint);
 		canvas.drawCircle(child.getX()-20,child.getY()-10,4,debugPreBehaviourOrderPaint);
-		
-		
 	}
 
-	
-	
-	//orders
 	private void orderRetreat()
 	{
 		if(targetToRetreatFrom==null)
@@ -208,7 +194,7 @@ public class AI extends Controller {
 			{
 				targetToRetreatFrom=e;	
 				preBehaviourOrder=currentOrder;
-				currentOrder=order.MOVETO;
+				currentOrder=order.MOVE;
 			}
 		}
 		else
@@ -216,8 +202,8 @@ public class AI extends Controller {
 			if(isInSightRadius(targetToRetreatFrom))
 			{
 				PointF vector=new PointF(targetToRetreatFrom.getCenterX()-child.getCenterX(),targetToRetreatFrom.getCenterY()-child.getCenterY());
-				float lengh=(float)Math.sqrt(vector.x*vector.x+vector.y*vector.y);
-				vector.set(vector.x/lengh*sightRadius,vector.y/lengh*sightRadius);
+				float length=(float)Math.sqrt(vector.x*vector.x+vector.y*vector.y);
+				vector.set(vector.x/length*sightRadius,vector.y/length*sightRadius);
 				destination=new PointF(child.getCenterX()-vector.x,child.getCenterY()-vector.y);
 			}
 			else
@@ -231,7 +217,7 @@ public class AI extends Controller {
 		}
 	}
 	
-	private void orderAgressive()
+	private void orderAggressive()
 	{
 		if(targetToAttack==null)
 		{
@@ -340,7 +326,7 @@ public class AI extends Controller {
 		currentOrder=order.STAY;
 	}
 	
-	public void orderMine()
+	private void orderMine()
 	{
 		if(targetToMine!=null)
 		{
@@ -362,11 +348,11 @@ public class AI extends Controller {
 			}
 		}
 	
-			targetToMine=findMinable();
+			targetToMine=findAsteroid();
 		
 	}
 	
-	protected void orderAttack()
+	private void orderAttack()
 	{
 		if(targetToAttack!=null)
 		{
@@ -383,8 +369,6 @@ public class AI extends Controller {
 				}
 				else
 					taskStop();
-				
-				return;
 			}
 			else
 				targetToAttack=null;
@@ -408,9 +392,8 @@ public class AI extends Controller {
 	{
 		taskStop();
 	}
-	
-	//tasks
-	protected Entity findEnemy()
+
+	private Entity findEnemy()
 	{
 		for(Entity e:child.getGameManager().getWorldManager().getEntityManager().getArray())
 		{
@@ -424,7 +407,7 @@ public class AI extends Controller {
 		return null;
 	}
 	
-	private Entity findMinable()
+	private Entity findAsteroid()
 	{
 		Entity asteroid=null;
 		for(Entity e:child.getGameManager().getWorldManager().getEntityManager().getArray())
@@ -432,7 +415,6 @@ public class AI extends Controller {
 			if(e instanceof Asteroid)
 				if(e.getActive())
 				{
-					//enemy=e;
 					asteroid=e;
 					break;
 				}
@@ -443,9 +425,7 @@ public class AI extends Controller {
 			if(e instanceof Asteroid)
 				if(e.getActive()&&distanceTo(e.getCenterWorldLocation())<distanceTo(asteroid.getCenterWorldLocation()))
 				{
-					//enemy=e;
 					asteroid=e;
-					
 				}
 		}
 		
@@ -482,48 +462,49 @@ public class AI extends Controller {
 		return asteroid;
 	}
 	
-	protected boolean taskRotateToPoint(PointF p)
+	private boolean taskRotateToPoint(PointF p)
 	{
 		return child.rotationToPoint(p);
 	}
 	
-	protected void taskAddMovement(float acceleration)
+	private void taskAddMovement(float acceleration)
 	{
 		child.addMovement(acceleration);
 		child.setMovable(true);
 	}
-	protected void taskStop()
+
+	private void taskStop()
 	{
 		child.setMovable(false);
 	}
 	
-	protected boolean isInAcceptableRadius(PointF p)
+	private boolean isInAcceptableRadius(PointF p)
 	{
 		return distanceTo(p)<acceptableDistance;
 	}
 	
-	protected boolean isInAcceptableShootRadius(PointF p)
+	private boolean isInAcceptableShootRadius(PointF p)
 	{
 		return distanceTo(p)<acceptableShootDistance;
 	}
 	
-	protected boolean isInSightRadius(PointF p)
+	private boolean isInSightRadius(PointF p)
 	{
 		return distanceTo(p)<sightRadius;
 	}
 	
-	protected boolean isInSightRadius(Entity e)
+	private boolean isInSightRadius(Entity e)
 	{
 		return distanceTo(e.getCenterWorldLocation())<sightRadius;
 	}
 	
-    protected float distanceTo(PointF p)
+    private float distanceTo(PointF p)
     {
         PointF point=new PointF(child.getCenterX()-p.x,child.getCenterY()-p.y);
         return (float)Math.sqrt((point.x)*(point.x)+(point.y)*(point.y));
     }
 	
-	protected PointF pickRandomPoint(int mx,int my)
+	private PointF pickRandomPoint(int mx,int my)
 	{
 		Random rnd=new Random();
 		return new PointF(rnd.nextInt(mx),rnd.nextInt(my));
@@ -549,6 +530,7 @@ public class AI extends Controller {
 	{
 		return currentBehaviour;
 	}
+
 	public void setTargetToAttack(Entity targetToAttack)
 	{
 		this.targetToAttack = targetToAttack;
@@ -617,7 +599,7 @@ public class AI extends Controller {
 	public void decodeSaveLine(String saveLine)
 	{
 		///TODO: AFTER LOAD TARGETS SETS, LOAD SYSTEM IN MAINTHREAD ISTEAD OF UI THREAD
-		String aiWords[]=saveLine.split("=");
+		String[] aiWords=saveLine.split("=");
 		PointF loadedTargetToAttackPoint=new PointF();
 		PointF loadedTargetToFollowPoint=new PointF();
 		PointF loadedTargetToRetreatFromPoint=new PointF();
@@ -631,7 +613,7 @@ public class AI extends Controller {
 			currentOrder=order.valueOf(aiWords[2]);
 		}
 		
-		String pointWords[]=aiWords[3].split(":");
+		String[] pointWords=aiWords[3].split(":");
 		loadedTargetToAttackPoint.set(Float.parseFloat(pointWords[0]),Float.parseFloat(pointWords[1]));
 		pointWords=aiWords[4].split(":");
 		loadedTargetToFollowPoint.set(Float.parseFloat(pointWords[0]),Float.parseFloat(pointWords[1]));

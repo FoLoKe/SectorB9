@@ -79,7 +79,7 @@ public class InteractionUI
         buttonCloseInteraction.setBackground(new BitmapDrawable(MA.getResources(),Bitmap.createScaledBitmap(UIAsset.interactionCancel,(int)(sizeY*scale),(int)(sizeY*scale),false)));
 
         float size=64;
-        
+
         buttonAggressiveBehaviour.setBackground(new BitmapDrawable(MA.getResources(),Bitmap.createScaledBitmap(UIAsset.AIAggressive,(int)(size*scale),(int)(size*scale),false)));
         buttonDefensiveBehaviour.setBackground(new BitmapDrawable(MA.getResources(),Bitmap.createScaledBitmap(UIAsset.AIDefensive,(int)(size*scale),(int)(size*scale),false)));
         buttonPeacefulBehaviour.setBackground(new BitmapDrawable(MA.getResources(),Bitmap.createScaledBitmap(UIAsset.AIPeaceful,(int)(size*scale),(int)(size*scale),false)));
@@ -177,7 +177,7 @@ public class InteractionUI
         buttonMoveToCommand.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 MA.getGameManager().currentCommand= GameManager.command.ORDER;
-                currentOrder=AI.order.MOVETO;
+                currentOrder=AI.order.MOVE;
             }
         });
 

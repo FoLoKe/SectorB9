@@ -8,20 +8,13 @@ import java.io.*;
 
 public class WorldManager
 {
-	private MainActivity MA;
 	private EntityManager entityManager;
 	private GameManager gameManager;
-	
-	//background
-	private Bitmap background;
-
-	////current sector
 	private int sectorX=0,sectorY=0;
 
-	WorldManager(MainActivity MA, GameManager gameManager)
+	WorldManager(GameManager gameManager)
 	{
         GameLog.update("WorldManager: preparing manager",0);
-		this.MA=MA;
 		this.gameManager = gameManager;
 		this.entityManager=new EntityManager(gameManager);
 		
@@ -34,15 +27,11 @@ public class WorldManager
 		sectorY=1;
 		BitmapFactory.Options bitmapOptions=new BitmapFactory.Options();
 		bitmapOptions.inScaled=false;
-		background=Bitmap.createBitmap(BitmapFactory.decodeResource(MA.getResources(),R.drawable.galactic_outflow,bitmapOptions));
-
-		//entityManager.addObject(gameManager.getPlayer());
-		
-		}
+	}
 	
 	void updateWorld()
 	{
-		int i=0;
+
 		for(Entity e : entityManager.getArray())
 		{
 			if(e.getActive())
@@ -51,7 +40,7 @@ public class WorldManager
 				if((gameManager.getCamera().getScreenRect().contains(e.getRenderBox()))||(RectF.intersects(gameManager.getCamera().getScreenRect(),e.getRenderBox())))
 				{
 					e.setRenderable(true);
-					i++;
+
 				}
 				else
 					e.setRenderable(false);
@@ -59,9 +48,7 @@ public class WorldManager
 			else
 				e.setRenderable(false);
 		}
-		
-		//objects ticks
-		
+
 		entityManager.tick();
 	}
 	
@@ -112,7 +99,7 @@ public class WorldManager
 		gameManager.saveGame();
 		sectorX=x;
 		sectorY=y;
-        if(!gameManager.loadSector(x,y))
+        if(!GameManager.loadSector(x,y))
         {
            WorldGenerator.makeSector(gameManager,gameManager.getMapManager().getSector(x,y));
 			gameManager.saveGame();
