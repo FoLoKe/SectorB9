@@ -284,6 +284,8 @@ public class GameManager
 
     public void interactionCheck(float x, float y)
     {
+		if(currentCommand==command.ORDER)
+			interactionTouch(new PointF(x,y));
 		try
 		{
 			interObject.calculateCollisionObject(x,y);
@@ -439,55 +441,50 @@ public class GameManager
 	
 	public void interactionTouch(PointF p)
 	{
-		
-		if (currentCommand==command.INTERACTION)
-		{
-			InteractionUI.update(MA,selectedEntities);
-			GameLog.update("interaction touch",2);
-		}
-		
-		if(selectedEntities.size()==1)
-		{
-			switch(currentCommand)
-			{
-				case EXCHANGE:
-					GameLog.update("exhange touch",2);
-					InventoryUI.setRightSide(selectedEntities.get(0));
-					break;
-			}
-		}
-		else
-		{
-			
-		Iterator<Entity> iteratot=selectedEntities.iterator();
-		while(iteratot.hasNext())
-		{
-			Entity e=iteratot.next();
-			
 		switch(currentCommand)
 		{
+			case INTERACTION:
+				InteractionUI.update(MA,selectedEntities);
+				GameLog.update("interaction touch",2);
+				break;
+	
+		
+			case EXCHANGE:
+				if(selectedEntities.size()==1)
+				{
+					GameLog.update("exhange touch",2);
+					InventoryUI.setRightSide(selectedEntities.get(0));
+				}
+				break;
 			
+		
 			case ORDER:
 				GameLog.update("order touch",2);
-				switch(InteractionUI.currentOrder)
+				Iterator<Entity> iterator=selectedEntities.iterator();
+				while(iterator.hasNext())
 				{
-					case MOVE:
-						((AI)((ControlledShip)e).getController()).setDestination(p);
-						((AI)((ControlledShip)e).getController()).setCurrentOrder(AI.order.MOVE);
+					Entity e=iterator.next();
+					
+					switch(InteractionUI.currentOrder)
+					{
+						case MOVE:
+							((AI)((ControlledShip)e).getController()).setDestination(p);
+							((AI)((ControlledShip)e).getController()).setCurrentOrder(AI.order.MOVE);
+							break;
+						case ATTACK:
+							((AI)((ControlledShip)e).getController()).setTargetToAttack(e);
+							((AI)((ControlledShip)e).getController()).setCurrentOrder(AI.order.ATTACK);
+							break;
+						case FOLLOW:
+							((AI)((ControlledShip)e).getController()).setTargetToFollow(e);
+							((AI)((ControlledShip)e).getController()).setCurrentOrder(AI.order.FOLLOW);
 						break;
-					case ATTACK:
-						((AI)((ControlledShip)e).getController()).setTargetToAttack(e);
-						((AI)((ControlledShip)e).getController()).setCurrentOrder(AI.order.ATTACK);
-						break;
-					case FOLLOW:
-						((AI)((ControlledShip)e).getController()).setTargetToFollow(e);
-						((AI)((ControlledShip)e).getController()).setCurrentOrder(AI.order.FOLLOW);
-						break;
+					}
+					
+					currentCommand=command.INTERACTION;	
 				}
-				currentCommand=command.INTERACTION;
 				break;
-				}
-			}
+			
 		}
 	}
 	
