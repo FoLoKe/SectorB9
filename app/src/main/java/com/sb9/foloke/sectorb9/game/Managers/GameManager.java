@@ -309,13 +309,38 @@ public class GameManager
     {
 		try
 		{
+			Entity firstEntity=null;
 			ArrayList<Entity> entities=new ArrayList<>();
-
+			
 			for(Entity e: getEntityManager().getArray())
 			{
 				if(box.contains(e.getCenterX(),e.getCenterY()))
 				{
-					entities.add(e);
+					if(e instanceof ControlledShip)
+					{
+						firstEntity=e;
+						break;
+					}	
+				}
+			}
+			
+			for(Entity e: getEntityManager().getArray())
+			{
+				if(box.contains(e.getCenterX(),e.getCenterY()))
+				{
+					if(firstEntity==null)
+					{
+						entities.add(e);
+						firstEntity=e;
+					}
+					else
+					{
+						if(e.getClass()==firstEntity.getClass())
+						{
+							entities.add(e);
+						}
+					}
+					
 				}
 			}
 			
@@ -414,6 +439,26 @@ public class GameManager
 	
 	public void interactionTouch(PointF p)
 	{
+		
+		if (currentCommand==command.INTERACTION)
+		{
+			InteractionUI.update(MA,selectedEntities);
+			GameLog.update("interaction touch",2);
+		}
+		
+		if(selectedEntities.size()==1)
+		{
+			switch(currentCommand)
+			{
+				case EXCHANGE:
+					GameLog.update("exhange touch",2);
+					InventoryUI.setRightSide(selectedEntities.get(0));
+					break;
+			}
+		}
+		else
+		{
+			
 		Iterator<Entity> iteratot=selectedEntities.iterator();
 		while(iteratot.hasNext())
 		{
@@ -421,14 +466,7 @@ public class GameManager
 			
 		switch(currentCommand)
 		{
-			case INTERACTION:
-				InteractionUI.update(MA,e);
-				GameLog.update("interaction touch",2);
-				break;
-			case EXCHANGE:
-				GameLog.update("exhange touch",2);
-				InventoryUI.setRightSide(e);
-				break;
+			
 			case ORDER:
 				GameLog.update("order touch",2);
 				switch(InteractionUI.currentOrder)
@@ -449,6 +487,7 @@ public class GameManager
 				currentCommand=command.INTERACTION;
 				break;
 				}
+			}
 		}
 	}
 	

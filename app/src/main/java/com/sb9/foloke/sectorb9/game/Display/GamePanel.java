@@ -354,55 +354,57 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 				switch(event.getAction())
 				{
 					case MotionEvent.ACTION_DOWN:
-							GameLog.update("touch"+x+" "+y,3);
+							
 						firstTouchPoint.set(x,y);
 						firstTouchTime=System.nanoTime();
 						action=screenAction.simple;
 						cameraToOffset.set(0,0);
 						currentTouchPoint.set(firstTouchPoint);
+						
+						switch (gameManager.currentCommand)
+						{
+							case CONTROL:
+								gameManager.checkJoystick(true,new PointF(x,y));
+								break;
+						}
 						break;
 						
 					case MotionEvent.ACTION_UP:
-						GameLog.update("unpressed "+action,3);
+						GameLog.update("unpressed "+action+" "+ gameManager.currentCommand,3);
+						
+						switch (gameManager.currentCommand)
+						{
+							case CONTROL:
+								gameManager.checkJoystick(false,new PointF(x,y));
+								break;
+						}
+						
 						if(action==screenAction.simple)
-					
+						{
 							switch (gameManager.currentCommand)
 							{
-								case CONTROL:
-									gameManager.checkJoystick(false,new PointF(x,y));
-									break;
 								case INTERACTION:
-									
-									
 									gameManager.interactionCheck(pointOfTouch.x,pointOfTouch.y);
 									break;
+									
 								case EXCHANGE:
-									
-									
 									gameManager.interactionCheck(pointOfTouch.x,pointOfTouch.y);
 									break;
+									
 								case ORDER:
-									
-									
 									gameManager.interactionCheck(pointOfTouch.x,pointOfTouch.y);
 									break;
 							}
+						}
 							if(action==screenAction.select)
 							{
 								switch (gameManager.currentCommand)
 								{
-									case CONTROL:
-										gameManager.checkJoystick(false,new PointF(x,y));
-										break;
 									case INTERACTION:
-
-										
 										gameManager.interactionCheck(selectBox);
 										break;
 									
 									case ORDER:
-
-										
 										gameManager.interactionCheck(selectBox);
 										break;
 								}
@@ -419,7 +421,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 								action=screenAction.move;
 							else
 							{
-								if(currentTouchTime-firstTouchTime>100000000)
+								if(currentTouchTime-firstTouchTime>100000000&&gameManager.currentCommand==GameManager.command.INTERACTION)
 								{
 									action=screenAction.select;
 								}
@@ -432,8 +434,27 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 							
 							if(action==screenAction.select)
 							{
-									selectBox.set((firstTouchPoint.x-canvasW/2)/camera.getScale()+cameraPoint.x,(firstTouchPoint.y-canvasH/2)/camera.getScale()+cameraPoint.y,
-												  (currentTouchPoint.x-canvasW/2)/camera.getScale()+cameraPoint.x,(currentTouchPoint.y-canvasH/2)/camera.getScale()+cameraPoint.y);
+								float x1=(firstTouchPoint.x-canvasW/2)/camera.getScale()+camera.getWorldLocation().x;
+								float y1=(firstTouchPoint.y-canvasH/2)/camera.getScale()+camera.getWorldLocation().y;
+								float x2=(currentTouchPoint.x-canvasW/2)/camera.getScale()+camera.getWorldLocation().x;
+								float y2=(currentTouchPoint.y-canvasH/2)/camera.getScale()+camera.getWorldLocation().y;
+								
+								if(x1>x2)
+								{
+									float t=x2;
+									x2=x1;
+									x1=t;
+								}
+								
+								if(y1>y2)
+								{
+									float t=y2;
+									y2=y1;
+									y1=t;
+								}
+								
+								
+								selectBox.set(x1,y1,x2,y2);
 								
 							}
 						}

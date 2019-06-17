@@ -14,6 +14,7 @@ import android.graphics.drawable.*;
 import com.sb9.foloke.sectorb9.game.UI.TechUIs.*;
 import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
 import com.sb9.foloke.sectorb9.game.AI.*;
+import java.util.*;
 
 public class InteractionUI
 {
@@ -21,7 +22,8 @@ public class InteractionUI
     ///////////////REFACTOR: INIT() UPDATE() COMMAND()
 
 	public static AI.order currentOrder;
-    private static Entity pressedEntity;
+  	private static Entity lastPressedEntity;
+	private static ArrayList<Entity> selectedEntities;
 
 	public static void init(final MainActivity MA)
     {
@@ -151,25 +153,25 @@ public class InteractionUI
 
         buttonAggressiveBehaviour.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-                ((AI)((ControlledShip)pressedEntity).getController()).setCurrentBehaviour(AI.behaviour.AGGRESSIVE);
+                setAIBehaviour(AI.behaviour.AGGRESSIVE);
             }
         });
 
         buttonDefensiveBehaviour.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-                ((AI)((ControlledShip)pressedEntity).getController()).setCurrentBehaviour(AI.behaviour.DEFENSIVE);
+                setAIBehaviour(AI.behaviour.DEFENSIVE);
             }
         });
 
         buttonPeacefulBehaviour.setOnClickListener(new OnClickListener(){
             public void onClick(View v) {
-                ((AI)((ControlledShip)pressedEntity).getController()).setCurrentBehaviour(AI.behaviour.PEACEFUL);
+				setAIBehaviour(AI.behaviour.PEACEFUL);
             }
         });
 
         buttonRetreatBehaviour.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-                ((AI)((ControlledShip)pressedEntity).getController()).setCurrentBehaviour(AI.behaviour.RETREAT);
+                setAIBehaviour(AI.behaviour.RETREAT);
             }
         });
 
@@ -190,13 +192,13 @@ public class InteractionUI
 
         buttonHoldCommand.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-                ((AI)((ControlledShip)pressedEntity).getController()).setCurrentOrder(AI.order.STAY);
+				setAIOrder(AI.order.STAY);
             }
         });
 
         buttonPatrolCommand.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-                ((AI)((ControlledShip)pressedEntity).getController()).setCurrentOrder(AI.order.PATROL);
+				setAIOrder(AI.order.PATROL);
             }
         });
 
@@ -209,13 +211,13 @@ public class InteractionUI
 
         buttonMineCommand.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-                ((AI)((ControlledShip)pressedEntity).getController()).setCurrentOrder(AI.order.MINE);
+				setAIOrder(AI.order.MINE);
             }
         });
 
         buttonRepairCommand.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-                ((AI)((ControlledShip)pressedEntity).getController()).setCurrentOrder(AI.order.REPAIR);
+                setAIOrder(AI.order.REPAIR);
             }
         });
 
@@ -231,12 +233,35 @@ public class InteractionUI
         GameLog.update("InteractionUI: ready",0);
     }
 
+	private static void setAIOrder(AI.order order)
+	{
+		Iterator<Entity> iter = selectedEntities.iterator();
+		
+		while (iter.hasNext())
+		{
+			Entity e=iter.next();
+			((AI)((ControlledShip)e).getController()).setCurrentOrder(order);
+		}
+	}
+	
+	private static void setAIBehaviour(AI.behaviour beh)
+	{
+		Iterator<Entity> iter = selectedEntities.iterator();
+
+		while (iter.hasNext())
+		{
+			Entity e=iter.next();
+			((AI)((ControlledShip)e).getController()).setCurrentBehaviour(beh);
+		}
+		
+	}
+	
     private static void changeController(MainActivity MA)
     {
         try {
             PlayerController playerController=MA.getGameManager().getController();
             ControlledShip controlled=playerController.getControlledEntity();
-            ControlledShip pressed=(ControlledShip)pressedEntity;
+            ControlledShip pressed=(ControlledShip)lastPressedEntity;
 
             if(controlled!=null) {
                 playerController.setControlledEntity(null);
@@ -249,7 +274,7 @@ public class InteractionUI
                 pressed.setController(playerController);
                 GameLog.update("manual set",3);
             }
-            update(MA,pressedEntity);
+            update(MA,selectedEntities);
         }
         catch(Exception e) {
             GameLog.update(e.toString(),1);
@@ -290,8 +315,8 @@ public class InteractionUI
         GameLog.update("InteractionUI: OPEN assemblerUI",0);
         final ViewFlipper IVF=MA.findViewById(R.id.interaction_uiViewFlipper);
         MA.getGameManager().currentCommand=GameManager.command.INTERACTION;
-        AssemblerUI.init(MA,(Assembler)pressedEntity);
-        MA.getGameManager().initAssemblerUI((Assembler)pressedEntity);
+        AssemblerUI.init(MA,(Assembler)lastPressedEntity);
+        MA.getGameManager().initAssemblerUI((Assembler)lastPressedEntity);
         IVF.setDisplayedChild(IVF.indexOfChild(MA.findViewById(R.id.assemblerUI)));
     }
 
@@ -300,7 +325,7 @@ public class InteractionUI
         GameLog.update("InteractionUI: OPEN optionsUI",0);
         final ViewFlipper IVF=MA.findViewById(R.id.interaction_uiViewFlipper);
         MA.getGameManager().currentCommand = GameManager.command.INTERACTION;
-        ObjectOptionsUI.init((StaticEntity)pressedEntity,IVF,MA);
+        ObjectOptionsUI.init((StaticEntity)lastPressedEntity,IVF,MA);
         IVF.setDisplayedChild(IVF.indexOfChild(MA.findViewById(R.id.obj_optionsUI)));
     }
 
@@ -309,7 +334,7 @@ public class InteractionUI
         GameLog.update("InteractionUI: OPEN inventoryUI",0);
         final ViewFlipper IVF=MA.findViewById(R.id.interaction_uiViewFlipper);
         MA.getGameManager().currentCommand = GameManager.command.EXCHANGE;
-        InventoryUI.setLeftSide(pressedEntity);
+        InventoryUI.setLeftSide(lastPressedEntity);
         MA.getGameManager().updateInventory(null);
         IVF.setDisplayedChild(IVF.indexOfChild(MA.findViewById(R.id.inventoryUI)));
     }
@@ -328,11 +353,11 @@ public class InteractionUI
         GameLog.update("InteractionUI: OPEN SpaceDockUI",0);
         final ViewFlipper IVF=MA.findViewById(R.id.interaction_uiViewFlipper);
         MA.getGameManager().currentCommand=GameManager.command.INTERACTION;
-        ConstructorUI.update((SpaceDock)pressedEntity);
+        ConstructorUI.update((SpaceDock)lastPressedEntity);
         IVF.setDisplayedChild(IVF.indexOfChild(MA.findViewById(R.id.ship_constructor_ui)));
     }
 
-    public static void update(MainActivity MA,Entity e)
+    public static void update(MainActivity MA,ArrayList<Entity> e)
     {
         final ImageButton buttonOpenCargo = MA.findViewById(R.id.openCargo);
         final ImageButton buttonOpenConfig=MA.findViewById(R.id.openConfig);
@@ -346,24 +371,29 @@ public class InteractionUI
         buttonOpenShipsConstructor.setVisibility(View.GONE);
         buttonOpenCargo.setVisibility(View.GONE);
         buttonOpenConfig.setVisibility(View.GONE);
-        pressedEntity=e;
-
-        if(pressedEntity!=null)
+		selectedEntities=e;
+		
+		if(e!=null&&e.size()>0)
+      	lastPressedEntity=e.get(0);
+		else
+		lastPressedEntity=null;
+			
+        if(lastPressedEntity!=null)
         {
-            if (pressedEntity instanceof SpaceDock)
+            if (lastPressedEntity instanceof SpaceDock)
                 buttonOpenShipsConstructor.setVisibility(View.VISIBLE);
 
-            if (pressedEntity.getOpened())
+            if (lastPressedEntity.getOpened())
                 buttonOpenCargo.setVisibility(View.VISIBLE);
 
-            if (pressedEntity.getInteractable() && (pressedEntity instanceof StaticEntity))
+            if (lastPressedEntity.getInteractable() && (lastPressedEntity instanceof StaticEntity))
                 buttonOpenConfig.setVisibility(View.VISIBLE);
 
-            if (pressedEntity instanceof Assembler)
+            if (lastPressedEntity instanceof Assembler)
                 buttonOpenProduction.setVisibility(View.VISIBLE);
 
-            if (pressedEntity instanceof ControlledShip)
-                if (((ControlledShip) pressedEntity).getController() instanceof AI)
+            if (lastPressedEntity instanceof ControlledShip)
+                if (((ControlledShip) lastPressedEntity).getController() instanceof AI)
                 {
                     MA.findViewById(R.id.interaction_ui_LL_AIOptions).setVisibility(View.VISIBLE);
                     MA.findViewById(R.id.interaction_ui_LL_buildOptions).setVisibility(View.GONE);
