@@ -346,12 +346,9 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 			}
 			
 			if(action==screenAction.scale)
-				gestureDetector.onTouchEvent(event);		
-			
+				gestureDetector.onTouchEvent(event);
 			//TODO CHECK TO POINTERS
-			
-			
-				{
+            {
 					
 				
 				switch(event.getAction())
@@ -441,9 +438,9 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 							}
 						}
 					break;
-			}
-			currentTouchTime=System.nanoTime();
-			currentTouchPoint.set(x,y);
+			    }
+			    currentTouchTime=System.nanoTime();
+			    currentTouchPoint.set(x,y);
 			}
 			/*gestureDetector.onTouchEvent(event);				//check gesture
 			if(!gestureInProgress)								//if not a jesture
