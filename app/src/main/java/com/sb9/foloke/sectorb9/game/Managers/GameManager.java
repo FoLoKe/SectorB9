@@ -59,7 +59,7 @@ public class GameManager
 	private PointF warpingLocation=new PointF();
     private  Point screenSize=new Point();
 	private ArrayList<Entity> selectedEntities=new ArrayList<>();
-	
+	private Entity orderEntity;
 	
     public GameManager( MainActivity MA)
     {
@@ -284,8 +284,9 @@ public class GameManager
 
     public void interactionCheck(float x, float y)
     {
-		if(currentCommand==command.ORDER)
-			interactionTouch(new PointF(x,y));
+		
+		
+			
 		try
 		{
 			interObject.calculateCollisionObject(x,y);
@@ -294,10 +295,13 @@ public class GameManager
 			{
 				if(e.getCollisionObject().intersects(interObject))
 				{
+					orderEntity=e;
 					entities.add(e);
 					break;
 				}
 			}
+			
+			if(currentCommand!=command.ORDER)
 			selectedEntities=entities;
 			interactionTouch(new PointF(x,y));
 		}
@@ -472,11 +476,11 @@ public class GameManager
 							((AI)((ControlledShip)e).getController()).setCurrentOrder(AI.order.MOVE);
 							break;
 						case ATTACK:
-							((AI)((ControlledShip)e).getController()).setTargetToAttack(e);
+							((AI)((ControlledShip)e).getController()).setTargetToAttack(orderEntity);
 							((AI)((ControlledShip)e).getController()).setCurrentOrder(AI.order.ATTACK);
 							break;
 						case FOLLOW:
-							((AI)((ControlledShip)e).getController()).setTargetToFollow(e);
+							((AI)((ControlledShip)e).getController()).setTargetToFollow(orderEntity);
 							((AI)((ControlledShip)e).getController()).setCurrentOrder(AI.order.FOLLOW);
 						break;
 					}
