@@ -6,6 +6,7 @@ import com.sb9.foloke.sectorb9.game.Entities.Buildings.*;
 import com.sb9.foloke.sectorb9.game.Funtions.*;
 import java.util.*;
 import com.sb9.foloke.sectorb9.game.Assets.*;
+import android.graphics.drawable.*;
 
 public class AI extends Controller {
 
@@ -14,7 +15,7 @@ public class AI extends Controller {
     private ControlledShip child;
     private final float sightRadius=300;
     private Paint debugPathPaint=new Paint();
-    private Paint debugOrderPaint=new Paint();
+    
     private Paint debugPreBehaviourOrderPaint=new Paint();
 
 	public enum behaviour{AGGRESSIVE,DEFENSIVE,PEACEFUL,RETREAT}
@@ -91,37 +92,63 @@ public class AI extends Controller {
 		}
 	}
 
+	private void drawSymbol(Canvas canvas,PointF point)
+	{
+		
+		Paint paint=new Paint();
+		paint.setColor(Color.GREEN);
+		paint.setStyle(Paint.Style.STROKE);
+		paint.setStrokeWidth(2);
+		
+		float radius=20;
+		
+		float fullInterval=6.28f*radius/4*3/4;
+		float blankInterval=6.28f*radius/4*1/4;
+		
+		float[] intervals=new float[]{fullInterval,blankInterval};
+		DashPathEffect effect=new DashPathEffect(intervals,-blankInterval/2);
+		
+		paint.setPathEffect(effect);
+		canvas.drawCircle(point.x,point.y,radius,paint);
+	}
+	
 	public void render(Canvas canvas)
 	{
 		
 		switch(currentOrder)
 		{
 			case STAY:
-				debugOrderPaint.setColor(Color.YELLOW);
-				
 				break;
+				
 			case MOVE:
-				debugOrderPaint.setColor(Color.BLUE);
+				if(destination!=null)
+					drawSymbol(canvas,destination);
 				break;
 				
 			case ATTACK:
-				debugOrderPaint.setColor(Color.RED);
+				if(targetToAttack!=null)
+					drawSymbol(canvas,targetToAttack.getCenterWorldLocation());
 				break;
 				
 			case FOLLOW:
-				debugOrderPaint.setColor(Color.GREEN);
+				if(targetToFollow!=null)
+					drawSymbol(canvas,targetToFollow.getCenterWorldLocation());
 				break;
 				
 			case REPAIR:
-				debugOrderPaint.setColor(Color.MAGENTA);
+				if(targetToRepairYourself!=null)
+					drawSymbol(canvas,targetToRepairYourself.getCenterWorldLocation());
 				break;
 
 			case MINE:
-				debugOrderPaint.setColor(Color.GRAY);
+				if(targetToMine!=null)
+					drawSymbol(canvas,targetToMine.getCenterWorldLocation());
 				break;	
 				
 			case PATROL:
-				debugOrderPaint.setColor(Color.WHITE);
+				if(destination!=null)
+					drawSymbol(canvas,destination);
+				
 				break;	
 		}
 		
@@ -177,7 +204,7 @@ public class AI extends Controller {
 
 		}
 
-		canvas.drawCircle(child.getX()-10,child.getY()-10,5,debugOrderPaint);
+		
 		
 		if(!Options.drawDebugInfo.getBoolean())
 			return;

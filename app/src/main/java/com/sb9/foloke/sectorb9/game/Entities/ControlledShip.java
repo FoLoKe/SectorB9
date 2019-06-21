@@ -61,8 +61,7 @@ public class ControlledShip extends DynamicEntity {
         ship.render(canvas);
         super.render(canvas);
 		
-		if(controller!=null)
-		controller.render(canvas);
+		
 		
 		if(Options.drawDebugInfo.getBoolean())
 			canvas.drawText(controller+"",getCenterX(),getCenterY(),debugPaint);

@@ -240,7 +240,10 @@ public class GameManager
 		Iterator<Entity> iter=selectedEntities.iterator();
 		while(iter.hasNext())
 		{
-			iter.next().drawDebugCollision(canvas);
+			Entity e=iter.next();
+			e.drawDebugCollision(canvas);
+			if(e instanceof ControlledShip && ((ControlledShip)e).getController()!=null)
+				((ControlledShip)e).getController().render(canvas);
 		}
 			
 		
