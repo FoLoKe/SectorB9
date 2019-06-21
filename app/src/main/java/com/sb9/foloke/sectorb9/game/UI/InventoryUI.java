@@ -1,25 +1,17 @@
 package com.sb9.foloke.sectorb9.game.UI;
-import com.sb9.foloke.sectorb9.game.Assets.*;
-
-import android.widget.*;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-//import android.support.v4.app.ActivityCompat;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
-
-import com.sb9.foloke.sectorb9.R;
-
-import android.view.*;
-
-import com.sb9.foloke.sectorb9.game.DataSheets.ItemsDataSheet;
-import com.sb9.foloke.sectorb9.game.Entities.Entity;
-import com.sb9.foloke.sectorb9.*;
 import android.content.*;
+import android.graphics.*;
+import android.graphics.drawable.*;
+import android.view.*;
 import android.view.View.*;
+import android.widget.*;
+import com.sb9.foloke.sectorb9.*;
+import com.sb9.foloke.sectorb9.game.Assets.*;
+import com.sb9.foloke.sectorb9.game.DataSheets.*;
+import com.sb9.foloke.sectorb9.game.Entities.*;
 import com.sb9.foloke.sectorb9.game.UI.Inventory.*;
+
+import com.sb9.foloke.sectorb9.game.Entities.Entity;
 
 //import java.util.*;
 public class InventoryUI
@@ -31,7 +23,9 @@ public class InventoryUI
 	private static int countToTransfer=1;
 	private static MainActivity MA;
 	
-
+	private static PointF frameOffset=new PointF();
+	private static PointF initialResizePoint=new PointF();
+	
 	public static void init(MainActivity mainActivity)
 	{
 		MA=mainActivity;
@@ -40,6 +34,10 @@ public class InventoryUI
         rightTable=MA.findViewById(R.id.ObjectTableLayout);
 		
 		excInterface=new InventoryExchangeInterface(MA.getGameManager());
+		
+		setWindowDragAndDrop(MA.findViewById(R.id.inventoryLeftInvLayout),MA.findViewById(R.id.inventoryLeftInvLayoutHead));
+		setWindowDragAndDrop(MA.findViewById(R.id.inventoryRightInvLayout),MA.findViewById(R.id.inventoryRightInvLayout));
+		setResizeButtons();
 		
 		MA.findViewById(R.id.InventoryUI_oneItemButton).setOnClickListener(new OnClickListener(){
 			@Override
@@ -65,12 +63,18 @@ public class InventoryUI
 		if(caller==null||caller==leftObject||caller==rightObject)
 		{
 			if(leftObject!=null)
+			{
+				((TextView)MA.findViewById(R.id.inventoryLeftTextView)).setText(leftObject.getName());
 				update(leftTable,leftObject);
+			}
 			else
 				leftTable.setVisibility(View.GONE);
 				
 			if(rightObject!=null)
+			{
+				((TextView)MA.findViewById(R.id.inventoryRightTextView)).setText(rightObject.getName());
 				update(rightTable,rightObject);
+			}
 			else
 				rightTable.setVisibility(View.GONE);
 			resetButtonColor(null);
@@ -173,7 +177,7 @@ public class InventoryUI
 				}
 			table.addView(row);
 			}
-			
+			//setWindowDragAndDrop(table);
 			if(table.getVisibility()==View.GONE)
 				table.setVisibility(View.VISIBLE);
 		}
@@ -218,6 +222,80 @@ public class InventoryUI
 			leftObject=side;
 			rightObject=null;
 			update(null);
+	}
+	
+	
+	
+	private static void setResizeButtons()
+	{
+		MA.findViewById(R.id.inventoryLeftResizeButton).setOnTouchListener(new OnTouchListener(){
+			
+			@Override
+			public boolean onTouch(View v, MotionEvent event)
+			{
+				switch(event.getAction())
+				{
+					case event.ACTION_DOWN:
+						initialResizePoint.set(event.getRawX(),event.getRawY());
+						break;
+					case event.ACTION_MOVE:
+						
+						AbsoluteLayout.LayoutParams lp=(AbsoluteLayout.LayoutParams)MA.findViewById(R.id.inventoryLeftInvLayout).getLayoutParams();
+						
+						lp.height=lp.height-(int)(initialResizePoint.y-event.getRawY());
+						lp.width=lp.width-(int)(initialResizePoint.x-event.getRawX());
+						
+						if(lp.width<600)
+							lp.width=600;
+						if(lp.height<400)
+							lp.height=400;
+						
+						MA.findViewById(R.id.inventoryLeftInvLayout).setLayoutParams(lp);
+						
+						initialResizePoint.set(event.getRawX(),event.getRawY());
+						break;
+						
+					
+				}
+				return true;
+			}
+		});
+	}
+	
+	private static void setWindowDragAndDrop(final View window,final View windowHead)
+	{
+		
+		
+		window.setZ(1);
+		windowHead.setOnTouchListener(new OnTouchListener()
+			{
+				@Override
+				public boolean onTouch(View v,MotionEvent e)
+				{
+					switch(e.getAction())
+					{
+						case e.ACTION_DOWN:
+							int[] location=new int[2];
+							window.getLocationOnScreen(location);
+							
+							frameOffset.set(e.getRawX()-location[0],e.getRawY()-location[1]);
+							break;
+							
+						case e.ACTION_MOVE:
+							
+						int[] framelocation=new int[2];
+						MA.findViewById(R.id.inventoryAbsoluteLayout).getLocationOnScreen(framelocation);
+						window.setX(e.getRawX()-frameOffset.x);
+						window.setY(e.getRawY()-framelocation[1]-frameOffset.y);
+						break;
+					}
+					
+					return true;
+				}
+			});
+		
+		
+		
 	}
 	
 	private static void setDragAndDrop(final InventoryFrameLayout IFL,final Entity target)

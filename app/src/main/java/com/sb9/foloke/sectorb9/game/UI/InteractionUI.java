@@ -293,6 +293,8 @@ public class InteractionUI
     private static void closeInteractionUI(MainActivity MA)
     {
         GameLog.update("InteractionUI: CLOSE",0);
+		final ViewFlipper IVF=MA.findViewById(R.id.interaction_uiViewFlipper);
+		IVF.setDisplayedChild(0);
         final ViewFlipper VF = MA.findViewById(R.id.UIFlipper);
         MA.getGameManager().currentCommand= GameManager.command.CONTROL;
         MA.getGameManager().nullPressedObjects();
