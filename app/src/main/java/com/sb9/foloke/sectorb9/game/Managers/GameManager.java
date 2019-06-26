@@ -105,7 +105,7 @@ public class GameManager
 		
         GameLog.update("GameManager: preparing action UI",0);
         uIhp=new ProgressBarUI(this,screenSize.x/3f,screenSize.y/20f,50,50,UIAsset.hpBackground,UIAsset.hpLine,UIAsset.progressBarBorder,100);
-        uIsh=new ProgressBarUI(this,screenSize.x/3f,screenSize.y/40f,50,50+screenSize.y/20f,UIAsset.stunBackground,UIAsset.stunLine,UIAsset.progressBarBorder,100);
+        uIsh=new ProgressBarUI(this,screenSize.x/3f,screenSize.y/20f,50,50+screenSize.y/20f,UIAsset.stunBackground,UIAsset.stunLine,UIAsset.progressBarBorder,100);
 
         GameLog.update("GameManager: preparing player controller",0);    
 		playerController=new PlayerController();

@@ -132,7 +132,13 @@ public class AI extends Controller {
 				
 			case FOLLOW:
 				if(targetToFollow!=null)
+				{
+					Paint pathPaint=new Paint();
+					pathPaint.setColor(Color.parseColor("#5500ff00"));
+					pathPaint.setStrokeWidth(5);
 					drawSymbol(canvas,targetToFollow.getCenterWorldLocation());
+					canvas.drawLine(child.getCenterX(),child.getCenterY(),targetToFollow.getCenterX(),targetToFollow.getCenterY(),pathPaint);
+				}
 				break;
 				
 			case REPAIR:
@@ -412,6 +418,10 @@ public class AI extends Controller {
 				taskAddMovement(1);
 			else
 				currentOrder=order.STAY;
+		}
+		else
+		{
+			taskStop();
 		}
 	}
 	

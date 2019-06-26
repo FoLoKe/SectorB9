@@ -132,14 +132,19 @@ public class ModulesDataSheet
 		modules.add(new TurretModule(12,"fixed turret",ObjectsAsset.nullItem,type.TURRET,0,1));
 		modules.add(new TurretModule(13,"light turret",ObjectsAsset.nullItem,type.TURRET,0,2));
         modules.add(new ShieldModule(14,"shield mk1",ObjectsAsset.nullItem,type.SHIELD,0,1,100));
+		
         modules.add(new GyrosModule(15,"gyros mk1",ObjectsAsset.nullItem,type.GYROSCOPES,25,200));
 		modules.add(new GyrosModule(16,"gyros mk2",ObjectsAsset.nullItem,type.GYROSCOPES,50,250));
 		modules.add(new GyrosModule(17,"gyros mk3",ObjectsAsset.nullItem,type.GYROSCOPES,75,400));
+		
+		modules.add(new ShieldModule(18,"shield mk2",ObjectsAsset.nullItem,type.SHIELD,0,1,200));
+		modules.add(new GeneratorModule(7,"generator mk2",ObjectsAsset.nullItem,type.GENERATOR,100,0.7f));
 	}
 	
 	public static Module[] getOfType(type moduleType)
 	{
 		ArrayList<Module> list=new ArrayList<>();
+		list.add(modules.get(0));
 			for(Module m:modules)
 			if(m.moduleType==moduleType)
 				list.add(m);

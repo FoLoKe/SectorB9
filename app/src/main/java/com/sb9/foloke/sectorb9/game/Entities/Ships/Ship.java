@@ -184,15 +184,15 @@ public class Ship
 	public static Ship createSimple()
     {
         Ship ship;
-        ModulesDataSheet.HullModule h=(ModulesDataSheet.HullModule)ModulesDataSheet.getOfType(ModulesDataSheet.type.HULL)[0];
-        ModulesDataSheet.EngineModule e=(ModulesDataSheet.EngineModule)ModulesDataSheet.getOfType(ModulesDataSheet.type.ENGINE)[0];
-        ModulesDataSheet.GeneratorModule g=(ModulesDataSheet.GeneratorModule)ModulesDataSheet.getOfType(ModulesDataSheet.type.GENERATOR)[0];
-        ModulesDataSheet.ShieldModule s=(ModulesDataSheet.ShieldModule)ModulesDataSheet.getOfType(ModulesDataSheet.type.SHIELD)[0];
-        ModulesDataSheet.GyrosModule gy=(ModulesDataSheet.GyrosModule)ModulesDataSheet.getOfType(ModulesDataSheet.type.GYROSCOPES)[0];
+        ModulesDataSheet.HullModule h=(ModulesDataSheet.HullModule)ModulesDataSheet.getOfType(ModulesDataSheet.type.HULL)[1];
+        ModulesDataSheet.EngineModule e=(ModulesDataSheet.EngineModule)ModulesDataSheet.getOfType(ModulesDataSheet.type.ENGINE)[1];
+        ModulesDataSheet.GeneratorModule g=(ModulesDataSheet.GeneratorModule)ModulesDataSheet.getOfType(ModulesDataSheet.type.GENERATOR)[1];
+        ModulesDataSheet.ShieldModule s=(ModulesDataSheet.ShieldModule)ModulesDataSheet.getOfType(ModulesDataSheet.type.SHIELD)[1];
+        ModulesDataSheet.GyrosModule gy=(ModulesDataSheet.GyrosModule)ModulesDataSheet.getOfType(ModulesDataSheet.type.GYROSCOPES)[1];
 
         ModulesDataSheet.TurretModule[] t=new ModulesDataSheet.TurretModule[h.gunMounts.length];
         for(int i=0;i<t.length;i++)
-            t[i]= (ModulesDataSheet.TurretModule) ModulesDataSheet.getOfType(ModulesDataSheet.type.TURRET)[0];
+            t[i]= (ModulesDataSheet.TurretModule) ModulesDataSheet.getOfType(ModulesDataSheet.type.TURRET)[1];
 
         ModulesDataSheet.WeaponModule[] w=new ModulesDataSheet.WeaponModule[h.gunMounts.length];
         for(int i=0;i<w.length;i++)

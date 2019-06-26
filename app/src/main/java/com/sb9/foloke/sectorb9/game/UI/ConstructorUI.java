@@ -7,24 +7,22 @@ import com.sb9.foloke.sectorb9.game.DataSheets.*;
 import android.content.*;
 import com.sb9.foloke.sectorb9.game.Entities.Buildings.*;
 import android.view.View.*;
+import com.sb9.foloke.sectorb9.game.UI.CustomViews.*;
 
 public class ConstructorUI
 {
-    private static ModulesDataSheet.HullModule selectedHull;
-	private static ModulesDataSheet.EngineModule selectedEngine;
-	private static ModulesDataSheet.TurretModule[] selectedTurrets;
-	private static ModulesDataSheet.WeaponModule[] selectedWeapons;
-	private static ModulesDataSheet.GeneratorModule selectedGenerator;
-	private static ModulesDataSheet.ShieldModule selectedShield;
-	private static ModulesDataSheet.GyrosModule selectedGyroscopes;
+    
 	private static float scaleX,scaleY;
     static MainActivity MA;
+	private static SpaceDock dock;
 	
 	private static class CustomAdapter extends ArrayAdapter
 	{
 		ModulesDataSheet.Module[] modules;
 		
 		Context mContext;
+		
+		
 
 		private static class ViewHolder 
 		{
@@ -91,7 +89,11 @@ public class ConstructorUI
 	
 	public static void update(final SpaceDock caller)
 	{
+		try{
 		//MainActivity tma=ma
+		GameLog.update("SpaceDockUI: update",0);
+		
+		dock=caller;
 		LinearLayout MAL =MA.findViewById(R.id.ship_constructor_ui_MainLinearLayout);
 		MAL.setBackgroundColor(Color.parseColor("#55ffffff"));
 		Button produce=MA.findViewById(R.id.ship_constructor_ui_produce_button);
@@ -99,7 +101,7 @@ public class ConstructorUI
 		{
 			public void onClick(View v)
 			{
-				caller.setToProduce(selectedHull,selectedEngine,selectedGenerator,selectedShield,selectedGyroscopes,selectedTurrets,selectedWeapons);
+				caller.setToProduce();
 			}
 		}
 		);
@@ -123,7 +125,28 @@ public class ConstructorUI
 		shieldsSpinner.setAdapter(shieldsSpinnerAdp);
 		generatorSpinner.setAdapter(generatorSpinnerAdp);
 		gyroscopSpinner.setAdapter(gyroscopSpinnerAdp);
-
+		
+		//spinner default
+		
+		int selectionCounter=0;
+		for(ModulesDataSheet.Module m :ModulesDataSheet.getOfType(ModulesDataSheet.type.HULL))
+		{
+			if(dock.selectedHull==null)
+			{
+				//TODO EMPTY MODULE
+				selectionCounter=0;
+				break;
+			}
+			if(m.ID==dock.selectedHull.ID)
+			{
+				hullSpinner.setSelection(selectionCounter);
+				selectionCounter=0;
+				break;
+			}
+			selectionCounter++;
+		}
+		
+		
 		//background set
 		hullSpinner.setBackgroundColor(Color.parseColor("#55ffffff"));
 		engineSpinner.setBackgroundColor(Color.parseColor("#55ffffff"));
@@ -136,7 +159,7 @@ public class ConstructorUI
 		{
 			public void onItemSelected(AdapterView<?> parent,View itemSelected, int selectedItemPosition, long selectedId) 
 			{
-				selectedHull=(ModulesDataSheet.HullModule)ModulesDataSheet.getOfType(ModulesDataSheet.type.HULL)[selectedItemPosition];
+				caller.selectedHull=(ModulesDataSheet.HullModule)ModulesDataSheet.getOfType(ModulesDataSheet.type.HULL)[selectedItemPosition];
 				organizeWeaponsSpinners();
 				updatePreview(null,null);
 			}
@@ -148,7 +171,7 @@ public class ConstructorUI
 		{
 			public void onItemSelected(AdapterView<?> parent,View itemSelected, int selectedItemPosition, long selectedId) 
 			{
-				selectedEngine=(ModulesDataSheet.EngineModule)ModulesDataSheet.getOfType(ModulesDataSheet.type.ENGINE)[selectedItemPosition];
+				caller.selectedEngine=(ModulesDataSheet.EngineModule)ModulesDataSheet.getOfType(ModulesDataSheet.type.ENGINE)[selectedItemPosition];
 			}
 
 		public void onNothingSelected(AdapterView<?> parent){}
@@ -158,7 +181,7 @@ public class ConstructorUI
 		{
 			public void onItemSelected(AdapterView<?> parent,View itemSelected, int selectedItemPosition, long selectedId) 
 			{
-				selectedGenerator=(ModulesDataSheet.GeneratorModule)ModulesDataSheet.getOfType(ModulesDataSheet.type.GENERATOR)[selectedItemPosition];
+				caller.selectedGenerator=(ModulesDataSheet.GeneratorModule)ModulesDataSheet.getOfType(ModulesDataSheet.type.GENERATOR)[selectedItemPosition];
 			}
 
 			public void onNothingSelected(AdapterView<?> parent){}
@@ -168,7 +191,7 @@ public class ConstructorUI
 		{
 			public void onItemSelected(AdapterView<?> parent,View itemSelected, int selectedItemPosition, long selectedId) 
 			{
-				selectedShield=(ModulesDataSheet.ShieldModule) ModulesDataSheet.getOfType(ModulesDataSheet.type.SHIELD)[selectedItemPosition];
+				caller.selectedShield=(ModulesDataSheet.ShieldModule) ModulesDataSheet.getOfType(ModulesDataSheet.type.SHIELD)[selectedItemPosition];
 			}
 
 			public void onNothingSelected(AdapterView<?> parent){}
@@ -178,18 +201,25 @@ public class ConstructorUI
         {
             public void onItemSelected(AdapterView<?> parent,View itemSelected, int selectedItemPosition, long selectedId)
             {
-                selectedGyroscopes=(ModulesDataSheet.GyrosModule)ModulesDataSheet.getOfType(ModulesDataSheet.type.GYROSCOPES)[selectedItemPosition];
+                caller.selectedGyroscopes=(ModulesDataSheet.GyrosModule)ModulesDataSheet.getOfType(ModulesDataSheet.type.GYROSCOPES)[selectedItemPosition];
                 updatePreview(null,null);
             }
 
             public void onNothingSelected(AdapterView<?> parent){}
         });
+		}
+		catch(Exception e)
+		{
+			GameLog.update("SpaceDockUI: "+e.toString(),1);
+		}
 		
+		GameLog.update("SpaceDockUI: update finished",0);
 	}
 	
 	private static void updatePreview(PointF f,PointF gf)
 	{
-		Bitmap hull=selectedHull.image;
+		GameLog.update("SpaceDockUI: update preview",0);
+		Bitmap hull=dock.selectedHull.image;
 		Bitmap bmOverlay = Bitmap.createBitmap(hull);
 		Paint p=new Paint();
 		p.setColor(Color.RED);
@@ -208,18 +238,18 @@ public class ConstructorUI
 			canvas.drawLine(f.x+hull.getWidth()/2f,f.y+hull.getHeight()/2f,f.x+hull.getWidth()/2f,f.y+hull.getHeight()/2f-5,p);
 		}
 		((ImageView)MA.findViewById(R.id.ship_constructor_ui_image)).setImageBitmap(Bitmap.createScaledBitmap(bmOverlay,(int)(320*scaleX),(int)(320*scaleY),false));
-		
+		GameLog.update("SpaceDockUI: update preview finished",0);
 	}
 	
 	private static void organizeWeaponsSpinners()
 	{
-		
-		selectedWeapons=new ModulesDataSheet.WeaponModule[(selectedHull).gunMounts.length];
-		selectedTurrets=new ModulesDataSheet.TurretModule[(selectedHull).gunMounts.length];
+		GameLog.update("SpaceDockUI: organazing weapons",0);
+		dock.selectedWeapons=new ModulesDataSheet.WeaponModule[(dock.selectedHull).gunMounts.length];
+		dock.selectedTurrets=new ModulesDataSheet.TurretModule[(dock.selectedHull).gunMounts.length];
 		
 		((LinearLayout)MA.findViewById(R.id.ship_constructor_ui_MainRightLinearLayout)).removeAllViews();
 		int turretNumber=0;
-		for(ModulesDataSheet.HullModule.GunMount g:(selectedHull).gunMounts)
+		for(ModulesDataSheet.HullModule.GunMount g:(dock.selectedHull).gunMounts)
 		{
 			
 			final ModulesDataSheet.HullModule.GunMount fg=g;
@@ -247,7 +277,7 @@ public class ConstructorUI
 					
 					public void onItemSelected(AdapterView<?> parent,View itemSelected, int selectedItemPosition, long selectedId) 
 					{
-						selectedTurrets[currentTurret]=(ModulesDataSheet.TurretModule)ModulesDataSheet.getOfType(ModulesDataSheet.type.TURRET)[selectedItemPosition];
+						dock.selectedTurrets[currentTurret]=(ModulesDataSheet.TurretModule)ModulesDataSheet.getOfType(ModulesDataSheet.type.TURRET)[selectedItemPosition];
 					}
 
 					public void onNothingSelected(AdapterView<?> parent){}
@@ -274,7 +304,7 @@ public class ConstructorUI
 				{
 					public void onItemSelected(AdapterView<?> parent,View itemSelected, int selectedItemPosition, long selectedId) 
 					{
-						selectedWeapons[currentTurret]=(ModulesDataSheet.WeaponModule)(ModulesDataSheet.getOfType(ModulesDataSheet.type.WEAPON)[selectedItemPosition]);
+						dock.selectedWeapons[currentTurret]=(ModulesDataSheet.WeaponModule)(ModulesDataSheet.getOfType(ModulesDataSheet.type.WEAPON)[selectedItemPosition]);
 					}
 
 					public void onNothingSelected(AdapterView<?> parent){}
@@ -283,7 +313,7 @@ public class ConstructorUI
 			
 			turretNumber++;
 		}
-		
+		GameLog.update("SpaceDockUI: organazing weapons finished",0);
 	}
 	
 	public static class CustomSpinner extends Spinner {

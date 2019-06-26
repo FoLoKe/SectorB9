@@ -12,6 +12,14 @@ public class SpaceDock extends StaticEntity
 	private boolean inProduction=false;
 	private ControlledShip toSpawn;
 
+	public ModulesDataSheet.HullModule selectedHull;
+	public ModulesDataSheet.EngineModule selectedEngine;
+	public ModulesDataSheet.TurretModule[] selectedTurrets;
+	public ModulesDataSheet.WeaponModule[] selectedWeapons;
+	public ModulesDataSheet.GeneratorModule selectedGenerator;
+	public ModulesDataSheet.ShieldModule selectedShield;
+	public ModulesDataSheet.GyrosModule selectedGyroscopes;
+	
 	public SpaceDock(float x,float y,float rotation,GameManager gm)
 	{
 		super(x,y,rotation,gm,ID);
@@ -40,10 +48,9 @@ public class SpaceDock extends StaticEntity
 		super.tick();
 	}
 	
-	public void setToProduce(ModulesDataSheet.HullModule hull, ModulesDataSheet.EngineModule engine, ModulesDataSheet.GeneratorModule generator, ModulesDataSheet.ShieldModule shields, ModulesDataSheet.GyrosModule gyroscope,
-							 ModulesDataSheet.TurretModule[] turrets, ModulesDataSheet.WeaponModule[] weapons)
+	public void setToProduce()
 	{
-		Ship ship=new Ship(hull,engine,generator,shields,gyroscope,turrets,weapons);
+		Ship ship=new Ship(selectedHull,selectedEngine,selectedGenerator,selectedShield,selectedGyroscopes,selectedTurrets,selectedWeapons);
 		toSpawn=new ControlledShip((int)this.x,(int)this.y,0,gameManager,ship);
 		toSpawn.setController(new AI(toSpawn));
 		toSpawn.setTeam(TEAM);
